@@ -1,4 +1,5 @@
 import { Header } from "./Header"
+import { Navigation } from "./Navigation"
 
 interface LayoutProps {
 	children?: JSX.Element | JSX.Element[]
@@ -6,9 +7,12 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
 	return (
-		<div className="">
+		<div className="flex flex-col gap-2 bg-lynch-50 h-screen">
 			<Header />
-			{children}
+			<div className="flex gap-2 h-full px-2">
+				<Navigation />
+				{children}
+			</div>
 		</div>
 	)
 }
