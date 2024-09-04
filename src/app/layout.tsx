@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Montserrat } from "next/font/google"
 import "./globals.css"
-import { MantineProvider } from "@mantine/core"
-import '@mantine/core/styles.css';
 
-const inter = Inter({ subsets: ["latin"] })
+const montserrat = Montserrat({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
 	//
@@ -16,10 +14,8 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en">
-			<body className={inter.className}>
-				<MantineProvider>{children}</MantineProvider>
-			</body>
+		<html lang="fr">
+			<body className={montserrat.className}>{children}</body>
 		</html>
 	)
 }
