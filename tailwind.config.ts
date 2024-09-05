@@ -9,6 +9,9 @@ const config: Config = {
 	],
 	theme: {
 		extend: {
+			screens: {
+				xsHeight: { 'raw': '(min-height: 720px)' },
+			},
 			colors: {
 				primary: {
 					DEFAULT: "#34D39E",

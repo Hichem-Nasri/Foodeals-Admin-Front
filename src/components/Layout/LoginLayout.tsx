@@ -10,14 +10,13 @@ export const LoginLayout: React.FC<LoginLayoutProps> = ({ children }) => {
 	const defaultOptions = {
 		loop: true,
 		autoplay: true,
-		clickToPause: false,
 		animationData: animationData,
 		rendererSettings: {
 			preserveAspectRatio: "xMidYMid slice",
 		},
 	}
 	return (
-		<main className="grid grid-cols-1 lg:grid-cols-2 w-full h-screen min-h-[43.75rem]">
+		<main className="grid grid-cols-1 lg:grid-cols-2 w-full h-screen lg:min-h-[43.75rem]">
 			<div
 				className="flex justify-center items-center h-full bg-repeat bg-center p-4"
 				style={{

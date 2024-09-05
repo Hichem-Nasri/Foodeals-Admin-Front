@@ -5,6 +5,8 @@ import { useState } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Lottie from "react-lottie"
+import animationData from "@/lotties/loginAnimation.json"
 
 export const Login: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false)
@@ -24,13 +26,25 @@ export const Login: React.FC = () => {
 	})
 	const { handleSubmit } = form
 
+	const defaultOptions = {
+		loop: true,
+		autoplay: true,
+		animationData: animationData,
+		rendererSettings: {
+			preserveAspectRatio: "xMidYMid slice",
+		},
+	}
+
 	const onSubmit = (data: z.infer<typeof schema>) => {
 		console.log(data)
 	}
 	const handleShowPassword = () => setShowPassword((prev) => !prev)
 	return (
-		<div className="flex flex-col justify-center items-center gap-[3.125rem] w-full">
+		<div className="flex flex-col justify-center items-center lg:gap-[3.125rem] gap-6 w-full">
 			<Image src="/logo-foodeals.svg" alt="login Illustrator" width={191} height={32} objectFit="cover" />
+			<div className="lg:hidden xsHeight:inline-flex hidden">
+				<Lottie options={defaultOptions} width="100%" height="197px" />
+			</div>
 			<h2 className="text-[1.375rem] font-medium text-center text-lynch-400">Administration</h2>
 			<FormLogin
 				handleSubmit={handleSubmit(onSubmit)}
