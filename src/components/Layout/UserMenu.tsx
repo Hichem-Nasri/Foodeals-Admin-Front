@@ -9,12 +9,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
 
-interface UserMenuProps {}
+interface UserMenuProps { }
 
-export const UserMenu: FC<UserMenuProps> = ({}) => {
+export const UserMenu: FC<UserMenuProps> = ({ }) => {
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
+			<DropdownMenuTrigger asChild className="lg:inline-flex hidden">
 				<Button variant="ghost" className="flex items-center gap-3 p-0 hover:bg-white shrink-0">
 					<div className="flex gap-3 items-center">
 						<Image
@@ -32,7 +32,7 @@ export const UserMenu: FC<UserMenuProps> = ({}) => {
 					</div>
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent align="start">
 				<DropdownMenuItem>Mon Profile</DropdownMenuItem>
 				<DropdownMenuItem>Paramètres</DropdownMenuItem>
 			</DropdownMenuContent>
