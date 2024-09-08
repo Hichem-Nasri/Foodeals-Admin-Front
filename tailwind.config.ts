@@ -10,18 +10,32 @@ const config: Config = {
 	theme: {
 		extend: {
 			screens: {
-				xsHeight: { 'raw': '(min-height: 720px)' },
+				xsHeight: { raw: "(min-height: 720px)" },
 			},
 			colors: {
 				primary: {
 					DEFAULT: "#34D39E",
 				},
-				Mountain: {
+				tulip: {
+					"100": "#FEF0C3",
+					"500": "#EAB308",
+				},
+				scooter: {
+					"100": "#CFF7FE",
+					"500": "#06B6D4",
+				},
+				amethyst: {
+					"100": "#F4E8FF",
+					"500": "#A855F7",
+				},
+				mountain: {
+					"100": "#D1FAEC",
 					"500": "#10B981",
 				},
 				lynch: {
 					"50": "#F6F7F9",
 					"100": "#ECEEF2",
+					"200": "#D5D9E2",
 					"300": "#B1BBC8",
 					"400": "#8695AA",
 					"500": "#64748B",

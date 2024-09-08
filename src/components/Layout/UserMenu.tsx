@@ -25,7 +25,7 @@ export const UserMenu: FC<UserMenuProps> = ({ }) => {
 							className="rounded-full overflow-hidden"
 						/>
 						<div className="lg:flex hidden items-start flex-col gap-[3px]">
-							<p className="text-base font-normal text-Mountain-500">Choaib Abouelwafa</p>
+							<p className="text-base font-normal text-mountain-500">Choaib Abouelwafa</p>
 							<p className="text-xs font-semibold text-subtitle">Super Admin</p>
 						</div>
 						<ChevronDown className="h-4 w-4" />
