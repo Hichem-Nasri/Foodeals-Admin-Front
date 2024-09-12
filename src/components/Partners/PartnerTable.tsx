@@ -1,127 +1,60 @@
-import { useState, FC } from "react"
+import { FC } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { TableRowType } from "."
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { PartnerCompanyType, PartnerType } from "@/types/partners"
-import { ChevronDown, ChevronsUpDown, ChevronUp, Mail, PhoneCall } from "lucide-react"
-import { PartnerStatus } from "./PartnerStatus"
-import { PartnerSolution } from "./PartnerSolution"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { flexRender } from "@tanstack/react-table"
+import { PartnerType } from "@/types/partners"
+import { ChevronDown, ChevronsDown, ChevronsUpDown, ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface PartnerTableProps {
-	partners: PartnerType[]
-	tableRows: TableRowType[]
+	table: import("@tanstack/table-core").Table<PartnerType>
 }
 
-type SortDirection = "ascending" | "descending"
-
-interface SortState {
-	column: string
-	direction: SortDirection
-}
-
-export const PartnerTable: FC<PartnerTableProps> = ({ partners, tableRows }) => {
-	const [sortState, setSortState] = useState<SortState>({ column: "createdAt", direction: "ascending" })
-
-	const handleSort = (column: string) => {
-		setSortState((prevSortState) => {
-			const newDirection: SortDirection =
-				prevSortState.column === column && prevSortState.direction === "ascending" ? "descending" : "ascending"
-			return { column, direction: newDirection }
-		})
-	}
-
-	const sortedPartners = [...partners].sort((a, b) => {
-		const aValue = a[sortState.column as keyof PartnerType]
-		const bValue = b[sortState.column as keyof PartnerType]
-
-		if (aValue < bValue) return sortState.direction === "ascending" ? -1 : 1
-		if (aValue > bValue) return sortState.direction === "ascending" ? 1 : -1
-		return 0
-	})
-
+export const PartnerTable: FC<PartnerTableProps> = ({ table }) => {
 	return (
 		<div className="grid gap-[0.625rem]">
 			<h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">Listes des partenaires</h1>
-			<ScrollArea className="w-full overflow-auto">
-				<Table className="rounded-[14px] bg-white min-w-[800px]">
+			<div className="w-full overflow-auto">
+				<Table className="rounded-[14px] bg-white py-2">
 					<TableHeader>
-						<TableRow className="">
-							{tableRows.map((row) => (
-								<TableHead
-									aria-sort={sortState.column === row.key ? sortState.direction : "none"}
-									key={row.key}
-									onClick={() => handleSort(row.key)}
-									className="cursor-pointer">
-									<div className="flex items-center gap-[2px] justify-between">
-										{row.label}
-										{sortState.column === row.key ? (
-											sortState.direction === "ascending" ? (
-												<ChevronUp size={18} />
-											) : (
-												<ChevronDown size={18} />
-											)
-										) : (
-											<ChevronsUpDown size={18} />
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => (
+									<TableHead
+										key={header.id}
+										className={cn(
+											"cursor-pointer",
+											header.column.id === "createdAt"
+												? "min-w-48"
+												: header.column.id === "logo"
+												? "min-w-28"
+												: "min-w-40"
 										)}
-									</div>
-								</TableHead>
-							))}
-						</TableRow>
+										onClick={header.column.getToggleSortingHandler()}>
+										<div className="flex justify-between items-center w-full">
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+											{{
+												asc: <ChevronUp />,
+												desc: <ChevronDown />,
+											}[header.column.getIsSorted() as string] ?? <ChevronsUpDown />}
+										</div>
+									</TableHead>
+								))}
+							</TableRow>
+						))}
 					</TableHeader>
 					<TableBody>
-						{sortedPartners.map((partner) => (
-							<TableRow key={partner.id} className="">
-								<TableCell className="">{partner.createdAt.toDateString()}</TableCell>
-								<TableCell>
-									<Avatar>
-										<AvatarImage src={partner.logo} />
-										<AvatarFallback>{partner.companyName[0].toUpperCase()}</AvatarFallback>
-									</Avatar>
-								</TableCell>
-								<TableCell>{partner.companyName}</TableCell>
-								<TableCell>{partner.collaborators}</TableCell>
-								<TableCell>{partner.underAccount}</TableCell>
-								<TableCell>
-									<div className="flex items-center gap-1">
-										<Avatar>
-											<AvatarImage src={partner.logo} />
-											<AvatarFallback>{partner.manager.name[0].toUpperCase()}</AvatarFallback>
-										</Avatar>
-										{partner.manager.name}
-									</div>
-								</TableCell>
-								<TableCell>
-									<PartnerStatus status={partner.status} />{" "}
-								</TableCell>
-								<TableCell>
-									<span className="flex items-center gap-1 text-sm font-medium text-lynch-400 py-[0.625rem] px-3 rounded-full border border-lynch-400 hover:border-amethyst-500 hover:text-amethyst-500">
-										<Mail size={18} />
-										{partner.email}
-									</span>
-								</TableCell>
-								<TableCell>
-									<span className="flex items-center gap-1 text-sm font-medium text-lynch-400 py-[0.625rem] px-3 rounded-full border border-lynch-400 hover:border-amethyst-500 hover:text-amethyst-500">
-										<PhoneCall size={18} />
-										{partner.phone}
-									</span>
-								</TableCell>
-								<TableCell>{partner.city}</TableCell>
-								<TableCell>
-									<div className="flex flex-wrap items-center gap-1">
-										{partner.solution.map((solution) => (
-											<PartnerSolution solution={solution} key={solution} />
-										))}
-									</div>
-								</TableCell>
-								<TableCell>
-									{partner.companyType === PartnerCompanyType.PRINCIPAL ? "Principal" : "Sous compte"}
-								</TableCell>
+						{table.getRowModel().rows.map((row) => (
+							<TableRow key={row.id}>
+								{row.getVisibleCells().map((cell) => (
+									<TableCell key={cell.id} className="w-fit">
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</TableCell>
+								))}
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
-			</ScrollArea>
+			</div>
 		</div>
 	)
 }

@@ -42,7 +42,7 @@ export const Login: React.FC = () => {
 	return (
 		<div className="flex flex-col justify-center items-center lg:gap-[3.125rem] gap-6 w-full">
 			<Image src="/logo-foodeals.svg" alt="login Illustrator" width={191} height={32} objectFit="cover" />
-			<div className="lg:hidden xsHeight:inline-flex hidden">
+			<div className="xs:inline-flex lg:hidden hidden">
 				<Lottie options={defaultOptions} width="100%" height="197px" />
 			</div>
 			<h2 className="text-[1.375rem] font-medium text-center text-lynch-400">Administration</h2>

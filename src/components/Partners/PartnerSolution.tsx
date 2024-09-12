@@ -13,11 +13,11 @@ export const PartnerSolution: FC<{ solution: PartnerSolutionType }> = ({ solutio
 		<span
 			className={`flex items-center gap-[0.375rem] text-[0.625rem] font-bold py-[0.375rem] px-3 rounded-full h-fit ${solutionColor}`}>
 			{solution === PartnerSolutionType.MARKET_PRO ? (
-				<ShoppingBag strokeWidth="4px" size={14} />
+				<ShoppingBag size={14} />
 			) : solution === PartnerSolutionType.DLC_PRO ? (
-				<HandCoins strokeWidth="4px" size={14} />
+				<HandCoins size={14} />
 			) : (
-				<HeartHandshake strokeWidth="4px" size={14} />
+				<HeartHandshake size={14} />
 			)}
 			{solution}
 		</span>

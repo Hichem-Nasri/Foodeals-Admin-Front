@@ -10,7 +10,7 @@ const config: Config = {
 	theme: {
 		extend: {
 			screens: {
-				xsHeight: { raw: "(min-height: 720px)" },
+				xs: "376px",
 			},
 			colors: {
 				primary: {

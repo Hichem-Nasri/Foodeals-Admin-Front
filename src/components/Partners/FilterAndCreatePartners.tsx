@@ -1,21 +1,27 @@
 import { FC } from "react"
 import { CustomButton } from "../custom/CustomButton"
-import { ArrowLeft, ArrowRight, Columns2, ListFilter, Store } from "lucide-react"
+import { ArrowRight, Store } from "lucide-react"
+import { FilterTablePartner } from "./FilterTablePartner"
+import { PartnerType } from "@/types/partners"
+import { UseFormReturn } from "react-hook-form"
+import { ColumnVisibilityModal } from "./ColumnVisibilityModal"
 
-interface FilterAndCreatePartnersProps {}
+interface FilterAndCreatePartnersProps {
+	partners: PartnerType[]
+	form: UseFormReturn<any>
+	table: import("@tanstack/table-core").Table<PartnerType>
+}
 
-export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({}) => {
+export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
+	partners,
+	form,
+	table,
+}) => {
 	return (
 		<div className="flex justify-between w-full rounded-[18px] bg-white">
 			<div className="flex gap-3 p-2">
-				<CustomButton
-					size="sm"
-					className="text-lynch-500"
-					variant="outline"
-					label="Filtrer par"
-					IconRight={ListFilter}
-				/>
-				<CustomButton size="sm" className="text-lynch-500" variant="outline" label="Afficher" IconRight={Columns2} />
+				<FilterTablePartner partners={partners} form={form} />
+				<ColumnVisibilityModal table={table} />
 			</div>
 			<div className="flex gap-3 p-2">
 				<CustomButton size="sm" label="Ajouter un partenaire" IconRight={Store} />
