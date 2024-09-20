@@ -3,6 +3,7 @@ export const AppRoutes = {
     payment: '/paiement',
     statistics: '/statistique',
     partners: '/partenaires',
+    newPartner: '/partenaires/nouveau',
     delivery: '/livraisons',
     associations: '/associations',
     crm: '/crm',

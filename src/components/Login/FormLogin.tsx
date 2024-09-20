@@ -1,10 +1,10 @@
-import { InputField } from "@/components/custom/InputField"
 import { Eye, EyeOffIcon, Lock, User } from "lucide-react"
 import { UseFormReturn } from "react-hook-form"
 import { Form } from "@/components/ui/form"
 import { CheckboxField } from "../custom/CheckboxField"
 import Link from "next/link"
 import { CustomButton } from "../custom/CustomButton"
+import { InputFieldForm } from "../custom/InputField"
 
 interface FormLoginProps {
 	handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
@@ -23,16 +23,15 @@ export const FormLogin: React.FC<FormLoginProps> = ({ handleSubmit, form, handle
 		<Form {...form}>
 			<form onSubmit={handleSubmit} className="w-full">
 				<div className="flex flex-col gap-[1.875rem] max-w-[438px] mx-auto">
-					<InputField label="Nom" control={control} name="user" placeholder="ID" IconLeft={User} />
-					<InputField
-						control={control}
-						label="Mot de passe"
+					<InputFieldForm form={form} name="user" placeholder="ID" label="Nom" IconLeft={User} />
+					<InputFieldForm
+						form={form}
 						name="password"
 						placeholder="*******"
-						type={showPassword ? "text" : "password"}
+						label="Mot de passe"
 						IconLeft={Lock}
 						IconRight={showPassword ? Eye : EyeOffIcon}
-						onClickRight={handleShowPassword}
+						onClickIconRight={handleShowPassword}
 					/>
 					<div className="flex justify-between items-center gap-1 ">
 						<CheckboxField control={control} name="remember" label="Se souvenir" />

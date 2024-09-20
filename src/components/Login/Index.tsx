@@ -7,9 +7,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Lottie from "react-lottie"
 import animationData from "@/lotties/loginAnimation.json"
+import { AppRoutes } from "@/lib/routes"
+import { useRouter } from "next/navigation"
 
 export const Login: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false)
+	const router = useRouter()
 	const schema = z.object({
 		user: z.string().min(4, "Le nom d'utilisateur doit contenir au moins 4 caractères"),
 		password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
@@ -36,7 +39,7 @@ export const Login: React.FC = () => {
 	}
 
 	const onSubmit = (data: z.infer<typeof schema>) => {
-		console.log(data)
+		router.push(AppRoutes.partners)
 	}
 	const handleShowPassword = () => setShowPassword((prev) => !prev)
 	return (

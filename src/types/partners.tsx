@@ -10,6 +10,7 @@ export enum PartnerStatusType {
 	VALIDATED = "VALIDATED",
 	PENDING = "PENDING",
 	ANNULLED = "ANNULLED",
+	DRAFT = "DRAFT",
 }
 
 export enum PartnerSolutionType {
@@ -40,6 +41,8 @@ export interface PartnerType {
 	city: string
 	solution: PartnerSolutionType[]
 	companyType: PartnerCompanyType
+	offer: number
+	order: number
 }
 
 export const partnersData: PartnerType[] = [
@@ -60,6 +63,8 @@ export const partnersData: PartnerType[] = [
 		city: "Casablanca",
 		solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DONATE_PRO],
 		companyType: PartnerCompanyType.UNDER_ACCOUNT,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "2",
@@ -78,6 +83,8 @@ export const partnersData: PartnerType[] = [
 		city: "Rabat",
 		solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "3",
@@ -96,6 +103,8 @@ export const partnersData: PartnerType[] = [
 		city: "Casablanca",
 		solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
 		companyType: PartnerCompanyType.UNDER_ACCOUNT,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "4",
@@ -114,6 +123,8 @@ export const partnersData: PartnerType[] = [
 		city: "Fes",
 		solution: [PartnerSolutionType.MARKET_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "5",
@@ -132,6 +143,8 @@ export const partnersData: PartnerType[] = [
 		city: "Casablanca",
 		solution: [PartnerSolutionType.DLC_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "6",
@@ -150,6 +163,8 @@ export const partnersData: PartnerType[] = [
 		city: "Agadir",
 		solution: [PartnerSolutionType.DLC_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "7",
@@ -168,6 +183,8 @@ export const partnersData: PartnerType[] = [
 		city: "Casablanca",
 		solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 	{
 		id: "8",
@@ -186,6 +203,8 @@ export const partnersData: PartnerType[] = [
 		city: "Casablanca",
 		solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
 		companyType: PartnerCompanyType.PRINCIPAL,
+		offer: 25,
+		order: 233,
 	},
 ]
 
@@ -208,6 +227,11 @@ export const columnsPartnersTable = [
 		footer: (info) => info.column.id,
 	}),
 	columnHelper.accessor("companyName", {
+		cell: (info) => info.getValue(),
+		header: "Raison sociale",
+		footer: (info) => info.column.id,
+	}),
+	columnHelper.accessor("offer", {
 		cell: (info) => info.getValue(),
 		header: "Raison sociale",
 		footer: (info) => info.column.id,

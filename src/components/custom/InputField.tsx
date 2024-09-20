@@ -1,69 +1,66 @@
-import { FC, ForwardRefExoticComponent, ReactNode, RefAttributes } from "react"
-import { Input } from "@/components/ui/input"
+import { FC, ForwardRefExoticComponent, RefAttributes } from "react"
+
+import { UseFormReturn } from "react-hook-form"
+import { FormField, FormMessage } from "../ui/form"
+import { Input } from "./Input"
 import { LucideProps } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Label } from "../ui/label"
 
 interface InputFieldProps {
-	onChange: (value: string | number) => void
-	value: string | number
-	placeholder: string
-	type?: "number" | "text" | "email" | "password"
+	label?: string
 	name: string
+	form: UseFormReturn<any>
+	type?: "number" | "text" | "email" | "password"
+	placeholder?: string
 	className?: string
+	disabled?: boolean
 	IconLeft?: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
 	IconRight?: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
-	onClickRight?: () => void
-	disabled?: boolean
-	label?: string
-	IconLeftColor?: string
+  iconLeftColor?: string
+	onClickIconRight?: () => void
 }
 
-export const InputField: FC<InputFieldProps> = ({
-	name,
-	placeholder,
-	type = "text",
-	className,
-	IconRight = null,
-	IconLeft = null,
-	disabled = false,
-	onClickRight: handleShowPassword = () => {},
-	onChange,
-	value,
+export const InputFieldForm: FC<InputFieldProps> = ({
 	label,
-	IconLeftColor,
+	name,
+	form,
+	IconLeft,
+	IconRight,
+	className,
+	disabled,
+	placeholder,
+	type,
+	iconLeftColor,
+	onClickIconRight = () => { },
 }) => {
+	const { control } = form
 	return (
-		<div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-			{label && (
-				<Label htmlFor={name} className="text-xs font-semibold text-lynch-950">
-					{label}
-				</Label>
+		<FormField
+			control={control}
+			name={name}
+			render={({ field }) => (
+				<div className="flex flex-col items-start w-full">
+					<div
+						className={`relative w-full  ${
+							field.value != "" ? "[&>svg]:text-description" : "[&>svg]:text-label-grayLight"
+						}`}>
+						<Input
+							{...field}
+							type={type}
+							label={label}
+							disabled={disabled}
+							onChange={(value) => (type === "number" && field.onChange(+value)) || field.onChange(value)}
+							value={type === "number" && field.value === "" ? undefined : field.value}
+							placeholder={placeholder}
+							className={className}
+							IconLeft={IconLeft}
+							IconRight={IconRight}
+              iconLeftColor={iconLeftColor}
+							onClickRight={onClickIconRight}
+						/>
+					</div>
+					<FormMessage />
+				</div>
 			)}
-			<div
-				className={`relative w-full  ${
-					!value || value != "" ? "[&>svg]:text-description" : "[&>svg]:text-label-grayLight"
-				}`}>
-				{IconLeft && (
-					<IconLeft
-						className={cn("cursor-pointer absolute left-3 top-1/2 -translate-y-1/2 text-primary ", IconLeftColor)}
-					/>
-				)}
-				<Input
-					type={type}
-					disabled={disabled}
-					onChange={(e) => (type === "number" && onChange(+e.target.value)) || onChange(e.target.value)}
-					value={type === "number" && value === 0 ? undefined : value}
-					placeholder={placeholder}
-					className={cn("text-base font-normal", className, IconLeft && "ps-12")}
-				/>
-				{IconRight && (
-					<IconRight
-						onClick={handleShowPassword}
-						className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2"
-					/>
-				)}
-			</div>
-		</div>
+		/>
 	)
 }
