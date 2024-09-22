@@ -15,6 +15,7 @@ interface SelectFieldProps {
 	name: string
 	disabled?: boolean
 	className?: string
+	transform?: (value: string | number) => JSX.Element
 }
 
 export const SelectField: FC<SelectFieldProps> = ({
@@ -25,6 +26,7 @@ export const SelectField: FC<SelectFieldProps> = ({
 	label,
 	disabled = false,
 	className,
+	transform,
 }) => {
 	return (
 		<FormField
@@ -39,6 +41,7 @@ export const SelectField: FC<SelectFieldProps> = ({
 						onChange={(value) => field.onChange(value)}
 						placeholder={placeholder}
 						label={label}
+						transform={transform}
 					/>
 					<FormMessage />
 				</div>

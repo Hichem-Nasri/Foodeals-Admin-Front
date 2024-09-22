@@ -14,13 +14,14 @@ import { FormField } from "@/components/ui/form"
 
 interface FormSubscriptionGeneralProps {
 	form: UseFormReturn<z.infer<typeof PartnerSubscriptionSchema>>
+	disabled?: boolean
 }
 
-export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form }) => {
+export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form, disabled }) => {
 	const { dlcPro, donate, marketPro } = form.watch()
 	return (
 		<Fragment>
-			<div className="flex items-start gap-3">
+			<div className="flex lg:flex-row flex-col items-start gap-3">
 				<div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
 					<Label
 						label="Nos solution"
@@ -37,6 +38,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 									className="size-5"
 									checked={field.value}
 									onClick={() => field.onChange(!field.value)}
+									disabled={disabled}
 								/>
 								<PartnerSolution
 									solution={PartnerSolutionType.MARKET_PRO}
@@ -56,15 +58,15 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "12", label: "12 mois" },
 						{ key: "24", label: "24 mois" },
 					]}
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 				<InputFieldForm
 					label="Montant"
 					name="marketPro.amount"
 					type="number"
-					form={form}
+					control={form.control}
 					placeholder="Saisir le montant"
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 				<SelectField
 					control={form.control}
@@ -75,10 +77,10 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "10", label: "10" },
 						{ key: "15", label: "15" },
 					]}
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 			</div>
-			<div className="flex items-start gap-3">
+			<div className="flex lg:flex-row flex-col items-start gap-3">
 				<SelectField
 					control={form.control}
 					name="marketPro.managerId"
@@ -87,31 +89,31 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: PartnerCompanyType.PRINCIPAL, label: "Principal" },
 						{ key: PartnerCompanyType.UNDER_ACCOUNT, label: "Sous compte" },
 					]}
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 				<InputFieldForm
+					control={form.control}
 					label="Montant"
 					name="marketPro.commissionCash"
 					type="number"
-					form={form}
 					placeholder="Saisir le montant"
 					IconRight={Percent}
 					className="pr-10"
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 				<InputFieldForm
 					label="Montant"
 					name="marketPro.commissionCard"
 					type="number"
-					form={form}
+					control={form.control}
 					placeholder="Saisir le montant"
 					IconRight={Percent}
 					className="pr-10"
-					disabled={!marketPro?.selected}
+					disabled={!marketPro?.selected || disabled}
 				/>
 			</div>
 			<span className="w-fill h-[1px] bg-lynch-100" />
-			<div className="flex items-start gap-3">
+			<div className="flex lg:flex-row flex-col items-start gap-3">
 				<div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
 					<Label
 						label="Nos solution"
@@ -143,15 +145,15 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "12", label: "12 mois" },
 						{ key: "24", label: "24 mois" },
 					]}
-					disabled={!dlcPro?.selected}
+					disabled={!dlcPro?.selected || disabled}
 				/>
 				<InputFieldForm
 					label="Montant"
 					name="dlcPro.amount"
 					type="number"
-					form={form}
+					control={form.control}
 					placeholder="Saisir le montant"
-					disabled={!dlcPro?.selected}
+					disabled={!dlcPro?.selected || disabled}
 				/>
 				<SelectField
 					control={form.control}
@@ -162,11 +164,11 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "10", label: "10" },
 						{ key: "15", label: "15" },
 					]}
-					disabled={!dlcPro?.selected}
+					disabled={!dlcPro?.selected || disabled}
 				/>
 			</div>
 			<span className="w-fill h-[1px] bg-lynch-100" />
-			<div className="flex items-start gap-3">
+			<div className="flex lg:flex-row flex-col items-start gap-3">
 				<div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
 					<Label
 						label="Nos solution"
@@ -183,6 +185,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 									className="size-5"
 									checked={field.value}
 									onClick={() => field.onChange(!field.value)}
+									disabled={disabled}
 								/>
 								<PartnerSolution
 									solution={PartnerSolutionType.DONATE_PRO}
@@ -202,15 +205,15 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "12", label: "12 mois" },
 						{ key: "24", label: "24 mois" },
 					]}
-					disabled={!donate?.selected}
+					disabled={!donate?.selected || disabled}
 				/>
 				<InputFieldForm
 					label="Montant"
 					name="donate.amount"
 					type="number"
-					form={form}
+					control={form.control}
 					placeholder="Saisir le montant"
-					disabled={!donate?.selected}
+					disabled={!donate?.selected || disabled}
 				/>
 				<SelectField
 					control={form.control}
@@ -221,7 +224,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({ form
 						{ key: "10", label: "10" },
 						{ key: "15", label: "15" },
 					]}
-					disabled={!donate?.selected}
+					disabled={!donate?.selected || disabled}
 				/>
 			</div>
 		</Fragment>

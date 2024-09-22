@@ -8,21 +8,24 @@ import { cn } from "@/lib/utils"
 interface AvatarProfileProps {
 	iUrl: string
 	alt?: string
-	width?: string
-	height?: string
 	label?: string
+	className?: string
 }
 
-export const AvatarProfile: React.FC<AvatarProfileProps> = ({ alt = "", iUrl, width, height, label = "" }) => {
+export const AvatarProfile: React.FC<AvatarProfileProps> = ({
+	alt = "",
+	iUrl,
+	label = "",
+	className,
+}) => {
 	const [src, setSrc] = useState(iUrl)
 	return (
 		<div className="flex flex-col gap-3 w-full">
-			<Label label={label} className="text-xs font-semibold text-lynch-950" />
+			<Label label={label} className="text-xs font-semibold text-lynch-950 lg:inline hidden" />
 			<Avatar
 				className={cn(
-					`w-[120px] h-[120px] rounded-[24px] border border-lynch-200`,
-					width ? `w-[${width}px]` : "",
-					height ? `h-[${height}px]` : ""
+					`w-[7.5rem] h-[7.5rem] lg:rounded-[24px] border border-lynch-200`,
+					className
 				)}>
 				<Input
 					type="file"

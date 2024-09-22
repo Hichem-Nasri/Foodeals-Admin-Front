@@ -14,6 +14,7 @@ interface InputPhoneFieldProps {
 	countryCode: string
 	onChangeCountryCode: (value: string) => void
   label: string
+	disabled?: boolean
 }
 
 export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
@@ -23,6 +24,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
 	className,
 	countryCode,
   label,
+	disabled,
 	onChangeCountryCode,
 }): JSX.Element => {
 	return (
@@ -34,7 +36,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
 					<Label htmlFor={name} className="text-xs font-semibold text-lynch-950" label={label} />
 					<div className={cn("flex flex-col w-full", className)}>
 						<div className="flex items-center gap-[0.375rem] w-full">
-							<Select value={countryCode} onValueChange={onChangeCountryCode}>
+							<Select value={countryCode} onValueChange={onChangeCountryCode} disabled={disabled}>
 								<SelectTrigger className="rounded-[12px] border-0 font-light text-base flex gap-[0.625rem] w-fit min-w-[8rem]">
 									{countryCodes.map((option) => (option.value == countryCode ? option.flag : null))}
 									<span>{countryCode}</span>

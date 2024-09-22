@@ -13,3 +13,7 @@ export const AppRoutes = {
     website: '/site-web',
     parameter: '/parametre',
 }
+
+export const appApi = {
+    partnerDetails: '/partner/{partnerId}',
+}

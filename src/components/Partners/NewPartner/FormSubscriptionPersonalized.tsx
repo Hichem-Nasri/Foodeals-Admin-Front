@@ -14,9 +14,10 @@ import { FormField } from "@/components/ui/form"
 
 interface FormSubscriptionPersonalizedProps {
 	form: UseFormReturn<z.infer<typeof PartnerSubscriptionSchema>>
+	disabled?: boolean
 }
 
-export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps> = ({ form }) => {
+export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps> = ({ form, disabled }) => {
 	const { solutions } = form.watch()
 
 	return (
@@ -37,6 +38,7 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 											? field.onChange([...field.value, PartnerSolutionType.MARKET_PRO])
 											: field.onChange(field.value.filter((v) => v !== PartnerSolutionType.MARKET_PRO))
 									}}
+									disabled={disabled}
 								/>
 								<PartnerSolution
 									solution={PartnerSolutionType.MARKET_PRO}
@@ -53,6 +55,7 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 											? field.onChange([...solutions!.solutionsId, PartnerSolutionType.DLC_PRO])
 											: field.onChange(solutions?.solutionsId.filter((v) => v !== PartnerSolutionType.DLC_PRO))
 									}}
+									disabled={disabled}
 								/>
 								<PartnerSolution solution={PartnerSolutionType.DLC_PRO} className="px-4 py-[0.4rem] my-3" size={20} />
 							</div>
@@ -65,6 +68,7 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 											? field.onChange([...solutions!.solutionsId, PartnerSolutionType.DONATE_PRO])
 											: field.onChange(solutions?.solutionsId.filter((v) => v !== PartnerSolutionType.DONATE_PRO))
 									}}
+									disabled={disabled}
 								/>
 								<PartnerSolution
 									solution={PartnerSolutionType.DONATE_PRO}
@@ -86,13 +90,15 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 						{ key: "12", label: "12 mois" },
 						{ key: "24", label: "24 mois" },
 					]}
+					disabled={disabled}
 				/>
 				<InputFieldForm
 					label="Montant"
 					name="solutions.amount"
 					type="number"
-					form={form}
+					control={form.control}
 					placeholder="Saisir le montant"
+					disabled={disabled}
 				/>
 				<SelectField
 					control={form.control}
@@ -103,6 +109,7 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 						{ key: "10", label: "10" },
 						{ key: "15", label: "15" },
 					]}
+					disabled={disabled}
 				/>
 			</div>
 			{solutions?.solutionsId &&
@@ -116,24 +123,27 @@ export const FormSubscriptionPersonalized: FC<FormSubscriptionPersonalizedProps>
 								{ key: PartnerCompanyType.PRINCIPAL, label: "Principal" },
 								{ key: PartnerCompanyType.UNDER_ACCOUNT, label: "Sous compte" },
 							]}
+							disabled={disabled}
 						/>
 						<InputFieldForm
 							label="Montant"
 							name="solutions.commissionCash"
 							type="number"
-							form={form}
+							control={form.control}
 							placeholder="Saisir le montant"
 							IconRight={Percent}
 							className="pr-10"
+							disabled={disabled}
 						/>
 						<InputFieldForm
 							label="Montant"
 							name="solutions.commissionCard"
 							type="number"
-							form={form}
+							control={form.control}
 							placeholder="Saisir le montant"
 							IconRight={Percent}
 							className="pr-10"
+							disabled={disabled}
 						/>
 					</div>
 				)}

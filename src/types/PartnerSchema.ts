@@ -1,33 +1,43 @@
 import { z } from "zod"
+import { PartnerStatusType } from "./partners"
 
 export const PartnerInformationSchema = z.object({
-	logo: z.string(),
-	cover: z.string(),
-	companyName: z.string(),
-	companyType: z.string(),
-	responsible: z.string(),
-	managerId: z.string(),
-	phone: z.string(),
-	email: z.string(),
-	commercialRegisterNumber: z.string(),
-	partnerType: z.string(),
-	country: z.string(),
-	city: z.string(),
-	region: z.string(),
-	address: z.string(),
-	mapLocation: z.string(),
+	logo: z.string().refine((value) => !value.includes("https://via.placeholder.com/120"), {
+		message: "Veuillez ajouter une image de logo",
+	}),
+	cover: z.string().refine((value) => !value.includes("https://via.placeholder.com/120"), {
+		message: "Veuillez ajouter une image de couverture",
+	}),
+	companyName: z.string().min(3),
+	companyType: z.array(z.string()).min(1),
+	responsible: z.string().min(3),
+	managerId: z.string().min(1),
+	phone: z
+		.string()
+		.min(9)
+		.refine((value) => /^\d+$/.test(value), {
+			message: "Le numéro de téléphone ne doit contenir que des chiffres",
+		}),
+	email: z.string().email("test Error"),
+	commercialRegisterNumber: z.number(),
+	partnerType: z.string().min(3),
+	country: z.string().min(3),
+	city: z.string().min(3),
+	region: z.string().min(3),
+	address: z.string().min(3),
+	mapLocation: z.string().min(3),
 })
 
 export const defaultPartnerInformationData = {
 	logo: "https://via.placeholder.com/120",
 	cover: "https://via.placeholder.com/740x223",
 	companyName: "",
-	companyType: "",
+	companyType: [],
 	responsible: "",
 	managerId: "",
 	phone: "",
 	email: "",
-	commercialRegisterNumber: "",
+	commercialRegisterNumber: 0,
 	partnerType: "",
 	country: "",
 	city: "",
@@ -40,12 +50,12 @@ export interface PartnerInformationSchemaType {
 	logo: string
 	cover: string
 	companyName: string
-	companyType: string
+	companyType: string[]
 	responsible: string
 	managerId: string
 	phone: string
 	email: string
-	commercialRegisterNumber: string
+	commercialRegisterNumber: number
 	partnerType: string
 	country: string
 	city: string
@@ -55,19 +65,19 @@ export interface PartnerInformationSchemaType {
 }
 
 export const PartnerSubscriptionSchema = z.object({
-	subscriptionType: z.string(),
-	bank: z.string(),
-	paymentMethod: z.string(),
-	beneficiary: z.string(),
-	rib: z.string(),
-	accountType: z.string(),
+	subscriptionType: z.string().min(3),
+	bank: z.string().min(3),
+	paymentMethod: z.string().min(3),
+	beneficiary: z.string().min(3),
+	rib: z.string().min(3),
+	accountType: z.string().min(3),
 	marketPro: z
 		.object({
 			selected: z.boolean(),
 			duration: z.number(),
 			amount: z.number(),
 			expiration: z.number(),
-			managerId: z.string(),
+			managerId: z.string().min(3),
 			commissionCash: z.number(),
 			commissionCard: z.number(),
 		})
@@ -171,4 +181,27 @@ export interface PartnerSubscriptionSchemaType {
 		commissionCash: number
 		commissionCard: number
 	}
+}
+
+export const PartnerFeaturesSchema = z.object({
+	numberOfStores: z.number(),
+	fileType: z.array(z.string()),
+})
+
+export const defaultPartnerFeaturesData = {
+	numberOfStores: 0,
+	fileType: [],
+}
+
+export interface PartnerFeaturesSchemaType {
+	numberOfStores: number
+	fileType: string[]
+}
+
+export interface PartnerDataType
+	extends PartnerInformationSchemaType,
+		PartnerSubscriptionSchemaType,
+		PartnerFeaturesSchemaType {
+	contractId: string
+	status: PartnerStatusType
 }

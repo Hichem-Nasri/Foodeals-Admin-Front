@@ -4,6 +4,7 @@ import { Label } from "../Label"
 
 interface SelectProps {
 	onChange: (value: string) => void
+	transform?: (value: string | number) => JSX.Element
 	value: string
 	options: {
 		key: string | number
@@ -14,7 +15,15 @@ interface SelectProps {
 	label: string
 }
 
-export const Select: FC<SelectProps> = ({ options, onChange, value, disabled = false, placeholder, label }) => {
+export const Select: FC<SelectProps> = ({
+	options,
+	onChange,
+	transform,
+	value,
+	disabled = false,
+	placeholder,
+	label,
+}) => {
 	return (
 		<div className="flex flex-col items-start gap-3 w-full text-lynch-400">
 			<Label label={label} className="text-xs font-semibold text-lynch-950" />
@@ -25,6 +34,8 @@ export const Select: FC<SelectProps> = ({ options, onChange, value, disabled = f
 					}`}>
 					{!value || value === "" ? (
 						<span className="text-base text-start font-normal line-clamp-1">{placeholder}</span>
+					) : transform ? (
+						transform(options.find((option) => option.key == value)!.label)
 					) : (
 						<span className="text-base text-start font-normal line-clamp-1 text-lynch-950">
 							{options.find((option) => option.key == value)?.label}

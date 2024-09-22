@@ -17,6 +17,7 @@ interface InputProps {
 	disabled?: boolean
 	label?: string
 	iconLeftColor?: string
+	onBlur?: () => void
 }
 
 export const Input: FC<InputProps> = ({
@@ -32,6 +33,7 @@ export const Input: FC<InputProps> = ({
 	value,
 	label,
 	iconLeftColor,
+	onBlur,
 }) => {
 	return (
 		<div className="flex flex-col items-start gap-3 w-full text-lynch-400">
@@ -56,6 +58,7 @@ export const Input: FC<InputProps> = ({
 					value={type === "number" && value === 0 ? undefined : value}
 					placeholder={placeholder}
 					className={cn("text-base font-normal", className, IconLeft && "ps-12")}
+					onBlur={onBlur}
 				/>
 				{IconRight && (
 					<IconRight

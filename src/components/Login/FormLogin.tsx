@@ -23,9 +23,9 @@ export const FormLogin: React.FC<FormLoginProps> = ({ handleSubmit, form, handle
 		<Form {...form}>
 			<form onSubmit={handleSubmit} className="w-full">
 				<div className="flex flex-col gap-[1.875rem] max-w-[438px] mx-auto">
-					<InputFieldForm form={form} name="user" placeholder="ID" label="Nom" IconLeft={User} />
+					<InputFieldForm control={control} name="user" placeholder="ID" label="Nom" IconLeft={User} />
 					<InputFieldForm
-						form={form}
+						control={control}
 						name="password"
 						placeholder="*******"
 						label="Mot de passe"

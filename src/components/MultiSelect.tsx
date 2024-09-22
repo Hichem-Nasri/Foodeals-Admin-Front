@@ -5,6 +5,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ChevronDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { AvatarAndName } from "@/components/AvatarAndName"
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"
 
 export type MultiSelectOptionsType = {
 	key: string | number
@@ -15,6 +23,7 @@ interface MultiSelectProps {
 	options: MultiSelectOptionsType[]
 	selectedValues: string[]
 	onSelect: (value: string[]) => void
+	transform?: (value: MultiSelectOptionsType[]) => JSX.Element[]
 	disabled?: boolean
 	placeholder?: string
 	searchPlaceholder?: string
@@ -26,6 +35,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 	options,
 	selectedValues,
 	onSelect,
+	transform,
 	disabled = false,
 	placeholder = "sélectionner",
 	searchPlaceholder,
@@ -35,23 +45,51 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 	const selectedOptions = options.filter((option) => selectedValues.includes(option.key.toString()))
 	return (
 		<Popover>
-			<PopoverTrigger disabled={disabled} id={id}>
+			<PopoverTrigger disabled={disabled} id={id} className="w-full">
 				<div
 					className={cn(
-						"flex items-center justify-between gap-2 py-2 px-3 w-full rounded-[12px] bg-lynch-50 border-0 text-lynch-400 hover:text-lynch-700 font-normal text-base min-h-14",
+						"flex items-center gap-2 py-2 px-3 w-full rounded-[12px] bg-lynch-50 border-0 text-lynch-400 hover:text-lynch-700 font-normal text-base min-h-14 max-w-[32.625rem]",
 						disabled ? "opacity-50" : "cursor-pointer",
 						selectedValues.length > 0 ? "border-textGray" : ""
 					)}>
-					{selectedValues.length == 1 ? (
+					{selectedValues.length == 1 && !transform ? (
 						selectedOptions[0].avatar && (
 							<AvatarAndName avatar={selectedOptions[0].avatar} name={selectedOptions[0].label} />
 						)
-					) : !selectedValues.length ? (
+					) : !selectedValues.length && !transform ? (
 						<AvatarAndName avatar={emptyAvatar} name={placeholder} />
+					) : transform && selectedValues.length ? (
+						selectedOptions.length > 3 ? (
+							<React.Fragment>
+								{transform(selectedOptions).slice(0, 3)}
+								<Dialog>
+									<DialogTrigger>
+										{transform([
+											{
+												key: "more",
+												label: `+${selectedOptions.length - 3}`,
+											},
+										])}
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Activité du partenaire</DialogTitle>
+											<DialogDescription className="flex flex-wrap gap-3">
+												{transform(selectedOptions)}
+											</DialogDescription>
+										</DialogHeader>
+									</DialogContent>
+								</Dialog>
+							</React.Fragment>
+						) : (
+							transform(selectedOptions)
+						)
+					) : transform && !selectedValues.length ? (
+						placeholder
 					) : (
 						<AvatarAndName avatar={emptyAvatar} name="Multi" />
 					)}
-					<ChevronDown className="h-5 w-5 opacity-50" />
+					<ChevronDown className="opacity-50 ml-auto" />
 				</div>
 			</PopoverTrigger>
 			<PopoverContent className="rounded-[16px] p-3">

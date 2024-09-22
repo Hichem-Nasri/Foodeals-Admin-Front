@@ -1,14 +1,14 @@
 import { FC, ForwardRefExoticComponent, RefAttributes } from "react"
 
-import { UseFormReturn } from "react-hook-form"
-import { FormField, FormMessage } from "../ui/form"
+import { Control } from "react-hook-form"
+import { FormField, FormItem, FormMessage } from "../ui/form"
 import { Input } from "./Input"
 import { LucideProps } from "lucide-react"
 
 interface InputFieldProps {
 	label?: string
 	name: string
-	form: UseFormReturn<any>
+	control: Control<any>
 	type?: "number" | "text" | "email" | "password"
 	placeholder?: string
 	className?: string
@@ -22,7 +22,7 @@ interface InputFieldProps {
 export const InputFieldForm: FC<InputFieldProps> = ({
 	label,
 	name,
-	form,
+	control,
 	IconLeft,
 	IconRight,
 	className,
@@ -32,13 +32,12 @@ export const InputFieldForm: FC<InputFieldProps> = ({
 	iconLeftColor,
 	onClickIconRight = () => { },
 }) => {
-	const { control } = form
 	return (
 		<FormField
 			control={control}
 			name={name}
 			render={({ field }) => (
-				<div className="flex flex-col items-start w-full">
+				<FormItem className="flex flex-col items-start w-full">
 					<div
 						className={`relative w-full  ${
 							field.value != "" ? "[&>svg]:text-description" : "[&>svg]:text-label-grayLight"
@@ -48,6 +47,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
 							type={type}
 							label={label}
 							disabled={disabled}
+							onBlur={field.onBlur}
 							onChange={(value) => (type === "number" && field.onChange(+value)) || field.onChange(value)}
 							value={type === "number" && field.value === "" ? undefined : field.value}
 							placeholder={placeholder}
@@ -59,7 +59,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
 						/>
 					</div>
 					<FormMessage />
-				</div>
+				</FormItem>
 			)}
 		/>
 	)

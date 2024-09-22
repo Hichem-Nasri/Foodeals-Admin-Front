@@ -28,7 +28,7 @@ export const SearchInput: FC<SearchInputProps> = ({ }) => {
 		<Form {...form}>
 			<form onSubmit={handleSubmit(onsubmit)} className="w-full">
 				<InputFieldForm
-					form={form}
+					control={form.control}
 					name="search"
 					placeholder="Rechercher"
 					className="lg:w-[23.438rem] py-3 h-fit lg:bg-lynch-50 bg-white"

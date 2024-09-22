@@ -13,6 +13,7 @@ interface TopBarProps {
 	secondaryButtonIcon?: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
 	primaryButtonDisabled?: boolean
 	secondaryButtonDisabled?: boolean
+	status: PartnerStatusType
 }
 
 export const TopBar: FC<TopBarProps> = ({
@@ -22,22 +23,24 @@ export const TopBar: FC<TopBarProps> = ({
 	secondaryButtonAction,
 	secondaryButtonIcon,
 	secondaryButtonLabel,
-	primaryButtonDisabled,
-	secondaryButtonDisabled,
+	primaryButtonDisabled = false,
+	secondaryButtonDisabled = false,
+	status,
 }) => {
 	return (
-		<div className="flex justify-between w-full rounded-[18px] lg:bg-white">
+		<div className="flex lg:relative fixed bottom-0 left-0 z-30 justify-between w-full rounded-[18px] lg:bg-white">
 			<div className="lg:flex items-center hidden gap-3 p-[1.125rem]">
-				<PartnerStatus status={PartnerStatusType.DRAFT} />
+				<PartnerStatus status={status} />
 			</div>
 			<div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white">
 				<CustomButton
 					onClick={secondaryButtonAction}
 					disabled={secondaryButtonDisabled}
 					size="sm"
-					className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
+					className="bg-white text-primary border-[1.5px] border-primary hover:text-white hover:bg-primary/60"
 					label={secondaryButtonLabel}
 					IconRight={secondaryButtonIcon}
+					variant="outline"
 				/>
 				<CustomButton
 					disabled={primaryButtonDisabled}
