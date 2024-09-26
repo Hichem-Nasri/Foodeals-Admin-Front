@@ -8,17 +8,25 @@ import { UseFormReturn } from "react-hook-form"
 import { Form, FormField } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/Label"
-import { FileSpreadsheet } from "lucide-react"
+import { FileSpreadsheet, LayoutList } from "lucide-react"
+import { PartnerStatusType } from "@/types/partners"
+import { CustomButton } from "@/components/custom/CustomButton"
+import { useRouter } from "next/navigation"
+import { AppRoutes } from "@/lib/routes"
 
 interface FormFeaturesProps {
 	form: UseFormReturn<z.infer<typeof PartnerFeaturesSchema>>
 	omSubmit: (data: z.infer<typeof PartnerFeaturesSchema>) => void
 	disabled?: boolean
+	status?: PartnerStatusType
 }
 
-export const FormFeatures: FC<FormFeaturesProps> = ({ form, omSubmit, disabled }) => {
+export const FormFeatures: FC<FormFeaturesProps> = ({ form, omSubmit, disabled, status }) => {
 	const { handleSubmit } = form
-
+	const router = useRouter()
+	const showAllPartners = () => {
+		router.push(AppRoutes.newCollaborator)
+	}
 	return (
 		<Accordion type="single" collapsible className="bg-white lg:p-5 px-4 py-6 rounded-[14px]" defaultValue="features">
 			<AccordionItem value="features" className="text-lynch-400 text-[1.375rem] font-normal">
@@ -26,7 +34,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({ form, omSubmit, disabled }
 				<AccordionContent className="pt-7">
 					<form onSubmit={handleSubmit(omSubmit)}>
 						<Form {...form}>
-							<div className="flex items-center gap-[1.875rem]">
+							<div className="flex lg:flex-row flex-col lg:items-end gap-[1.875rem]">
 								<div className="lg:w-1/4">
 									<InputFieldForm
 										label="Nombre de magasin"
@@ -37,6 +45,14 @@ export const FormFeatures: FC<FormFeaturesProps> = ({ form, omSubmit, disabled }
 										disabled={disabled}
 									/>
 								</div>
+								{/* {status === PartnerStatusType.VALIDATED && ( */}
+								<CustomButton
+									className="h-fit py-4"
+									label="Voir la liste"
+									IconRight={LayoutList}
+									onClick={showAllPartners}
+								/>
+								{/* )} */}
 								<div className="flex items-center my-auto h-full gap-2 lg:w-1/4">
 									<div className="flex flex-col items-start gap-3 w-full text-lynch-400">
 										<Label label="Type de fichier Excel" className="text-xs font-semibold text-lynch-950" />

@@ -2,13 +2,16 @@ import { Input } from "@/components/custom/Input"
 import { CloudUpload, FileMinus, X } from "lucide-react"
 import { FC, useState } from "react"
 
-interface UploadFileProps {}
+interface UploadFileProps {
+	value: File
+	onChange: (file: File) => void
+}
 
 export const UploadFile: FC<UploadFileProps> = ({}) => {
 	const [files, setFiles] = useState<File[]>([])
 
 	return (
-		<div className={"flex relative"}>
+		<div className={"flex relative w-full"}>
 			<Input
 				name="file"
 				onChange={() => {}}

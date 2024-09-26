@@ -17,9 +17,9 @@ interface CustomButtonProps {
 export const CustomButton: React.FC<CustomButtonProps> = ({ label, IconLeft, IconRight, ...rest }): JSX.Element => {
 	return (
 		<Button {...rest}>
-			{IconLeft && <IconLeft className="mr-2 icon" />}
+			{IconLeft && <IconLeft className="mr-2 icon shrink-0" />}
 			{label}
-			{IconRight && <IconRight className="ml-2 icon" />}
+			{IconRight && <IconRight className="ml-2 icon shrink-0" />}
 		</Button>
 	)
 }

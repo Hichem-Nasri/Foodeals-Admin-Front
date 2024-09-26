@@ -1,4 +1,3 @@
-import { AvatarAndName } from "@/components/AvatarAndName"
 import { EmailBadge } from "@/components/Partners/EmailBadge"
 import { PartnerSolution } from "@/components/Partners/PartnerSolution"
 import { PartnerStatus } from "@/components/Partners/PartnerStatus"

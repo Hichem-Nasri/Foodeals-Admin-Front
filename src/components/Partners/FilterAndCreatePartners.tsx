@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { CustomButton } from "../custom/CustomButton"
-import { ArrowRight, Store } from "lucide-react"
+import { Archive, ArrowRight, Store } from "lucide-react"
 import { FilterTablePartner } from "./FilterTablePartner"
 import { PartnerType } from "@/types/partners"
 import { UseFormReturn } from "react-hook-form"
@@ -15,6 +15,9 @@ interface FilterAndCreatePartnersProps {
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({ partners, form, table }) => {
+	const handleArchive = () => {
+		// handle archive
+	}
 	return (
 		<div className="flex justify-between w-full rounded-[18px] lg:bg-white">
 			<div className="flex lg:hidden items-center justify-between w-full">
@@ -24,6 +27,14 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({ part
 			<div className="lg:flex hidden gap-3 p-2">
 				<FilterTablePartner partners={partners} form={form} />
 				<ColumnVisibilityModal table={table} />
+				<CustomButton
+					size="sm"
+					variant="outline"
+					label="Archive"
+					className="text-lynch-500"
+					onClick={handleArchive}
+					IconRight={Archive}
+				/>
 			</div>
 			<div className="lg:flex hidden gap-3 p-2">
 				<Link href={AppRoutes.newPartner}>
@@ -31,7 +42,8 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({ part
 				</Link>
 				<CustomButton
 					size="sm"
-					className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
+					disabled
+					className="disabled:bg-white disabled:opacity-100 text-primary border-[1.5px] border-primary hover:bg-primary/40"
 					label={"1666"}
 					IconLeft={ArrowRight}
 				/>

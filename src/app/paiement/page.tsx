@@ -1,11 +1,13 @@
 import { Layout } from "@/components/Layout/Layout";
+import { Payment } from "@/components/payment";
+import { defaultDataPaymentsTable } from "@/types/PaymentType";
 
 interface PaymentPageProps {}
 
 export default async function PaymentPage({}: PaymentPageProps) {
 	return (
 		<Layout>
-      <h1>Paiement Page</h1>
+      <Payment payments={defaultDataPaymentsTable} />
 		</Layout>
 	)
 }

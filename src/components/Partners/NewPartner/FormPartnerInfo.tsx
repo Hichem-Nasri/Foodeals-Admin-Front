@@ -49,7 +49,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<div className="flex flex-col gap-[1.875rem]">
 								<div className="flex relative gap-5 lg:pb-0 pb-14">
-									<AvatarField form={form} name="logo" alt="Logo" label="Image du logo" className="lg:relative absolute -bottom-5 left-1/2 -translate-x-1/2 z-10" classNameAvatar="rounded-full" />
+									<AvatarField form={form} name="logo" alt="Logo" label="Image du logo" className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10" classNameAvatar="rounded-full" />
 									<AvatarField
 										form={form}
 										name="cover"

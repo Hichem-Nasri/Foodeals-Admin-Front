@@ -1,8 +1,7 @@
 import { Layout } from "@/components/Layout/Layout"
-import { Partners } from "@/components/Partners"
 import { partnersData, PartnerType } from "@/types/partners"
 
-interface PartnersPageProps {
+interface CollaboratorsPageProps {
 	params: {
 		pathParams: string[]
 		lang: string
@@ -12,16 +11,16 @@ interface PartnersPageProps {
 	}
 }
 
-export default async function PartnersPage({ searchParams }: PartnersPageProps) {
-	const { subAccounts, partners } = await getPartners(searchParams.partnerId)
+export default async function CollaboratorsPage({ searchParams }: CollaboratorsPageProps) {
+	const { subAccounts, partners } = await getCollaborators(searchParams.partnerId)
 	return (
 		<Layout>
-			<Partners partners={partnersData} />
+
 		</Layout>
 	)
 }
 
-const getPartners = async (id: string) => {
+const getCollaborators = async (id: string) => {
 	if (!id) {
 		// TODO: fetch Partners
 		return {

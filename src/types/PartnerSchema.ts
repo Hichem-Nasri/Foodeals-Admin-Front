@@ -14,11 +14,11 @@ export const PartnerInformationSchema = z.object({
 	managerId: z.string().min(1),
 	phone: z
 		.string()
-		.min(9)
+		.min(9, "Le numéro de téléphone doit contenir au moins 9 chiffres")
 		.refine((value) => /^\d+$/.test(value), {
 			message: "Le numéro de téléphone ne doit contenir que des chiffres",
 		}),
-	email: z.string().email("test Error"),
+	email: z.string().email("Veuillez entrer une adresse email valide"),
 	commercialRegisterNumber: z.number(),
 	partnerType: z.string().min(3),
 	country: z.string().min(3),
@@ -204,4 +204,18 @@ export interface PartnerDataType
 		PartnerFeaturesSchemaType {
 	contractId: string
 	status: PartnerStatusType
+	id?: string
+	proofId: string
+	proofName: string
+	contractName: string 
+}
+
+export const ArchivePartnerSchema = z.object({
+	archiveType: z.string(),
+	archiveReason: z.string().min(20, "Le type d'archive doit contenir au moins 20 caractères"),
+})
+
+export const defaultArchivePartnerData = {
+	archiveType: "",
+	archiveReason: "",
 }

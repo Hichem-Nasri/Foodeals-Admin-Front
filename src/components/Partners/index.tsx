@@ -29,21 +29,6 @@ export interface TableRowType {
 	label: string
 }
 
-const tableColumData = [
-	{ key: "createdAt", label: "Date de création" },
-	{ key: "logo", label: "Logo" },
-	{ key: "companyName", label: "Raison sociale" },
-	{ key: "collaborators", label: "Collaborateurs" },
-	{ key: "underAccount", label: "Sous compte" },
-	{ key: "manager", label: "Responsable" },
-	{ key: "status", label: "Statut" },
-	{ key: "email", label: "Email" },
-	{ key: "phone", label: "Téléphone" },
-	{ key: "city", label: "Ville" },
-	{ key: "solution", label: "Solution" },
-	{ key: "companyType", label: "Type de société" },
-]
-
 export const Partners: FC<PartnersProps> = ({ partners }) => {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 	const schema = z.object({

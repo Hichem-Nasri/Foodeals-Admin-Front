@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react"
+import { FC, Fragment, useState } from "react"
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Form } from "@/components/ui/form"
@@ -12,17 +12,42 @@ import { z } from "zod"
 import { FormSubscriptionGeneral } from "./FormSubscriptionGeneral"
 import { FormSubscriptionPersonalized } from "./FormSubscriptionPersonalized"
 import { UploadFile } from "./UploadFile"
+import { PartnerStatusType } from "@/types/partners"
+import Image from "next/image"
 
 interface FormSubscriptionProps {
 	form: UseFormReturn<z.infer<typeof PartnerSubscriptionSchema>>
 	onSubmit: (data: z.infer<typeof PartnerSubscriptionSchema>) => void
 	disabled?: boolean
 	isContractGenerated?: boolean
+	status: PartnerStatusType
 }
 
-export const FormSubscription: FC<FormSubscriptionProps> = ({ form, onSubmit, disabled, isContractGenerated }) => {
+enum FileTypes {
+	PDF = "PDF",
+	WORD = "WORD",
+}
+
+export const FormSubscription: FC<FormSubscriptionProps> = ({
+	form,
+	onSubmit,
+	disabled,
+	isContractGenerated,
+	status,
+}) => {
 	const { handleSubmit } = form
 	const { subscriptionType } = form.watch()
+	const documents = [
+		{
+			fileName: "contrat.word",
+			fileID: "contractID",
+		},
+		{
+			fileName: "contrat.pdf",
+			fileID: "contractID",
+		},
+	] // TODO: fetch documents with the partner id
+
 	return (
 		<Accordion
 			type="single"
@@ -109,6 +134,27 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({ form, onSubmit, di
 								<UploadFile />
 							</div>
 						</Fragment>
+					)}
+					{status === PartnerStatusType.DRAFT && <span className="w-fill h-[1px] bg-lynch-100" />}
+					{status === PartnerStatusType.DRAFT && (
+						<div className="flex flex-col gap-3">
+							<Label label="Documents & Contrat" className="text-lynch-950 text-sm font-medium" />
+							<div className="flex items-center gap-3">
+								{documents.map((document) => (
+									<span
+										key={document.fileID}
+										className="flex flex-col justify-center items-center gap-5 rounded-[24px] bg-lynch-50 px-4 py-6 w-fit">
+										<Image
+											width={48}
+											height={48}
+											alt="Word"
+											src={document.fileName.includes("pdf") ? "/word-icon.png" : "/pdf-icon.png"}
+										/>
+										<Label label={document.fileName} className="text-lynch-500 text-base font-normal" />
+									</span>
+								))}
+							</div>
+						</div>
 					)}
 				</AccordionContent>
 			</AccordionItem>

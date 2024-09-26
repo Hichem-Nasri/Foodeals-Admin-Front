@@ -2,16 +2,21 @@ import { FC } from "react"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Columns2 } from "lucide-react"
 import { Switch } from "../custom/Switch"
-import { PartnerType } from "@/types/partners"
+import { cn } from "@/lib/utils"
 
 interface ColumnVisibilityModalProps {
-	table: import("@tanstack/table-core").Table<PartnerType>
+	table: import("@tanstack/table-core").Table<any>
+	className?: string
 }
 
-export const ColumnVisibilityModal: FC<ColumnVisibilityModalProps> = ({ table }) => {
+export const ColumnVisibilityModal: FC<ColumnVisibilityModalProps> = ({ table, className }) => {
 	return (
 		<Dialog>
-			<DialogTrigger className="flex items-center gap-3 rounded-[12px] border border-lynch-200 text-lynch-500 font-medium text-sm px-5 py-3 hover:text-black hover:bg-neutral-100">
+			<DialogTrigger
+				className={cn(
+					"flex items-center gap-3 rounded-[12px] border border-lynch-200 text-lynch-500 font-medium text-sm px-5 py-3 hover:text-black hover:bg-neutral-100",
+					className
+				)}>
 				Afficher
 				<Columns2 />
 			</DialogTrigger>
