@@ -1,9 +1,13 @@
+import { ActionsMenu } from "@/components/custom/ActionsMenu"
 import { EmailBadge } from "@/components/Partners/EmailBadge"
 import { PartnerSolution } from "@/components/Partners/PartnerSolution"
 import { PartnerStatus } from "@/components/Partners/PartnerStatus"
 import { PhoneBadge } from "@/components/Partners/PhoneBadge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AppRoutes } from "@/lib/routes"
 import { createColumnHelper } from "@tanstack/react-table"
+import { Eye, Pencil } from "lucide-react"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 
 export enum PartnerStatusType {
 	VALIDATED = "VALIDATED",
@@ -209,7 +213,7 @@ export const partnersData: PartnerType[] = [
 
 const columnHelper = createColumnHelper<PartnerType>()
 
-export const columnsPartnersTable = [
+export const columnsPartnersTable = (router: AppRouterInstance) => [
 	columnHelper.accessor("createdAt", {
 		cell: (info) => info.getValue<Date>().toLocaleDateString(),
 		header: "Date de création",
@@ -293,5 +297,25 @@ export const columnsPartnersTable = [
 		cell: (info) => (info.getValue() === PartnerCompanyType.PRINCIPAL ? "Principal" : "Sous compte"),
 		header: "Type de société",
 		footer: (info) => info.column.id,
+	}),
+	columnHelper.accessor("id", {
+		cell: (info) => (
+			<ActionsMenu
+				id={info.getValue()}
+				menuList={[
+					{
+						actions: () => router.push(AppRoutes.newPartner.replace(":id", info.getValue()!)),
+						icon: Eye,
+						label: "Voir",
+					},
+					{
+						actions: () => router.push(AppRoutes.newPartner.replace(":id", info.getValue()!)),
+						icon: Pencil,
+						label: "Modifier",
+					},
+				]}
+			/>
+		),
+		header: "Activité",
 	}),
 ]

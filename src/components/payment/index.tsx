@@ -17,6 +17,7 @@ import {
 import { DataTable } from "../DataTable"
 import { CustomButton } from "../custom/CustomButton"
 import { PaymentCardDetails } from "./PaymentCardDetails"
+import { useRouter } from "next/navigation"
 
 interface PaymentProps {
 	payments: PaymentType[]
@@ -24,18 +25,19 @@ interface PaymentProps {
 
 export const Payment: FC<PaymentProps> = ({ payments }) => {
 	const [data, _setData] = useState(() => [...payments])
+	const router = useRouter()
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
-	const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
+	const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => { }
 	const totalCommission = payments.reduce((acc, payment) => acc + payment.totalCommission, 0)
 	const total = payments.reduce((acc, payment) => acc + payment.toPay, 0)
 
 	const table = useReactTable({
 		data,
-		columns: columnsPaymentsTable,
+		columns: columnsPaymentsTable(router),
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
-		getFilteredRowModel: getFilteredRowModel(), //client side filtering
+		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	})
@@ -61,10 +63,17 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
 				table={table}
 				data={data}
 				title="Tableau de validation des commission"
-				transform={(data) => <PaymentCardDetails payment={data}  />}
+				transform={(data) => <PaymentCardDetails payment={data} />}
+				hideColumns={["payByFoodeals"]}
 			/>
 			<div className="lg:hidden flex flex-col items-center gap-4 my-3">
-				<CustomButton size="sm" label="Voir plus" className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5" variant="outline" IconRight={RotateCw} />
+				<CustomButton
+					size="sm"
+					label="Voir plus"
+					className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
+					variant="outline"
+					IconRight={RotateCw}
+				/>
 			</div>
 		</div>
 	)

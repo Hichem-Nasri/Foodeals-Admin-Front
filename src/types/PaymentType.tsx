@@ -1,13 +1,50 @@
+import { ActionsMenu } from "@/components/custom/ActionsMenu"
+import { ConfirmPayment } from "@/components/payment/ConfirmPayment"
 import { PaymentStatus } from "@/components/payment/PaymentStatus"
 import { PaymentValidation } from "@/components/payment/PaymentValidation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AppRoutes } from "@/lib/routes"
 import { createColumnHelper } from "@tanstack/react-table"
+import { Eye, Pencil } from "lucide-react"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import { z } from "zod"
 
 export enum PaymentStatusType {
 	PAID = "PAID",
 	PENDING = "PENDING",
 	CANCELED = "CANCELED",
+}
+
+export interface ConfirmPaymentType {
+	id: string
+	store: {
+		id: string
+		avatar: string
+		name: string
+	}
+	dateOfReception: Date
+	amount: number
+	transmitter: string
+	document: {
+		fileName: string
+		fileUrl: string
+	}
+}
+
+export const defaultValuesConfirmPayment = {
+	id: "1",
+	store: {
+		id: "1",
+		avatar: "https://api.dicebear.com/7.x/bottts/png?seed=Ikea",
+		name: "Nom du magasin",
+	},
+	dateOfReception: new Date(),
+	amount: 25000,
+	transmitter: "Amine Ben",
+	document: {
+		fileName: "Justificatif de la commission.word",
+		fileUrl: "",
+	},
 }
 
 export interface PaymentType {
@@ -25,6 +62,7 @@ export interface PaymentType {
 	toPay: number
 	receiver: number
 	status: PaymentStatusType
+	payByFoodeals: boolean
 }
 
 export const PaymentFilterSchema = z.object({
@@ -99,7 +137,7 @@ export interface FormData {
 
 const columnHelper = createColumnHelper<PaymentType>()
 
-export const columnsPaymentsTable = [
+export const columnsPaymentsTable = (router: AppRouterInstance) => [
 	columnHelper.accessor("ref", {
 		cell: (info) => info.getValue(),
 		header: "Réf",
@@ -144,12 +182,30 @@ export const columnsPaymentsTable = [
 		footer: (info) => info.column.id,
 	}),
 	columnHelper.accessor("toPay", {
-		cell: (info) => info.getValue(),
+		cell: (info) => (
+			<span
+				className={
+					info.row.getValue("payByFoodeals") && info.row.getValue("status") !== PaymentStatusType.PAID
+						? "text-red-500"
+						: "text-primary"
+				}>
+				{info.getValue()}
+			</span>
+		),
 		header: "A payer",
 		footer: (info) => info.column.id,
 	}),
 	columnHelper.accessor("receiver", {
-		cell: (info) => info.getValue(),
+		cell: (info) => (
+			<span
+				className={
+					!info.row.getValue("payByFoodeals") && info.row.getValue("status") !== PaymentStatusType.PAID
+						? "text-red-500"
+						: "text-primary"
+				}>
+				{info.getValue()}
+			</span>
+		),
 		header: "Reçu",
 		footer: (info) => info.column.id,
 	}),
@@ -159,15 +215,50 @@ export const columnsPaymentsTable = [
 		footer: (info) => info.column.id,
 	}),
 	columnHelper.accessor("ref", {
-		cell: (info) => (
-			<PaymentValidation
-				id={info.getValue()}
-				label="Confirmer"
-				disabled={!(info.row.getValue("status") === PaymentStatusType.PENDING)}
-			/>
-		),
+		cell: (info) => {
+			if (info.row.getValue("payByFoodeals"))
+				return (
+					<PaymentValidation
+						id={info.getValue()}
+						label="Confirmer"
+						disabled={!(info.row.getValue("status") === PaymentStatusType.PENDING)}
+					/>
+				)
+			return (
+				<ConfirmPayment
+					id={info.getValue()}
+					label="Confirmer"
+					disabled={!(info.row.getValue("status") === PaymentStatusType.PENDING)}
+				/>
+			)
+		},
 		header: "Validation",
 		footer: (info) => info.column.id,
+	}),
+	columnHelper.accessor("payByFoodeals", {
+		cell: "payByFoodeals",
+		header: "payByFoodeals",
+		footer: (info) => info.column.id,
+	}),
+	columnHelper.accessor("ref", {
+		cell: (info) => (
+			<ActionsMenu
+				id={info.getValue()}
+				menuList={[
+					{
+						actions: () => router.push(AppRoutes.paymentDetails.replace(":id", info.getValue()!)),
+						icon: Eye,
+						label: "Voir",
+					},
+					{
+						actions: () => router.push(AppRoutes.paymentDetails.replace(":id", info.getValue()!)),
+						icon: Pencil,
+						label: "Modifier",
+					},
+				]}
+			/>
+		),
+		header: "Activité",
 	}),
 ]
 
@@ -186,7 +277,8 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		totalCommission: 1000,
 		toPay: 1000,
 		receiver: 1000,
-		status: PaymentStatusType.PAID,
+		status: PaymentStatusType.PENDING,
+		payByFoodeals: true,
 	},
 	{
 		ref: "2",
@@ -203,6 +295,7 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		toPay: 1000,
 		receiver: 1000,
 		status: PaymentStatusType.PENDING,
+		payByFoodeals: false,
 	},
 	{
 		ref: "3",
@@ -219,5 +312,64 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		toPay: 1000,
 		receiver: 1000,
 		status: PaymentStatusType.CANCELED,
+
+		payByFoodeals: false,
+	},
+]
+
+export interface PaymentDetailsSubscriptionType {}
+
+export interface PaymentDetailsOperationsType {
+	withCard: number
+	withCash: number
+	commissionCard: number
+	commissionCash: number
+	commissionTotal: number
+	status: PaymentStatusType
+}
+
+const columnPaymentDetailsHelper = createColumnHelper<PaymentDetailsOperationsType>()
+
+export const columnsPaymentsDetailsTable = [
+	columnPaymentDetailsHelper.accessor("withCard", {
+		cell: (info) => info.getValue(),
+		header: "Vente par carte",
+		footer: (info) => info.column.id,
+	}),
+	columnPaymentDetailsHelper.accessor("withCash", {
+		cell: (info) => info.getValue(),
+		header: "Vente par espèce",
+		footer: (info) => info.column.id,
+	}),
+	columnPaymentDetailsHelper.accessor("commissionCard", {
+		cell: (info) => info.getValue(),
+		header: "Commission par carte",
+		footer: (info) => info.column.id,
+	}),
+	columnPaymentDetailsHelper.accessor("commissionCash", {
+		cell: (info) => info.getValue(),
+		header: "Commission par espèce",
+		footer: (info) => info.column.id,
+	}),
+	columnPaymentDetailsHelper.accessor("commissionTotal", {
+		cell: (info) => info.getValue(),
+		header: "Total Commission",
+		footer: (info) => info.column.id,
+	}),
+	columnPaymentDetailsHelper.accessor("status", {
+		cell: (info) => <PaymentStatus status={info.getValue()} />,
+		header: "Statut",
+		footer: (info) => info.column.id,
+	}),
+]
+
+export const defaultDataPaymentsDetailsTable: PaymentDetailsOperationsType[] = [
+	{
+		commissionCard: 4454,
+		commissionCash: 566,
+		commissionTotal: 6846,
+		withCard: 46846,
+		withCash: 64888,
+		status: PaymentStatusType.PAID,
 	},
 ]

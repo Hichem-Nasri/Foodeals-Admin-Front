@@ -22,31 +22,40 @@ export const PartnerTable: FC<PartnerTableProps> = ({ table, data }) => {
 			<div className="lg:grid hidden gap-[0.625rem]">
 				<h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">Listes des partenaires</h1>
 				<div className="w-full overflow-auto">
-					<Table className="rounded-[14px] bg-white py-2">
+					<Table className="rounded-[14px] bg-white py-2 relative">
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
-									{headerGroup.headers.map((header) => (
-										<TableHead
-											key={header.id}
-											className={cn(
-												"cursor-pointer",
-												header.column.id === "createdAt"
-													? "min-w-48"
-													: header.column.id === "logo"
-													? "min-w-28"
-													: "min-w-40"
-											)}
-											onClick={header.column.getToggleSortingHandler()}>
-											<div className="flex justify-between items-center w-full">
-												{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-												{{
-													asc: <ChevronUp />,
-													desc: <ChevronDown />,
-												}[header.column.getIsSorted() as string] ?? <ChevronsUpDown />}
-											</div>
-										</TableHead>
-									))}
+									{headerGroup.headers.map((header) => {
+										console.log(header.id)
+
+										return (
+											<TableHead
+												key={header.id}
+												className={cn(
+													"cursor-pointer",
+													header.column.id === "createdAt"
+														? "min-w-48"
+														: header.column.id === "logo"
+														? "min-w-28"
+														: header.id === "id"
+														? "sticky right-0 shadow-md bg-white min-w-none rounded-tl-[18px]"
+														: "min-w-44"
+												)}
+												onClick={header.column.getToggleSortingHandler()}>
+												<div className="flex justify-between items-center w-full">
+													{header.isPlaceholder
+														? null
+														: flexRender(header.column.columnDef.header, header.getContext())}
+													{(header.id !== "id" &&
+														{
+															asc: <ChevronUp />,
+															desc: <ChevronDown />,
+														}[header.column.getIsSorted() as string]) ?? <ChevronsUpDown />}
+												</div>
+											</TableHead>
+										)
+									})}
 								</TableRow>
 							))}
 						</TableHeader>
@@ -54,7 +63,9 @@ export const PartnerTable: FC<PartnerTableProps> = ({ table, data }) => {
 							{table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className="w-fit">
+										<TableCell
+											key={cell.id}
+											className={cn("w-fit", cell.column.id === "id" ? "sticky right-0 bg-white min-w-none shadow-md" : "")}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
 									))}

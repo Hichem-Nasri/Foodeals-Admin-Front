@@ -3,17 +3,19 @@ import { CloudUpload, FileMinus, X } from "lucide-react"
 import { FC, useState } from "react"
 
 interface UploadFileProps {
-	value: File
-	onChange: (file: File) => void
+	value?: File
+	onChange?: (file: File) => void
+	disabled?: boolean
 }
 
-export const UploadFile: FC<UploadFileProps> = ({}) => {
+export const UploadFile: FC<UploadFileProps> = ({ disabled, onChange, value }) => {
 	const [files, setFiles] = useState<File[]>([])
 
 	return (
 		<div className={"flex relative w-full"}>
 			<Input
 				name="file"
+				disabled={disabled}
 				onChange={() => {}}
 				value={""}
 				IconRight={CloudUpload}
@@ -23,6 +25,7 @@ export const UploadFile: FC<UploadFileProps> = ({}) => {
 				type="file"
 				className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
 				onChange={(e) => setFiles((prev) => [...prev, e.target.files![0]])}
+				disabled={disabled}
 			/>
 			<div className="flex gap-3 items-center absolute top-1/2 -translate-y-1/2 left-4">
 				{files &&

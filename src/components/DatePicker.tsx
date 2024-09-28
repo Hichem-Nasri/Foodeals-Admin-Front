@@ -24,7 +24,7 @@ export const DatePicker: FC<DatePickerProps> = ({ id, disabled, onChange, value 
 				<Button
 					variant={"outline"}
 					disabled={disabled}
-					className="justify-start gap-3 text-left font-normal text-lynch-950 hover:text-lynch-700 [&>span]:hover:text-lynch-700 bg-lynch-50 rounded-[12px] px-3 py-4 w-full h-14"
+					className="justify-start gap-3 text-left font-normal text-lynch-950 hover:text-lynch-700 [&>span]:hover:text-lynch-700 bg-lynch-50 rounded-[12px] px-3 py-4 w-full h-14 disabled:text-lynch-700 border-0 disabled:opacity-100"
 					id={id}>
 					<CalendarIcon className="text-green-400" size={24} />
 					{date ? format(date, "MM/dd/yyyy") : <span className="text-lynch-400">Sélectionner une date</span>}

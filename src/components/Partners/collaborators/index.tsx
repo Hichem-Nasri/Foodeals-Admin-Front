@@ -56,7 +56,7 @@ export const Collaborators: FC<CollaboratorsProps> = ({ collaborators, partnerId
 		columns: columnsPartnerCollaboratorsTable,
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
-		getFilteredRowModel: getFilteredRowModel(), //client side filtering
+		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	})

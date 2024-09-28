@@ -8,6 +8,7 @@ import { SelectField } from "../custom/SelectField"
 import { DatePicker } from "../DatePicker"
 import { AvatarProfile } from "../AvatarProfile"
 import { Label } from "../Label"
+import { PartnerOptions } from "@/lib/utils"
 
 interface FilterPayment {
 	onSubmit: (data: z.infer<typeof PaymentFilterSchema>) => void
@@ -21,13 +22,7 @@ export const FilterPayment: FC<FilterPayment> = ({ onSubmit }) => {
 	})
 	const { handleSubmit, control } = form
 
-	const options = [
-		{ id: "0", name: "All", avatar: "https://via.placeholder.com/120" },
-		{ id: "1", name: "Supermarché", avatar: "https://via.placeholder.com/120" },
-		{ id: "2", name: "Superettes", avatar: "https://via.placeholder.com/120" },
-	] // Fetch options from API
-
-	const adaptOptions = options.map((option) => ({ key: option.id, label: option.name }))
+	const adaptOptions = PartnerOptions.map((option) => ({ key: option.id, label: option.name }))
 	return (
 		<Form {...form}>
 			<form onSubmit={handleSubmit(onSubmit)} className="w-full">
@@ -47,8 +42,7 @@ export const FilterPayment: FC<FilterPayment> = ({ onSubmit }) => {
 						label="Partenaire"
             className="w-full"
 						transform={(value) => {
-              console.log(value);
-							const option = options.find((option) => option.name === value)
+							const option = PartnerOptions.find((option) => option.name === value)
 							return (
 								<div className="flex items-center gap-3">
 									<AvatarProfile

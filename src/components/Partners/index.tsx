@@ -19,6 +19,7 @@ import {
 } from "@tanstack/react-table"
 import { CustomButton } from "../custom/CustomButton"
 import { RotateCw, Store } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface PartnersProps {
 	partners: PartnerType[]
@@ -31,6 +32,7 @@ export interface TableRowType {
 
 export const Partners: FC<PartnersProps> = ({ partners }) => {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+	const router = useRouter()
 	const schema = z.object({
 		startDate: z.date().optional(),
 		endDate: z.date().optional(),
@@ -78,10 +80,10 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
 
 	const table = useReactTable({
 		data,
-		columns: columnsPartnersTable,
+		columns: columnsPartnersTable(router),
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
-		getFilteredRowModel: getFilteredRowModel(), //client side filtering
+		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	})

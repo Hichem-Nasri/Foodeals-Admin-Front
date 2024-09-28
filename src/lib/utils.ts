@@ -34,3 +34,10 @@ export const countryCodes = [
 	{ value: "+216", flag: "🇹🇳" },
 	{ value: "+225", flag: "🇨🇮" },
 ]
+
+
+export const PartnerOptions = [
+	{ id: "0", name: "All", avatar: "https://via.placeholder.com/120" },
+	{ id: "1", name: "Supermarché", avatar: "https://via.placeholder.com/120" },
+	{ id: "2", name: "Superettes", avatar: "https://via.placeholder.com/120" },
+] // Fetch options from API
