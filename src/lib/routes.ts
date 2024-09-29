@@ -1,4 +1,4 @@
-export const AppRoutes = {
+export const appRoutes = {
 	home: "/",
 	payment: "/paiement",
 	paymentDetails: "/paiement/:id",
@@ -6,9 +6,12 @@ export const AppRoutes = {
 	partners: "/partenaires",
 	newPartner: "/partenaires/partenair/:id",
 	collaboratorDetails: "/partenaires/collaborateurs/:PartnerId/:CollaboratorID",
-	newCollaborator: "/partenaires/collaborateurs/:id",
+	collaborator: "/partenaires/collaborateurs/:id",
 	delivery: "/livraisons",
+	newDelivery: "/livraisons/partenaire-livraison/:id",
 	associations: "/associations",
+	newAssociation: "/associations/association/:id",
+	sieges: "/associations/sieges/:id",
 	crm: "/crm",
 	marketing: "/marketing",
 	settings: "/settings",

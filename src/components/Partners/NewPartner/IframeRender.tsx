@@ -8,7 +8,7 @@ import { UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 
 interface IframeRendererProps {
-	form: UseFormReturn<z.infer<typeof PartnerInformationSchema>>
+	form: UseFormReturn<z.infer<any>>
 	disabled?: boolean
 }
 
@@ -20,7 +20,7 @@ export const IframeRenderer: FC<IframeRendererProps> = ({ form, disabled }) => {
 			render={({ field }) => (
 				<Fragment>
 					<Input {...field} type="text" label="Iframe" value={field.value} IconLeft={Link2} disabled={disabled} />
-					<div className="iframe-container [&>iframe]:w-full" dangerouslySetInnerHTML={{ __html: field.value }} />
+					<div className="iframe-container [&>iframe]:w-full [&>iframe]:rounded-[12px] " dangerouslySetInnerHTML={{ __html: field.value }} />
 				</Fragment>
 			)}
 		/>

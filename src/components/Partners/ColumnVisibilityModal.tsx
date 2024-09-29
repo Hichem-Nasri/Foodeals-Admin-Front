@@ -1,8 +1,9 @@
 import { FC } from "react"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Columns2 } from "lucide-react"
+import { Columns2, X } from "lucide-react"
 import { Switch } from "../custom/Switch"
 import { cn } from "@/lib/utils"
+import { DialogClose } from "@radix-ui/react-dialog"
 
 interface ColumnVisibilityModalProps {
 	table: import("@tanstack/table-core").Table<any>
@@ -21,7 +22,12 @@ export const ColumnVisibilityModal: FC<ColumnVisibilityModalProps> = ({ table, c
 				<Columns2 />
 			</DialogTrigger>
 			<DialogContent className="[&>.Icon]:hidden p-5 rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem]">
-				<DialogTitle className="text-[1.375rem] font-normal text-lynch-400">Afficher les colonnes</DialogTitle>
+				<DialogTitle className="flex justify-between items-center gap-3 text-[1.375rem] font-normal text-lynch-400">
+					Afficher les colonnes
+					<DialogClose>
+						<X />
+					</DialogClose>
+				</DialogTitle>
 				<div className="flex flex-wrap gap-3">
 					{table.getAllColumns().map((column) => (
 						<Switch

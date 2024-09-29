@@ -3,11 +3,13 @@ import { ConfirmPayment } from "@/components/payment/ConfirmPayment"
 import { PaymentStatus } from "@/components/payment/PaymentStatus"
 import { PaymentValidation } from "@/components/payment/PaymentValidation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 import { createColumnHelper } from "@tanstack/react-table"
 import { Eye, Pencil } from "lucide-react"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import { z } from "zod"
+import { PartnerSolutionType } from "./partners"
+import { PartnerSolution } from "@/components/Partners/PartnerSolution"
 
 export enum PaymentStatusType {
 	PAID = "PAID",
@@ -48,6 +50,7 @@ export const defaultValuesConfirmPayment = {
 }
 
 export interface PaymentType {
+	id: string
 	ref: string
 	date: Date
 	type: string
@@ -240,18 +243,18 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
 		header: "payByFoodeals",
 		footer: (info) => info.column.id,
 	}),
-	columnHelper.accessor("ref", {
+	columnHelper.accessor("id", {
 		cell: (info) => (
 			<ActionsMenu
 				id={info.getValue()}
 				menuList={[
 					{
-						actions: () => router.push(AppRoutes.paymentDetails.replace(":id", info.getValue()!)),
+						actions: () => router.push(appRoutes.paymentDetails.replace(":id", info.getValue()!)),
 						icon: Eye,
 						label: "Voir",
 					},
 					{
-						actions: () => router.push(AppRoutes.paymentDetails.replace(":id", info.getValue()!)),
+						actions: () => router.push(appRoutes.paymentDetails.replace(":id", info.getValue()!)),
 						icon: Pencil,
 						label: "Modifier",
 					},
@@ -264,6 +267,7 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
 
 export const defaultDataPaymentsTable: PaymentType[] = [
 	{
+		id: "1",
 		ref: "1",
 		date: new Date(),
 		type: "Type",
@@ -281,6 +285,7 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		payByFoodeals: true,
 	},
 	{
+		id: "2",
 		ref: "2",
 		date: new Date(),
 		type: "Type",
@@ -298,6 +303,7 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		payByFoodeals: false,
 	},
 	{
+		id: "3",
 		ref: "3",
 		date: new Date(),
 		type: "Type",
@@ -312,7 +318,6 @@ export const defaultDataPaymentsTable: PaymentType[] = [
 		toPay: 1000,
 		receiver: 1000,
 		status: PaymentStatusType.CANCELED,
-
 		payByFoodeals: false,
 	},
 ]
@@ -371,5 +376,73 @@ export const defaultDataPaymentsDetailsTable: PaymentDetailsOperationsType[] = [
 		withCard: 46846,
 		withCash: 64888,
 		status: PaymentStatusType.PAID,
+	},
+]
+
+export interface ValidationSubscriptionType {
+	ref: string
+	deadline: Date
+	price: number
+	solution: PartnerSolutionType[]
+	validation: PaymentStatusType
+}
+
+const columnValidationSubscriptionHelper = createColumnHelper<ValidationSubscriptionType>()
+
+export const columnsValidationTable = [
+	columnValidationSubscriptionHelper.accessor("ref", {
+		cell: (info) => info.getValue(),
+		header: "Réf",
+		footer: (info) => info.column.id,
+	}),
+	columnValidationSubscriptionHelper.accessor("deadline", {
+		cell: (info) => info.getValue().toLocaleDateString(),
+		header: "Date limite",
+		footer: (info) => info.column.id,
+	}),
+	columnValidationSubscriptionHelper.accessor("price", {
+		cell: (info) => info.getValue(),
+		header: "Prix",
+		footer: (info) => info.column.id,
+	}),
+	columnValidationSubscriptionHelper.accessor("solution", {
+		cell: (info) => (
+			<div className="flex items-center gap-1">
+				{info.getValue().map((solution) => (
+					<PartnerSolution solution={solution} key={solution} />
+				))}
+			</div>
+		),
+		header: "Solution",
+		footer: (info) => info.column.id,
+	}),
+	columnValidationSubscriptionHelper.accessor("validation", {
+		cell: (info) => <PaymentStatus status={info.getValue()} />,
+		header: "Statut",
+		footer: (info) => info.column.id,
+	}),
+]
+
+export const defaultDataValidationTable: ValidationSubscriptionType[] = [
+	{
+		ref: "1",
+		deadline: new Date(),
+		price: 1000,
+		solution: [PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
+		validation: PaymentStatusType.PENDING,
+	},
+	{
+		ref: "2",
+		deadline: new Date(),
+		price: 1000,
+		solution: [PartnerSolutionType.DLC_PRO],
+		validation: PaymentStatusType.PENDING,
+	},
+	{
+		ref: "3",
+		deadline: new Date(),
+		price: 1000,
+		solution: [PartnerSolutionType.DLC_PRO],
+		validation: PaymentStatusType.PENDING,
 	},
 ]

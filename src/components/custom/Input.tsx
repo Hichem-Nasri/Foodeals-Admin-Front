@@ -38,7 +38,7 @@ export const Input: FC<InputProps> = ({
 	return (
 		<div className="flex flex-col items-start gap-3 w-full text-lynch-400">
 			{label && (
-				<Label htmlFor={name} className="text-xs font-semibold text-lynch-950">
+				<Label htmlFor={name} className="text-sm font-semibold text-lynch-950">
 					{label}
 				</Label>
 			)}

@@ -12,7 +12,7 @@ import { FileSpreadsheet, LayoutList } from "lucide-react"
 import { PartnerStatusType } from "@/types/partners"
 import { CustomButton } from "@/components/custom/CustomButton"
 import { useRouter } from "next/navigation"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 
 interface FormFeaturesProps {
 	form: UseFormReturn<z.infer<typeof PartnerFeaturesSchema>>
@@ -25,7 +25,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({ form, omSubmit, disabled, 
 	const { handleSubmit } = form
 	const router = useRouter()
 	const showAllPartners = () => {
-		router.push(AppRoutes.newCollaborator)
+		router.push(appRoutes.collaborator)
 	}
 	return (
 		<Accordion type="single" collapsible className="bg-white lg:p-5 px-4 py-6 rounded-[14px]" defaultValue="features">

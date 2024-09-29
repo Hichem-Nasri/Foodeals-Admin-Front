@@ -4,9 +4,9 @@ import { PartnerSolution } from "@/components/Partners/PartnerSolution"
 import { PartnerStatus } from "@/components/Partners/PartnerStatus"
 import { PhoneBadge } from "@/components/Partners/PhoneBadge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 import { createColumnHelper } from "@tanstack/react-table"
-import { Eye, Pencil } from "lucide-react"
+import { Eye, Pencil, Users } from "lucide-react"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 
 export enum PartnerStatusType {
@@ -304,14 +304,14 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
 				id={info.getValue()}
 				menuList={[
 					{
-						actions: () => router.push(AppRoutes.newPartner.replace(":id", info.getValue()!)),
+						actions: () => router.push(appRoutes.newPartner.replace(":id", info.getValue()!)),
 						icon: Eye,
 						label: "Voir",
 					},
 					{
-						actions: () => router.push(AppRoutes.newPartner.replace(":id", info.getValue()!)),
-						icon: Pencil,
-						label: "Modifier",
+						actions: (id) => router.push(appRoutes.collaborator.replace(":id", id)),
+						icon: Users,
+						label: "Collaborateurs",
 					},
 				]}
 			/>

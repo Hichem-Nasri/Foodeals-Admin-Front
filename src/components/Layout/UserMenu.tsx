@@ -14,8 +14,8 @@ interface UserMenuProps { }
 export const UserMenu: FC<UserMenuProps> = ({ }) => {
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild className="lg:inline-flex hidden">
-				<Button variant="ghost" className="flex items-center gap-3 p-0 hover:bg-white shrink-0">
+			<DropdownMenuTrigger asChild className="">
+				<Button variant="ghost" className="lg:inline-flex hidden items-center gap-3 p-0 hover:bg-white shrink-0">
 					<div className="flex gap-3 items-center">
 						<Image
 							src="https://api.dicebear.com/7.x/bottts/png"

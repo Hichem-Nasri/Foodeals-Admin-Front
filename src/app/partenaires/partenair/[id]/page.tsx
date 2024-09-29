@@ -7,7 +7,7 @@ interface PartnersPageProps {
 }
 
 export default async function PartnersPage({ params }: PartnersPageProps) {
-	const partnerDetails = await getPartnerData(params.id)
+	const partnerDetails = await getPartnerData() // TODO: add params.id to fetch data
 	return (
 		<Layout>
 			<NewPartner partnerDetails={partnerDetails} />

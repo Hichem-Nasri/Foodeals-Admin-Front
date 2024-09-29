@@ -16,7 +16,7 @@ import {
 interface TopBarProps {
 	primaryButtonDisabled?: boolean
 	secondaryButtonDisabled?: boolean
-	status: PartnerStatusType
+	status?: PartnerStatusType
 	onSaveData: () => void
 	onSubmit: () => void
 }
@@ -65,10 +65,12 @@ export const TopBar: FC<TopBarProps> = ({
 
 	return (
 		<div className="flex lg:relative fixed bottom-0 left-0 z-30 justify-between w-full rounded-[18px] lg:bg-white">
-			<div className="lg:flex items-center hidden gap-3 p-[1.125rem]">
-				<PartnerStatus status={status} />
-			</div>
-			<div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white">
+			{status && (
+				<div className="lg:flex items-center hidden gap-3 p-[1.125rem]">
+					<PartnerStatus status={status} />
+				</div>
+			)}
+			<div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
 				{status === PartnerStatusType.DRAFT || status === PartnerStatusType.VALIDATED ? (
 					<CustomButton
 						onClick={onSaveData}
