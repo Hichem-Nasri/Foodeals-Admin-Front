@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+	.text-balance {
+		text-wrap: balance;
+	}
+}
+
+body,
+html {
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box !important;
+}
+
+
+@layer base {
+	:root {
+		--radius: 0.5rem;
+	}
+}
+
+.lucide {
+	flex-shrink: 0;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
