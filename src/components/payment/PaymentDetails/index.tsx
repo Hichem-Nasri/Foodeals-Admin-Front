@@ -20,11 +20,14 @@ import {
 } from "@tanstack/react-table"
 import { useState } from "react"
 import { OperationCard } from "./OperationCard"
+import { SubscriptionCard } from "./SubscriptionCard"
+import { cn } from "@/lib/utils"
 
 interface OperationsProps {}
 
 export const Operations = ({}: OperationsProps) => {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+	const [showOperations, setShowOperations] = useState(true)
 	const onSubmit = () => {}
 	const totalPending = 12222
 	const totalSales = 51554516
@@ -59,6 +62,21 @@ export const Operations = ({}: OperationsProps) => {
 		<div className="flex flex-col gap-3 w-full">
 			<div className="flex lg:flex-row flex-col items-center gap-3 w-full">
 				<FilterPayment onSubmit={onSubmit} />
+				<div className="flex lg:hidden items-center gap-2.5 bg-white p-3 rounded-[14px]">
+					<CustomButton
+						label="Opération du mois"
+						variant="ghost"
+						className={showOperations ? "text-primary" : "text-lynch-950"}
+						onClick={() => setShowOperations(true)}
+					/>
+					<span className="h-2/3 w-px bg-lynch-400" />
+					<CustomButton
+						label="Validation des paiement"
+						variant="ghost"
+						onClick={() => setShowOperations(false)}
+						className={!showOperations ? "text-primary" : "text-lynch-950"}
+					/>
+				</div>
 				<CardTotalValue
 					Icon={LoaderCircle}
 					title="En cours"
@@ -71,14 +89,18 @@ export const Operations = ({}: OperationsProps) => {
 				table={tableOperations}
 				data={defaultDataPaymentsDetailsTable}
 				title="Opérations du mois"
-				transform={(data) => <OperationCard operation={data} />}
+				transform={(data) => (
+					<OperationCard className={`${showOperations ? "inline-flex" : "hidden"}`} operation={data} />
+				)}
 				partnerData={PaymentData}
 			/>
 			<DataTable
 				table={tableSubscription}
 				data={defaultDataValidationTable}
 				title="Tableau de validation des abonnement"
-				transform={(data) => <OperationCard operation={data} />}
+				transform={(data) => (
+					<SubscriptionCard className={`${showOperations ? "hidden" : "inline-flex"}`} operation={data} />
+				)}
 			/>
 			<div className="lg:hidden flex flex-col items-center gap-4 my-3">
 				<CustomButton

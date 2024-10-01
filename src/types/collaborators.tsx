@@ -32,6 +32,15 @@ export interface ScheduleDayType {
 	morning: string
 	afternoon: string
 }
+export interface ScheduleWeekType {
+	monday: ScheduleDayType
+	tuesday: ScheduleDayType
+	wednesday: ScheduleDayType
+	thursday: ScheduleDayType
+	friday: ScheduleDayType
+	saturday: ScheduleDayType
+	sunday: ScheduleDayType
+}
 
 export interface CollaboratorDataType {
 	id: string
@@ -67,15 +76,7 @@ export interface CollaboratorDataType {
 		phone: string
 		mail: string
 	}
-	schedule: {
-		monday: ScheduleDayType
-		tuesday: ScheduleDayType
-		wednesday: ScheduleDayType
-		thursday: ScheduleDayType
-		friday: ScheduleDayType
-		saturday: ScheduleDayType
-		sunday: ScheduleDayType
-	}
+	schedule: ScheduleWeekType
 }
 
 export const collaboratorData: CollaboratorDataType = {

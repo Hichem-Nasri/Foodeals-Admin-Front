@@ -71,13 +71,14 @@ export const DataTable: FC<DataTableProps<any>> = ({
 												onClick={header.column.getToggleSortingHandler()}
 												className={cn(
 													"cursor-pointer min-w-40",
-													header.column.id === "createdAt"
+													header.column.id === "createdAt" || header.column.id === "date"
 														? "min-w-48"
 														: header.column.id === "logo"
 														? "min-w-28"
 														: header.id === "id"
 														? "sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit"
-														: ""
+														: "",
+													header.column.id === "email" || header.column.id === 'phone' ? "min-w-60" : ""
 												)}>
 												<div className="flex justify-between items-center w-full">
 													{header.isPlaceholder

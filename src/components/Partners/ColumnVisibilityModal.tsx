@@ -29,14 +29,19 @@ export const ColumnVisibilityModal: FC<ColumnVisibilityModalProps> = ({ table, c
 					</DialogClose>
 				</DialogTitle>
 				<div className="flex flex-wrap gap-3">
-					{table.getAllColumns().map((column) => (
-						<Switch
-							key={column.id}
-							checked={column.getIsVisible()}
-							onChange={column.getToggleVisibilityHandler()}
-							label={column.columnDef.header?.toString() || ""}
-						/>
-					))}
+					{table
+						.getAllColumns()
+						.map(
+							(column) =>
+								column.id !== "id" && (
+									<Switch
+										key={column.id}
+										checked={column.getIsVisible()}
+										onChange={column.getToggleVisibilityHandler()}
+										label={column.columnDef.header?.toString() || ""}
+									/>
+								)
+						)}
 				</div>
 			</DialogContent>
 		</Dialog>

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation"
 import { DataTable } from "../DataTable"
 import { columnsDeliveriesTable, DeliveryType } from "@/types/deliveries"
 import { FiltersDeliveries } from "./FilterDeliveries"
+import { DeliveryCard } from "./DeliveryCard"
 interface DeliveriesProps {
 	deliveries: DeliveryType[]
 }
@@ -90,7 +91,12 @@ export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
 	return (
 		<div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
 			<FiltersDeliveries table={table} form={form} data={deliveries} />
-			<DataTable data={data} table={table} title="Liste des partenaires de livraison" transform={(value) => <></>} />
+			<DataTable
+				data={data}
+				table={table}
+				title="Liste des partenaires de livraison"
+				transform={(value) => <DeliveryCard delivery={value} />}
+			/>
 			<div className="lg:hidden flex flex-col items-center gap-4 ">
 				<CustomButton
 					size="sm"

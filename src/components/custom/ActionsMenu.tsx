@@ -27,7 +27,7 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({ id = "", menuList, className
 					)}>
 					<ListPlus />
 				</DrawerTrigger>
-				<DrawerContent className="flex flex-col gap-2 p-3 rounded-[16px] flex lg:hidden">
+				<DrawerContent className="flex flex-col gap-2 p-3 rounded-[16px] lg:hidden">
 					{menuList.map((item) => (
 						<button
 							key={item.label}
