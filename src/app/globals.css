@@ -3,36 +3,51 @@
 @tailwind utilities;
 
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+    .text-balance {
+        text-wrap: balance;
+    }
 }
 
 body,
 html {
-	min-height: 100vh;
-	min-height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 }
 
 *,
 *::before,
 *::after {
-	box-sizing: border-box !important;
+    box-sizing: border-box !important;
 }
 
-
 @layer base {
-	:root {
-		--radius: 0.5rem;
-	}
+    :root {
+        --radius: 0.5rem;
+    }
 }
 
 .lucide {
-	flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 @layer base {
-  :root {
-    --radius: 0.5rem;
-  }
+    :root {
+        --radius: 0.5rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/* Styling for the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #10b981; /* Green color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Styling for the scrollbar track */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Light gray background */
 }
