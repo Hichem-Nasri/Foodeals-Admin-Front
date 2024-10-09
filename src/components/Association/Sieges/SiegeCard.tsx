@@ -1,115 +1,135 @@
-import { FC } from "react"
+import { FC } from 'react'
 import {
-	CalendarClock,
-	Eye,
-	HandCoins,
-	HeartHandshake,
-	Mail,
-	PhoneCall,
-	Store,
-	Users,
-} from "lucide-react"
-import Link from "next/link"
-import { appRoutes } from "@/lib/routes"
-import { useRouter } from "next/navigation"
-import { AssociationType, SiegesType } from "@/types/association"
-import { ActionsMenu, ActionType } from "@/components/custom/ActionsMenu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Label } from "@/components/Label"
-import { PaymentStatus } from "@/components/payment/PaymentStatus"
-import { CustomButton } from "@/components/custom/CustomButton"
-import { PartnerSolution } from "@/components/Partners/PartnerSolution"
+    CalendarClock,
+    Eye,
+    HandCoins,
+    HeartHandshake,
+    Mail,
+    PhoneCall,
+    Store,
+    Users,
+} from 'lucide-react'
+import Link from 'next/link'
+import { AppRoutes } from '@/lib/routes'
+import { useRouter } from 'next/navigation'
+import { AssociationType, SiegesType } from '@/types/association'
+import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Label } from '@/components/Label'
+import { PaymentStatus } from '@/components/payment/PaymentStatus'
+import { CustomButton } from '@/components/custom/CustomButton'
+import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 
 interface SiegeCardProps {
-	sieges?: SiegesType
+    sieges?: SiegesType
 }
 
 export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
-	const router = useRouter()
-	if (!sieges) return
+    const router = useRouter()
+    if (!sieges) return
 
-	const dataArray = [
-		{
-			label: `récupération : ${sieges.recovery}`,
-			icon: HeartHandshake,
-		},
-		{
-			label: `collaborateurs : ${sieges.collaborators}`,
-			icon: HandCoins,
-		},
-	]
+    const dataArray = [
+        {
+            label: `récupération : ${sieges.recovery}`,
+            icon: HeartHandshake,
+        },
+        {
+            label: `collaborateurs : ${sieges.collaborators}`,
+            icon: HandCoins,
+        },
+    ]
 
-	const actions: ActionType[] = [
-		{
-			actions: (id) => router.push(appRoutes.paymentDetails.replace(":id", id)),
-			icon: Eye,
-			label: "Voir",
-		},
-		{
-			actions: (id) => router.push(appRoutes.collaborator.replace(":id", id)),
-			icon: Users,
-			label: "Collaborateurs",
-		},
-	]
-	return (
-		<div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
-			<div className="flex justify-between gap-[0.375rem]">
-				<div className="flex gap-[0.375rem]">
-					<Avatar className="size-[2.875rem] shrink-0">
-						<AvatarImage className="" src={sieges.responsible.avatar} />
-						<AvatarFallback>{sieges.responsible.name[0].toUpperCase()}</AvatarFallback>
-					</Avatar>
-					<div className="flex flex-col gap-1">
-						<Label label={sieges.responsible.name} className="text-sm font-normal text-lynch-950" />
-						<Label label={sieges.city} className="text-xs font-medium text-primary" />
-						<div className="flex items-center gap-2 text-lynch-500">
-							<CalendarClock size={18} />
-							<Label
-								label={sieges.createAt.toLocaleDateString()}
-								className="text-xs font-medium text-lynch-500"
-							/>
-						</div>
-					</div>
-				</div>
-				<div className="flex flex-col items-end gap-2">
-					<div className="flex items-center gap-[0.375rem]">
-						<Link href={`tel:${sieges.phone}`}>
-							<CustomButton
-								label=""
-								IconLeft={PhoneCall}
-								className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
-							/>
-						</Link>
-						<Link href={`mailto:${sieges.email}`}>
-							<CustomButton
-								label=""
-								IconLeft={Mail}
-								className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
-							/>
-						</Link>
-						<ActionsMenu menuList={actions} className="[&>svg]:size-6 p-[0.625rem]" />
-					</div>
-				</div>
-			</div>
-			<span className="h-[1px] w-full bg-lynch-100" />
-			<div className="flex items-start gap-3">
-				<div className="flex flex-wrap gap-[0.375rem]">
-					{dataArray.map((data) => (
-						<div
-							key={data.label}
-							className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3">
-							<data.icon size={18} key={data.label} />
-							<Label label={data.label.toString()} className="text-lynch-500" />
-						</div>
-					))}
-				</div>
-			</div>
-			<span className="h-[1px] w-full bg-lynch-100" />
-			<div className="flex items-start gap-3">
-				{sieges.solutions.map((solution) => (
-					<PartnerSolution key={solution} solution={solution} />
-				))}
-			</div>
-		</div>
-	)
+    const actions: ActionType[] = [
+        {
+            actions: (id) =>
+                router.push(AppRoutes.paymentDetails.replace(':id', id)),
+            icon: Eye,
+            label: 'Voir',
+        },
+        {
+            actions: (id) =>
+                router.push(AppRoutes.collaborator.replace(':id', id)),
+            icon: Users,
+            label: 'Collaborateurs',
+        },
+    ]
+    return (
+        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
+            <div className="flex justify-between gap-[0.375rem]">
+                <div className="flex gap-[0.375rem]">
+                    <Avatar className="size-[2.875rem] shrink-0">
+                        <AvatarImage
+                            className=""
+                            src={sieges.responsible.avatar}
+                        />
+                        <AvatarFallback>
+                            {sieges.responsible.name[0].toUpperCase()}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-1">
+                        <Label
+                            label={sieges.responsible.name}
+                            className="text-sm font-normal text-lynch-950"
+                        />
+                        <Label
+                            label={sieges.city}
+                            className="text-xs font-medium text-primary"
+                        />
+                        <div className="flex items-center gap-2 text-lynch-500">
+                            <CalendarClock size={18} />
+                            <Label
+                                label={sieges.createAt.toLocaleDateString()}
+                                className="text-xs font-medium text-lynch-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-[0.375rem]">
+                        <Link href={`tel:${sieges.phone}`}>
+                            <CustomButton
+                                label=""
+                                IconLeft={PhoneCall}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
+                            />
+                        </Link>
+                        <Link href={`mailto:${sieges.email}`}>
+                            <CustomButton
+                                label=""
+                                IconLeft={Mail}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
+                            />
+                        </Link>
+                        <ActionsMenu
+                            menuList={actions}
+                            className="[&>svg]:size-6 p-[0.625rem]"
+                        />
+                    </div>
+                </div>
+            </div>
+            <span className="h-[1px] w-full bg-lynch-100" />
+            <div className="flex items-start gap-3">
+                <div className="flex flex-wrap gap-[0.375rem]">
+                    {dataArray.map((data) => (
+                        <div
+                            key={data.label}
+                            className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
+                        >
+                            <data.icon size={18} key={data.label} />
+                            <Label
+                                label={data.label.toString()}
+                                className="text-lynch-500"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <span className="h-[1px] w-full bg-lynch-100" />
+            <div className="flex items-start gap-3">
+                {sieges.solutions.map((solution) => (
+                    <PartnerSolution key={solution} solution={solution} />
+                ))}
+            </div>
+        </div>
+    )
 }

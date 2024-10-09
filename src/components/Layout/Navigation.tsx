@@ -5,7 +5,7 @@ import { CustomButton } from '../custom/CustomButton'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { appRoutes, AppRoutes } from '@/lib/routes'
+import { AppRoutes } from '@/lib/routes'
 import {
     Accordion,
     AccordionContent,
@@ -43,7 +43,6 @@ export const Navigation: FC<NavigationProps> = () => {
                                             ? 'bg-primary text-white'
                                             : ''
                                     )}
-                                    // classNameArrow=" peer-hover:bg-primary peer-hover:text-white"
                                 >
                                     <>
                                         <div
@@ -105,9 +104,9 @@ export const Navigation: FC<NavigationProps> = () => {
                                 className={cn(
                                     'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
                                     (pathname.includes(page.href) &&
-                                        page.href != appRoutes.home) ||
+                                        page.href != AppRoutes.home) ||
                                         (pathname === page.href &&
-                                            page.href === appRoutes.home)
+                                            page.href === AppRoutes.home)
                                         ? 'bg-primary/90 text-white'
                                         : ''
                                 )}

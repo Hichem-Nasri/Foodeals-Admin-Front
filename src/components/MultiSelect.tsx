@@ -55,7 +55,7 @@ const defaultTransform = (value: MultiSelectOptionsType[]) => {
         <div
             key={index}
             className={cn(
-                ' max-w-24 flex justify-center items-center text-base font-semibold whitespace-nowrap truncate',
+                ' pl-1 max-w-24 flex justify-center items-center text-base font-semibold whitespace-nowrap truncate',
                 option.className
             )}
         >

@@ -1,13 +1,8 @@
-import { FC, ForwardRefExoticComponent, ReactNode, RefAttributes } from 'react'
-import { Input as ShadCnInput } from '@/components/ui/input'
-import { LucideProps } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Label } from '../ui/label'
-import { FC, ForwardRefExoticComponent, ReactNode, RefAttributes } from 'react'
-import { Input as ShadCnInput } from '@/components/ui/input'
 import { LucideProps } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { ForwardRefExoticComponent, RefAttributes, FC } from 'react'
 import { Label } from '../ui/label'
+import { Input as ShadCnInput } from '@/components/ui/input'
 
 interface InputProps {
     onChange: (value: string | number) => void
