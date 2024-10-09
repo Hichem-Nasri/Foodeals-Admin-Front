@@ -1,3 +1,5 @@
+import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
+
 export const AppRoutes = {
     home: '/',
     payment: '/paiement',
@@ -6,7 +8,8 @@ export const AppRoutes = {
     partners: '/partenaires',
     newPartner: '/partenaires/partenair/:id',
     newConvertir: '/partenaires/convertir/:id',
-    newProspect: '/crm/prospects/:id',
+    newProspect: '/crm/prospects/create',
+    prospects: '/crm/prospects/:id',
     collaboratorDetails:
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',

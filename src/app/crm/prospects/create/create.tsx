@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { EventContext } from '@/context/EventContext'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
+import axios from 'axios'
 
 export const Create = () => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
@@ -42,6 +43,38 @@ export const Create = () => {
         defaultCrmInformationData
     )
     const onSaveData = (e: CrmInformationSchemaType) => {
+        const createProspect = {
+            companyName: e.companyName,
+            activities: e.category,
+            responsible: {
+                name: {
+                    firstName: e.responsable.split(' ')[0],
+                    lastName: e.responsable.slice(
+                        e.responsable.indexOf(' ') + 1
+                    ),
+                },
+                email: e.email,
+                phone: e.phone,
+            },
+            powered_by: 1,
+            manager_id: 2,
+            address: {
+                city: e.city,
+                address: e.address,
+                region: e.region,
+            },
+        }
+        const fetch = async () => {
+            const res = await axios
+                .post(
+                    'http://localhost:8080/api/v1/crm/prospects/create',
+                    createProspect
+                )
+                .then((res) => res.data)
+                .catch((err) => console.log(err))
+            console.log('done: ', res)
+        }
+        fetch()
         setInfo(e)
         setConvertir(true)
         console.log('Save data')

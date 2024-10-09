@@ -67,10 +67,8 @@ export const Select: FC<SelectProps> = ({
                         )
                     ) : (
                         <div
-                            className={`text-base text-start font-normal line-clamp-1 text-lynch-950 ${
-                                avatar
-                                    ? 'flex items-center justify-start gap-2'
-                                    : ''
+                            className={`text-base text-start font-normal line-clamp-1 text-lynch-950 flex items-center ${
+                                avatar ? ' justify-start gap-2' : ''
                             }`}
                         >
                             {avatar && (
@@ -109,12 +107,13 @@ export const Select: FC<SelectProps> = ({
                             className="cursor-pointer"
                             onChange={() => console.log("I'm clicked")}
                         >
-                            {/* {option.label} */}
-                            {option.avatar && (
+                            {option.avatar ? (
                                 <AvatarAndName
                                     avatar={option.avatar}
                                     name={option.label}
                                 />
+                            ) : (
+                                <>{option.label}</>
                             )}
                         </SelectItem>
                     ))}

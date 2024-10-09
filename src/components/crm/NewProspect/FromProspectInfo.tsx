@@ -35,7 +35,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
 }) => {
     const { handleSubmit, control } = form
     const companyTypeOptions = [
-        { key: 'supermarché', label: 'Supermarché' },
+        { key: 'Activity 1', label: 'Activity 1' },
         { key: 'superettes', label: 'Superettes' },
         { key: 'épiceries', label: 'Épiceries' },
         { key: 'boulangeries', label: 'Boulangeries' },
@@ -117,17 +117,41 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
                                         />
-                                        <InputFieldForm
+                                        <SelectField
                                             label="Alimenter par"
                                             name="creatorInfo"
+                                            options={[
+                                                {
+                                                    label: 'Creator 1',
+                                                    key: 'creator1',
+                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Felix',
+                                                },
+                                                {
+                                                    label: 'Creator 2',
+                                                    key: 'creator2',
+                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=John',
+                                                },
+                                            ]}
                                             control={control}
                                             placeholder="Nom"
                                             disabled={disabled}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <InputFieldForm
+                                        <SelectField
                                             control={control}
+                                            options={[
+                                                {
+                                                    label: 'Creator 1',
+                                                    key: 'creator1',
+                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Felix',
+                                                },
+                                                {
+                                                    label: 'Creator 2',
+                                                    key: 'creator2',
+                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=John',
+                                                },
+                                            ]}
                                             name="managerInfo"
                                             label="Manager"
                                             placeholder="Nom du manager"
@@ -137,7 +161,20 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             control={control}
                                             name="country"
                                             label="Pays"
-                                            options={CountryData()}
+                                            options={[
+                                                {
+                                                    label: 'France',
+                                                    key: 'fr',
+                                                },
+                                                {
+                                                    label: 'United States',
+                                                    key: 'USA',
+                                                },
+                                                {
+                                                    label: 'Maroc',
+                                                    key: 'ma',
+                                                },
+                                            ]}
                                             className="[&_*_.avatar]:grid [&_*_.avatar]:size-8 [&_*_.avatar]:rounded-full [&_*_.avatar]:place-items-center [&_*_.avatar]:m-auto"
                                             disabled={disabled}
                                         />

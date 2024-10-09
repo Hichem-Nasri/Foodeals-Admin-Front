@@ -65,7 +65,7 @@ export const pagesData: PageData[] = [
         ListAccordion: [
             {
                 label: 'Prospects',
-                href: AppRoutes.newProspect,
+                href: AppRoutes.prospects,
                 icon: SquareUser,
             },
         ],
