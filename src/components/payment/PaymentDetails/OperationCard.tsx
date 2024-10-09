@@ -7,9 +7,10 @@ import { Coins, CreditCard } from "lucide-react"
 
 interface OperationCardProps {
 	operation: PaymentDetailsOperationsType
+	className?: string
 }
 
-export const OperationCard: FC<OperationCardProps> = ({ operation }) => {
+export const OperationCard: FC<OperationCardProps> = ({ operation, className }) => {
 	const dataArray = [
 		{
 			label: `V. carte : ${operation.withCard}`,
@@ -33,7 +34,7 @@ export const OperationCard: FC<OperationCardProps> = ({ operation }) => {
 		},
 	]
 	return (
-		<div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
+		<div className={cn("flex flex-col gap-3 bg-white p-3 rounded-[20px]", className)}>
 			<div className="flex justify-end gap-[0.375rem]">
 				<PaymentStatus status={operation.status} />
 			</div>

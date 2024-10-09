@@ -5,9 +5,9 @@ import { CustomButton } from "../custom/CustomButton"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 
-interface NavigationProps {}
+interface NavigationProps { }
 
 export const Navigation: FC<NavigationProps> = () => {
 	const pathname = usePathname()
@@ -18,8 +18,8 @@ export const Navigation: FC<NavigationProps> = () => {
 					<CustomButton
 						className={cn(
 							"w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4",
-							(pathname.includes(page.href) && page.href != AppRoutes.home) ||
-								(pathname === page.href && page.href === AppRoutes.home)
+							(pathname.includes(page.href) && page.href != appRoutes.home) ||
+								(pathname === page.href && page.href === appRoutes.home)
 								? "bg-primary/90 text-white"
 								: ""
 						)}

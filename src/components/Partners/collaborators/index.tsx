@@ -12,7 +12,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table"
-import { ArrowLeft, RotateCw, Store } from "lucide-react"
+import { ArrowLeft, Eye, RotateCw, Store } from "lucide-react"
 import { CustomButton } from "@/components/custom/CustomButton"
 import {
 	columnsPartnerCollaboratorsTable,
@@ -20,7 +20,11 @@ import {
 	PartnerCollaboratorsFilerSchema,
 } from "@/types/collaborators"
 import { FilterAndCreatePartnerCollaborators } from "./FilterAndCreatePartnerCollaborators"
-import { PartnerCollaboratorsTable } from "./PartnerCollaboratorsTable"
+import { useRouter } from "next/navigation"
+import { ActionType } from "@/components/custom/ActionsMenu"
+import { appRoutes } from "@/lib/routes"
+import { DataTable } from "@/components/DataTable"
+import { PartnerCollaboratesCard } from "./PartnerCollaboratorsCard"
 
 interface CollaboratorsProps {
 	collaborators: PartnerCollaborators[]
@@ -34,6 +38,7 @@ export interface TableRowType {
 
 export const Collaborators: FC<CollaboratorsProps> = ({ collaborators, partnerId }) => {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+	const router = useRouter()
 	const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
 		resolver: zodResolver(PartnerCollaboratorsFilerSchema),
 		mode: "onBlur",
@@ -51,9 +56,19 @@ export const Collaborators: FC<CollaboratorsProps> = ({ collaborators, partnerId
 
 	const [data, _setData] = useState(() => [...collaborators])
 
+	const actionsList = (id: string) =>
+		[
+			{
+				actions: () =>
+					router.push(appRoutes.collaboratorDetails.replace(":CollaboratorID", id).replace(":PartnerId", partnerId)),
+				icon: Eye,
+				label: "Voir",
+			},
+		] as ActionType[]
+
 	const table = useReactTable({
 		data,
-		columns: columnsPartnerCollaboratorsTable,
+		columns: columnsPartnerCollaboratorsTable({ actionsList: actionsList }),
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
@@ -61,10 +76,22 @@ export const Collaborators: FC<CollaboratorsProps> = ({ collaborators, partnerId
 		getPaginationRowModel: getPaginationRowModel(),
 	})
 
+	const partnerData = {
+		name: "Marjane",
+		avatar: "https://api.dicebear.com/7.x/bottts/png?seed=Ikea",
+		city: "Fès",
+	}
+
 	return (
 		<div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
 			<FilterAndCreatePartnerCollaborators table={table} form={form} collaborators={collaborators} />
-			<PartnerCollaboratorsTable table={table} data={data} partnerId={partnerId} />
+			<DataTable
+				title="Listes des collaborateurs"
+				table={table}
+				data={data}
+				transform={(value) => <PartnerCollaboratesCard partner={value} key={value.id} />}
+				partnerData={partnerData}
+			/>
 			<div className="lg:hidden flex flex-col items-center gap-4 ">
 				<CustomButton
 					size="sm"

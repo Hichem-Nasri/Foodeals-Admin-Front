@@ -2,16 +2,20 @@ import { FC } from "react"
 import { PartnerCompanyType, PartnerType } from "@/types/partners"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Label } from "../Label"
-import { Boxes, Building, CalendarClock, HandCoins, ListPlus, Mail, PhoneCall, Store, Users } from "lucide-react"
+import { Archive, Boxes, Building, CalendarClock, Eye, HandCoins, ListPlus, Mail, PhoneCall, Store, Users } from "lucide-react"
 import { CustomButton } from "../custom/CustomButton"
 import { PartnerStatus } from "./PartnerStatus"
 import Link from "next/link"
+import { ActionsMenu, ActionType } from "../custom/ActionsMenu"
+import { appRoutes } from "@/lib/routes"
+import { useRouter } from "next/navigation"
 
 interface PartnerCardProps {
 	partner?: PartnerType
 }
 
 export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
+	const router = useRouter()
 	if (!partner) return
 
 	const dataArray = [
@@ -34,6 +38,19 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
 		{
 			label: partner.order,
 			icon: HandCoins,
+		},
+	]
+
+	const actions: ActionType[] = [
+		{
+			actions: (id) => router.push(appRoutes.paymentDetails.replace(":id", id)),
+			icon: Eye,
+			label: "Voir",
+		},
+		{
+			actions: (id) => router.push(appRoutes.collaborator.replace(":id", id)),
+			icon: Users,
+			label: "Collaborateurs",
 		},
 	]
 	return (
@@ -68,11 +85,7 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
 							className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
 						/>
 					</Link>
-					<CustomButton
-						label=""
-						IconLeft={ListPlus}
-						className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
-					/>
+					<ActionsMenu menuList={actions} className="[&>svg]:size-6 p-[0.625rem]" />
 				</div>
 			</div>
 			<span className="h-[1px] w-full bg-lynch-100" />

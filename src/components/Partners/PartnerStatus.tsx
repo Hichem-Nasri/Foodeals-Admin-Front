@@ -22,7 +22,7 @@ export const PartnerStatus: FC<PartnerStatusProps> = ({ status }) => {
 
 	return (
 		<span
-			className={`flex items-center gap-[0.375rem] text-[0.625rem] font-bold py-[0.403rem] px-3 rounded-full w-fit h-fit ${statusData.style}`}>
+			className={`flex items-center gap-[0.375rem] text-[0.625rem] font-bold py-[0.403rem] px-3 rounded-full w-fit h-fit shrink-0 ${statusData.style}`}>
 			{statusData.icon}
 			{statusData.text.toUpperCase()}
 		</span>

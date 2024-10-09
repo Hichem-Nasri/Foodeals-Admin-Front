@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Lottie from "react-lottie"
 import animationData from "@/lotties/loginAnimation.json"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 import { useRouter } from "next/navigation"
 
 export const Login: React.FC = () => {
@@ -39,7 +39,7 @@ export const Login: React.FC = () => {
 	}
 
 	const onSubmit = (data: z.infer<typeof schema>) => {
-		router.push(AppRoutes.partners)
+		router.push(appRoutes.partners)
 	}
 	const handleShowPassword = () => setShowPassword((prev) => !prev)
 	return (

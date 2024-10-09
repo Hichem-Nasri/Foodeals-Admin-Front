@@ -15,8 +15,8 @@ import { PartnerSolution } from "../PartnerSolution"
 import { PartnerCollaborators } from "@/types/collaborators"
 
 interface FilterTablePartnerCollaboratorsProps {
-	partners: PartnerCollaborators[]
-	form: UseFormReturn<any>
+	partners?: PartnerCollaborators[]
+	form?: UseFormReturn<any>
 }
 
 export const FilterTablePartnerCollaborators: FC<FilterTablePartnerCollaboratorsProps> = () => {

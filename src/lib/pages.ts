@@ -13,7 +13,7 @@ import {
 	WandSparkles,
 } from "lucide-react"
 import { ForwardRefExoticComponent, RefAttributes } from "react"
-import { AppRoutes } from "./routes"
+import { appRoutes } from "./routes"
 
 export interface PageData {
 	label: string
@@ -24,57 +24,57 @@ export interface PageData {
 export const pagesData: PageData[] = [
 	{
 		label: "Accueil",
-		href: AppRoutes.home,
+		href: appRoutes.home,
 		icon: Hotel,
 	},
 	{
 		label: "Paiement",
-		href: AppRoutes.payment,
+		href: appRoutes.payment,
 		icon: CreditCard,
 	},
 	{
 		label: "Statistique",
-		href: AppRoutes.statistics,
+		href: appRoutes.statistics,
 		icon: BarChartBig,
 	},
 	{
 		label: "Partenaires",
-		href: AppRoutes.partners,
+		href: appRoutes.partners,
 		icon: Store,
 	},
 	{
 		label: "Livraison",
-		href: AppRoutes.delivery,
+		href: appRoutes.delivery,
 		icon: Truck,
 	},
 	{
 		label: "Associations",
-		href: AppRoutes.associations,
+		href: appRoutes.associations,
 		icon: HeartHandshake,
 	},
 	{
 		label: "CRM",
-		href: AppRoutes.crm,
+		href: appRoutes.crm,
 		icon: Database,
 	},
 	{
 		label: "Marketing",
-		href: AppRoutes.marketing,
+		href: appRoutes.marketing,
 		icon: WandSparkles,
 	},
 	{
 		label: "Ressources Humaines",
-		href: AppRoutes.humanResources,
+		href: appRoutes.humanResources,
 		icon: Headset,
 	},
 	{
 		label: "Site Web",
-		href: AppRoutes.website,
+		href: appRoutes.website,
 		icon: Globe,
 	},
 	{
 		label: "Paramètre",
-		href: AppRoutes.parameter,
+		href: appRoutes.parameter,
 		icon: Settings,
 	},
 ]

@@ -22,7 +22,6 @@ export const CollaboratorDetails: FC<CollaboratorDetailsProps> = ({ collaborator
 		key,
 		collaborator.schedule[key as keyof typeof collaborator.schedule],
 	])
-	console.log(schedules)
 
 	return (
 		<div className="flex flex-col gap-2 w-full">

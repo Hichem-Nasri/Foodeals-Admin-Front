@@ -2,15 +2,12 @@
 import { columnsPartnersTable, PartnerSolutionType, PartnerType } from "@/types/partners"
 import { FC, useReducer, useState } from "react"
 import { FilterAndCreatePartners } from "./FilterAndCreatePartners"
-import { PartnerTable } from "./PartnerTable"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import {
 	ColumnFiltersState,
-	createColumnHelper,
-	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
@@ -20,6 +17,8 @@ import {
 import { CustomButton } from "../custom/CustomButton"
 import { RotateCw, Store } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { DataTable } from "../DataTable"
+import { PartnerCard } from "./PartnerCard"
 
 interface PartnersProps {
 	partners: PartnerType[]
@@ -91,9 +90,20 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
 	return (
 		<div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
 			<FilterAndCreatePartners table={table} form={form} partners={partners} />
-			<PartnerTable table={table} data={data} />
+			<DataTable
+				data={data}
+				table={table}
+				title="Listes des partenaires"
+				transform={(value) => <PartnerCard partner={value} key={value.id} />}
+			/>
 			<div className="lg:hidden flex flex-col items-center gap-4 ">
-				<CustomButton size="sm" label="Voir plus" className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5" variant="outline" IconRight={RotateCw} />
+				<CustomButton
+					size="sm"
+					label="Voir plus"
+					className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
+					variant="outline"
+					IconRight={RotateCw}
+				/>
 				<CustomButton label="Ajouter un partenaire" className="w-full" IconRight={Store} />
 			</div>
 		</div>

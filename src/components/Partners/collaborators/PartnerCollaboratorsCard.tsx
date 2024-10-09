@@ -1,18 +1,22 @@
 import { FC } from "react"
-import { PartnerCompanyType, PartnerType } from "@/types/partners"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Label } from "@/components/Label"
-import { Boxes, Building, CalendarClock, HandCoins, ListPlus, Mail, PhoneCall, Store, Users } from "lucide-react"
+import { Boxes, CalendarClock, Eye, HandCoins, ListPlus, Mail, PhoneCall, Store, Users } from "lucide-react"
 import { CustomButton } from "@/components/custom/CustomButton"
 import Link from "next/link"
 import { PartnerStatus } from "../PartnerStatus"
 import { PartnerCollaborators } from "@/types/collaborators"
+import { ActionsMenu, ActionType } from "@/components/custom/ActionsMenu"
+import { appRoutes } from "@/lib/routes"
+import { useRouter } from "next/navigation"
 
 interface PartnerCollaboratesCardProps {
 	partner?: PartnerCollaborators
 }
 
 export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({ partner }) => {
+	const router = useRouter()
+
 	if (!partner) return
 
 	const dataArray = [
@@ -29,6 +33,15 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({ part
 			icon: HandCoins,
 		},
 	]
+
+	const actions: ActionType[] = [
+		{
+			actions: (id) => router.push(appRoutes.paymentDetails.replace(":id", id)),
+			icon: Eye,
+			label: "Voir",
+		}
+	]
+
 	return (
 		<div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
 			<div className="flex justify-between gap-[0.375rem]">
@@ -61,11 +74,7 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({ part
 							className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
 						/>
 					</Link>
-					<CustomButton
-						label=""
-						IconLeft={ListPlus}
-						className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
-					/>
+					<ActionsMenu menuList={actions} className="[&>svg]:size-6 p-[0.625rem]" />
 				</div>
 			</div>
 			<span className="h-[1px] w-full bg-lynch-100" />

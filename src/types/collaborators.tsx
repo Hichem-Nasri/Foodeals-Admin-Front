@@ -6,6 +6,7 @@ import { EmailBadge } from "@/components/Partners/EmailBadge"
 import { PhoneBadge } from "@/components/Partners/PhoneBadge"
 import { PartnerSolution } from "@/components/Partners/PartnerSolution"
 import { z } from "zod"
+import { ActionsMenu, ActionType } from "@/components/custom/ActionsMenu"
 
 export interface PartnerCollaborators {
 	id: string
@@ -30,6 +31,15 @@ export interface PartnerCollaborators {
 export interface ScheduleDayType {
 	morning: string
 	afternoon: string
+}
+export interface ScheduleWeekType {
+	monday: ScheduleDayType
+	tuesday: ScheduleDayType
+	wednesday: ScheduleDayType
+	thursday: ScheduleDayType
+	friday: ScheduleDayType
+	saturday: ScheduleDayType
+	sunday: ScheduleDayType
 }
 
 export interface CollaboratorDataType {
@@ -66,15 +76,7 @@ export interface CollaboratorDataType {
 		phone: string
 		mail: string
 	}
-	schedule: {
-		monday: ScheduleDayType
-		tuesday: ScheduleDayType
-		wednesday: ScheduleDayType
-		thursday: ScheduleDayType
-		friday: ScheduleDayType
-		saturday: ScheduleDayType
-		sunday: ScheduleDayType
-	}
+	schedule: ScheduleWeekType
 }
 
 export const collaboratorData: CollaboratorDataType = {
@@ -164,7 +166,11 @@ export const PartnerCollaboratorsFilerSchema = z.object({
 
 const columnHelper = createColumnHelper<PartnerCollaborators>()
 
-export const columnsPartnerCollaboratorsTable = [
+interface ColumnsPartnerCollaboratorsTableProps {
+	actionsList: (id: string) => ActionType[]
+}
+
+export const columnsPartnerCollaboratorsTable = ({ actionsList }: ColumnsPartnerCollaboratorsTableProps) => [
 	columnHelper.accessor("createdAt", {
 		cell: (info) => info.getValue<Date>().toLocaleDateString(),
 		header: "Date de création",
@@ -237,6 +243,11 @@ export const columnsPartnerCollaboratorsTable = [
 			</div>
 		),
 		header: "Solution",
+		footer: (info) => info.column.id,
+	}),
+	columnHelper.accessor("id", {
+		cell: (info) => <ActionsMenu id={info.getValue()} menuList={actionsList(info.getValue()!)} />,
+		header: "Activité",
 		footer: (info) => info.column.id,
 	}),
 ]

@@ -6,7 +6,7 @@ import { PartnerType } from "@/types/partners"
 import { UseFormReturn } from "react-hook-form"
 import { ColumnVisibilityModal } from "./ColumnVisibilityModal"
 import Link from "next/link"
-import { AppRoutes } from "@/lib/routes"
+import { appRoutes } from "@/lib/routes"
 
 interface FilterAndCreatePartnersProps {
 	partners: PartnerType[]
@@ -37,7 +37,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({ part
 				/>
 			</div>
 			<div className="lg:flex hidden gap-3 p-2">
-				<Link href={AppRoutes.newPartner}>
+				<Link href={appRoutes.newPartner}>
 					<CustomButton size="sm" label="Ajouter un partenaire" IconRight={Store} />
 				</Link>
 				<CustomButton
