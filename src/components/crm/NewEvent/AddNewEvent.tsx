@@ -14,18 +14,20 @@ import { CrmObjectSchema } from '@/types/CrmScheme'
 import { CheckCheck, X } from 'lucide-react'
 import React, { FC, useContext, useState } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
-import { Form } from '@/components/ui/form'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { useMediaQuery } from 'react-responsive'
 import { z } from 'zod'
 import { CrmObjectType, EvenetType } from '@/types/CrmType'
 import { useRouter } from 'next/navigation'
-import { EventContext } from '@/context/EventContext'
 
 interface AddNewEventProps {
     form: UseFormReturn<z.infer<typeof CrmObjectSchema>>
     isMobile: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
+    event: EvenetType[]
+    setEvenement: React.Dispatch<React.SetStateAction<EvenetType[]>>
+    mutation: any
 }
 
 const AddNewEvent: FC<AddNewEventProps> = ({
@@ -33,18 +35,21 @@ const AddNewEvent: FC<AddNewEventProps> = ({
     isMobile,
     setOpen,
     convertir,
+    event,
+    setEvenement,
+    mutation,
 }) => {
-    const { evenement, setEvenement } = useContext(EventContext)
     const myhandleSubmit = async (e: CrmObjectType) => {
         console.log(e)
         try {
-            const evenet: EvenetType = {
+            const newEvent: EvenetType = {
                 object: e.object,
                 message: e.message,
                 date: new Date().toISOString(),
-                lead: 1, //Todo: Change this value to the lead id
+                lead: 231, //Todo: Change this value to the lead id
             }
-            setEvenement([...evenement, evenet])
+            mutation.mutate(newEvent)
+            setEvenement([...event, newEvent])
             setOpen(true)
             // await axios.post('http://localhost:8080/api/v1/crm/prospects/{id}/events/create', newEven)
         } catch (error) {}
@@ -83,18 +88,24 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                             </div>
                             <div className="w-full px-2 space-y-2">
                                 <Label label="Message" htmlFor="message" />
-                                <Controller
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <Textarea
-                                            value={value}
-                                            onChange={(e) =>
-                                                onChange(e.target.value)
-                                            }
-                                            name="message"
-                                            className="w-full min-h-64 text-start h-full flex justify-start items-start focus-visible:ring-0 focus:ring-0  outline-none text-lynch-400 font-normal text-base"
-                                        />
+                                <FormField
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <Textarea
+                                                {...field}
+                                                value={field.value}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        (
+                                                            e.target as HTMLTextAreaElement
+                                                        ).value
+                                                    )
+                                                }
+                                                name="message"
+                                                className="w-full min-h-64 text-start h-full flex justify-start items-start focus-visible:ring-0 focus:ring-0  outline-none text-lynch-400 font-normal text-base"
+                                            />
+                                            <FormMessage />
+                                        </FormItem>
                                     )}
                                     name="message"
                                     control={form.control}

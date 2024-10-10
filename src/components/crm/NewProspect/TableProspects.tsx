@@ -27,12 +27,11 @@ import { EventContext } from '@/context/EventContext'
 
 type TableProspectsProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    data: any
 }
 
-export const TableProspects: FC<TableProspectsProps> = ({ setOpen }) => {
-    const { evenement } = useContext(EventContext)
+export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const data = defaultDataProspectTable
     const router = useRouter()
     const table = useReactTable({
         data,

@@ -8,23 +8,41 @@ import {
     CrmInformationSchema,
     defaultCrmInformationData,
 } from '@/types/CrmScheme'
-import {
-    CrmInformationSchemaType,
-    CrmStatusType,
-    EvenetType,
-} from '@/types/CrmType'
+import { CrmInformationSchemaType } from '@/types/CrmType'
 import { PartnerStatusType } from '@/types/partners'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Archive } from 'lucide-react'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { EventContext } from '@/context/EventContext'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import axios from 'axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-export const Create = () => {
+interface CreateProps {
+    prospect: any
+}
+
+export const Create: FC<CreateProps> = ({ prospect }) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
+    const queryClient = useQueryClient()
+    const mutate = useMutation({
+        mutationFn: async (data: any) => {
+            const res = await axios
+                .post('http://localhost:8080/api/v1/crm/prospects/create', data)
+                .then((res) => res.data)
+                .catch((err) => console.log(err))
+            console.log('done: ', res)
+            return res
+        },
+        onSuccess: () => {
+            setConvertir(true)
+
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['todos'] })
+        },
+    })
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
         resolver: zodResolver(CrmInformationSchema),
         mode: 'onBlur',
@@ -44,44 +62,34 @@ export const Create = () => {
     )
     const onSaveData = (e: CrmInformationSchemaType) => {
         const createProspect = {
-            companyName: e.companyName,
-            activities: e.category,
+            companyName: 'Example Company',
+            activities: ['Activity 1', 'Activity 2'],
             responsible: {
                 name: {
-                    firstName: e.responsable.split(' ')[0],
-                    lastName: e.responsable.slice(
-                        e.responsable.indexOf(' ') + 1
-                    ),
+                    firstName: 'John',
+                    lastName: 'Doe',
                 },
-                email: e.email,
-                phone: e.phone,
+                email: 'john.doe1234@example.com',
+                phone: '1234567890',
             },
             powered_by: 1,
             manager_id: 2,
             address: {
-                city: e.city,
-                address: e.address,
-                region: e.region,
+                city: 'Casablanca',
+                address: '123 Main St',
+                region: 'maarif',
             },
         }
-        const fetch = async () => {
-            const res = await axios
-                .post(
-                    'http://localhost:8080/api/v1/crm/prospects/create',
-                    createProspect
-                )
-                .then((res) => res.data)
-                .catch((err) => console.log(err))
-            console.log('done: ', res)
-        }
-        fetch()
+        console.log(createProspect)
+        mutate.mutate(createProspect)
         setInfo(e)
-        setConvertir(true)
         console.log('Save data')
     }
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {}
     const [convertir, setConvertir] = useState(false)
-    const [status, setStatus] = useState<CrmStatusType>(CrmStatusType.DRAFT)
+    const [status, setStatus] = useState<PartnerStatusType>(
+        PartnerStatusType.DRAFT
+    )
     const { evenement, setEvenement } = useContext(EventContext)
     const [open, setOpen] = useState(false)
     useEffect(() => {
@@ -130,7 +138,7 @@ export const Create = () => {
                     setOpen={setOpen}
                     open={open}
                     convertir={convertir}
-                    Info={Info}
+                    prospect={prospect}
                 />
             )}
         </div>

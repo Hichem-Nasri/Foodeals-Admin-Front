@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { TopBar } from '../NewProspect/TopBar'
 import { PartnerStatusType } from '@/types/partners'
 import { useForm } from 'react-hook-form'
@@ -10,24 +10,38 @@ import AddNewEvent from './AddNewEvent'
 import { CrmObjectType, EvenetType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
 import { EventContext } from '@/context/EventContext'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import api from '@/api/Auth'
 
 export const EventPopUps = ({
     setOpen,
     open,
     convertir,
-    Info,
+    prospect,
 }: {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
-    Info: any
+    prospect: any
     open: boolean
 }) => {
-    const { evenement, setEvenement } = useContext(EventContext)
+    const queryClient = useQueryClient()
+    const { id } = useParams()
+    const [evenement, setEvenement] = useState<EvenetType[]>(prospect.events)
     const onSaveData = () => {
         console.log('Save data')
     }
-    const router = useRouter()
+    const { data, isSuccess } = useQuery({
+        queryKey: ['events'],
+        queryFn: async () => {
+            return api
+                .get(`http://localhost:8080/api/v1/crm/prospects/${id}/events`)
+                .then((res) => res.data)
+                .catch((error) => console.error(error))
+        },
+    })
+
     const form = useForm<z.infer<typeof CrmObjectSchema>>({
         resolver: zodResolver(CrmObjectSchema),
         mode: 'onBlur',
@@ -41,25 +55,43 @@ export const EventPopUps = ({
         },
     })
     useEffect(() => {
+        if (isSuccess) {
+            setEvenement(data.content)
+        }
         if (open) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }, [open])
 
-    const onSubmit = (e: CrmObjectType) => {
-        console.log(e)
-        try {
+    const mutation = useMutation({
+        mutationFn: async (e: CrmObjectType) => {
             const evenet: EvenetType = {
                 object: e.object,
                 message: e.message,
                 date: new Date().toISOString(),
-                lead: 1, //Todo: Change this value to the lead id
+                lead: 102, //Todo: Change this value to the lead id
             }
             setEvenement([...evenement, evenet])
+            const res = await api
+                .post(
+                    `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
+                    evenet
+                )
+                .then((res) => console.log(res))
+                .catch((error) => console.error(error))
+        },
+        onSuccess: () => {
+            console.log('Success!!!')
             setOpen((prev) => !prev)
-            // await axios.post('http://localhost:8080/api/v1/crm/prospects/{id}/events/create', newEven)
+            queryClient.invalidateQueries({ queryKey: ['event'] })
+        },
+    })
+
+    const onSubmit = (e: CrmObjectType) => {
+        try {
+            mutation.mutate(e)
+            setOpen((prev) => !prev)
         } catch (error) {
-            // handle error
             console.error(error)
         }
     }
@@ -82,6 +114,9 @@ export const EventPopUps = ({
                 isMobile={isMobile}
                 setOpen={setOpen}
                 convertir={convertir}
+                event={evenement}
+                setEvenement={setEvenement}
+                mutation={mutation}
             />
         </div>
     )

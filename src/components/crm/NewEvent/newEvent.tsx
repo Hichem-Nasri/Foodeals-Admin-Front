@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/accordion'
 import Image from 'next/image'
 import React, { FC, useEffect, useState } from 'react'
-import { EvenetType } from '@/types/CrmType'
+import { defaultDataProspectTable, EvenetType } from '@/types/CrmType'
 import { TableProspects } from '../NewProspect/TableProspects'
 import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
@@ -62,14 +62,17 @@ export const NewEvenent: FC<EvenetProps> = ({ Evenet, setOpen, convertir }) => {
                                     }}
                                     label="Ajouter un événement"
                                     IconRight={FilePlus}
-                                    className=" disabled:bg-lynch-400    disabled:hover:bg-transparent justify-center bg-primary text-white hover:bg-white hover:text-primary hover:border-2 border-primary transition-all"
+                                    className=" disabled:bg-lynch-400 disabled:hover:bg-transparent justify-center bg-primary text-white hover:bg-white hover:text-primary hover:border-2 border-primary transition-all"
                                 />
                             </div>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
             ) : (
-                <TableProspects setOpen={setOpen} />
+                <TableProspects
+                    setOpen={setOpen}
+                    data={defaultDataProspectTable}
+                />
             )}
         </div>
     )
