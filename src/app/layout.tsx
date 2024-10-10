@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+
 import { Montserrat } from 'next/font/google'
 import './globals.css'
+import QueryProvider from '@/components/Layout/QueryProvider'
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: '500' })
 
@@ -15,7 +17,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="fr">
-            <body className={`${montserrat.className} `}>{children}</body>
+            <QueryProvider>
+                <body className={`${montserrat.className} `}>{children}</body>
+            </QueryProvider>
         </html>
     )
 }
