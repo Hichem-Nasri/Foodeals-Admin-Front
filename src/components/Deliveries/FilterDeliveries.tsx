@@ -6,17 +6,20 @@ import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
 import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 import { FormFilter } from './FilterForm'
+import { DeliveryType } from '@/types/deliveries'
 
 interface FiltersDeliveriesProps {
-    data: any[]
+    data: DeliveryType[]
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<any>
+    setColumnFilters: (val: any) => void
 }
 
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
     data,
     form,
     table,
+    setColumnFilters,
 }) => {
     const router = useRouter()
     return (
@@ -25,10 +28,10 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des livraisons
                 </h2>
-                <FormFilter />
+                <FormFilter data={data} setColumnFilters={setColumnFilters} />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FormFilter />
+                <FormFilter data={data} setColumnFilters={setColumnFilters} />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"

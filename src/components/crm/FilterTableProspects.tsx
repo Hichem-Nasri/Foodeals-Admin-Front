@@ -26,6 +26,10 @@ import {
     FilterData,
     FilterClass,
 } from '@/types/CrmUtils'
+import { DateFilter } from '../utils/DateFilters'
+import { FilterSelect } from '../utils/FilterSelect'
+import { FilterMultiSelect } from '../utils/FilterMultiSelect'
+import { FilterInput } from '../utils/FilterInput'
 
 interface FilterTableProspectsProps {
     table: import('@tanstack/table-core').Table<CrmType>
@@ -57,7 +61,6 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                     value: value,
                 }
             })
-        console.log('table', filterArray)
         setColumnFilters(filterArray)
     }
     return (
@@ -78,82 +81,112 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                         }
                     />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <CountryFilter
-                            country={filterData.country}
-                            setCountry={(country) =>
-                                setFilterData({ ...filterData, country })
+                        <FilterMultiSelect
+                            item={filterData.country}
+                            setItem={(item) =>
+                                setFilterData({ ...filterData, country: item })
                             }
                             options={options.dataOption.country}
+                            label="Pays"
                         />
-                        <RegionFilter
-                            region={filterData.region}
-                            setRegion={(region) =>
-                                setFilterData({ ...filterData, region })
+                        <FilterMultiSelect
+                            item={filterData.region}
+                            setItem={(item) =>
+                                setFilterData({ ...filterData, region: item })
                             }
                             options={options.dataOption.region}
+                            label="Region"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <CompanyFilter
-                            companyName={filterData.companyName}
-                            setCompanyName={(companyName) =>
-                                setFilterData({ ...filterData, companyName })
+                        <FilterMultiSelect
+                            item={filterData.companyName}
+                            setItem={(item) =>
+                                setFilterData({
+                                    ...filterData,
+                                    companyName: item,
+                                })
                             }
                             options={options.dataOption.companyName}
+                            label="Raison sociale"
                         />
-                        <CategoryFilter
-                            categories={filterData.category}
-                            setCategories={(category) =>
-                                setFilterData({ ...filterData, category })
+                        <FilterMultiSelect
+                            item={filterData.category}
+                            setItem={(item) =>
+                                setFilterData({ ...filterData, category: item })
                             }
                             options={options.dataOption.category}
+                            label="Categorie"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <CreatorFilter
-                            creatorInfo={filterData.creatorInfo}
-                            setCreatorInfo={(creatorInfo) =>
+                        <FilterSelect
+                            item={filterData.creatorInfo}
+                            setItem={(creatorInfo) =>
                                 setFilterData({ ...filterData, creatorInfo })
                             }
                             options={options.dataOption.creatorInfo}
+                            label="Alimente par"
                         />
-                        <ManagerFilter
-                            managerInfo={filterData.managerInfo}
-                            setManagerInfo={(managerInfo) =>
+                        <FilterSelect
+                            item={filterData.managerInfo}
+                            setItem={(managerInfo) =>
                                 setFilterData({ ...filterData, managerInfo })
                             }
                             options={options.dataOption.managerInfo}
+                            label="Effectuée à"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <EmailFilter
-                            email={filterData.email}
-                            setEmail={(email) =>
+                        <FilterInput
+                            input={filterData.email}
+                            setInput={(email) =>
                                 setFilterData({ ...filterData, email })
                             }
+                            label="Email"
                         />
-                        <PhoneFilter
-                            phone={filterData.phone}
-                            setPhone={(phone) =>
+                        <FilterInput
+                            input={filterData.phone}
+                            setInput={(phone) =>
                                 setFilterData({ ...filterData, phone })
                             }
+                            label="Téléphone"
+                            placeholder="Saisir le téléphone"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <CityFilter
-                            city={filterData.city}
-                            setCity={(city) =>
+                        <FilterMultiSelect
+                            item={filterData.city}
+                            setItem={(city) =>
                                 setFilterData({ ...filterData, city })
                             }
                             options={options.dataOption.city}
+                            label="Ville"
+                            placeholder="Sélectionner la ville"
+                            normalTransform={true}
                         />
-                        <StatusFilter
-                            status={filterData.status}
-                            setStatus={(status) =>
+                        <FilterMultiSelect
+                            item={filterData.status}
+                            setItem={(status) =>
                                 setFilterData({ ...filterData, status })
                             }
                             options={options.dataOption.status}
-                            isLargeScreen={isLargeScreen}
+                            label="Status"
+                            length={isLargeScreen ? 2 : 3}
+                            transform={(value: MultiSelectOptionsType[]) => {
+                                return value.map((option, index) => (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            'text-xs w-full p-1 max-w-24 flex justify-around items-center rounded-full whitespace-nowrap text-ellipsis',
+                                            option.className
+                                        )}
+                                    >
+                                        {option.icon && <option.icon />}
+                                        <span>{option.label}</span>
+                                    </div>
+                                ))
+                            }}
                         />
                     </div>
                 </div>
@@ -184,81 +217,9 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
 }
 
 ///** DateFilter */
-interface DateFilterProps {
-    date: string[]
-    setDate: (date: string[]) => void
-}
-
-const DateFilter: FC<DateFilterProps> = ({ date, setDate }) => {
-    const [startDate, setStartDate] = useState(date[0] || '')
-    const [endDate, setEndDate] = useState(date[1] || '')
-
-    const handleDateChange = (date: string, type: 'start' | 'end') => {
-        if (type === 'start') {
-            setStartDate(date)
-            setDate([date, endDate])
-        } else {
-            setEndDate(date)
-            setDate([startDate, date])
-        }
-    }
-
-    return (
-        <div className="flex flex-col gap-3 w-full">
-            <Label label="Date de création (Début et fin)" htmlFor="start" />
-            <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <DatePicker
-                    id="start"
-                    onChange={(newDate) =>
-                        handleDateChange(newDate.toLocaleDateString(), 'start')
-                    }
-                />
-                <DatePicker
-                    onChange={(newDate) =>
-                        handleDateChange(newDate.toLocaleDateString(), 'end')
-                    }
-                />
-            </div>
-        </div>
-    )
-}
-
 //** */
 
 //** */
-
-interface CountryFilterProps {
-    country: string[]
-    setCountry: (country: string[]) => void
-    options: MultiSelectOptionsType[]
-}
-
-const CountryFilter: FC<CountryFilterProps> = ({
-    country,
-    setCountry,
-    options,
-}) => {
-    const [selectedCountry, setSelectedCountry] = useState(country)
-
-    const handleCountryChange = (country: string[]) => {
-        setSelectedCountry(country)
-        setCountry(country)
-    }
-
-    return (
-        <div className="flex flex-col gap-3 w-full">
-            <Label label="Pays" htmlFor="pays" />
-            <MultiSelect
-                length={2}
-                placeholder="Sélectionner le pays"
-                normalTransform={true}
-                onSelect={handleCountryChange}
-                options={options}
-                selectedValues={selectedCountry}
-            />
-        </div>
-    )
-}
 
 //** */
 
@@ -324,8 +285,8 @@ const CompanyFilter: FC<CompanyFilterProps> = ({
             <Label label="Raison sociale" htmlFor="raisonSociale" />
             <MultiSelect
                 length={2}
-                placeholder="Sélectionner la raison sociale"
                 normalTransform={true}
+                placeholder="Sélectionner la raison sociale"
                 onSelect={handleCompanyChange}
                 options={options}
                 selectedValues={selectedCompanies}
@@ -480,28 +441,6 @@ const EmailFilter: FC<EmailFilterProps> = ({ email, setEmail }) => {
 
 //** PhoneFilter */
 
-interface PhoneFilterProps {
-    phone: string
-    setPhone: (phone: string) => void
-}
-
-const PhoneFilter: FC<PhoneFilterProps> = ({ phone, setPhone }) => {
-    return (
-        <div className="flex flex-col gap-3 w-full">
-            <Label label="Téléphone" htmlFor="Phone" />
-            <Input
-                name="Phone"
-                onChange={(e: string | number) => {
-                    setPhone(e + '')
-                }}
-                placeholder="Téléphone"
-                value={phone}
-                IconLeft={PhoneCall}
-            />
-        </div>
-    )
-}
-
 //** StatusFilter */
 
 interface StatusFilterProps {
@@ -528,26 +467,11 @@ const StatusFilter: FC<StatusFilterProps> = ({
         <div className="flex flex-col gap-3 w-full justify-between">
             <Label label="status" htmlFor="status" />
             <MultiSelect
-                transform={(value: MultiSelectOptionsType[]) => {
-                    return value.map((option, index) => (
-                        <div
-                            key={index}
-                            className={cn(
-                                'text-xs w-full p-1 max-w-24 flex justify-around items-center rounded-full whitespace-nowrap text-ellipsis',
-                                option.className
-                            )}
-                        >
-                            {option.icon && <option.icon />}
-                            <span>{option.label}</span>
-                        </div>
-                    ))
-                }}
                 options={options}
                 placeholder="Sélectionner le status"
                 onSelect={handleStatusChange}
                 selectedValues={selectedStatus}
                 type="status"
-                length={isLargeScreen ? 2 : 3}
             />
         </div>
     )

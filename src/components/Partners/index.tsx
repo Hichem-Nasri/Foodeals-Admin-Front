@@ -88,6 +88,9 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
     const table = useReactTable({
         data,
         columns: columnsPartnersTable(router),
+        state: {
+            columnFilters,
+        },
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -101,6 +104,7 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
                 table={table}
                 form={form}
                 partners={partners}
+                setColumnFilters={setColumnFilters}
             />
             <DataTable
                 data={data}

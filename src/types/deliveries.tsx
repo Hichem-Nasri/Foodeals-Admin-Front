@@ -40,6 +40,19 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         cell: (info) => info.getValue().toLocaleDateString(),
         header: 'Date de création',
         footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const parse = (date: string) => {
+                const dateArray = date.split('/')
+                return `${dateArray[1]}/${dateArray[0]}/${dateArray[2]}`
+            }
+            const startDate = new Date(parse(filterValue[0]))
+            const endDate = new Date(parse(filterValue[1]))
+            const date = row.original.createdAt
+            if (date >= startDate && date <= endDate) {
+                return true
+            }
+            return false
+        },
     }),
     columnDeliveriesTableHelper.accessor('partner', {
         cell: (info) => (
@@ -55,6 +68,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         ),
         header: 'Partenaire',
         footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const name = row.original.partner.name.toLowerCase()
+            return name.includes(filterValue.toLowerCase())
+        },
     }),
     columnDeliveriesTableHelper.accessor('responsible', {
         cell: (info) => (
@@ -70,6 +87,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         ),
         header: 'Responsable',
         footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const name = row.original.responsible.name.toLowerCase()
+            return name.includes(filterValue.toLowerCase())
+        },
     }),
     columnDeliveriesTableHelper.accessor('numberOfDeliveries', {
         cell: (info) => info.getValue(),
@@ -106,6 +127,13 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         ),
         header: 'Solutions',
         footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            const solutions = rows.original.solution.sort() //example: ['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']
+            const mySolution = filterValue.sort() // example:  ['MARKET_PRO', 'DLC_PRO']
+            return mySolution.every((solution: PartnerSolutionType) =>
+                solutions.includes(solution)
+            )
+        },
     }),
     columnDeliveriesTableHelper.accessor('id', {
         cell: (info) => (
@@ -153,7 +181,7 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
 export const deliveriesData: DeliveryType[] = [
     {
         id: '1',
-        city: 'Paris',
+        city: 'Casablanca',
         commands: 5,
         createdAt: new Date(),
         email: 'email@test.com',
@@ -171,9 +199,9 @@ export const deliveriesData: DeliveryType[] = [
     },
     {
         id: '2',
-        city: 'Paris',
+        city: 'Agadir',
         commands: 5,
-        createdAt: new Date(),
+        createdAt: new Date('03-03-2022'),
         email: 'email@test.com',
         numberOfDeliveries: 10,
         partner: {

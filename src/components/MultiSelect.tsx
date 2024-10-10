@@ -130,7 +130,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                             <DialogTitle>
                                                 Activité du partenaire
                                             </DialogTitle>
-                                            <DialogDescription className="flex flex-wrap gap-3">
+                                            <DialogDescription className="flex flex-wrap gap-3 overflow-auto">
                                                 {transform(selectedOptions)}
                                             </DialogDescription>
                                         </DialogHeader>
@@ -167,7 +167,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                         <CommandItem
                                             key={option.key}
                                             onSelect={(name: string) => {
-                                                console.log('name :', name)
                                                 if (isSelected) {
                                                     const newData =
                                                         selectedValues.filter(

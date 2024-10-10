@@ -2,8 +2,7 @@
 import { CrmCardDetails } from '@/components/crm/CrmCard'
 import { FilterCrm } from '@/components/crm/FilterCrm'
 import { DataTable } from '@/components/DataTable'
-import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { columnsCrmTable, CrmType, defaultDataCrmTable } from '@/types/CrmType'
+import { columnsCrmTable, defaultDataCrmTable } from '@/types/CrmType'
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -12,14 +11,8 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import {
-    RocketIcon,
-    UserRoundCheck,
-    UserRoundX,
-    UsersRound,
-} from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import Statistics from './statistics'
 

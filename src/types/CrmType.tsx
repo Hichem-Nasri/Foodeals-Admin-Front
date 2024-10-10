@@ -23,6 +23,7 @@ import React from 'react'
 import { DetailsEvenetProspect } from '@/components/crm/NewEvent/DetailsEvenet'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { IconStatus, StyleStatus } from './utils'
+import axios from 'axios'
 
 export interface EvenetType {
     date: string
@@ -65,8 +66,8 @@ export interface CrmInformationSchemaType {
     companyName: string
     category: string[]
     responsable: string
-    managerInfo: string
-    creatorInfo: string
+    managerInfo: string // id
+    creatorInfo: string // id
     phone: string
     email: string
     country: string
@@ -81,7 +82,7 @@ export interface CrmObjectType {
 }
 
 export interface CrmType {
-    id?: string
+    id: string
     date: Date
     companyName: string
     category: string
@@ -111,7 +112,7 @@ export interface CrmType {
         avatar: string
     }
     status: CrmStatusType
-    evenet: string
+    eventObject: string
 }
 
 export interface ProspectType {
@@ -238,9 +239,6 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
             const startDate = new Date(parse(filterValue[0]))
             const endDate = new Date(parse(filterValue[1]))
             const date = row.original.date
-            console.log('startDate :', startDate)
-            console.log('endDate :', endDate)
-            console.log('date :', date)
             if (date >= startDate && date <= endDate) {
                 return true
             }
@@ -415,7 +413,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         },
         header: 'Effectuée à',
     }),
-    columnHelper.accessor('evenet', {
+    columnHelper.accessor('eventObject', {
         cell: (info) => (
             <span className="w-full max-w-44 text-ellipsis whitespace-nowrap	">
                 {info.getValue()}
@@ -441,20 +439,18 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         header: 'Status',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
-            console.log(row.original.status)
-            console.log(filterValue)
             return filterValue.includes(StatusCrm[row.original.status])
         },
     }),
     columnHelper.accessor('id', {
         cell: (info) => (
-            <ActionsMenu //Todo: change the redirection
+            <ActionsMenu
                 id={info.getValue()}
                 menuList={[
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.newPartner.replace(
+                                AppRoutes.newProspect.replace(
                                     ':id',
                                     info.getValue()!
                                 )
@@ -465,7 +461,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.newPartner.replace(
+                                AppRoutes.newProspect.replace(
                                     ':id',
                                     info.getValue()!
                                 )
@@ -479,7 +475,13 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                         label: 'Convertir',
                     },
                     {
-                        actions: () => console.log('archive'),
+                        actions: () => {
+                            const deleteProspect = async () => {
+                                const response = await axios.delete(
+                                    `http://localhost:8080/api/v1/crm/prospects/${info.getValue()}`
+                                )
+                            }
+                        },
                         icon: Archive,
                         label: 'Archive',
                     },
@@ -599,7 +601,7 @@ export const defaultDataCrmTable: CrmType[] = [
         address: 'Avenue Hassan II',
         country: 'Morocco',
         region: 'Maarif',
-        evenet: 'Réunion prévue pour suivi la semaine prochaine.',
+        eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
         status: CrmStatusType.VALID,
         solutions: [
             PartnerSolutionType.MARKET_PRO,
@@ -631,7 +633,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 'b.alix@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Réunion prévue pour suivi la semaine prochaine.',
+        eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
         status: CrmStatusType.PENDING,
         address: 'Avenue Hassan II',
         city: 'Casablanca',
@@ -664,7 +666,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 'j.doe@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Meeting scheduled for next week.',
+        eventObject: 'Meeting scheduled for next week.',
         status: CrmStatusType.CANCELED,
         address: 'Rue de Paris',
         city: 'Paris',
@@ -701,7 +703,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 'e.brown@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Meeting scheduled for next week.',
+        eventObject: 'Meeting scheduled for next week.',
         status: CrmStatusType.DRAFT,
         address: 'Main Street',
         city: 'New York',
@@ -734,7 +736,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 'd.johnson@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Meeting scheduled for next week.',
+        eventObject: 'Meeting scheduled for next week.',
         status: CrmStatusType.PENDING,
         address: '5th Avenue',
         city: 'New York',
@@ -770,7 +772,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 's.brown@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Meeting scheduled for next week.',
+        eventObject: 'Meeting scheduled for next week.',
         status: CrmStatusType.VALID,
         address: 'Oxford Street',
         city: 'London',
@@ -803,7 +805,7 @@ export const defaultDataCrmTable: CrmType[] = [
         },
         email: 'e.wilson@example.com',
         phone: '+212 6xxxxxxxx',
-        evenet: 'Meeting scheduled for next week.',
+        eventObject: 'Meeting scheduled for next week.',
         status: CrmStatusType.PENDING,
         address: 'Baker Street',
         city: 'London',

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { CustomButton } from '../custom/CustomButton'
 import { Archive, ArrowRight, Store } from 'lucide-react'
 import { FilterTablePartner } from './FilterTablePartner'
@@ -12,12 +12,16 @@ interface FilterAndCreatePartnersProps {
     partners: PartnerType[]
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<PartnerType>
+    setColumnFilters: React.Dispatch<
+        React.SetStateAction<import('@tanstack/react-table').ColumnFiltersState>
+    >
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
     partners,
     form,
     table,
+    setColumnFilters,
 }) => {
     const handleArchive = () => {
         // handle archive
@@ -28,10 +32,18 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des partenaires
                 </h2>
-                <FilterTablePartner partners={partners} form={form} />
+                <FilterTablePartner
+                    partners={partners}
+                    form={form}
+                    setColumnFilters={setColumnFilters}
+                />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FilterTablePartner partners={partners} form={form} />
+                <FilterTablePartner
+                    partners={partners}
+                    form={form}
+                    setColumnFilters={setColumnFilters}
+                />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"

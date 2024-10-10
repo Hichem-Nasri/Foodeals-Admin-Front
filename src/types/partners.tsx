@@ -159,7 +159,7 @@ export const partnersData: PartnerType[] = [
     },
     {
         id: '6',
-        createdAt: new Date('2022-05-15'),
+        createdAt: new Date('2024-05-15'),
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=Paul',
         companyName: 'Paul',
         collaborators: 56,
@@ -179,7 +179,7 @@ export const partnersData: PartnerType[] = [
     },
     {
         id: '7',
-        createdAt: new Date('2022-05-15'),
+        createdAt: new Date('2023-05-15'),
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=LabelVie',
         companyName: 'Label vie',
         collaborators: 23,
@@ -219,6 +219,12 @@ export const partnersData: PartnerType[] = [
     },
 ]
 
+const strToPartnerType = {
+    ['DONATE']: 'DONATE_PRO',
+    ['DLC_PRO']: 'DLC_PRO',
+    ['MARKET_PRO']: 'MARKET_PRO',
+}
+
 const columnHelper = createColumnHelper<PartnerType>()
 
 export const columnsPartnersTable = (router: AppRouterInstance) => [
@@ -226,6 +232,19 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         cell: (info) => info.getValue<Date>().toLocaleDateString(),
         header: 'Date de création',
         footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const parse = (date: string) => {
+                const dateArray = date.split('/')
+                return `${dateArray[1]}/${dateArray[0]}/${dateArray[2]}`
+            }
+            const startDate = new Date(parse(filterValue[0]))
+            const endDate = new Date(parse(filterValue[1]))
+            const date = row.original.createdAt
+            if (date >= startDate && date <= endDate) {
+                return true
+            }
+            return false
+        },
     }),
     columnHelper.accessor('logo', {
         cell: (info) => (
@@ -243,6 +262,9 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         cell: (info) => info.getValue(),
         header: 'Raison sociale',
         footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            return filterValue.includes(rows.original.companyName)
+        },
     }),
     columnHelper.accessor('offer', {
         cell: (info) => info.getValue(),
@@ -273,6 +295,9 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         ),
         header: 'Responsable',
         footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            return filterValue.includes(rows.original.manager.name)
+        },
     }),
     columnHelper.accessor('status', {
         cell: (info) => <PartnerStatus status={info.getValue()} />,
@@ -304,6 +329,13 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         ),
         header: 'Solution',
         footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            const solutions = rows.original.solution.sort() //example: ['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']
+            const mySolution = filterValue.sort() // example:  ['MARKET_PRO', 'DLC_PRO']
+            return mySolution.every((solution: PartnerSolutionType) =>
+                solutions.includes(solution)
+            )
+        },
     }),
     columnHelper.accessor('companyType', {
         cell: (info) =>

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import {
     Table,
     TableBody,
@@ -40,7 +40,9 @@ export const DataTable: FC<DataTableProps<any>> = ({
     return (
         <>
             <div className="lg:hidden grid gap-[0.625rem]">
-                {data.map((value) => transform(value))}
+                {data.map((value, index) => (
+                    <Fragment key={title + index}>{transform(value)}</Fragment>
+                ))}
             </div>
             <div className="lg:grid hidden gap-[0.625rem]">
                 {partnerData && (
@@ -80,7 +82,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
                         {title}
                     </h1>
                 )}
-                <div className="w-full overflow-auto">
+                <div className="w-full overflow-auto rounded-[14px]">
                     <Table className="rounded-[14px] bg-white py-2">
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (

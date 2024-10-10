@@ -92,6 +92,14 @@ export const DataToOptions = (
         ]
     } else if (key == 'status') {
         return [...data.map((d: any) => OptionStatus[d])]
+    } else if (key == 'solutions') {
+        return [
+            ...data.map((d: any) => ({
+                key: d.map((s: any) => s),
+                label: d.map((s: any) => s),
+                avatar: '',
+            })),
+        ]
     }
     return [
         ...data.map((d: any) => ({ key: d + '', label: d + '', avatar: '' })),
