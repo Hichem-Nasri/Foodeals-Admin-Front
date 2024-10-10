@@ -21,7 +21,7 @@ export const UserMenu: FC<UserMenuProps> = ({}) => {
                 >
                     <div className="flex gap-3 items-center">
                         <Image
-                            src="https://api.dicebear.com/7.x/bottts/png"
+                            src="https://api.dicebear.com/7.x/lorelei/png?seed=alex"
                             alt="avatar"
                             width={42}
                             height={42}

@@ -70,16 +70,12 @@ export const Navigation: FC<NavigationProps> = () => {
                                 </AccordionTrigger>
                                 <AccordionContent>
                                     {page.ListAccordion?.map((item, index) => (
-                                        <Link
-                                            key={index}
-                                            href={item.href}
-                                            passHref
-                                        >
+                                        <Fragment key={index}>
                                             <CustomButton
                                                 className={cn(
                                                     'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
                                                     (pathname.includes(
-                                                        item.href
+                                                        page.href
                                                     ) &&
                                                         item.href !=
                                                             AppRoutes.home) ||
@@ -93,7 +89,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                                 label={item.label}
                                                 IconLeft={item.icon}
                                             />
-                                        </Link>
+                                        </Fragment>
                                     ))}
                                 </AccordionContent>
                             </AccordionItem>

@@ -17,7 +17,7 @@ import { Select } from '../custom/Select'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMediaQuery } from 'react-responsive'
 import { cn } from '@/lib/utils'
-import { CrmStatusType, CrmType } from '@/types/CrmType'
+import { PartnerStatusType, CrmType } from '@/types/CrmType'
 import { OptionStatus } from '@/types/utils'
 import { ColumnFiltersState, Row } from '@tanstack/react-table'
 import {

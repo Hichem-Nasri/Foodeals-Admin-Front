@@ -3,6 +3,7 @@ import { LucideProps } from 'lucide-react'
 import { ForwardRefExoticComponent, RefAttributes, FC } from 'react'
 import { Label } from '../ui/label'
 import { Input as ShadCnInput } from '@/components/ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 interface InputProps {
     onChange: (value: string | number) => void

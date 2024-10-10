@@ -10,6 +10,7 @@ import {
     CheckCheck,
     CirclePercent,
     Coins,
+    Eye,
     FileMinus,
     Frame,
     HandCoins,
@@ -24,7 +25,7 @@ import {
     X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { CrmStatusType, CrmType } from '@/types/CrmType'
+import { PartnerStatusType, CrmType } from '@/types/CrmType'
 import { Icon, SelectIconProps } from '@radix-ui/react-select'
 import Link from 'next/link'
 import { CustomButton } from '../custom/CustomButton'

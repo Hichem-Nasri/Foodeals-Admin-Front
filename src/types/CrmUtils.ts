@@ -1,8 +1,57 @@
 import { Row } from '@tanstack/react-table'
-import { CrmStatusType, CrmType } from './CrmType'
+import { PartnerStatusType, CrmType } from './CrmType'
 import { PartnerSolutionType } from './partners'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { OptionStatus } from './utils'
+import { Phone } from 'lucide-react'
+
+export const extractData = (element: any) => {
+    return {
+        id: element.id,
+        date: new Date(element.createdAt),
+        companyName: element.companyName,
+        category: element.category,
+        responsable: {
+            firstName: element.contact.name.firstName,
+            lastName: element.contact.name.lastName,
+        },
+        city: element.address.city,
+        phone: element.contact.phone,
+        email: element.contact.email,
+        address: element.address.address,
+        region: element.address.region,
+        creatorInfo: {
+            name: {
+                firstName: element.creatorInfo.name.firstName,
+                lastName: element.creatorInfo.name.lastName,
+            },
+            avatar: element.creatorInfo.avatar,
+        },
+        managerInfo: {
+            name: {
+                firstName: element.managerInfo.name.firstName,
+                lastName: element.managerInfo.name.lastName,
+            },
+            avatar: element.managerInfo.avatar,
+        },
+        country: 'Morocco', //element.address.country,
+        status: PartnerStatusType.PENDING,
+        solutions: element.solutions,
+        events: element.events,
+        eventObject: element.eventObject,
+    }
+}
+
+export const DataToCrmObj = (data: any) => {
+    if (!data) return
+
+    const dataCrm: CrmType[] = []
+    data.map((element: any) => {
+        const obj: CrmType = extractData(element)
+        dataCrm.push(obj)
+    })
+    return dataCrm
+}
 
 export const setupFilterTable = (row: Row<CrmType>[]) => {
     const filterTable: {
@@ -34,7 +83,7 @@ export const setupFilterTable = (row: Row<CrmType>[]) => {
             }
             avatar: string
         }[]
-        status: CrmStatusType[]
+        status: PartnerStatusType[]
     } = {
         date: [],
         phone: '',

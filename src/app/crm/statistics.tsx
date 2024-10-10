@@ -1,5 +1,8 @@
 'use client'
+import api from '@/api/Auth'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
+import { headers } from '@/lib/utils'
+import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import {
     RocketIcon,
@@ -16,6 +19,8 @@ interface StatisticsProps {
     totalOfLeads: number
 }
 
+const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects/statistics'
+
 const Statistics = () => {
     const [data, setData] = useState<StatisticsProps>({
         activeLeads: 0,
@@ -23,17 +28,27 @@ const Statistics = () => {
         total: 0,
         totalOfLeads: 0,
     })
+    const {
+        data: query,
+        isSuccess,
+        error,
+    } = useQuery({
+        queryKey: ['statistics'],
+        queryFn: async () => {
+            try {
+                const response = await api.get(API_ENDPOINT)
+                return response.data
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+    })
     useEffect(() => {
-        const fetch = async () => {
-            // const response = await axios
-            //     .get('http:/localhost:8080/api/v1/crm/prospects/statistics')
-            //     .then((res) => res.data)
-            //     .catch((err) => console.error(err))
-            // const data = await response.json()
-            // setData(data)
+        if (isSuccess && query) {
+            setData(query)
         }
-        fetch()
-    }, [data])
+    }, [isSuccess, query])
     return (
         <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
             <CardTotalValue

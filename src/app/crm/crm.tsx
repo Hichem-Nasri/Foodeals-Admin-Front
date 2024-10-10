@@ -1,8 +1,9 @@
+// Import necessary modules and components
 'use client'
 import { CrmCardDetails } from '@/components/crm/CrmCard'
 import { FilterCrm } from '@/components/crm/FilterCrm'
 import { DataTable } from '@/components/DataTable'
-import { columnsCrmTable, defaultDataCrmTable } from '@/types/CrmType'
+import { columnsCrmTable, CrmType, defaultDataCrmTable } from '@/types/CrmType'
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -13,26 +14,45 @@ import {
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import axios from 'axios'
 import Statistics from './statistics'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { DataToCrmObj } from '@/types/CrmUtils'
+import { setDate } from 'date-fns'
+import { accessToken } from '@/lib/utils'
+import api from '@/api/Auth'
+
+// Define the API endpoint URL as a constant
+const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects'
 
 export default function Crm() {
-    /* This Part is for fetching data of table and change it to CrmType */
-    // const [data, setData] = useState<CrmType[]>([])
-    // useEffect(() => {
-    //     axios
-    //         .get('https://localhost:8080/api/v1/crm/prospects')
-    //         .then((response) => {
-    //              const parsedData = JSON.parse(response.data);
-    //             setData(AllDataToCrm(parseData.content))
-    //         })
-    //         .catch((error) => {
-    //             console.error(error)
-    //         })
-    // }, [])
-    const data = defaultDataCrmTable
+    const [data, setData] = useState<CrmType[]>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+    const {
+        data: query,
+        isSuccess,
+        error, // TODO: add skeleton loader
+    } = useQuery({
+        queryKey: ['crm'],
+        queryFn: async () => {
+            try {
+                const response = await api.get(API_ENDPOINT)
+                return response.data
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+    })
+
+    React.useEffect(() => {
+        if (isSuccess && query) {
+            setData(DataToCrmObj(query.content)!)
+        }
+    }, [isSuccess, query])
+
     const router = useRouter()
+
     const table = useReactTable({
         data,
         columns: columnsCrmTable(router),
@@ -45,6 +65,7 @@ export default function Crm() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
     return (
         <div className="flex flex-col gap-3 w-full p-1">
             <Statistics />
@@ -59,51 +80,7 @@ export default function Crm() {
                 title="Listes des prospects"
                 transform={(data: any) => <CrmCardDetails crm={data} />}
             />
+            {error && <div>Error: {error.message}</div>}
         </div>
     )
 }
-
-const fetchData = async () => {
-    const response = await axios.get(
-        'http://localhost:8080/api/v1/crm/prospects'
-    )
-    return response.data
-}
-
-// {
-//     "id": "b2eb74fe-6af7-4c83-88bf-b1a8391bc0d8",
-//     "createdAt": "2024-10-03",
-//     "companyName": "Example Company",
-//     "category": "Activity 2",
-//     "contact": {
-//         "name": {
-//             "firstName": "John",
-//             "lastName": "Doe"
-//         },
-//         "email": "john.doe1234@example.com",
-//         "phone": "1234567890"
-//     },
-//     "address": {
-//         "city": "Casablanca",
-//         "address": "123 Main St",
-//         "region": "maarif"
-//     },
-//     "creatorInfo": {
-//         "name": {
-//             "firstName": "test ",
-//             "lastName": "test "
-//         },
-//         "avatarPath": null
-//     },
-//     "managerInfo": {
-//         "name": {
-//             "firstName": "test 1 ",
-//             "lastName": "test 1"
-//         },
-//         "avatarPath": null
-//     },
-//     "eventObject": "",
-//     "status": "IN_PROGRESS",
-//     "events": [],
-//     "solutions": []
-// }

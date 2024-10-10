@@ -23,8 +23,10 @@ export const CrmInformationSchema = z.object({
 })
 
 export const CrmObjectSchema = z.object({
-    object: z.string().min(3),
-    message: z.string().min(3),
+    object: z.string().min(3, "L'objet doit contenir au moins 3 caractères"),
+    message: z
+        .string()
+        .min(3, 'Le message doit contenir au moins 3 caractères'),
 })
 
 export const defaultCrmInformationData = {

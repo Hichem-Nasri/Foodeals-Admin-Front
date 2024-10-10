@@ -32,7 +32,22 @@ export interface EvenetType {
     lead: number
 }
 
-export enum CrmStatusType {
+export interface EvenetData {
+    id: string
+    createdAt: string
+    lead: {
+        name: {
+            firstName: string
+            lastName: string
+        }
+        avatarPath: string
+    }
+    dateAndTime: string
+    object: string
+    message: string
+}
+
+export enum PartnerStatusType {
     VALID = 'VALIDER',
     PENDING = 'EN COURS',
     DRAFT = 'BROUILLON',
@@ -111,8 +126,9 @@ export interface CrmType {
         }
         avatar: string
     }
-    status: CrmStatusType
+    status: PartnerStatusType
     eventObject: string
+    // events?: EvenetType[]
 }
 
 export interface ProspectType {
@@ -450,7 +466,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.newProspect.replace(
+                                AppRoutes.prospects.replace(
                                     ':id',
                                     info.getValue()!
                                 )
@@ -461,7 +477,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.newProspect.replace(
+                                AppRoutes.prospects.replace(
                                     ':id',
                                     info.getValue()!
                                 )
@@ -602,7 +618,7 @@ export const defaultDataCrmTable: CrmType[] = [
         country: 'Morocco',
         region: 'Maarif',
         eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
-        status: CrmStatusType.VALID,
+        status: PartnerStatusType.VALID,
         solutions: [
             PartnerSolutionType.MARKET_PRO,
             PartnerSolutionType.DLC_PRO,
@@ -634,7 +650,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 'b.alix@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
-        status: CrmStatusType.PENDING,
+        status: PartnerStatusType.PENDING,
         address: 'Avenue Hassan II',
         city: 'Casablanca',
         country: 'Morocco',
@@ -667,7 +683,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 'j.doe@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Meeting scheduled for next week.',
-        status: CrmStatusType.CANCELED,
+        status: PartnerStatusType.CANCELED,
         address: 'Rue de Paris',
         city: 'Paris',
         country: 'France',
@@ -704,7 +720,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 'e.brown@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Meeting scheduled for next week.',
-        status: CrmStatusType.DRAFT,
+        status: PartnerStatusType.DRAFT,
         address: 'Main Street',
         city: 'New York',
         country: 'USA',
@@ -737,7 +753,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 'd.johnson@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Meeting scheduled for next week.',
-        status: CrmStatusType.PENDING,
+        status: PartnerStatusType.PENDING,
         address: '5th Avenue',
         city: 'New York',
         country: 'USA',
@@ -773,7 +789,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 's.brown@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Meeting scheduled for next week.',
-        status: CrmStatusType.VALID,
+        status: PartnerStatusType.VALID,
         address: 'Oxford Street',
         city: 'London',
         country: 'UK',
@@ -806,7 +822,7 @@ export const defaultDataCrmTable: CrmType[] = [
         email: 'e.wilson@example.com',
         phone: '+212 6xxxxxxxx',
         eventObject: 'Meeting scheduled for next week.',
-        status: CrmStatusType.PENDING,
+        status: PartnerStatusType.PENDING,
         address: 'Baker Street',
         city: 'London',
         country: 'UK',

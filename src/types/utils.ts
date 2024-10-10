@@ -1,44 +1,44 @@
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
-import { CrmStatusType } from './CrmType'
+import { PartnerStatusType } from './CrmType'
 import { SelectIconProps } from '@radix-ui/react-select'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 
-export const StyleStatus = {
-    [`${CrmStatusType.VALID}`]: 'bg-mountain-100 text-mountain-500',
-    [`${CrmStatusType.PENDING}`]: 'bg-amethyst-100 text-amethyst-500',
-    [`${CrmStatusType.DRAFT}`]: 'bg-lynch-100 text-lynch-500',
-    [`${CrmStatusType.CANCELED}`]: 'bg-red-100 text-coral-500',
+export const StyleStatus: Record<string, string> = {
+    [`VALIDER`]: 'bg-mountain-100 text-mountain-500',
+    [`EN COURS`]: 'bg-amethyst-100 text-amethyst-500',
+    [`BROUILLON`]: 'bg-lynch-100 text-lynch-500',
+    [`ANNULER`]: 'bg-red-100 text-coral-500',
 }
 
 export const IconStatus: Record<string, React.FC<SelectIconProps>> = {
-    [`${CrmStatusType.VALID}`]: CheckCheck as React.FC<SelectIconProps>,
-    [`${CrmStatusType.PENDING}`]: LoaderCircle as React.FC<SelectIconProps>,
-    [`${CrmStatusType.DRAFT}`]: FileMinus as React.FC<SelectIconProps>,
-    [`${CrmStatusType.CANCELED}`]: X as React.FC<SelectIconProps>,
+    [`VALIDER`]: CheckCheck as React.FC<SelectIconProps>,
+    [`EN COURS`]: LoaderCircle as React.FC<SelectIconProps>,
+    [`BROUILLON`]: FileMinus as React.FC<SelectIconProps>,
+    [`ANNULER`]: X as React.FC<SelectIconProps>,
 }
 
 export const OptionStatus: Record<string, MultiSelectOptionsType> = {
-    [`${CrmStatusType.VALID}`]: {
+    [`VALIDER`]: {
         label: 'valider',
         key: 'VALID',
         icon: CheckCheck,
         className:
             'text-mountain-500 border border-mountain-500 bg-mountain-100',
     },
-    [`${CrmStatusType.PENDING}`]: {
+    [`EN COURS`]: {
         label: 'en attente',
         key: 'PENDING',
         icon: LoaderCircle,
         className:
             'text-amethyst-500 border border-amethyst-500 bg-amethyst-100',
     },
-    [`${CrmStatusType.DRAFT}`]: {
+    [`BROUILLON`]: {
         label: 'brouillon',
         key: 'DRAFT',
         icon: FileMinus,
         className: 'text-Lynch-500 border border-Lynch-500 bg-Lynch-100',
     },
-    [`${CrmStatusType.CANCELED}`]: {
+    [`ANNULER`]: {
         label: 'annulee',
         key: 'CANCELED',
         icon: X,
