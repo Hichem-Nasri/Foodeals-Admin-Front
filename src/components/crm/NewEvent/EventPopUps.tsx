@@ -1,18 +1,16 @@
 'use client'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TopBar } from '../NewProspect/TopBar'
 import { PartnerStatusType } from '@/types/partners'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CrmObjectSchema, defaultCrmObjectData } from '@/types/CrmScheme'
+import { CrmObjectSchema } from '@/types/CrmScheme'
 import AddNewEvent from './AddNewEvent'
 import { CrmObjectType, EvenetType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
-import { EventContext } from '@/context/EventContext'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import api from '@/api/Auth'
 
 export const EventPopUps = ({
@@ -56,7 +54,8 @@ export const EventPopUps = ({
     })
     useEffect(() => {
         if (isSuccess) {
-            setEvenement(data.content)
+            queryClient.invalidateQueries({ queryKey: ['events', 'prospects'] })
+            setEvenement((prev) => [...prev, ...data.content])
         }
         if (open) {
             window.scrollTo({ top: 0, behavior: 'smooth' })

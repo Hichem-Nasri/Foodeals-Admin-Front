@@ -19,6 +19,8 @@ import { Input } from '@/components/custom/Input'
 import { AvatarAndName } from '@/components/AvatarAndName'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import { Avatar } from '@/components/ui/avatar'
+import { LabelAndAvatar } from '@/components/custom/LabelAndAvatar'
+import LabelMultiItems from '@/components/custom/LabelMultiItems'
 
 interface FormProspectInfoDisplayProps {
     data: any
@@ -33,6 +35,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
     setCountryCode,
     disabled,
 }) => {
+    console.log(data)
     return (
         <Accordion
             type="single"
@@ -64,11 +67,10 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     }}
                                     name={''}
                                 />
-                                <Input
+                                <LabelMultiItems
                                     label="Catégorie"
-                                    value={data.category}
+                                    options={data.category}
                                     disabled={disabled}
-                                    onChange={() => {}}
                                     name={''}
                                 />
                                 <Input
@@ -102,25 +104,27 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     value={data.email}
                                     disabled={disabled}
                                 />
-                                <Input
+                                <LabelAndAvatar
                                     label="Alimenter par"
                                     value={
                                         data.creatorInfo.name.firstName +
                                         ' ' +
                                         data.creatorInfo.name.lastName
                                     }
+                                    avatar={'https://picsum.photos/200'}
                                     onChange={() => {}}
                                     name=""
                                     disabled={disabled}
                                 />
                             </div>
                             <div className="flex lg:flex-row flex-col items-start gap-3">
-                                <Input
+                                <LabelAndAvatar
                                     value={
                                         data.managerInfo.name.firstName +
                                         ' ' +
                                         data.managerInfo.name.lastName
                                     }
+                                    avatar={'https://picsum.photos/200'}
                                     label="Manager"
                                     onChange={() => {}}
                                     name=""
@@ -151,7 +155,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     label="Région"
                                     disabled={disabled}
                                 />
-                                <Input
+                                <LabelAndAvatar
                                     name=""
                                     onChange={() => {}}
                                     className=" flex-1 w-full col-span-2"

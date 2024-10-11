@@ -110,7 +110,6 @@ const demoProspect = {
 
 const getProspect = async (id: string) => {
     if (id) {
-        console.log('No id provided')
         const res = await api
             .get(`${API_ENDPOINT}/${id}`)
             .then((res) => res.data)

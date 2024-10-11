@@ -24,6 +24,8 @@ import { DetailsEvenetProspect } from '@/components/crm/NewEvent/DetailsEvenet'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { IconStatus, StyleStatus } from './utils'
 import axios from 'axios'
+import api from '@/api/Auth'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export interface EvenetType {
     date: string
@@ -133,34 +135,32 @@ export interface CrmType {
 
 export interface ProspectType {
     key: string
-    creatorInfo: {
+    lead: {
         name: {
             firstName: string
             lastName: string
         }
-        avatar: string
+        avatarPath: string
     }
     object: string
-    details: {
-        message: string
-    }
+    message: string
     date: Date
 }
 const columnProspectHelper = createColumnHelper<ProspectType>()
 const columnHelper = createColumnHelper<CrmType>()
-
+let count = 1
 export const columnsProspectTable = (router: AppRouterInstance) => [
     columnProspectHelper.accessor('key', {
         cell: (info) => (
             <span className="max-w-16">
-                {info.getValue().toString().padStart(3, '0')}
+                {count.toString().padStart(3, '0')}
             </span>
         ),
         header: 'ID',
-        size: 4,
+        // size: 4,
         footer: (info) => info.column.id,
     }),
-    columnProspectHelper.accessor('creatorInfo', {
+    columnProspectHelper.accessor('lead', {
         cell: (info) => {
             const fullName = `${info
                 .getValue()
@@ -178,7 +178,7 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
             return (
                 <div className="flex items-center justify-start gap-2 w-full">
                     <Avatar>
-                        <AvatarImage src={info.getValue().avatar} />
+                        <AvatarImage src={info.getValue().avatarPath} />
                         <AvatarFallback>{fullName}</AvatarFallback>
                     </Avatar>
                     <div className="w-full text-nowrap px-4">{fullName}</div>
@@ -213,7 +213,7 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
         header: 'Object',
         footer: (info) => info.column.id,
     }),
-    columnProspectHelper.accessor('details', {
+    columnProspectHelper.accessor('message', {
         cell: (info) => {
             return (
                 <DetailsEvenetProspect detailsData={info.row.original}>
@@ -491,15 +491,20 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                         label: 'Convertir',
                     },
                     {
-                        actions: () => {
+                        actions: async () => {
                             const deleteProspect = async () => {
-                                const response = await axios.delete(
-                                    `http://localhost:8080/api/v1/crm/prospects/${info.getValue()}`
-                                )
+                                const response = await api
+                                    .delete(
+                                        `http://localhost:8080/api/v1/crm/prospects/${info.getValue()}`
+                                    )
+                                    .then((res) => res.data)
+                                    .catch((err) => err)
+                                return response
                             }
+                            deleteProspect()
                         },
                         icon: Archive,
-                        label: 'Archive',
+                        label: 'Lead Ko',
                     },
                 ]}
             />
@@ -511,78 +516,69 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
 export const defaultDataProspectTable: ProspectType[] = [
     {
         key: '1',
-        creatorInfo: {
+        lead: {
             name: {
                 firstName: 'John',
                 lastName: 'Doe',
             },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=John',
+            avatarPath: 'https://api.dicebear.com/9.x/avataaars/svg?seed=John',
         },
         object: 'Meeting scheduled for next week.',
-        details: {
-            message: 'This is the message of the first prospect',
-        },
+        message: 'This is the message of the first prospect',
         date: new Date('2022-01-01'),
     },
     {
         key: '2',
-        creatorInfo: {
+        lead: {
             name: {
                 firstName: 'Jane',
                 lastName: 'Smith',
             },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Jane',
+            avatarPath: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Jane',
         },
         object: 'Follow-up meeting scheduled for next week.',
-        details: {
-            message: 'This is the message of the second prospect',
-        },
+        message: 'This is the message of the second prospect',
         date: new Date('2022-02-01'),
     },
     {
         key: '3',
-        creatorInfo: {
+        lead: {
             name: {
                 firstName: 'Michael',
                 lastName: 'Johnson',
             },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Michael',
+            avatarPath:
+                'https://api.dicebear.com/9.x/avataaars/svg?seed=Michael',
         },
         object: 'Discussion about new partnership opportunities.',
-        details: {
-            message:
-                'This is the message of the third prospect. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        },
+        message:
+            'This is the message of the third prospect. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         date: new Date('2022-03-01'),
     },
     {
         key: '4',
-        creatorInfo: {
+        lead: {
             name: {
                 firstName: 'Emily',
                 lastName: 'Brown',
             },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Emily',
+            avatarPath: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Emily',
         },
         object: 'Product demo and presentation.',
-        details: {
-            message: 'This is the message of the fourth prospect',
-        },
+        message: 'This is the message of the fourth prospect',
         date: new Date('2022-04-01'),
     },
     {
         key: '5',
-        creatorInfo: {
+        lead: {
             name: {
                 firstName: 'David',
                 lastName: 'Wilson',
             },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=David',
+            avatarPath: 'https://api.dicebear.com/9.x/avataaars/svg?seed=David',
         },
         object: 'Negotiation and contract discussion.',
-        details: {
-            message: 'This is the message of the fifth prospect',
-        },
+        message: 'This is the message of the fifth prospect',
         date: new Date('2022-05-01'),
     },
 ]

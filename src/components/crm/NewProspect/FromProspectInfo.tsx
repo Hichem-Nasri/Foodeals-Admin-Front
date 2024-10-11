@@ -78,6 +78,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             label="Catégorie"
                                             options={companyTypeOptions}
                                             disabled={disabled}
+                                            className=""
                                             placeholder="Sélectionner"
                                             transform={(value) =>
                                                 value.map((item) => (

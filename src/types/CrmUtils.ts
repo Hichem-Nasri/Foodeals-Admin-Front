@@ -174,6 +174,7 @@ export class FilterClass {
         )
         this.dataOption.country = DataToOptions(data.country, 'country')
         this.dataOption.region = DataToOptions(data.region, 'region')
+        console.log(this.dataOption)
     }
     dataOption: {
         companyName: MultiSelectOptionsType[]

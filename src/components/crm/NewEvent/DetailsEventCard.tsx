@@ -1,11 +1,7 @@
-import { AvatarAndName } from '@/components/AvatarAndName'
-import { CustomButton } from '@/components/custom/CustomButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Label } from '@/components/ui/label'
 import { ProspectType } from '@/types/CrmType'
 import { CalendarMinus2, Eye, Mail, PhoneCall, TextQuote } from 'lucide-react'
 import React, { FC } from 'react'
-import { createInflate } from 'zlib'
 import { DetailsEvenetProspect } from './DetailsEvenet'
 
 interface DetailsEventCardProps {
@@ -13,23 +9,23 @@ interface DetailsEventCardProps {
 }
 
 const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
-    const { key, creatorInfo, object, details, date } = detailsData
+    const { lead, object, date } = detailsData
     return (
         <div className="w-full  col-span-1 m-auto rounded-2xl border-lynch-100 flex flex-col border-2 justify-center items-center p-4 space-y-4">
             <div className="flex justify-between items-center w-full">
                 <div className="flex flex-col justify-start items-center space-y-2">
                     <div className="flex justify-center items-center h-12 w-full space-x-2">
                         <Avatar className="w-12 h-12">
-                            <AvatarImage src={creatorInfo.avatar} />
+                            <AvatarImage src={lead.avatarPath} />
                             <AvatarFallback>
-                                {creatorInfo.name.lastName[0].toUpperCase()}
+                                {lead.name.lastName[0].toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col justify-center items-start">
-                            <p className="text-lynch-950 text-xl w-full font-normal">
-                                {creatorInfo.name.firstName +
+                            <p className="text-lynch-950    text-xl w-full font-normal">
+                                {lead.name.firstName +
                                     ' ' +
-                                    creatorInfo.name.lastName.toUpperCase()}
+                                    lead.name.lastName.toUpperCase()}
                             </p>
                             <p className="text-md text-mountain-400">Manager</p>
                         </div>
@@ -45,7 +41,7 @@ const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-row-reverse gap-x-4 justify-around items-center flex-wrap w-1/2">
+                <div className="flex flex-row-reverse gap-x-4 justify-around items-center flex-wrap w-auto">
                     <DetailsEvenetProspect detailsData={detailsData}>
                         <div className="rounded-full bg-lynch-400 size-11 text-white grid place-items-center hover:border-2 hover:border-lynch-400 hover:bg-transparent hover:text-lynch-400 transition-all cursor-pointer ">
                             <Eye />

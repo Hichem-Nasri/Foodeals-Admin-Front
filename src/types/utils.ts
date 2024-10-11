@@ -1,5 +1,5 @@
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
-import { PartnerStatusType } from './CrmType'
+import { EvenetType, PartnerStatusType, ProspectType } from './CrmType'
 import { SelectIconProps } from '@radix-ui/react-select'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 
@@ -44,6 +44,28 @@ export const OptionStatus: Record<string, MultiSelectOptionsType> = {
         icon: X,
         className: 'text-coral-500 border border-coral-500 bg-coral-100',
     },
+}
+
+export const extractDataEvent = (data: any): ProspectType => {
+    return {
+        key: data.id,
+        date: new Date(data.createAt),
+        object: data.object,
+        message: data.message,
+        lead: {
+            name: {
+                firstName: data.lead.name.firstName,
+                lastName: data.lead.name.lastName,
+            },
+            avatarPath: data.lead.avatarPath,
+        },
+    }
+}
+
+export const extractEvent = (data: any): ProspectType[] => {
+    return data.map((event: any) => {
+        extractDataEvent(event)
+    })
 }
 
 let countryData: MultiSelectOptionsType[] = []

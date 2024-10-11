@@ -34,7 +34,12 @@ export const SelectField: FC<SelectFieldProps> = ({
             control={control}
             name={name}
             render={({ field }) => (
-                <div className={cn('flex flex-col w-full', className)}>
+                <div
+                    className={cn(
+                        'flex flex-col w-full text-xs font-semibold',
+                        className
+                    )}
+                >
                     <Select
                         options={options}
                         disabled={options.length === 0 || disabled}

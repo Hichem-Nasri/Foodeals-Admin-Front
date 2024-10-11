@@ -95,84 +95,20 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                                 <SheetDescription className="flex flex-col gap-4">
                                     {pagesData.map((page, index) => (
                                         <Fragment key={index}>
-                                            {page.asAccordion ? (
-                                                <Accordion
-                                                    type="single"
-                                                    className="w-full"
-                                                    defaultValue={page.label}
-                                                    collapsible
-                                                >
-                                                    <AccordionItem
-                                                        value={
-                                                            page.label + index
-                                                        }
-                                                        className="w-full justify-normal bg-transparent text-lynch-500  rounded-[6px] space-y-2"
-                                                    >
-                                                        <AccordionTrigger
-                                                            className={cn(
-                                                                'w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0'
-                                                            )}
-                                                        >
-                                                            <>
-                                                                <div
-                                                                    className={cn(
-                                                                        'w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0'
-                                                                    )}
-                                                                >
-                                                                    {
-                                                                        <page.icon className="mr-2 icon shrink-0" />
-                                                                    }
-                                                                    {page.label}
-                                                                </div>
-                                                            </>
-                                                        </AccordionTrigger>
-                                                        <AccordionContent>
-                                                            {page.ListAccordion?.map(
-                                                                (
-                                                                    item,
-                                                                    index
-                                                                ) => (
-                                                                    <Link
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        href={
-                                                                            item.href
-                                                                        }
-                                                                        passHref
-                                                                    >
-                                                                        <CustomButton
-                                                                            className={cn(
-                                                                                'w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0'
-                                                                            )}
-                                                                            label={
-                                                                                item.label
-                                                                            }
-                                                                            IconLeft={
-                                                                                item.icon
-                                                                            }
-                                                                        />
-                                                                    </Link>
-                                                                )
-                                                            )}
-                                                        </AccordionContent>
-                                                    </AccordionItem>
-                                                </Accordion>
-                                            ) : (
-                                                <Link
-                                                    key={index}
-                                                    href={page.href}
-                                                    passHref
-                                                >
-                                                    <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
-                                                        <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
-                                                            <page.icon />
-                                                        </div>
-                                                        {page.label}
-                                                        <ChevronRight className="ml-auto" />
-                                                    </Button>
-                                                </Link>
-                                            )}
+                                            <Link
+                                                key={index}
+                                                href={page.href}
+                                                passHref
+                                            >
+                                                <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
+                                                    <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
+                                                        <page.icon />
+                                                    </div>
+                                                    {page.label}
+                                                    <ChevronRight className="ml-auto" />
+                                                </Button>
+                                            </Link>
+
                                             {page.href === '/marketing' && (
                                                 <span className="h-[1px] w-full bg-lynch-100" />
                                             )}

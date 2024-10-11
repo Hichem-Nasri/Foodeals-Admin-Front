@@ -58,7 +58,7 @@ export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {
                 </AccordionTrigger>
                 <AccordionContent className="w-full">
                     <div className="flex flex-col justify-center items-center w-full p-2 space-y-4">
-                        <div className="self-start w-full border border-lynch-100 rounded-2xl">
+                        <div className="self-start w-full lg:border border-lynch-100 rounded-2xl">
                             <DataTable
                                 title={''}
                                 table={table}
@@ -66,6 +66,7 @@ export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {
                                 transform={(data) => (
                                     <DetailsEventCard detailsData={data} />
                                 )}
+                                hidden={true}
                             />
                         </div>
                         <div className="self-end">

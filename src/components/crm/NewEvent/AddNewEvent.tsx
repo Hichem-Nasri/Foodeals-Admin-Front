@@ -1,6 +1,5 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { Input } from '@/components/custom/Input'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { Label } from '@/components/Label'
 import {
@@ -12,13 +11,11 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { CrmObjectSchema } from '@/types/CrmScheme'
 import { CheckCheck, X } from 'lucide-react'
-import React, { FC, useContext, useState } from 'react'
-import { Controller, UseFormReturn } from 'react-hook-form'
+import React, { FC } from 'react'
+import { UseFormReturn } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { useMediaQuery } from 'react-responsive'
 import { z } from 'zod'
 import { CrmObjectType, EvenetType } from '@/types/CrmType'
-import { useRouter } from 'next/navigation'
 
 interface AddNewEventProps {
     form: UseFormReturn<z.infer<typeof CrmObjectSchema>>
@@ -42,16 +39,18 @@ const AddNewEvent: FC<AddNewEventProps> = ({
     const myhandleSubmit = async (e: CrmObjectType) => {
         console.log(e)
         try {
-            const newEvent: EvenetType = {
+            const newEvent = {
                 object: e.object,
                 message: e.message,
-                date: new Date().toISOString(),
+                dateAndTime: new Date().toISOString(),
                 lead: 231, //Todo: Change this value to the lead id
             }
             mutation.mutate(newEvent)
-            setEvenement([...event, newEvent])
+            setEvenement([
+                ...event,
+                { ...newEvent, date: newEvent.dateAndTime },
+            ])
             setOpen(true)
-            // await axios.post('http://localhost:8080/api/v1/crm/prospects/{id}/events/create', newEven)
         } catch (error) {}
     }
 

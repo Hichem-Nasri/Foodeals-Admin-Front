@@ -55,7 +55,7 @@ const defaultTransform = (value: MultiSelectOptionsType[]) => {
         <div
             key={index}
             className={cn(
-                ' pl-1 max-w-24 flex justify-center items-center text-base font-semibold whitespace-nowrap truncate',
+                ' pl-1 max-w-fit flex justify-center items-center text-base font-xs whitespace-nowrap truncate',
                 option.className
             )}
         >
@@ -84,6 +84,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         selectedValues.includes(option.key.toString())
     )
     const len = length ?? 3
+    console.log('selectedOptions:: ', options, transform)
     if (normalTransform) {
         transform = defaultTransform
     }

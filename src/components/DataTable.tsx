@@ -26,6 +26,7 @@ interface DataTableProps<T> {
         avatar: string
         city: string
     }
+    hidden?: boolean
 }
 
 export const DataTable: FC<DataTableProps<any>> = ({
@@ -35,11 +36,12 @@ export const DataTable: FC<DataTableProps<any>> = ({
     data,
     hideColumns,
     partnerData = undefined,
+    hidden,
 }) => {
     const router = useRouter()
     return (
         <>
-            <div className="lg:hidden grid gap-[0.625rem]">
+            <div className="lg:hidden grid gap-[0.625rem] border-0">
                 {data.map((value, index) => (
                     <Fragment key={title + index}>{transform(value)}</Fragment>
                 ))}
@@ -47,7 +49,11 @@ export const DataTable: FC<DataTableProps<any>> = ({
             <div className="lg:grid hidden gap-[0.625rem]">
                 {partnerData && (
                     <div className="flex items-center justify-between">
-                        <h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">
+                        <h1
+                            className={`${
+                                hidden && 'hidden'
+                            } font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]`}
+                        >
                             {title}
                         </h1>
                         <div className="flex items-center gap-3">

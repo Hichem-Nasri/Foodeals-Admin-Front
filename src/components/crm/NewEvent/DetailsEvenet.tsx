@@ -86,8 +86,8 @@ const DetailsEvenetProspect = ({
     children: React.ReactNode
 }) => {
     const [open, setOpen] = React.useState(false)
-    const { creatorInfo, object, details, date } = detailsData
-    
+    const { lead, object, message, date } = detailsData
+
     const isMobile = useMediaQuery({ query: '(max-width:1024px)' })
     const styleDialog = isMobile
         ? 'h-screen min-w-full flex justify-center items-center p-0'
@@ -123,18 +123,16 @@ const DetailsEvenetProspect = ({
                     <DialogDescription className="flex flex-col space-x-4 w-full p-4">
                         <DetailsProspect
                             name={
-                                creatorInfo.name.firstName +
-                                ' ' +
-                                creatorInfo.name.lastName
+                                lead.name.firstName + ' ' + lead.name.lastName
                             }
-                            avatar={creatorInfo.avatar}
+                            avatar={lead.avatarPath}
                             date={{
                                 date: date.toLocaleDateString(),
                                 hour:
                                     date.getHours() + 'h:' + date.getMinutes(),
                             }}
                             object={object}
-                            message={details.message}
+                            message={message}
                         />
                     </DialogDescription>
                 </div>

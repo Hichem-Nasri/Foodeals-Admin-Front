@@ -11,7 +11,7 @@ import {
 import { CrmInformationSchemaType } from '@/types/CrmType'
 import { PartnerStatusType } from '@/types/partners'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Archive } from 'lucide-react'
+import { Archive, Router } from 'lucide-react'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -19,6 +19,8 @@ import { EventContext } from '@/context/EventContext'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import api from '@/api/Auth'
+import { useRouter } from 'next/navigation'
 
 interface CreateProps {
     prospect: any
@@ -27,20 +29,25 @@ interface CreateProps {
 export const Create: FC<CreateProps> = ({ prospect }) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const queryClient = useQueryClient()
+    const route = useRouter()
     const mutate = useMutation({
         mutationFn: async (data: any) => {
-            const res = await axios
+            const res = await api
                 .post('http://localhost:8080/api/v1/crm/prospects/create', data)
                 .then((res) => res.data)
                 .catch((err) => console.log(err))
             console.log('done: ', res)
             return res
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             setConvertir(true)
-
+            setInfo(data)
+            route.replace('create', data.id)
             // Invalidate and refetch
             queryClient.invalidateQueries({ queryKey: ['todos'] })
+        },
+        onError: (error) => {
+            console.log(error)
         },
     })
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
@@ -57,48 +64,42 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
 
         console.log('Submit')
     }
-    const [Info, setInfo] = useState<CrmInformationSchemaType>(
-        defaultCrmInformationData
-    )
+    const [Info, setInfo] = useState<any>(null)
     const onSaveData = (e: CrmInformationSchemaType) => {
+        const [firstName, lastName] = e.responsable.split(' ')
         const createProspect = {
-            companyName: 'Example Company',
-            activities: ['Activity 1', 'Activity 2'],
+            companyName: e.companyName,
+            activities: e.category,
             responsible: {
                 name: {
-                    firstName: 'John',
-                    lastName: 'Doe',
+                    firstName,
+                    lastName,
                 },
-                email: 'john.doe1234@example.com',
-                phone: '1234567890',
+                email: e.email,
+                phone: e.email,
             },
-            powered_by: 1,
-            manager_id: 2,
+            powered_by: 1, // TODO: get from List
+            manager_id: 2, // TODO: get from List
             address: {
-                city: 'Casablanca',
-                address: '123 Main St',
-                region: 'maarif',
+                city: e.city,
+                address: e.address,
+                region: e.region,
             },
         }
-        console.log(createProspect)
+        const data = JSON.stringify(createProspect)
+
+        console.log(data)
         mutate.mutate(createProspect)
         setInfo(e)
         console.log('Save data')
     }
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {}
     const [convertir, setConvertir] = useState(false)
-    const [status, setStatus] = useState<PartnerStatusType>(
-        PartnerStatusType.DRAFT
-    )
-    const { evenement, setEvenement } = useContext(EventContext)
     const [open, setOpen] = useState(false)
-    useEffect(() => {
-        console.log(open)
-    }, [open])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
-            {!open ? (
+            {!convertir ? (
                 <>
                     {' '}
                     <TopBar
@@ -116,11 +117,11 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
                         disabled={convertir}
                     />
                     <NewEvenent
-                        Evenet={evenement}
+                        Evenet={Info ? Info.events : []}
                         setOpen={setOpen}
                         convertir={convertir}
                     />
-                    {evenement.length > 0 && (
+                    {Info && Info.events.length > 0 && (
                         <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
                             <CustomButton
                                 disabled={convertir}

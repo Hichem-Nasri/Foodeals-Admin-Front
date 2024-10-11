@@ -22,10 +22,10 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
     options,
     label,
     placeholder,
+    transform,
     ...rest
 }) => {
     const [selectedItem, setselectedItem] = useState(item)
-
     const handleCountryChange = (item: string[]) => {
         setselectedItem(item)
         setItem(item)
@@ -36,7 +36,8 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
             <Label label={label} htmlFor={label} />
             <MultiSelect
                 {...rest}
-                placeholder={placeholder}
+                transform={transform}
+                placeholder={placeholder || 'Sélectionner'}
                 onSelect={handleCountryChange}
                 options={options}
                 selectedValues={selectedItem}

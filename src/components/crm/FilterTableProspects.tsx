@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -25,16 +25,43 @@ import {
     emptyFilterData,
     FilterData,
     FilterClass,
+    DataToOptions,
 } from '@/types/CrmUtils'
 import { DateFilter } from '../utils/DateFilters'
 import { FilterSelect } from '../utils/FilterSelect'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
+import { set } from 'date-fns'
 
 interface FilterTableProspectsProps {
     table: import('@tanstack/table-core').Table<CrmType>
     columnFilters: ColumnFiltersState
     setColumnFilters: (value: ColumnFiltersState) => void
+}
+
+const setMultiSelectPerson = (
+    value: { name: { firstName: string; lastName: string }; avatar: string }[]
+) => {
+    return Array.from(
+        new Set(
+            value.map(
+                (items) => items.name.firstName + ' ' + items.name.lastName
+            )
+        )
+    ).map((items) => ({
+        key: items,
+        label: items,
+        avatar: value.find(
+            (item) => item.name.firstName + ' ' + item.name.lastName === items
+        )?.avatar,
+    }))
+}
+
+const setMultiSelect = (value: string[]) => {
+    return Array.from(new Set(value)).map((items) => ({
+        key: items,
+        label: items,
+    }))
 }
 
 export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
@@ -44,9 +71,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
 }) => {
     const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
     const filterTable = setupFilterTable(table.getRowModel().rows)
-    const [options, setDataOption] = useState<FilterClass>(
-        new FilterClass(filterTable)
-    )
+
     const [filterData, setFilterData] = useState<FilterData>(emptyFilterData)
     const handleConfirm = () => {
         const filterArray = Object.entries(filterData)
@@ -82,24 +107,6 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                     />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterMultiSelect
-                            item={filterData.country}
-                            setItem={(item) =>
-                                setFilterData({ ...filterData, country: item })
-                            }
-                            options={options.dataOption.country}
-                            label="Pays"
-                        />
-                        <FilterMultiSelect
-                            item={filterData.region}
-                            setItem={(item) =>
-                                setFilterData({ ...filterData, region: item })
-                            }
-                            options={options.dataOption.region}
-                            label="Region"
-                        />
-                    </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterMultiSelect
                             item={filterData.companyName}
                             setItem={(item) =>
                                 setFilterData({
@@ -107,25 +114,30 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                                     companyName: item,
                                 })
                             }
-                            options={options.dataOption.companyName}
+                            options={setMultiSelect(filterTable.companyName)}
                             label="Raison sociale"
+                            normalTransform={true}
                         />
                         <FilterMultiSelect
                             item={filterData.category}
                             setItem={(item) =>
                                 setFilterData({ ...filterData, category: item })
                             }
-                            options={options.dataOption.category}
+                            options={setMultiSelect(filterTable.category)}
                             label="Categorie"
+                            normalTransform={true}
                         />
                     </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
+                    <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
                         <FilterSelect
+                            placeholder=""
                             item={filterData.creatorInfo}
                             setItem={(creatorInfo) =>
                                 setFilterData({ ...filterData, creatorInfo })
                             }
-                            options={options.dataOption.creatorInfo}
+                            options={setMultiSelectPerson(
+                                filterTable.creatorInfo
+                            )}
                             label="Alimente par"
                         />
                         <FilterSelect
@@ -133,7 +145,9 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(managerInfo) =>
                                 setFilterData({ ...filterData, managerInfo })
                             }
-                            options={options.dataOption.managerInfo}
+                            options={setMultiSelectPerson(
+                                filterTable.managerInfo
+                            )}
                             label="Effectuée à"
                         />
                     </div>
@@ -160,19 +174,36 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(city) =>
                                 setFilterData({ ...filterData, city })
                             }
-                            options={options.dataOption.city}
+                            options={filterTable.city.map((city) => ({
+                                label: city,
+                                key: city,
+                            }))}
                             label="Ville"
                             placeholder="Sélectionner la ville"
                             normalTransform={true}
                         />
                         <FilterMultiSelect
+                            item={filterData.country}
+                            setItem={(country) =>
+                                setFilterData({ ...filterData, country })
+                            }
+                            options={setMultiSelect(filterTable.country)}
+                            label="Pays"
+                            placeholder="Sélectionner le pays"
+                            normalTransform={true}
+                        />
+                    </div>
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
+                        <FilterMultiSelect
                             item={filterData.status}
                             setItem={(status) =>
                                 setFilterData({ ...filterData, status })
                             }
-                            options={options.dataOption.status}
+                            options={filterTable.status.map(
+                                (status) => OptionStatus[status]
+                            )}
                             label="Status"
-                            length={isLargeScreen ? 2 : 3}
+                            length={3}
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (
                                     <div
@@ -190,6 +221,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                         />
                     </div>
                 </div>
+
                 <DialogDescription className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <DialogClose className="lg:w-fit w-full">
                         <CustomButton

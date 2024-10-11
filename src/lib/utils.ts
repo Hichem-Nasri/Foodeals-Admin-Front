@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImF5bWFuZWVlLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYXltYW5lZWUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjg1ODAzNDMsImV4cCI6MTcyODY2Njc0M30.UJna1xwhhMNHMTiWkG7SfNENsFtAXyAJNac7ELNp4SOX_oSAPeDBHfzbnbk-FmxKaiIJEl2VxP_kUjBSZRgiiw'
+    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImF5bWFuZWVlLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYXltYW5lZWUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjg2NTc4MzYsImV4cCI6MTcyODc0NDIzNn0.C0BAxfi8TP7ci2WzJjV1AOcpjLVZ58SAKbX9XFeXwQKL-J68OH5VVXS2otwlAlf5ajcbfMl5ckHwoNjl5m64ww'
 
 export const headers = {
     Authorization: 'Bearer ' + accessToken,
@@ -40,7 +40,7 @@ export const countryCodes = [
     { value: '+221', flag: '🇸🇳' },
     { value: '+216', flag: '🇹🇳' },
     { value: '+225', flag: '🇨🇮' },
-]
+].sort((a, b) => a.value.localeCompare(b.value))
 
 export const PartnerOptions = [
     { id: '0', name: 'All', avatar: 'https://via.placeholder.com/120' },

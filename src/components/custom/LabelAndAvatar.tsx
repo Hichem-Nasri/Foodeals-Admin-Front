@@ -2,8 +2,9 @@ import { cn } from '@/lib/utils'
 import { LucideProps } from 'lucide-react'
 import { ForwardRefExoticComponent, RefAttributes, FC } from 'react'
 import { Label } from '../ui/label'
-import { Input as ShadCnInput } from '@/components/ui/input'
+import { Input, Input as ShadCnInput } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { AvatarAndName } from '../AvatarAndName'
 
 interface InputProps {
     onChange: (value: string | number) => void
@@ -23,9 +24,10 @@ interface InputProps {
     label?: string
     iconLeftColor?: string
     onBlur?: () => void
+    avatar?: string
 }
 
-export const Input: FC<InputProps> = ({
+export const LabelAndAvatar: FC<InputProps> = ({
     name,
     placeholder,
     type = 'text',
@@ -39,13 +41,18 @@ export const Input: FC<InputProps> = ({
     label,
     iconLeftColor,
     onBlur,
+    avatar,
 }) => {
     return (
-        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+        <div
+            className={`flex flex-col items-start gap-3 w-full text-lynch-500 ${
+                label == 'Adresse' && 'col-span-2'
+            }`}
+        >
             {label && (
                 <Label
                     htmlFor={name}
-                    className="text-xs font-semibold text-lynch-950"
+                    className="text-sm font-semibold text-lynch-950"
                 >
                     {label}
                 </Label>
@@ -65,22 +72,35 @@ export const Input: FC<InputProps> = ({
                         )}
                     />
                 )}
-                <ShadCnInput
-                    type={type}
-                    disabled={disabled}
-                    onChange={(e) =>
-                        (type === 'number' && onChange(+e.target.value)) ||
-                        onChange(e.target.value)
-                    }
-                    value={type === 'number' && value === 0 ? undefined : value}
-                    placeholder={placeholder}
-                    className={cn(
-                        'text-base font-normal',
-                        className,
-                        IconLeft && 'ps-12'
-                    )}
-                    onBlur={onBlur}
-                />
+                {avatar ? (
+                    <AvatarAndName
+                        name={value + ''}
+                        avatar={avatar}
+                        className={cn(
+                            'text-base font-normal h-14 flex items-center bg-lynch-50 rounded-[14px] px-4 w-full',
+                            className,
+                            IconLeft && 'ps-12'
+                        )}
+                    />
+                ) : (
+                    <Input
+                        disabled={disabled}
+                        onChange={(e) =>
+                            (type === 'number' && onChange(+e.target.value)) ||
+                            onChange(e.target.value)
+                        }
+                        value={
+                            type === 'number' && value === 0 ? undefined : value
+                        }
+                        placeholder={placeholder}
+                        className={cn(
+                            'text-base font-normal',
+                            className,
+                            IconLeft && 'ps-12'
+                        )}
+                        onBlur={onBlur}
+                    />
+                )}
                 {IconRight && (
                     <IconRight
                         onClick={handleShowPassword}

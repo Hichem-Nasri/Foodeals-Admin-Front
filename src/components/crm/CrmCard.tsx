@@ -94,11 +94,13 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
                             />
                         </Link>
-                        <CustomButton
-                            label=""
-                            IconLeft={ListPlus}
-                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
-                        />
+                        <Link href={`/crm/prospects/${crm.id}`}>
+                            <CustomButton
+                                label=""
+                                IconLeft={Eye}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
+                            />
+                        </Link>
                     </div>
                 </div>
             </div>

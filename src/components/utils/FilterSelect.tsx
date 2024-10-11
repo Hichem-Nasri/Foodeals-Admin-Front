@@ -24,7 +24,7 @@ export const FilterSelect: FC<FilterSelectProps> = ({
             <Label label={label} htmlFor={label} />
             <Select
                 label=""
-                placeholder={placeholder || `Sélectionner ${label}`}
+                placeholder={placeholder || 'Sélectionner'}
                 onChange={setItem}
                 options={options}
                 value={item}

@@ -1,4 +1,3 @@
-'use client'
 import {
     Accordion,
     AccordionContent,
@@ -6,24 +5,21 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import Image from 'next/image'
-import React, { FC, useEffect, useState } from 'react'
-import { defaultDataProspectTable, EvenetType } from '@/types/CrmType'
+import React, { FC, useEffect } from 'react'
 import { TableProspects } from '../NewProspect/TableProspects'
 import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
 
 interface EvenetProps {
-    Evenet: EvenetType[]
+    Evenet: any[]
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
 }
 
 export const NewEvenent: FC<EvenetProps> = ({ Evenet, setOpen, convertir }) => {
-    useEffect(() => {
-        console.log('convertir', convertir)
-    }, [convertir])
+    Evenet = Evenet.map((curr: any) => {
+        return { ...curr, date: new Date(curr.createdAt) }
+    })
     return (
         <div className="w-full self-start h-full relative">
             {Evenet.length == 0 ? (
@@ -69,10 +65,7 @@ export const NewEvenent: FC<EvenetProps> = ({ Evenet, setOpen, convertir }) => {
                     </AccordionItem>
                 </Accordion>
             ) : (
-                <TableProspects
-                    setOpen={setOpen}
-                    data={defaultDataProspectTable}
-                />
+                <TableProspects setOpen={setOpen} data={Evenet} />
             )}
         </div>
     )

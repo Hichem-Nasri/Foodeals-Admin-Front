@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { CrmType } from '@/types/CrmType'
 import { ColumnFiltersState } from '@tanstack/react-table'
+import { Button } from '../ui/button'
 
 interface FilterCrmProps {
     table: import('@tanstack/table-core').Table<CrmType>
@@ -25,7 +26,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
 
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
-            <div className="flex lg:hidden items-center justify-between w-full">
+            <div className="flex lg:hidden items-center justify-start space-x-4 lg:space-x-0 w-full">
                 <h2 className="font-medium text-[1.375rem] text-lynch-950 mx-4  ">
                     Liste des prospects
                 </h2>
@@ -34,6 +35,13 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     columnFilters={columnFilters}
                     setColumnFilters={setColumnFilters}
                 />
+                <Button
+                    size="sm"
+                    className="text-lynch-500 rounded-full bg-white hover:bg-transparent hover:text-black w-14 h-14"
+                    onClick={handleArchive}
+                >
+                    <Archive size={26} />
+                </Button>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTableProspects
@@ -69,7 +77,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     size="sm"
                     disabled
                     className="disabled:bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40  "
-                    label={'17'}
+                    label={table.getRowCount().toString()}
                     IconLeft={ArrowRight}
                 />
             </div>
