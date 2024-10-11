@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Archive, ArrowRight, HeartHandshake } from 'lucide-react'
+import { Archive, ArrowRight, HeartHandshake, Truck } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
@@ -44,15 +44,16 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
             <div className="lg:flex hidden gap-3 p-2">
                 <CustomButton
                     size="sm"
-                    label="Ajouter une association"
-                    IconRight={HeartHandshake}
+                    label="Ajouter une ste de livraison"
+                    IconRight={Truck}
                     onClick={() =>
                         router.push(AppRoutes.newDelivery.replace(':id', 'new'))
                     }
                 />
                 <CustomButton
+                    disabled
                     size="sm"
-                    className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
+                    className="disabled:bg-white disabled:opacity-100 font-semibold text-lynch-400 border-[1.5px] border-lynch-400"
                     label={'1666'}
                     IconLeft={ArrowRight}
                 />

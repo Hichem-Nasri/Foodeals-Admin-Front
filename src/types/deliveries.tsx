@@ -7,7 +7,7 @@ import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { AppRoutes } from '@/lib/routes'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { Eye, Users } from 'lucide-react'
+import { Archive, Eye, FileBadge, Pen, Users } from 'lucide-react'
 import { BadgeDisponibility } from '@/components/Deliveries/Collaborators/BadgeDisponibility'
 import { PaymentStatusType } from './PaymentType'
 import { PaymentValidation } from '@/components/payment/PaymentValidation'
@@ -38,7 +38,7 @@ const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()
 export const columnsDeliveriesTable = (router: AppRouterInstance) => [
     columnDeliveriesTableHelper.accessor('createdAt', {
         cell: (info) => info.getValue().toLocaleDateString(),
-        header: 'Date de création',
+        header: 'Date',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
             const parse = (date: string) => {
@@ -85,7 +85,7 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                 {info.getValue().name}
             </div>
         ),
-        header: 'Responsable',
+        header: 'Résponsable',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
             const name = row.original.responsible.name.toLowerCase()
@@ -94,12 +94,12 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
     }),
     columnDeliveriesTableHelper.accessor('numberOfDeliveries', {
         cell: (info) => info.getValue(),
-        header: 'Nombre de livraisons',
+        header: 'Nb livraisons',
         footer: (info) => info.column.id,
     }),
     columnDeliveriesTableHelper.accessor('commands', {
         cell: (info) => info.getValue(),
-        header: 'Nombre de commandes',
+        header: 'Commandes',
         footer: (info) => info.column.id,
     }),
     columnDeliveriesTableHelper.accessor('city', {
@@ -153,6 +153,19 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                     },
                     {
                         actions: (id) =>
+                            AppRoutes.newDelivery.replace(':id', id),
+                        icon: Pen,
+                        label: 'Modifier',
+                    },
+                    {
+                        actions: () => {
+                            // Archive
+                        },
+                        icon: Archive,
+                        label: 'Archiver',
+                    },
+                    {
+                        actions: (id) =>
                             router.push(
                                 AppRoutes.deliveryCollaborator.replace(
                                     ':id',
@@ -169,6 +182,13 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                             ),
                         icon: Users,
                         label: 'Liste des paiement',
+                    },
+                    {
+                        actions: (id) => {
+                            // Contract
+                        },
+                        icon: FileBadge,
+                        label: 'Contrat',
                     },
                 ]}
             />

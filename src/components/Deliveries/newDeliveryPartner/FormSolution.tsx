@@ -111,16 +111,16 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                         <div className="flex items-center my-auto h-full gap-2">
                                                             <Checkbox
                                                                 name={
-                                                                    PartnerSolutionType.DLC_PRO
+                                                                    PartnerSolutionType.DONATE_PRO
                                                                 }
                                                                 className="size-5"
                                                                 checked={field.value.includes(
-                                                                    PartnerSolutionType.DLC_PRO
+                                                                    PartnerSolutionType.DONATE_PRO
                                                                 )}
                                                                 onClick={() =>
                                                                     field.onChange(
                                                                         field.value.includes(
-                                                                            PartnerSolutionType.DLC_PRO
+                                                                            PartnerSolutionType.DONATE_PRO
                                                                         )
                                                                             ? [
                                                                                   ...field.value.filter(
@@ -128,19 +128,19 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                                                           item
                                                                                       ) =>
                                                                                           item !==
-                                                                                          PartnerSolutionType.DLC_PRO
+                                                                                          PartnerSolutionType.DONATE_PRO
                                                                                   ),
                                                                               ]
                                                                             : [
                                                                                   ...field.value,
-                                                                                  PartnerSolutionType.DLC_PRO,
+                                                                                  PartnerSolutionType.DONATE_PRO,
                                                                               ]
                                                                     )
                                                                 }
                                                             />
                                                             <PartnerSolution
                                                                 solution={
-                                                                    PartnerSolutionType.DLC_PRO
+                                                                    PartnerSolutionType.DONATE_PRO
                                                                 }
                                                                 className="px-4 py-[0.4rem] my-3"
                                                                 size={20}
