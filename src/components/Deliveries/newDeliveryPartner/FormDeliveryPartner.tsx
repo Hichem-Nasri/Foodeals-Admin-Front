@@ -9,18 +9,16 @@ import {
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { InputFieldForm } from '@/components/custom/InputField'
-import { Form, FormField } from '@/components/ui/form'
+import { Form } from '@/components/ui/form'
 import { SelectField } from '@/components/custom/SelectField'
 import { InputPhoneField } from '@/components/custom/InputFieldPhone'
 import { Mail } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
-import { IframeRenderer } from '@/components/Partners/NewPartner/IframeRender'
 import { DeliveryPartnerSchema } from '@/types/DeliverySchema'
-import { PartnerSolutionType } from '@/types/partners'
-import { Label } from '@/components/Label'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CitySelectField } from '@/components/custom/CitySelectField'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import { PartnerSolutionType } from '@/types/partners'
 
 interface FormDeliveryPartnerProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
@@ -131,6 +129,35 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
+                                        <MultiSelectField
+                                            control={control}
+                                            name="solutions"
+                                            className="h-auto"
+                                            label="Solutions"
+                                            options={[
+                                                {
+                                                    key: PartnerSolutionType.DLC_PRO,
+                                                    label: PartnerSolutionType.DLC_PRO,
+                                                },
+                                                {
+                                                    key: PartnerSolutionType.DONATE_PRO,
+                                                    label: PartnerSolutionType.DONATE_PRO,
+                                                },
+                                            ]}
+                                            transform={(values) => {
+                                                return values.map((value) => (
+                                                    <PartnerSolution
+                                                        key={value.key}
+                                                        solution={
+                                                            value.label as PartnerSolutionType
+                                                        }
+                                                        className="px-4 py-[0.4rem]"
+                                                        size={20}
+                                                    />
+                                                ))
+                                            }}
+                                            disabled={disabled}
+                                        />
                                         <InputPhoneField
                                             control={control}
                                             name="phone"
@@ -148,28 +175,12 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
                                         />
-                                        <SelectField
-                                            control={control}
-                                            name="siege"
-                                            label="Siège"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
-                                            disabled={disabled}
-                                        />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <SelectField
                                             control={control}
-                                            name="region"
-                                            label="Région"
+                                            name="siege"
+                                            label="Siège"
                                             options={[
                                                 {
                                                     key: '1',
@@ -200,104 +211,21 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 },
                                                 {
                                                     key: '2',
-                                                    label: 'Fournisseur',
+                                                    label: 'Fournisseurs    ',
                                                 },
                                             ]}
                                             disabled={disabled}
                                         />
                                     </div>
                                     <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
-                                        <SelectField
-                                            className="col-span-1"
+                                        <CitySelectField
                                             control={control}
-                                            name="Zone"
                                             label="Zone Couverte"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Maarid',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Ein diab',
-                                                },
-                                            ]}
-                                            disabled={disabled}
+                                            name="zone"
+                                            placeholder="Sélectionnez"
+                                            className="col-span-1"
                                         />
                                     </div>
-
-                                    {/* <div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
-										<Label
-											label="Solution"
-											htmlFor={PartnerSolutionType.DLC_PRO}
-											className="text-xs font-semibold text-lynch-950"
-										/>
-										<FormField
-											control={form.control}
-											name="solutions"
-											render={({ field }) => (
-												<div className="flex gap-3 items-center">
-													<div className="flex items-center my-auto h-full gap-2">
-														<Checkbox
-															name={PartnerSolutionType.DONATE_PRO}
-															className="size-5"
-															checked={field.value.includes(PartnerSolutionType.DONATE_PRO)}
-															onClick={() =>
-																field.onChange(
-																	field.value.includes(PartnerSolutionType.DONATE_PRO)
-																		? [...field.value.filter((item) => item !== PartnerSolutionType.DONATE_PRO)]
-																		: [...field.value, PartnerSolutionType.DONATE_PRO]
-																)
-															}
-														/>
-														<PartnerSolution
-															solution={PartnerSolutionType.DONATE_PRO}
-															className="px-4 py-[0.4rem] my-3"
-															size={20}
-														/>
-													</div>
-													<div className="flex items-center my-auto h-full gap-2">
-														<Checkbox
-															name={PartnerSolutionType.DLC_PRO}
-															className="size-5"
-															checked={field.value.includes(PartnerSolutionType.DLC_PRO)}
-															onClick={() =>
-																field.onChange(
-																	field.value.includes(PartnerSolutionType.DLC_PRO)
-																		? [...field.value.filter((item) => item !== PartnerSolutionType.DLC_PRO)]
-																		: [...field.value, PartnerSolutionType.DLC_PRO]
-																)
-															}
-														/>
-														<PartnerSolution
-															solution={PartnerSolutionType.DLC_PRO}
-															className="px-4 py-[0.4rem] my-3"
-															size={20}
-														/>
-													</div>
-													<div className="flex items-center my-auto h-full gap-2">
-														<Checkbox
-															name={PartnerSolutionType.MARKET_PRO}
-															className="size-5"
-															checked={field.value.includes(PartnerSolutionType.MARKET_PRO)}
-															onClick={() =>
-																field.onChange(
-																	field.value.includes(PartnerSolutionType.MARKET_PRO)
-																		? [...field.value.filter((item) => item !== PartnerSolutionType.MARKET_PRO)]
-																		: [...field.value, PartnerSolutionType.MARKET_PRO]
-																)
-															}
-														/>
-														<PartnerSolution
-															solution={PartnerSolutionType.MARKET_PRO}
-															className="px-4 py-[0.4rem] my-3"
-															size={20}
-														/>
-													</div>
-												</div>
-											)}
-										/>
-									</div> */}
                                 </div>
                             </div>
                         </form>

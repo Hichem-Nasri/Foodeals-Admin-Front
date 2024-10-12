@@ -66,6 +66,21 @@ export interface DeliveryFilterType {
     email: string
 }
 
+export const valuesGetting = (cities: string[]) => {
+    if (!cities || cities.length === 0) return []
+    const result: { name: string; location: string[] }[] = []
+    cities.forEach((city) => {
+        const [cityName, region] = city.split('-')
+        const existingCity = result.find((item) => item.name === cityName)
+        if (existingCity) {
+            existingCity.location.push(region)
+        } else {
+            result.push({ name: cityName, location: [region] })
+        }
+    })
+    return result
+}
+
 export const CheckedType = (
     target: HTMLInputElement,
     type: string,

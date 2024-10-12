@@ -60,7 +60,7 @@ const DialogSide: FC<DialogSideProps> = ({
             </DialogTrigger>
             <DialogContent
                 className={cn(
-                    `${sideClassName} flex flex-col justify-start items-start border border-neutral-200 bg-white p-6 shadow-lg duration-200 sm:rounded-lg dark:border-neutral-800 dark:bg-neutral-950 lg:w-auto min-w-full`,
+                    `${sideClassName} flex flex-col justify-start items-start border border-neutral-200 bg-white p-6 shadow-lg duration-200 sm:rounded-lg lg:w-auto min-w-full`,
                     className
                 )}
                 {...props}

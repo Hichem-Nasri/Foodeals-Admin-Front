@@ -12,7 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { ChevronDown, LucideProps } from 'lucide-react'
+import { ChevronDown, ListPlus, LucideProps } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AvatarAndName } from '@/components/AvatarAndName'
 import {
@@ -48,9 +48,17 @@ interface MultiSelectProps {
     length?: number
     type?: 'company' | 'status'
     normalTransform?: boolean
+    region?: boolean
 }
 
-const defaultTransform = (value: MultiSelectOptionsType[]) => {
+const defaultTransform = (
+    value: MultiSelectOptionsType[],
+    region: boolean,
+    len: number
+) => {
+    if (len == 1 && region) {
+        return [<div key={99}>Plusieurs ville</div>]
+    }
     return value.map((option, index) => (
         <div
             key={index}
@@ -60,7 +68,9 @@ const defaultTransform = (value: MultiSelectOptionsType[]) => {
             )}
         >
             <span>
-                {option.label} {index != value.length - 1 ? '-' : ''}
+                {region
+                    ? option.label.split('-').slice(1).join(' ')
+                    : option.label + (index != value.length - 1 ? '-' : '')}
             </span>
         </div>
     ))
@@ -79,14 +89,14 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     length,
     type = 'company',
     normalTransform = false,
+    region = false,
 }) => {
     const selectedOptions = options.filter((option) =>
         selectedValues.includes(option.key.toString())
     )
     const len = length ?? 3
-    console.log('selectedOptions:: ', options, transform)
     if (normalTransform) {
-        transform = defaultTransform
+        transform = (value) => defaultTransform(value, region, len)
     }
     return (
         <Popover>
@@ -144,9 +154,16 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     ) : transform && !selectedValues.length ? (
                         placeholder
                     ) : (
-                        <AvatarAndName avatar={emptyAvatar} name="Multi" />
+                        <AvatarAndName
+                            avatar={emptyAvatar}
+                            name={region ? 'Plusieurs zone' : 'Multi'}
+                        />
                     )}
-                    <ChevronDown className="opacity-50 ml-auto" />
+                    {region && selectedValues.length > 1 ? (
+                        <ListPlus className="opacity-50 ml-auto" />
+                    ) : (
+                        <ChevronDown className="opacity-50 ml-auto" />
+                    )}
                 </div>
             </PopoverTrigger>
             <PopoverContent className="rounded-[16px] p-3">
@@ -190,7 +207,14 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                             {type == 'company' ? (
                                                 <AvatarAndName
                                                     avatar={option.avatar}
-                                                    name={option.label}
+                                                    name={
+                                                        region
+                                                            ? option.label
+                                                                  .split('-')
+                                                                  .slice(1)
+                                                                  .join(' ')
+                                                            : option.label
+                                                    }
                                                 />
                                             ) : (
                                                 <div
@@ -202,7 +226,14 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                                     {option.icon && (
                                                         <option.icon className="size-4" />
                                                     )}
-                                                    <span>{option.label}</span>
+                                                    <span>
+                                                        {region
+                                                            ? option.label
+                                                                  .split('-')
+                                                                  .slice(1)
+                                                                  .join(' ')
+                                                            : option.label}
+                                                    </span>
                                                 </div>
                                             )}
                                         </CommandItem>

@@ -1,5 +1,7 @@
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
-import { PartnerType } from './partners'
+import { PartnerSolutionType, PartnerType } from './partners'
+import { LucideProps } from 'lucide-react'
+import { ForwardRefExoticComponent, RefAttributes } from 'react'
 
 export const CheckedType = (
     target: HTMLInputElement,
