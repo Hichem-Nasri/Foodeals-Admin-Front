@@ -125,7 +125,7 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
                         <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
                             <CustomButton
                                 disabled={convertir}
-                                label="Archiver"
+                                label="Lead Ko"
                                 onClick={() => console.log('Save')}
                                 className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
                         transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"

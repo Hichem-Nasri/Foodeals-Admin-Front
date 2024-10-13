@@ -60,7 +60,7 @@ export const EventPopUps = ({
         if (open) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
-    }, [open])
+    }, [open, isSuccess])
 
     const mutation = useMutation({
         mutationFn: async (e: CrmObjectType) => {

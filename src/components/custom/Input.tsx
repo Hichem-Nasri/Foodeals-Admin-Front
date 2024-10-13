@@ -1,6 +1,7 @@
+'use client'
 import { cn } from '@/lib/utils'
-import { LucideProps } from 'lucide-react'
-import { ForwardRefExoticComponent, RefAttributes, FC } from 'react'
+import { Eye, EyeOff, LucideProps } from 'lucide-react'
+import { ForwardRefExoticComponent, RefAttributes, FC, useState } from 'react'
 import { Label } from '../ui/label'
 import { Input as ShadCnInput } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -40,6 +41,7 @@ export const Input: FC<InputProps> = ({
     iconLeftColor,
     onBlur,
 }) => {
+    const [password, setPassword] = useState(false)
     return (
         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
             {label && (
@@ -66,7 +68,7 @@ export const Input: FC<InputProps> = ({
                     />
                 )}
                 <ShadCnInput
-                    type={type}
+                    type={password && type == 'password' ? 'text' : type}
                     disabled={disabled}
                     onChange={(e) =>
                         (type === 'number' && onChange(+e.target.value)) ||
@@ -86,6 +88,17 @@ export const Input: FC<InputProps> = ({
                         onClick={handleShowPassword}
                         className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2"
                     />
+                )}
+                {type === 'password' && (
+                    <button
+                        type="button"
+                        className="absolute flex items-center justify-center right-0 top-1/2 -translate-y-1/2 h-full w-12"
+                        onClick={() => {
+                            setPassword((prev) => !prev)
+                        }}
+                    >
+                        {!password ? <EyeOff /> : <Eye />}
+                    </button>
                 )}
             </div>
         </div>
