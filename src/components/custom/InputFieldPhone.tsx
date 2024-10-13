@@ -94,6 +94,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
                                 placeholder={placeholder}
                                 IconRight={IconRight}
                                 IconLeft={PhoneCall}
+                                disabled={disabled}
                             />
                         </div>
                         <FormMessage />

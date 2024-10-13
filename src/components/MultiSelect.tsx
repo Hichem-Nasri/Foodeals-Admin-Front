@@ -109,10 +109,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     )}
                 >
                     {selectedValues.length == 1 && !transform ? (
-                        selectedOptions[0] &&
-                        selectedOptions[0].avatar && (
+                        selectedOptions[0] && (
                             <AvatarAndName
-                                avatar={selectedOptions[0].avatar}
+                                avatar={selectedOptions[0].avatar!}
                                 name={selectedOptions[0].label}
                             />
                         )
