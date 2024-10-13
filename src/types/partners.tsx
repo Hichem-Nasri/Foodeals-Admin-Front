@@ -1,3 +1,4 @@
+import api from '@/api/Auth'
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
@@ -6,7 +7,7 @@ import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { AppRoutes } from '@/lib/routes'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Eye, Pencil, Users } from 'lucide-react'
+import { Archive, Eye, FileBadge, Pencil, Store, Users } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 export enum PartnerStatusType {
@@ -362,12 +363,53 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
                         label: 'Voir',
                     },
                     {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Pencil,
+                        label: 'Modifier',
+                    },
+                    {
                         actions: (id) =>
                             router.push(
                                 AppRoutes.collaborator.replace(':id', id)
                             ),
                         icon: Users,
                         label: 'Collaborateurs',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Store,
+                        label: 'Sous Comptes',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: FileBadge,
+                        label: 'Contrat',
+                    },
+                    {
+                        actions: () => {
+                            // const res = api.delete(`http://localhost:8080/api/v1/...`)
+                            console.log('archive')
+                        },
+                        icon: Archive,
+                        label: 'Archiver',
                     },
                 ]}
             />

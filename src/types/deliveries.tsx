@@ -265,7 +265,10 @@ export const columnsDeliveryCollaboratorsTable = (
     router: AppRouterInstance
 ) => [
     columnDeliveryCollaboratorsTableHelper.accessor('date', {
-        cell: (info) => info.getValue().toLocaleDateString(),
+        cell: (info) =>
+            info.getValue().getMonth().toString().padStart(2, '0') +
+            '/' +
+            info.getValue().getUTCFullYear().toString().slice(2),
         header: 'Date',
         footer: (info) => info.column.id,
     }),
@@ -306,7 +309,7 @@ export const columnsDeliveryCollaboratorsTable = (
     }),
     columnDeliveryCollaboratorsTableHelper.accessor('commands', {
         cell: (info) => info.getValue(),
-        header: 'Nombre de commandes',
+        header: 'Commandes',
         footer: (info) => info.column.id,
     }),
     columnDeliveryCollaboratorsTableHelper.accessor('phone', {
@@ -345,6 +348,11 @@ export const columnsDeliveryCollaboratorsTable = (
                             ),
                         icon: Eye,
                         label: 'Voir',
+                    },
+                    {
+                        actions: () => {},
+                        icon: Archive,
+                        label: 'Archiver',
                     },
                 ]}
             />

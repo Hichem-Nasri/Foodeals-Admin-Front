@@ -88,8 +88,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                     />
                     <div className="flex  lg:flex-row flex-col gap-3 w-full">
                         <FilterMultiSelect
-                            normalTransform
-                            length={2}
+                            length={1}
                             label="Raison sociale"
                             options={options.companyName}
                             emptyAvatar="/avatar/emptyPartner.png"
@@ -99,11 +98,10 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                             }}
                         />
                         <FilterMultiSelect
-                            normalTransform
                             length={2}
                             label="Manager"
                             options={options.manager}
-                            emptyAvatar="/avatar/emptyPartner.png"
+                            emptyAvatar="/avatar/emptyUser.png"
                             item={filterData.manager}
                             setItem={(manager) => {
                                 setFilterData({ ...filterData, manager })
@@ -147,83 +145,29 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                         />
                     </div>
                     <div className="flex flex-col gap-3 w-full">
-                        <Label label="Type de compte" htmlFor="accountType" />
                         <div className="flex lg:flex-row flex-col lg:items-center gap-3">
-                            <div className="flex items-center gap-2">
-                                <Checkbox
-                                    checked={solutionChecked.includes(
-                                        PartnerSolutionType.MARKET_PRO
-                                    )}
-                                    name={PartnerSolutionType.MARKET_PRO}
-                                    className="size-5"
-                                    onClick={(e) => {
-                                        const target =
-                                            e.target as HTMLInputElement
-                                        CheckedType(
-                                            target,
-                                            PartnerSolutionType.MARKET_PRO,
-                                            solutionChecked,
-                                            setSolutionChecked,
-                                            setFilterData
+                            <FilterMultiSelect
+                                transform={(value) => {
+                                    return value.map((val) => {
+                                        return (
+                                            <PartnerSolution
+                                                solution={
+                                                    val.label as PartnerSolutionType
+                                                }
+                                                className="px-4 py-3"
+                                                size={20}
+                                            />
                                         )
-                                    }}
-                                />
-                                <PartnerSolution
-                                    solution={PartnerSolutionType.MARKET_PRO}
-                                    className="px-4 py-3"
-                                    size={20}
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Checkbox
-                                    checked={solutionChecked.includes(
-                                        PartnerSolutionType.DLC_PRO
-                                    )}
-                                    name={PartnerSolutionType.DLC_PRO}
-                                    className="size-5"
-                                    onClick={(e) => {
-                                        const target =
-                                            e.target as HTMLInputElement
-                                        CheckedType(
-                                            target,
-                                            PartnerSolutionType.DLC_PRO,
-                                            solutionChecked,
-                                            setSolutionChecked,
-                                            setFilterData
-                                        )
-                                    }}
-                                />
-                                <PartnerSolution
-                                    solution={PartnerSolutionType.DLC_PRO}
-                                    className="px-4 py-3"
-                                    size={20}
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Checkbox
-                                    checked={solutionChecked.includes(
-                                        PartnerSolutionType.DONATE_PRO
-                                    )}
-                                    name={PartnerSolutionType.DONATE_PRO}
-                                    className="size-5"
-                                    onClick={(e) => {
-                                        const target =
-                                            e.target as HTMLInputElement
-                                        CheckedType(
-                                            target,
-                                            PartnerSolutionType.DONATE_PRO,
-                                            solutionChecked,
-                                            setSolutionChecked,
-                                            setFilterData
-                                        )
-                                    }}
-                                />
-                                <PartnerSolution
-                                    solution={PartnerSolutionType.DONATE_PRO}
-                                    className="px-4 py-3"
-                                    size={20}
-                                />
-                            </div>
+                                    })
+                                }}
+                                length={3}
+                                label="solutions"
+                                options={options.solution}
+                                item={filterData.solution}
+                                setItem={(solution) => {
+                                    setFilterData({ ...filterData, solution })
+                                }}
+                            />
                         </div>
                     </div>
                 </div>

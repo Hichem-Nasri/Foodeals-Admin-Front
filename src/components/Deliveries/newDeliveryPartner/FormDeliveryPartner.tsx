@@ -12,13 +12,16 @@ import { InputFieldForm } from '@/components/custom/InputField'
 import { Form } from '@/components/ui/form'
 import { SelectField } from '@/components/custom/SelectField'
 import { InputPhoneField } from '@/components/custom/InputFieldPhone'
-import { Mail } from 'lucide-react'
+import { Mail, Users } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
 import { DeliveryPartnerSchema } from '@/types/DeliverySchema'
 import { CitySelectField } from '@/components/custom/CitySelectField'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partners'
+import { CustomButton } from '@/components/custom/CustomButton'
+import { AppRoutes } from '@/lib/routes'
+import { useParams, useRouter } from 'next/navigation'
 
 interface FormDeliveryPartnerProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
@@ -35,6 +38,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
     setCountryCode,
     disabled,
 }) => {
+    const { id } = useParams()
     const { handleSubmit, control } = form
     const companyTypeOptions = [
         { key: 'supermarché', label: 'Supermarché' },
@@ -47,6 +51,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
         { key: 'traiteurs', label: 'Traiteurs' },
         { key: 'autres', label: 'Autres' },
     ]
+    const router = useRouter()
     return (
         <Accordion
             type="single"
@@ -225,6 +230,22 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             placeholder="Sélectionnez"
                                             className="col-span-1"
                                         />
+                                        {disabled && (
+                                            <CustomButton
+                                                type="button"
+                                                label="List des collaborators"
+                                                IconRight={Users}
+                                                className="col-auto h-14 self-end w-4/5"
+                                                onClick={() => {
+                                                    router.push(
+                                                        AppRoutes.deliveryCollaboratorDetails.replace(
+                                                            ':id',
+                                                            id as string
+                                                        )
+                                                    )
+                                                }}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>
