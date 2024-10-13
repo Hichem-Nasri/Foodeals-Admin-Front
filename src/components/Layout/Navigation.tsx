@@ -22,7 +22,7 @@ export const Navigation: FC<NavigationProps> = () => {
         <nav className="lg:flex hidden flex-col p-[0.625rem] gap-[0.625rem] max-w-60 w-full h-fit rounded-[14px] bg-white">
             {pagesData.map((page, index) => (
                 <Fragment key={index}>
-                    {page.asAccordion ? (
+                    {page.subPage ? (
                         <Accordion
                             type="single"
                             className="w-full"
@@ -68,14 +68,17 @@ export const Navigation: FC<NavigationProps> = () => {
                                         </div>
                                     </>
                                 </AccordionTrigger>
-                                <AccordionContent>
-                                    {page.ListAccordion?.map((item, index) => (
+                                <AccordionContent className="space-y-1">
+                                    {page.ListSubPage?.map((item, index) => (
                                         <Fragment key={index}>
                                             <CustomButton
+                                                onClick={() => {
+                                                    router.push(item.href)
+                                                }}
                                                 className={cn(
                                                     'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
                                                     (pathname.includes(
-                                                        page.href
+                                                        item.href
                                                     ) &&
                                                         item.href !=
                                                             AppRoutes.home) ||

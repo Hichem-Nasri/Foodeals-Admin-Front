@@ -1,5 +1,7 @@
 import {
     BarChartBig,
+    Box,
+    Contact,
     CreditCard,
     Database,
     Globe,
@@ -7,6 +9,7 @@ import {
     HeartHandshake,
     Hotel,
     LucideProps,
+    Salad,
     Settings,
     SquareUser,
     Store,
@@ -22,8 +25,8 @@ export interface PageData {
     icon: ForwardRefExoticComponent<
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
-    asAccordion?: boolean
-    ListAccordion?: PageData[]
+    subPage?: boolean
+    ListSubPage?: PageData[]
 }
 
 export const pagesData: PageData[] = [
@@ -36,6 +39,24 @@ export const pagesData: PageData[] = [
         label: 'Paiement',
         href: AppRoutes.payment,
         icon: CreditCard,
+        subPage: true,
+        ListSubPage: [
+            {
+                label: 'Partenaire business',
+                href: AppRoutes.businessPartner,
+                icon: Contact,
+            },
+            {
+                label: 'Partenaire livraison',
+                href: AppRoutes.delivery,
+                icon: Box,
+            },
+            {
+                label: 'Produits',
+                href: '#',
+                icon: Salad,
+            },
+        ],
     },
     {
         label: 'Statistique',
@@ -61,8 +82,8 @@ export const pagesData: PageData[] = [
         label: 'CRM',
         href: AppRoutes.crm,
         icon: Database,
-        asAccordion: true,
-        ListAccordion: [
+        subPage: true,
+        ListSubPage: [
             {
                 label: 'Prospects',
                 href: AppRoutes.prospects,

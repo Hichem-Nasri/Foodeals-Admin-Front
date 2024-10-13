@@ -4,6 +4,8 @@ export const AppRoutes = {
     home: '/',
     payment: '/paiement',
     paymentDetails: '/paiement/:id',
+    businessPartner: '/paiement/partenaire-business',
+    newBusinessPartner: '/paiement/partenaire-business/:id',
     statistics: '/statistique',
     partners: '/partenaires',
     newPartner: '/partenaires/partenair/:id',
