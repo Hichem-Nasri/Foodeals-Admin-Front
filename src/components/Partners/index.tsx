@@ -25,6 +25,7 @@ import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
+import PaginationData from '../utils/PaginationData'
 
 interface PartnersProps {
     partners: PartnerType[]
@@ -99,7 +100,7 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
     })
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
+        <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
                 table={table}
                 form={form}
@@ -114,6 +115,7 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
                     <PartnerCard partner={value} key={value.id} />
                 )}
             />
+            <PaginationData />
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton
                     size="sm"
