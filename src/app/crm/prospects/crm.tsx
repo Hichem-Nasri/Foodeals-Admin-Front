@@ -14,7 +14,6 @@ import {
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import Statistics from './statistics'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { setDate } from 'date-fns'
 import { accessToken } from '@/lib/utils'
@@ -26,6 +25,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { RotateCw, UserRoundPlus } from 'lucide-react'
 import PaginationData from '@/components/utils/PaginationData'
 import { CrmType } from '@/types/Global-Type'
+import Statistics from '@/components/crm/Prospect/statistics'
 
 // Define the API endpoint URL as a constant
 const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects'

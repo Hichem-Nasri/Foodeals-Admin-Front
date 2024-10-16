@@ -12,6 +12,7 @@ export const AppRoutes = {
     newConvertir: '/partenaires/convertir/:id',
     newProspect: '/crm/prospects/create',
     prospects: '/crm/prospects/:id',
+    crmDemandes: 'crm/demandes',
     collaboratorDetails:
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',

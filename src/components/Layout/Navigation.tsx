@@ -12,6 +12,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '../ui/accordion'
+import { path } from 'animejs'
 
 interface NavigationProps {}
 
@@ -46,9 +47,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                 >
                                     <>
                                         <div
-                                            onClick={() =>
-                                                router.push(page.href)
-                                            }
+                                            onClick={() => {}}
                                             className={cn(
                                                 'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] hover:bg-transparent cursor-pointer inline-flex items-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none  disabled:pointer-events-none disabled:opacity-50 p-4 py-5',
                                                 (pathname.includes(page.href) &&
@@ -73,19 +72,15 @@ export const Navigation: FC<NavigationProps> = () => {
                                         <Fragment key={index}>
                                             <CustomButton
                                                 onClick={() => {
+                                                    console.log(
+                                                        pathname,
+                                                        item.href
+                                                    )
                                                     router.push(item.href)
                                                 }}
                                                 className={cn(
                                                     'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
-                                                    (pathname.includes(
-                                                        item.href
-                                                    ) &&
-                                                        item.href !=
-                                                            AppRoutes.home) ||
-                                                        (pathname ===
-                                                            item.href &&
-                                                            item.href ===
-                                                                AppRoutes.home)
+                                                    pathname.includes(item.href)
                                                         ? 'bg-lynch-100 '
                                                         : ''
                                                 )}

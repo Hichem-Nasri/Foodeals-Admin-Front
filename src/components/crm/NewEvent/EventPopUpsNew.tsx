@@ -12,20 +12,23 @@ import { useMediaQuery } from 'react-responsive'
 import { useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
+import { EventType } from '@/types/Global-Type'
 
-export const EventPopUps = ({
+export const EventPopUpsNew = ({
+    id,
     setOpen,
     open,
     convertir,
-    prospect,
+    setEvents,
+    events,
 }: {
+    id?: string
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
-    prospect: any
+    setEvents: React.Dispatch<React.SetStateAction<EventType[]>>
+    events: EventType[]
     open: boolean
 }) => {
-    const queryClient = useQueryClient()
-    const { id } = useParams()
     const onSaveData = () => {
         console.log('Save data')
     }
@@ -33,7 +36,7 @@ export const EventPopUps = ({
     const form = useForm<z.infer<typeof CrmObjectSchema>>({
         resolver: zodResolver(CrmObjectSchema),
         mode: 'onBlur',
-        defaultValues: getInitialValues(prospect.event),
+        defaultValues: getInitialValues(events),
     })
     useEffect(() => {
         if (open) {
@@ -60,10 +63,8 @@ export const EventPopUps = ({
             return res
         },
         onSuccess: (data) => {
-            console.log('data:', prospect)
-            prospect.event.push(data)
+            setEvents((prev) => [...prev, data])
             setOpen((prev) => !prev)
-            queryClient.invalidateQueries({ queryKey: ['events', 'prospects'] })
         },
     })
 

@@ -68,6 +68,18 @@ export interface PaymentType {
     payByFoodeals: boolean
 }
 
+export interface partnerAbonnementType {
+    id: string
+    ref: string
+    type: string
+    magasin: string
+    date: Date
+    nbEcheance: number
+    totalEcheance: number
+    prixEcheance: number
+    solution: string[]
+}
+
 export const PaymentFilterSchema = z.object({
     date: z.date().optional(),
     partner: z
@@ -141,6 +153,92 @@ export interface FormData {
     document?: string
     file?: string
 }
+
+const columnHelperAbonnement = createColumnHelper<partnerAbonnementType>()
+
+export const columnsAbonnementTable = (router: AppRouterInstance) => [
+    columnHelperAbonnement.accessor('ref', {
+        cell: (info) => info.getValue(),
+        header: 'Réf',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('type', {
+        cell: (info) => info.getValue(),
+        header: 'Type',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('magasin', {
+        cell: (info) => info.getValue(),
+        header: 'Magasin',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('date', {
+        cell: (info) => info.getValue().toLocaleDateString(),
+        header: 'Date',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('nbEcheance', {
+        cell: (info) => info.getValue(),
+        header: "Nombre d'échéance",
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('totalEcheance', {
+        cell: (info) => info.getValue(),
+        header: 'Total échéance',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('prixEcheance', {
+        cell: (info) => info.getValue(),
+        header: 'Prix échéance',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('solution', {
+        cell: (info) => (
+            <div className="flex items-center gap-1">
+                {info.getValue().map((solution) => (
+                    <PartnerSolution
+                        solution={solution as PartnerSolutionType}
+                        key={solution}
+                    />
+                ))}
+            </div>
+        ),
+        header: 'Solution',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperAbonnement.accessor('id', {
+        cell: (info) => (
+            <ActionsMenu
+                id={info.getValue()}
+                menuList={[
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.paymentDetails.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Eye,
+                        label: 'Voir',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.paymentDetails.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Pencil,
+                        label: 'Modifier',
+                    },
+                ]}
+            />
+        ),
+        header: 'Activité',
+    }),
+]
 
 const columnHelper = createColumnHelper<PaymentType>()
 

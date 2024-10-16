@@ -17,7 +17,7 @@ export default function CreatePage() {
     // })
     return (
         <Layout>
-            <Create prospect={defaultDataProspectTable} />
+            <Create />
         </Layout>
     )
 }

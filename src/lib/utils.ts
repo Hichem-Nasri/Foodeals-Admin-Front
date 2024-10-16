@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MjkwMjM0NjIsImV4cCI6MTcyOTEwOTg2Mn0.5UgtC47RivOFN-ENZh93l94p1DwEaVlx2T32Lwbi_kn9CekD3HjddhnIeKnH4-opyr3f-6Kqb9s65GPJDbMmVQ    '
+    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MjkwODQzNDEsImV4cCI6MTcyOTY4OTE0MX0.vwr018bD7kObVRJEG_KTA0gKltt4sy4Zl1veu_w73LA73Y0D1F4EhKzEAXmimTmBb2Eck5-_YEL8pphrgIofZQ'
 
 export const headers = {
     Authorization: 'Bearer ' + accessToken,

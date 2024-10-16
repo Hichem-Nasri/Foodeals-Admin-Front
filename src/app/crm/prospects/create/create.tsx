@@ -7,8 +7,9 @@ import { countryCodes } from '@/lib/utils'
 import {
     CrmInformationSchema,
     defaultCrmInformationData,
+    getInfoData,
 } from '@/types/CrmScheme'
-import { CrmInformationSchemaType } from '@/types/CrmType'
+import { CrmInformationSchemaType, CrmObjectType } from '@/types/CrmType'
 import { PartnerStatusType } from '@/types/partners'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Archive, Router } from 'lucide-react'
@@ -21,16 +22,17 @@ import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useRouter } from 'next/navigation'
+import { EventPopUpsNew } from '@/components/crm/NewEvent/EventPopUpsNew'
+import { EventType } from '@/types/Global-Type'
 
-interface CreateProps {
-    prospect: any
-}
+interface CreateProps {}
 
-export const Create: FC<CreateProps> = ({ prospect }) => {
+export const Create: FC<CreateProps> = () => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const queryClient = useQueryClient()
     const router = useRouter()
     const [Info, setInfo] = useState<any>(null)
+    const [events, setEvents] = useState<EventType[]>([])
     const mutate = useMutation({
         mutationFn: async (data: any) => {
             const res = await api
@@ -54,9 +56,7 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
         resolver: zodResolver(CrmInformationSchema),
         mode: 'onBlur',
-        defaultValues: {
-            ...defaultCrmInformationData,
-        },
+        defaultValues: { ...getInfoData(Info) },
     })
 
     const { handleSubmit } = CrmInformation
@@ -64,11 +64,6 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
         onSubmitCrmInfo(CrmInformation.getValues())
         setOpen((prev) => !prev)
     }
-    useEffect(() => {
-        if (Info) {
-            router.push(`/crm/prospects/${Info.id}`)
-        }
-    }, [Info, router])
     const onSaveData = (e: CrmInformationSchemaType) => {
         const [firstName, lastName] = e.responsable.split(' ')
         const createProspect = {
@@ -91,8 +86,6 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
                 region: e.region,
             },
         }
-        // const data = JSON.stringify(createProspect)
-        console.log(createProspect)
         mutate.mutate(createProspect)
         console.log('Save data')
     }
@@ -100,52 +93,53 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
     const [convertir, setConvertir] = useState(false)
     const [open, setOpen] = useState(false)
 
-    if (open)
-        return (
-            <EventPopUps
-                setOpen={setOpen}
-                open={open}
-                convertir={false}
-                prospect={prospect}
-            />
-        )
-
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
-            <>
-                {' '}
-                <TopBar
-                    status={PartnerStatusType.DRAFT}
-                    primaryButtonDisabled={!convertir}
-                    secondaryButtonDisabled={convertir}
-                    onSaveData={handleSubmit((e) => onSaveData(e))}
-                    onSubmit={onSubmit}
-                />
-                <FormCrmInfo
-                    onSubmit={onSubmitCrmInfo}
-                    form={CrmInformation}
-                    countryCode={countryCode}
-                    setCountryCode={setCountryCode}
-                    disabled={convertir}
-                />
-                <NewEvenent
-                    Event={Info && Info.event ? Info.event : []}
-                    setOpen={setOpen}
-                    convertir={convertir}
-                />
-                {Info && Info.events && Info.events.length > 0 && (
-                    <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
-                        <CustomButton
-                            disabled={convertir}
-                            label="Lead Ko"
-                            onClick={() => console.log('Save')}
-                            className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
+            {!open ? (
+                <>
+                    {' '}
+                    <TopBar
+                        status={PartnerStatusType.DRAFT}
+                        primaryButtonDisabled={!convertir}
+                        secondaryButtonDisabled={convertir}
+                        onSaveData={handleSubmit((e) => onSaveData(e))}
+                        onSubmit={onSubmit}
+                    />
+                    <FormCrmInfo
+                        onSubmit={onSubmitCrmInfo}
+                        form={CrmInformation}
+                        countryCode={countryCode}
+                        setCountryCode={setCountryCode}
+                        disabled={convertir}
+                    />
+                    <NewEvenent
+                        Event={events}
+                        setOpen={setOpen}
+                        convertir={convertir}
+                    />
+                    {Info && Info.events && Info.events.length > 0 && (
+                        <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
+                            <CustomButton
+                                disabled={convertir}
+                                label="Lead Ko"
+                                onClick={() => console.log('Save')}
+                                className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
                         transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"
-                            IconRight={Archive}
-                        />
-                    </div>
-                )}
-            </>
+                                IconRight={Archive}
+                            />
+                        </div>
+                    )}
+                </>
+            ) : (
+                <EventPopUpsNew
+                    id={Info?.id}
+                    setOpen={setOpen}
+                    open={open}
+                    convertir={convertir}
+                    setEvents={setEvents}
+                    events={events}
+                />
+            )}
         </div>
     )
 }

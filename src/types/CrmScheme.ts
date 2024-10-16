@@ -1,5 +1,8 @@
 import { z } from 'zod'
 import { CrmInformationSchemaType, CrmObjectType } from './CrmType'
+import CrmDemandes from '@/app/crm/demandes/crmDemandes'
+import { CrmType } from './Global-Type'
+import { capitalize } from './utils'
 
 export const CrmInformationSchema = z.object({
     companyName: z.string().min(3),
@@ -39,6 +42,32 @@ export const defaultCrmInformationData = {
     city: '',
     region: '',
     address: '',
+}
+
+export function getInfoData(data: CrmType) {
+    if (!data) return defaultCrmInformationData
+    return {
+        companyName: data.companyName,
+        category: [...data.category],
+        responsable:
+            capitalize(data.contact.name.firstName) +
+            ' ' +
+            capitalize(data.contact.name.lastName),
+        phone: data.contact.phone,
+        email: data.contact.email,
+        creatorInfo:
+            capitalize(data.creatorInfo.name.firstName) +
+            ' ' +
+            capitalize(data.creatorInfo.name.lastName),
+        managerInfo:
+            capitalize(data.managerInfo.name.firstName) +
+            ' ' +
+            capitalize(data.managerInfo.name.lastName),
+        country: data.address.country,
+        city: data.address.city,
+        region: data.address.region,
+        address: data.address.address,
+    }
 }
 
 export const defaultCrmObjectData = {

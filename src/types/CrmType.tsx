@@ -6,6 +6,7 @@ import { AppRoutes } from '@/lib/routes'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
     Archive,
+    BellDot,
     CheckCheck,
     Eye,
     FileMinus,
@@ -102,6 +103,154 @@ export const capitalize = (str: string): string => {
     if (!str) return ''
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+export interface CrmDemandeType {
+    id: string
+    date: Date
+    companyName: string
+    activity: string[]
+    respansable: string
+    role: string
+    country: string
+    city: string
+    address: string
+    telephone: string
+    email: string
+}
+
+const columnDemandeHelper = createColumnHelper<CrmDemandeType>()
+
+export const columnsDemandeTable = (router: AppRouterInstance) => [
+    columnDemandeHelper.accessor('date', {
+        cell: (info) => {
+            const date = info.getValue()
+            const formattedDate = new Intl.DateTimeFormat('fr-FR', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+            }).format(date)
+
+            return (
+                <span className="w-full max-w-44 text-ellipsis whitespace-nowrap">
+                    {formattedDate}
+                </span>
+            )
+        },
+        header: 'Date de création',
+        footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const parse = (date: string) => {
+                const dateArray = date.split('/')
+                return `${dateArray[1]}/${dateArray[0]}/${dateArray[2]}`
+            }
+            const startDate = new Date(parse(filterValue[0]))
+            const endDate = new Date(parse(filterValue[1]))
+            const date = row.original.date
+            if (date >= startDate && date <= endDate) {
+                return true
+            }
+            return false
+        },
+    }),
+    columnDemandeHelper.accessor('companyName', {
+        cell: (info) => info.getValue(),
+        header: 'Raison sociale',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('activity', {
+        cell: (info) => (
+            <div className="flex items-center gap-1">
+                {info.getValue().map((activity) => (
+                    <span
+                        key={activity}
+                        className="text-ellipsis whitespace-nowrap"
+                    >
+                        {activity}
+                    </span>
+                ))}
+            </div>
+        ),
+        header: 'Activité',
+        footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            return filterValue.includes(row.original.activity)
+        },
+    }),
+    columnDemandeHelper.accessor('respansable', {
+        cell: (info) => {
+            const fullName = `${capitalize(info.getValue())}`
+            return <span className="">{fullName}</span>
+        },
+        header: 'Responsable',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('role', {
+        cell: (info) => info.getValue(),
+        header: 'Role',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('country', {
+        cell: (info) => (
+            <div className="w-full px-2 flex-1 text-nowrap">
+                {info.getValue()}
+            </div>
+        ),
+        header: 'Pays',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('city', {
+        cell: (info) => info.getValue(),
+        header: 'Ville',
+        footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            return filterValue.includes(row.original.city)
+        },
+    }),
+    columnDemandeHelper.accessor('address', {
+        cell: 'Address',
+        header: 'Adresse',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('telephone', {
+        cell: (info) => {
+            return <PhoneBadge phone={info.getValue()} />
+        },
+        header: 'Téléphone',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('email', {
+        cell: (info) => {
+            return <EmailBadge email={info.getValue()} />
+        },
+        header: 'Email',
+        footer: (info) => info.column.id,
+    }),
+    columnDemandeHelper.accessor('id', {
+        cell: (info) => (
+            <ActionsMenu
+                id={info.getValue()}
+                menuList={[
+                    {
+                        actions: () => {},
+                        icon: Eye,
+                        label: 'Voir',
+                    },
+                    {
+                        actions: () => {},
+                        icon: BellDot,
+                        label: 'Notifier',
+                    },
+                    {
+                        actions: () => console.log('Convertir'),
+                        icon: Rocket,
+                        label: 'Convertir',
+                    },
+                ]}
+            />
+        ),
+        header: 'Activité',
+    }),
+]
 
 export interface ProspectType {
     key: string

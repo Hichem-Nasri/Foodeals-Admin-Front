@@ -33,11 +33,11 @@ const AddNewEvent: FC<AddNewEventProps> = ({
     mutation,
 }) => {
     const myhandleSubmit = async (e: CrmObjectType) => {
-        console.log('hello')
         try {
             mutation.mutate(e)
-            // setOpen(true)
-        } catch (error) {}
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const { control, handleSubmit } = form

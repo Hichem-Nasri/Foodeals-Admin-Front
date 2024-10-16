@@ -106,30 +106,19 @@ const ProspectPage = () => {
 
 export default ProspectPage
 
-const demoProspect = {
-    id: '1',
-    status: PartnerStatusType.PENDING,
-    email: 'test@example.com',
-    phone: '1234567890',
-    companyName: 'Test Company',
-    category: 'Test Category',
-    responsable: 'Test Responsable',
-    managerInfo: 'test',
-    country: 'Test Country',
-    city: 'Test City',
-    region: 'Test Region',
-    address: 'Test Address',
-    creatorInfo: 'Test Creator Info',
-    event: [],
-}
-
 const getProspect = async (id: string) => {
     if (id) {
-        const res = await api
-            .get(`${API_ENDPOINT_GET}/${id}`)
-            .then((res) => res.data)
-            .catch((err) => console.error(err))
-        return res
+        try {
+            const res = await api
+                .get(`${API_ENDPOINT_GET}/${id}`)
+                .then((res) => res.data)
+                .catch((err) => {
+                    throw new Error(err)
+                })
+            return res
+        } catch (e) {
+            console.error(e)
+        }
     }
-    return demoProspect
+    return {}
 }

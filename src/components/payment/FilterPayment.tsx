@@ -31,7 +31,7 @@ export const FilterPayment: FC<FilterPayment> = ({ onSubmit }) => {
     }))
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-1/2">
                 <div className="flex lg:flex-row flex-col items-center gap-3 p-4 bg-white rounded-[14px] w-full">
                     <div className="flex flex-col gap-3 w-full">
                         <Label
