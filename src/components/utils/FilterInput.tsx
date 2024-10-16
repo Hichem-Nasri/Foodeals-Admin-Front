@@ -8,6 +8,7 @@ interface FilterInputProps {
     setInput: (input: string) => void
     label: string
     placeholder?: string
+    LeftIcon?: any
 }
 
 export const FilterInput: FC<FilterInputProps> = ({
@@ -15,6 +16,7 @@ export const FilterInput: FC<FilterInputProps> = ({
     setInput,
     label,
     placeholder,
+    LeftIcon,
 }) => {
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -26,7 +28,7 @@ export const FilterInput: FC<FilterInputProps> = ({
                 }}
                 placeholder={placeholder || `Saisir ${label}`}
                 value={input}
-                IconLeft={PhoneCall}
+                IconLeft={LeftIcon}
             />
         </div>
     )

@@ -47,7 +47,7 @@ export const Input: FC<InputProps> = ({
             {label && (
                 <Label
                     htmlFor={name}
-                    className="text-xs font-semibold text-lynch-950"
+                    className="text-sm font-semibold text-lynch-950"
                 >
                     {label}
                 </Label>

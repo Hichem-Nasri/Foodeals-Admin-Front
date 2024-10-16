@@ -17,7 +17,7 @@ const SplashScreen = ({ finishLoading }: { finishLoading: Function }) => {
             duration: 2000,
             easing: 'easeInOutExpo',
         })
-    }, [])
+    }, [finishLoading])
 
     return (
         <div

@@ -1,6 +1,4 @@
 import { z } from 'zod'
-import { PartnerStatusType } from './partners'
-import { object } from 'prop-types'
 import { CrmInformationSchemaType, CrmObjectType } from './CrmType'
 
 export const CrmInformationSchema = z.object({

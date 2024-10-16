@@ -148,7 +148,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                         <div className="flex lg:flex-row flex-col lg:items-center gap-3">
                             <FilterMultiSelect
                                 transform={(value) => {
-                                    return value.map((val) => {
+                                    return value.map((val, index) => {
                                         return (
                                             <PartnerSolution
                                                 solution={
@@ -156,6 +156,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                                                 }
                                                 className="px-4 py-3"
                                                 size={20}
+                                                key={index}
                                             />
                                         )
                                     })

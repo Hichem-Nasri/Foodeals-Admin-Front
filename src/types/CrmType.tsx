@@ -16,16 +16,16 @@ import {
     X,
 } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { PartnerSolutionType } from './partners'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import React from 'react'
 
 import { DetailsEvenetProspect } from '@/components/crm/NewEvent/DetailsEvenet'
-import { CustomButton } from '@/components/custom/CustomButton'
-import { IconStatus, StyleStatus } from './utils'
 import axios from 'axios'
 import api from '@/api/Auth'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { PartnerSolutionType } from './partners'
+import { IconStatus, StringStatus, StyleStatus } from './utils'
+import { CrmType, EventType } from './Global-Type'
 
 export interface EvenetType {
     date: string
@@ -98,39 +98,9 @@ export interface CrmObjectType {
     message: string
 }
 
-export interface CrmType {
-    id: string
-    date: Date
-    companyName: string
-    category: string
-    responsable: {
-        firstName: string
-        lastName: string
-    }
-    email: string
-    phone: string
-    city: string
-    address: string
-    country: string
-    region: string
-    solutions: PartnerSolutionType[]
-    creatorInfo: {
-        name: {
-            firstName: string
-            lastName: string
-        }
-        avatar: string
-    }
-    managerInfo: {
-        name: {
-            firstName: string
-            lastName: string
-        }
-        avatar: string
-    }
-    status: PartnerStatusType
-    eventObject: string
-    // events?: EvenetType[]
+export const capitalize = (str: string): string => {
+    if (!str) return ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 export interface ProspectType {
@@ -146,62 +116,47 @@ export interface ProspectType {
     message: string
     date: Date
 }
-const columnProspectHelper = createColumnHelper<ProspectType>()
+const columnProspectHelper = createColumnHelper<EventType>()
 const columnHelper = createColumnHelper<CrmType>()
 let count = 1
 export const columnsProspectTable = (router: AppRouterInstance) => [
-    columnProspectHelper.accessor('key', {
-        cell: (info) => (
-            <span className="max-w-16">
-                {count.toString().padStart(3, '0')}
-            </span>
-        ),
-        header: 'ID',
-        // size: 4,
+    columnProspectHelper.accessor('createdAt', {
+        cell: (info) => {
+            // parse the date to be date and hour like this 20/09/2024 à 10h50
+            const date = new Date(info.getValue())
+            const hour = date.toLocaleTimeString().slice(0, 5)
+
+            return (
+                <div className="text-ellipsis whitespace-nowrap max-w-36">
+                    {date.toLocaleDateString()} à {hour}
+                </div>
+            )
+        },
+        header: 'Date et heure',
+        maxSize: 20,
         footer: (info) => info.column.id,
     }),
     columnProspectHelper.accessor('lead', {
         cell: (info) => {
-            const fullName = `${info
-                .getValue()
-                .name.firstName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.firstName.slice(1)
-                .toLowerCase()} ${info
-                .getValue()
-                .name.lastName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.lastName.slice(1)
-                .toLowerCase()}`
+            const fullName =
+                capitalize(info.getValue().name.firstName) +
+                ' ' +
+                capitalize(info.getValue().name.lastName)
             return (
                 <div className="flex items-center justify-start gap-2 w-full">
                     <Avatar>
                         <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>{fullName}</AvatarFallback>
+                        <AvatarFallback>{fullName.at(0)}</AvatarFallback>
                     </Avatar>
                     <div className="w-full text-nowrap px-4">{fullName}</div>
                 </div>
             )
         },
         header: 'Créer par',
+
         footer: (info) => info.column.id,
     }),
-    columnProspectHelper.accessor('date', {
-        cell: (info) => {
-            // parse the date to be date and hour like this 20/09/2024 à 10h50
-            const date = info.getValue().toLocaleDateString()
-            const hour = info.getValue().toLocaleTimeString().slice(0, 5)
-            return (
-                <span className="text-ellipsis whitespace-nowrap">
-                    {date} à {hour}
-                </span>
-            )
-        },
-        header: 'Date et heure',
-        footer: (info) => info.column.id,
-    }),
+
     columnProspectHelper.accessor('object', {
         cell: (info) => {
             return (
@@ -216,11 +171,13 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
     columnProspectHelper.accessor('message', {
         cell: (info) => {
             return (
-                <DetailsEvenetProspect detailsData={info.row.original}>
-                    <CustomButton
-                        label="Plus de détails"
-                        className="bg-transparent rounded-[6px] border-2 text-lynch-300 border-lynch-200 transition-all delay-100 duration-150 px-5 py-3 hover:scale-90 hover:bg-lynch-500 hover:text-lynch-300"
-                    />
+                <DetailsEvenetProspect
+                    className="hover:text-lynch-950 hover:border-lynch-300"
+                    detailsData={info.row.original}
+                >
+                    <button className="bg-transparent rounded-[8px] border-2 text-lynch-300 border-lynch-200 transition-all delay-100 duration-150 px-3 py-2 hover:scale-95 hover:text-black hover:bg-lynch-300">
+                        Plus de détails
+                    </button>
                 </DetailsEvenetProspect>
             )
         },
@@ -229,15 +186,15 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
     }),
 ]
 
-export const columnsCrmTable = (router: AppRouterInstance) => [
-    columnHelper.accessor('date', {
+export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
+    columnHelper.accessor('createdAt', {
         cell: (info) => {
             const date = info.getValue()
             const formattedDate = new Intl.DateTimeFormat('fr-FR', {
                 day: '2-digit',
                 month: 'short',
                 year: 'numeric',
-            }).format(date)
+            }).format(new Date(date))
 
             return (
                 <span className="w-full max-w-44 text-ellipsis whitespace-nowrap">
@@ -254,7 +211,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
             }
             const startDate = new Date(parse(filterValue[0]))
             const endDate = new Date(parse(filterValue[1]))
-            const date = row.original.date
+            const date = new Date(row.original.createdAt)
             if (date >= startDate && date <= endDate) {
                 return true
             }
@@ -265,6 +222,9 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         cell: (info) => info.getValue(),
         header: 'Raison sociale',
         footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            return filterValue.includes(row.original.companyName)
+        },
     }),
     columnHelper.accessor('category', {
         cell: (info) => (
@@ -276,21 +236,12 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
             return filterValue.includes(row.original.category)
         },
     }),
-    columnHelper.accessor('responsable', {
+    columnHelper.accessor('contact', {
         cell: (info) => {
-            const fullName = `${info
-                .getValue()
-                .firstName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .firstName.slice(1)
-                .toLowerCase()} ${info
-                .getValue()
-                .lastName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .lastName.slice(1)
-                .toLowerCase()}`
+            const fullName =
+                capitalize(info.getValue().name.firstName) +
+                ' ' +
+                capitalize(info.getValue().name.lastName)
             return <span className="">{fullName}</span>
         },
         header: 'Responsable',
@@ -322,7 +273,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
             return filterValue.includes(row.original.solutions)
         },
     }),
-    columnHelper.accessor('country', {
+    columnHelper.accessor('address.country', {
         cell: (info) => (
             <div className="w-full px-2 flex-1 text-nowrap">
                 {info.getValue()}
@@ -331,7 +282,7 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         header: 'Pays',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('region', {
+    columnHelper.accessor('address.region', {
         cell: (info) => (
             <div className="w-full px-2 flex-1 text-nowrap">
                 {info.getValue()}
@@ -341,52 +292,42 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         header: 'Région',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('contact.email', {
         cell: (info) => {
             return <EmailBadge email={info.getValue()} />
         },
         header: 'Email',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('phone', {
+    columnHelper.accessor('contact.phone', {
         cell: (info) => {
             return <PhoneBadge phone={info.getValue()} />
         },
         header: 'Téléphone',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('city', {
+    columnHelper.accessor('address.city', {
         cell: (info) => info.getValue(),
         header: 'Ville',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(row.original.city)
+            return filterValue.includes(row.original.address.city)
         },
     }),
-    columnHelper.accessor('address', {
-        cell: 'Address',
+    columnHelper.accessor('address.address', {
+        cell: (info) => info.getValue(),
         header: 'Adresse',
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('creatorInfo', {
         cell: (info) => {
-            const fullName = `${info
-                .getValue()
-                .name.firstName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.firstName.slice(1)
-                .toLowerCase()} ${info
-                .getValue()
-                .name.lastName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.lastName.slice(1)
-                .toLowerCase()}`
+            const fullName = `${capitalize(
+                info.getValue().name.firstName
+            )} ${capitalize(info.getValue().name.lastName)}`
             return (
                 <div className="flex items-center gap-2">
                     <Avatar>
-                        <AvatarImage src={info.getValue().avatar} />
+                        <AvatarImage src={info.getValue().avatarPath} />
                         <AvatarFallback>{fullName}</AvatarFallback>
                     </Avatar>
                     <span>{fullName}</span>
@@ -404,23 +345,13 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
     }),
     columnHelper.accessor('managerInfo', {
         cell: (info) => {
-            const fullName = `${info
-                .getValue()
-                .name.firstName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.firstName.slice(1)
-                .toLowerCase()} ${info
-                .getValue()
-                .name.lastName.charAt(0)
-                .toUpperCase()}${info
-                .getValue()
-                .name.lastName.slice(1)
-                .toLowerCase()}`
+            const fullName = `${capitalize(
+                info.getValue().name.firstName
+            )} ${capitalize(info.getValue().name.lastName)}`
             return (
                 <div className="flex items-center gap-2 min-w-44">
                     <Avatar>
-                        <AvatarImage src={info.getValue().avatar} />
+                        <AvatarImage src={info.getValue().avatarPath} />
                         <AvatarFallback>{fullName}</AvatarFallback>
                     </Avatar>
                     <span>{fullName}</span>
@@ -429,10 +360,10 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
         },
         header: 'Effectuée à',
     }),
-    columnHelper.accessor('eventObject', {
+    columnHelper.accessor('event', {
         cell: (info) => (
-            <span className="w-full max-w-44 text-ellipsis whitespace-nowrap	">
-                {info.getValue()}
+            <span className="w-full max-w-44 text-ellipsis whitespace-nowrap">
+                {info.getValue() && info.getValue().at(0)?.object}
             </span>
         ),
         header: 'Event',
@@ -448,14 +379,14 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                     className={`${colors} text-xs px-3 py-1.5 font-semibold rounded-full flex justify-center min-w-24 items-center space-x-2 text-nowrap`}
                 >
                     <Icon />
-                    <span>{info.getValue()}</span>
+                    <span>{StringStatus[info.getValue().toString()]}</span>
                 </div>
             )
         },
         header: 'Status',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(StatusCrm[row.original.status])
+            return filterValue.includes(row.original.status)
         },
     }),
     columnHelper.accessor('id', {
@@ -499,6 +430,14 @@ export const columnsCrmTable = (router: AppRouterInstance) => [
                                     )
                                     .then((res) => res.data)
                                     .catch((err) => err)
+
+                                setData((prev: []) => {
+                                    const filterData = prev.filter(
+                                        (elem: any) =>
+                                            elem.id != info.getValue()
+                                    )
+                                    return filterData
+                                })
                                 return response
                             }
                             deleteProspect()
@@ -580,249 +519,5 @@ export const defaultDataProspectTable: ProspectType[] = [
         object: 'Negotiation and contract discussion.',
         message: 'This is the message of the fifth prospect',
         date: new Date('2022-05-01'),
-    },
-]
-
-export const defaultDataCrmTable: CrmType[] = [
-    {
-        id: '1',
-        date: new Date('08/08/2024'),
-        companyName: 'Marjane',
-        creatorInfo: {
-            name: {
-                firstName: 'Ali',
-                lastName: 'Ben',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'Mario',
-                lastName: 'Jobs',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Jane',
-        },
-        category: 'Supperette',
-        responsable: {
-            firstName: 'Jordan',
-            lastName: 'Mario',
-        },
-        email: 'b.alix@example.com',
-        phone: '+212 6xxxxxxxx',
-        city: 'Casablanca',
-        address: 'Avenue Hassan II',
-        country: 'Morocco',
-        region: 'Maarif',
-        eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
-        status: PartnerStatusType.VALID,
-        solutions: [
-            PartnerSolutionType.MARKET_PRO,
-            PartnerSolutionType.DLC_PRO,
-        ],
-    },
-    {
-        id: '2',
-        date: new Date('01/10/2024'),
-        companyName: 'Ikea',
-        creatorInfo: {
-            name: {
-                firstName: 'Sara',
-                lastName: 'Alex',
-            },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Alex',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'Stive',
-                lastName: 'Gen',
-            },
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        },
-        category: 'Supperette',
-        responsable: {
-            firstName: 'Kratos',
-            lastName: 'Baird',
-        },
-        email: 'b.alix@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Réunion prévue pour suivi la semaine prochaine.',
-        status: PartnerStatusType.PENDING,
-        address: 'Avenue Hassan II',
-        city: 'Casablanca',
-        country: 'Morocco',
-        region: 'Maarif',
-        solutions: [],
-    },
-    {
-        id: '3',
-        date: new Date('12/05/2023'),
-        companyName: 'Carrefour',
-        creatorInfo: {
-            name: {
-                firstName: 'John',
-                lastName: 'Doe',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Carrefour',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'Michael',
-                lastName: 'Smith',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Smith',
-        },
-        category: 'Supermarket',
-        responsable: {
-            firstName: 'Emma',
-            lastName: 'Johnson',
-        },
-        email: 'j.doe@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Meeting scheduled for next week.',
-        status: PartnerStatusType.CANCELED,
-        address: 'Rue de Paris',
-        city: 'Paris',
-        country: 'France',
-        region: 'Île-de-France',
-        solutions: [
-            PartnerSolutionType.MARKET_PRO,
-            PartnerSolutionType.DLC_PRO,
-            PartnerSolutionType.DONATE_PRO,
-        ],
-    },
-    {
-        id: '4',
-        date: new Date('05/03/2023'),
-        companyName: 'Walmart',
-        creatorInfo: {
-            name: {
-                firstName: 'Emily',
-                lastName: 'Brown',
-            },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Walmart',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'Daniel',
-                lastName: 'Taylor',
-            },
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Taylor',
-        },
-        category: 'Supermarket',
-        responsable: {
-            firstName: 'Olivia',
-            lastName: 'Miller',
-        },
-        email: 'e.brown@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Meeting scheduled for next week.',
-        status: PartnerStatusType.DRAFT,
-        address: 'Main Street',
-        city: 'New York',
-        country: 'USA',
-        region: 'New York',
-        solutions: [],
-    },
-    {
-        id: '5',
-        date: new Date('09/12/2023'),
-        companyName: 'Target',
-        creatorInfo: {
-            name: {
-                firstName: 'David',
-                lastName: 'Johnson',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Target',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'Robert',
-                lastName: 'Anderson',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Anderson',
-        },
-        category: 'Supermarket',
-        responsable: {
-            firstName: 'Sophia',
-            lastName: 'Wilson',
-        },
-        email: 'd.johnson@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Meeting scheduled for next week.',
-        status: PartnerStatusType.PENDING,
-        address: '5th Avenue',
-        city: 'New York',
-        country: 'USA',
-        region: 'New York',
-        solutions: [
-            PartnerSolutionType.MARKET_PRO,
-            PartnerSolutionType.DONATE_PRO,
-        ],
-    },
-    {
-        id: '6',
-        date: new Date('03/07/2023'),
-        companyName: 'Tesco',
-        creatorInfo: {
-            name: {
-                firstName: 'Sophie',
-                lastName: 'Brown',
-            },
-            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Tesco',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'James',
-                lastName: 'Smith',
-            },
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Smith',
-        },
-        category: 'Supermarket',
-        responsable: {
-            firstName: 'Oliver',
-            lastName: 'Johnson',
-        },
-        email: 's.brown@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Meeting scheduled for next week.',
-        status: PartnerStatusType.VALID,
-        address: 'Oxford Street',
-        city: 'London',
-        country: 'UK',
-        region: 'England',
-        solutions: [],
-    },
-    {
-        id: '7',
-        date: new Date('11/11/2023'),
-        companyName: 'Lidl',
-        creatorInfo: {
-            name: {
-                firstName: 'Emma',
-                lastName: 'Wilson',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Lidl',
-        },
-        managerInfo: {
-            name: {
-                firstName: 'William',
-                lastName: 'Brown',
-            },
-            avatar: 'https://api.dicebear.com/9.x/pixel-art/svg?seed=Brown',
-        },
-        category: 'Supermarket',
-        responsable: {
-            firstName: 'Olivia',
-            lastName: 'Miller',
-        },
-        email: 'e.wilson@example.com',
-        phone: '+212 6xxxxxxxx',
-        eventObject: 'Meeting scheduled for next week.',
-        status: PartnerStatusType.PENDING,
-        address: 'Baker Street',
-        city: 'London',
-        country: 'UK',
-        region: 'England',
-        solutions: [PartnerSolutionType.MARKET_PRO],
     },
 ]

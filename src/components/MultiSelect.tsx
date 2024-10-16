@@ -59,6 +59,7 @@ const defaultTransform = (
     if (len == 1 && region) {
         return [<div key={99}>Plusieurs ville</div>]
     }
+    value.slice(0, len)
     return value.map((option, index) => (
         <div
             key={index}
@@ -69,8 +70,8 @@ const defaultTransform = (
         >
             <span>
                 {region
-                    ? option.label.split('-').slice(1).join(' ')
-                    : option.label + (index != value.length - 1 ? '-' : '')}
+                    ? option.label.split('-').slice(1).join('')
+                    : option.label + (index != value.length - 1 ? ' -' : '')}
             </span>
         </div>
     ))

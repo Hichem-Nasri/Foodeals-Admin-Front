@@ -24,10 +24,11 @@ import Link from 'next/link'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilePlus } from 'lucide-react'
 import { EventContext } from '@/context/EventContext'
+import { EventType } from '@/types/Global-Type'
 
 type TableProspectsProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
-    data: any
+    data: EventType[]
 }
 
 export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {

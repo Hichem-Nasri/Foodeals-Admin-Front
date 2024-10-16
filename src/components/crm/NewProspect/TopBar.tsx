@@ -120,7 +120,10 @@ export const TopBar: FC<TopBarProps> = ({
                 ) : PartnerStatusType.PENDING ? (
                     <CustomButton
                         disabled={primaryButtonDisabled}
-                        onClick={onSubmit}
+                        onClick={() => {
+                            onSubmit()
+                            console.log('confirmer')
+                        }}
                         size="sm"
                         label="Confirmer l’évènement"
                         IconRight={Rocket}

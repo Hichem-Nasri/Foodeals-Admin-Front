@@ -17,31 +17,36 @@ import { Select } from '../custom/Select'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMediaQuery } from 'react-responsive'
 import { cn } from '@/lib/utils'
-import { PartnerStatusType, CrmType } from '@/types/CrmType'
-import { OptionStatus } from '@/types/utils'
-import { ColumnFiltersState, Row } from '@tanstack/react-table'
+import { PartnerStatusType } from '@/types/CrmType'
 import {
-    setupFilterTable,
-    emptyFilterData,
-    FilterData,
-    FilterClass,
-    DataToOptions,
-} from '@/types/CrmUtils'
+    IconStatus,
+    OptionStatus,
+    StringStatus,
+    StyleStatus,
+} from '@/types/utils'
+import { ColumnFiltersState, Row } from '@tanstack/react-table'
 import { DateFilter } from '../utils/DateFilters'
 import { FilterSelect } from '../utils/FilterSelect'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
 import { set } from 'date-fns'
+import { FilterData, emptyFilterData } from '@/types/CrmUtils'
+import {
+    AddressType,
+    CrmType,
+    CustomFilterType,
+    FilteredData,
+    ProfileType,
+} from '@/types/Global-Type'
 
 interface FilterTableProspectsProps {
+    data: CrmType[]
     table: import('@tanstack/table-core').Table<CrmType>
     columnFilters: ColumnFiltersState
     setColumnFilters: (value: ColumnFiltersState) => void
 }
 
-const setMultiSelectPerson = (
-    value: { name: { firstName: string; lastName: string }; avatar: string }[]
-) => {
+const setMultiSelectPerson = (value: ProfileType[]) => {
     return Array.from(
         new Set(
             value.map(
@@ -51,9 +56,9 @@ const setMultiSelectPerson = (
     ).map((items) => ({
         key: items,
         label: items,
-        avatar: value.find(
+        avatarPath: value.find(
             (item) => item.name.firstName + ' ' + item.name.lastName === items
-        )?.avatar,
+        )?.avatarPath,
     }))
 }
 
@@ -64,13 +69,59 @@ const setMultiSelect = (value: string[]) => {
     }))
 }
 
+const getDataFilter = (data: CrmType[]) => {
+    const filterTable: CustomFilterType = {
+        date: Array.from(new Set(data.map((items) => items.createdAt))),
+        companyName: Array.from(
+            new Set(data.map((items) => items.companyName))
+        ),
+        category: Array.from(new Set(data.map((items) => items.category))),
+        creatorInfo: Array.from(
+            new Set(
+                data.map((item) =>
+                    JSON.stringify({
+                        name: {
+                            firstName: item.creatorInfo.name.firstName,
+                            lastName: item.creatorInfo.name.lastName,
+                        },
+                        avatarPath: item.creatorInfo.avatarPath,
+                    })
+                )
+            )
+        ).map((person) => JSON.parse(person)),
+        managerInfo: Array.from(
+            new Set(
+                data.map((item) =>
+                    JSON.stringify({
+                        name: {
+                            firstName: item.managerInfo.name.firstName,
+                            lastName: item.managerInfo.name.lastName,
+                        },
+                        avatarPath: item.managerInfo.avatarPath,
+                    })
+                )
+            )
+        ).map((person) => JSON.parse(person)),
+        status: Array.from(new Set(data.map((items) => items.status))),
+        city: Array.from(new Set(data.map((items) => items.address.city))),
+        country: Array.from(
+            new Set(data.map((items) => items.address.country))
+        ),
+    }
+    return filterTable
+}
+
 export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
+    data,
     table,
     columnFilters,
     setColumnFilters,
 }) => {
     const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
-    const filterTable = setupFilterTable(table.getRowModel().rows)
+    const [filterTable, setFilterTable] = useState<CustomFilterType>(
+        getDataFilter(data)
+    )
+    console.log('data: ', filterTable)
 
     const [filterData, setFilterData] = useState<FilterData>(emptyFilterData)
     const handleConfirm = () => {
@@ -116,7 +167,8 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             }
                             options={setMultiSelect(filterTable.companyName)}
                             label="Raison sociale"
-                            normalTransform={true}
+                            emptyAvatar="/avatar/emptyUser.png"
+                            // normalTransform={true}
                         />
                         <FilterMultiSelect
                             item={filterData.category}
@@ -125,7 +177,8 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             }
                             options={setMultiSelect(filterTable.category)}
                             label="Categorie"
-                            normalTransform={true}
+                            // normalTransform={true}
+                            emptyAvatar="/avatar/emptyPartner.png"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
@@ -136,7 +189,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                                 setFilterData({ ...filterData, creatorInfo })
                             }
                             options={setMultiSelectPerson(
-                                filterTable.creatorInfo
+                                filterTable.creatorInfo || []
                             )}
                             label="Alimente par"
                         />
@@ -146,7 +199,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                                 setFilterData({ ...filterData, managerInfo })
                             }
                             options={setMultiSelectPerson(
-                                filterTable.managerInfo
+                                filterTable.managerInfo || []
                             )}
                             label="Effectuée à"
                         />
@@ -158,6 +211,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                                 setFilterData({ ...filterData, email })
                             }
                             label="Email"
+                            LeftIcon={Mail}
                         />
                         <FilterInput
                             input={filterData.phone}
@@ -166,15 +220,17 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             }
                             label="Téléphone"
                             placeholder="Saisir le téléphone"
+                            LeftIcon={PhoneCall}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterMultiSelect
+                            length={2}
                             item={filterData.city}
                             setItem={(city) =>
                                 setFilterData({ ...filterData, city })
                             }
-                            options={filterTable.city.map((city) => ({
+                            options={filterTable.city?.map((city: string) => ({
                                 label: city,
                                 key: city,
                             }))}
@@ -183,11 +239,19 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             normalTransform={true}
                         />
                         <FilterMultiSelect
+                            length={2}
                             item={filterData.country}
                             setItem={(country) =>
                                 setFilterData({ ...filterData, country })
                             }
-                            options={setMultiSelect(filterTable.country)}
+                            options={
+                                filterTable.country?.map((country: string) => {
+                                    return {
+                                        label: country,
+                                        key: country,
+                                    }
+                                }) || []
+                            }
                             label="Pays"
                             placeholder="Sélectionner le pays"
                             normalTransform={true}
@@ -199,17 +263,25 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(status) =>
                                 setFilterData({ ...filterData, status })
                             }
-                            options={filterTable.status.map(
-                                (status) => OptionStatus[status]
-                            )}
+                            options={
+                                filterTable.status?.map((status: string) => {
+                                    const str = StringStatus[status]
+                                    return {
+                                        label: str,
+                                        key: status as string,
+                                        icon: IconStatus[status],
+                                        className: StyleStatus[status],
+                                    } as MultiSelectOptionsType
+                                }) || []
+                            }
                             label="Status"
-                            length={3}
+                            length={2}
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (
                                     <div
                                         key={index}
                                         className={cn(
-                                            'text-xs w-full p-1 max-w-24 flex justify-around items-center rounded-full whitespace-nowrap text-ellipsis',
+                                            'text-xs w-full p-1 max-w-28 flex justify-around items-center rounded-full whitespace-nowrap text-ellipsis',
                                             option.className
                                         )}
                                     >

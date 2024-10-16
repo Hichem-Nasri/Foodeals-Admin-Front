@@ -9,28 +9,26 @@ import React, { FC, useEffect } from 'react'
 import { TableProspects } from '../NewProspect/TableProspects'
 import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
+import { EventType } from '@/types/Global-Type'
 
-interface EvenetProps {
-    Evenet: any[]
+interface EventProps {
+    Event: EventType[]
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
 }
 
-export const NewEvenent: FC<EvenetProps> = ({ Evenet, setOpen, convertir }) => {
-    Evenet = Evenet.map((curr: any) => {
-        return { ...curr, date: new Date(curr.createdAt) }
-    })
+export const NewEvenent: FC<EventProps> = ({ Event, setOpen, convertir }) => {
     return (
         <div className="w-full self-start h-full relative">
-            {Evenet.length == 0 ? (
+            {Event.length == 0 ? (
                 <Accordion
                     type="single"
                     className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
-                    defaultValue="evenet"
+                    defaultValue="Event"
                     collapsible
                 >
                     <AccordionItem
-                        value="evenet"
+                        value="Event"
                         className="text-lynch-400 text-[1.375rem] font-normal"
                     >
                         <AccordionTrigger className="font-normal text-[1.375rem] py-0">
@@ -65,7 +63,7 @@ export const NewEvenent: FC<EvenetProps> = ({ Evenet, setOpen, convertir }) => {
                     </AccordionItem>
                 </Accordion>
             ) : (
-                <TableProspects setOpen={setOpen} data={Evenet} />
+                <TableProspects setOpen={setOpen} data={Event} />
             )}
         </div>
     )

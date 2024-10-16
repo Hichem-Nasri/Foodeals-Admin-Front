@@ -17,6 +17,8 @@ import { Mail, PhoneCall } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
 import { CountryData } from '@/types/utils'
+import { useQuery } from '@tanstack/react-query'
+import api from '@/api/Auth'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -34,17 +36,24 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
     disabled,
 }) => {
     const { handleSubmit, control } = form
-    const companyTypeOptions = [
-        { key: 'Activity 1', label: 'Activity 1' },
-        { key: 'superettes', label: 'Superettes' },
-        { key: 'épiceries', label: 'Épiceries' },
-        { key: 'boulangeries', label: 'Boulangeries' },
-        { key: 'cafés', label: 'Cafés' },
-        { key: 'restaurants', label: 'Restaurants' },
-        { key: 'hôtels', label: 'Hôtels' },
-        { key: 'traiteurs', label: 'Traiteurs' },
-        { key: 'autres', label: 'Autres' },
-    ]
+    const { data: companyTypeOptions } = useQuery({
+        queryKey: ['activities'],
+        queryFn: async () => {
+            const res = await api
+                .get('http://localhost:8080/Activities')
+                .then((res) => res.data)
+                .catch((error) => console.log(error))
+            console.log('done: ', res)
+            return Array.from(
+                res.map((item: { id: string; name: string }) => {
+                    return {
+                        label: item.name,
+                        key: item.name,
+                    }
+                })
+            )
+        },
+    })
     return (
         <Accordion
             type="single"
@@ -76,7 +85,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             control={control}
                                             name="category"
                                             label="Catégorie"
-                                            options={companyTypeOptions}
+                                            options={companyTypeOptions as { key: string | number; label: string }[] || []}
                                             disabled={disabled}
                                             className=""
                                             placeholder="Sélectionner"
@@ -164,22 +173,20 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             label="Pays"
                                             options={[
                                                 {
-                                                    label: 'France',
-                                                    key: 'fr',
-                                                },
-                                                {
-                                                    label: 'United States',
-                                                    key: 'USA',
-                                                },
-                                                {
-                                                    label: 'Maroc',
-                                                    key: 'ma',
+                                                    label: 'Morocco',
+                                                    key: 'Morocco',
                                                 },
                                             ]}
                                             className="[&_*_.avatar]:grid [&_*_.avatar]:size-8 [&_*_.avatar]:rounded-full [&_*_.avatar]:place-items-center [&_*_.avatar]:m-auto"
                                             disabled={disabled}
                                         />
-                                        <InputFieldForm
+                                        <SelectField
+                                            options={[
+                                                {
+                                                    label: 'Casablanca',
+                                                    key: 'Casablanca',
+                                                },
+                                            ]}
                                             control={control}
                                             name="city"
                                             label="Ville"
@@ -188,9 +195,14 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
-                                        <InputFieldForm
-                                            classNameParent="col-span-1"
-                                            className=""
+                                        <SelectField
+                                            options={[
+                                                {
+                                                    label: 'maarif',
+                                                    key: 'maarif',
+                                                },
+                                            ]}
+                                            className="col-span-1"
                                             control={control}
                                             name="region"
                                             label="Région"

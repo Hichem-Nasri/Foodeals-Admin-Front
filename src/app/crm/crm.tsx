@@ -3,7 +3,7 @@
 import { CrmCardDetails } from '@/components/crm/CrmCard'
 import { FilterCrm } from '@/components/crm/FilterCrm'
 import { DataTable } from '@/components/DataTable'
-import { columnsCrmTable, CrmType, defaultDataCrmTable } from '@/types/CrmType'
+import { columnsCrmTable } from '@/types/CrmType'
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -13,10 +13,9 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Statistics from './statistics'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { DataToCrmObj } from '@/types/CrmUtils'
 import { setDate } from 'date-fns'
 import { accessToken } from '@/lib/utils'
 import api from '@/api/Auth'
@@ -25,44 +24,55 @@ import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { RotateCw, UserRoundPlus } from 'lucide-react'
+import PaginationData from '@/components/utils/PaginationData'
+import { CrmType } from '@/types/Global-Type'
 
 // Define the API endpoint URL as a constant
 const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
+    const [setSwitchTable, setSetSwitchTable] = useState<
+        'partenaires' | 'associations'
+    >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [page, setPage] = useState(1)
-    const [hasMore, setHasMore] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
 
     const {
         data: query,
         isSuccess,
-        error, // TODO: add skeleton loader
+        isLoading,
+        error,
     } = useQuery({
-        queryKey: ['crm'],
+        queryKey: ['prospects', currentPage, pageSize],
         queryFn: async () => {
             try {
-                const response = await api.get(API_ENDPOINT)
-                return response.data
+                const response = await api
+                    .get(
+                        `${API_ENDPOINT}?page=${
+                            currentPage - 1
+                        }&size=${pageSize}&sort=createdAt,desc`
+                    )
+                    .then((res) => res.data)
+                    .catch((e) => console.error(e))
+                if (response) {
+                    setTotalPages(response.totalPages)
+                    setData(response.content)
+                }
+                return response.content
             } catch (error) {
                 console.error(error)
                 throw error
             }
         },
     })
-
-    React.useEffect(() => {
-        if (isSuccess && query) {
-            setData(DataToCrmObj(query.content)!)
-        }
-    }, [isSuccess, query])
-
     const router = useRouter()
 
     const table = useReactTable({
         data,
-        columns: columnsCrmTable(router),
+        columns: columnsCrmTable(router, setData),
         state: {
             columnFilters,
         },
@@ -72,26 +82,30 @@ export default function Crm() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    if (isLoading) return <div>Loading...</div>
+    if (error) return <div>Error: {error.message}</div>
+    console.log(data)
 
     return (
         <div className="flex flex-col gap-3 w-full p-1">
-            <SwitchToggle />
+            <SwitchToggle setSwitchTable={setSetSwitchTable} />
             <Statistics />
             <FilterCrm
+                data={data || query}
                 table={table}
                 columnFilters={columnFilters}
                 setColumnFilters={setColumnFilters}
             />
             <DataTable
                 table={table}
-                data={data}
+                data={data || query}
                 title="Listes des prospects"
                 transform={(data: any) => <CrmCardDetails crm={data} />}
             />
             <CustomButton
                 label="Voir plus"
                 onClick={() => {
-                    setPage(page + 1)
+                    // setPage(page + 1)
                 }}
                 className="lg:hidden flex w-fit self-center px-[18px] py-1.5 h-auto hover:text-white hover:bg-lynch-400 rounded-full justify-center bg-transparent text-lynch-400 border-2 border-lynch-400 text-md font-base transition-all"
                 IconRight={RotateCw}
@@ -107,7 +121,16 @@ export default function Crm() {
                     IconRight={UserRoundPlus}
                 />
             </Link>
-            {error && <div>Error: {error.message}</div>}
+            <PaginationData
+                className="items-center"
+                setData={setData}
+                url={API_ENDPOINT}
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+            />
+            {/* {error && <div>Error: {error.message}</div>} */}
         </div>
     )
 }

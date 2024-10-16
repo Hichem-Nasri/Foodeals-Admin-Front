@@ -1,9 +1,21 @@
 import { cn } from '@/lib/utils'
 import React, { FC, useState } from 'react'
-interface SwitchToggleProps {}
+interface SwitchToggleProps {
+    setSwitchTable: (type: 'partenaires' | 'associations') => void
+}
 
-const SwitchToggle: FC<SwitchToggleProps> = () => {
+const SwitchToggle: FC<SwitchToggleProps> = ({ setSwitchTable }) => {
     const [selected, setSelected] = useState(true)
+    const handleSwitch = (type: 'partenaires' | 'associations') => {
+        if (type === 'partenaires') {
+            setSelected(true)
+            setSwitchTable('partenaires')
+        }
+        if (type === 'associations') {
+            setSelected(false)
+            setSwitchTable('associations')
+        }
+    }
     return (
         <div className="w-fit p-2  rounded-[14px] bg-white flex items-center justify-start">
             <div className="w-auto rounded-[14px] bg-white flex items-center justify-start gap-2 relative">

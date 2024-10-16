@@ -38,7 +38,7 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                     <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                         <Label
                             label={label}
-                            className="text-xs font-semibold text-lynch-950"
+                            className="text-sm font-semibold text-lynch-950"
                         />
                         <MultiSelect
                             options={options}

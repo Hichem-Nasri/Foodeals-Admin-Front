@@ -3,13 +3,19 @@ import { ProspectType } from '@/types/CrmType'
 import { CalendarMinus2, Eye, Mail, PhoneCall, TextQuote } from 'lucide-react'
 import React, { FC } from 'react'
 import { DetailsEvenetProspect } from './DetailsEvenet'
+import { EventType } from '@/types/Global-Type'
 
 interface DetailsEventCardProps {
-    detailsData: ProspectType
+    detailsData: EventType
 }
 
 const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
-    const { lead, object, date } = detailsData
+    const { lead, object, createdAt } = detailsData
+    const createdAtDate = new Date(createdAt)
+    const date = createdAtDate.toLocaleDateString()
+    const hour = createdAtDate.getHours()
+    const minutes = createdAtDate.getMinutes()
+    const hourString = `${hour}h:${minutes}`
     return (
         <div className="w-full  col-span-1 m-auto rounded-2xl border-lynch-100 flex flex-col border-2 justify-center items-center p-4 space-y-4">
             <div className="flex justify-between items-center w-full">
@@ -33,11 +39,11 @@ const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
                     <div className="flex justify-center flex-1 space-x-2 text-lynch-400 items-center text-md">
                         <CalendarMinus2 className="text-lynch-500" />
                         <p>
-                            {date.toLocaleDateString() +
+                            {date +
                                 ' à ' +
-                                date.getHours() +
+                                hour.toString().padStart(2, '0') +
                                 'h' +
-                                date.getMinutes()}
+                                minutes.toString().padStart(2, '0')}
                         </p>
                     </div>
                 </div>

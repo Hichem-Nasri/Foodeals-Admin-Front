@@ -5,7 +5,7 @@ import { PartnerStatusType } from '@/types/partners'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CrmObjectSchema } from '@/types/CrmScheme'
+import { CrmObjectSchema, defaultCrmObjectData } from '@/types/CrmScheme'
 import AddNewEvent from './AddNewEvent'
 import { CrmObjectType, EvenetType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
@@ -26,70 +26,51 @@ export const EventPopUps = ({
 }) => {
     const queryClient = useQueryClient()
     const { id } = useParams()
-    const [evenement, setEvenement] = useState<EvenetType[]>(prospect.events)
     const onSaveData = () => {
         console.log('Save data')
     }
-    const { data, isSuccess } = useQuery({
-        queryKey: ['events'],
-        queryFn: async () => {
-            return api
-                .get(`http://localhost:8080/api/v1/crm/prospects/${id}/events`)
-                .then((res) => res.data)
-                .catch((error) => console.error(error))
-        },
-    })
 
     const form = useForm<z.infer<typeof CrmObjectSchema>>({
         resolver: zodResolver(CrmObjectSchema),
         mode: 'onBlur',
-        defaultValues: {
-            ...Object.fromEntries(
-                evenement.map((e, index) => [
-                    index,
-                    { object: e.object, message: e.message },
-                ])
-            ),
-        },
+        defaultValues: getInitialValues(prospect.event),
     })
     useEffect(() => {
-        if (isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ['events', 'prospects'] })
-            setEvenement((prev) => [...prev, ...data.content])
-        }
         if (open) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
-    }, [open, isSuccess])
+    }, [open])
 
     const mutation = useMutation({
         mutationFn: async (e: CrmObjectType) => {
-            const evenet: EvenetType = {
+            const evenet = {
                 object: e.object,
                 message: e.message,
-                date: new Date().toISOString(),
-                lead: 102, //Todo: Change this value to the lead id
+                dateAndTime: new Date().toISOString(),
+                lead: 1, //Todo: Change this value to the lead id
             }
-            setEvenement([...evenement, evenet])
+            console.log(id, evenet)
             const res = await api
                 .post(
                     `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
                     evenet
                 )
-                .then((res) => console.log(res))
-                .catch((error) => console.error(error))
+                .then((res) => res.data)
+                .catch((error) => console.log(error))
+            console.log('resssss:', res)
+            return res
         },
-        onSuccess: () => {
-            console.log('Success!!!')
+        onSuccess: (data) => {
+            console.log('data:', prospect)
+            prospect.event.push(data)
             setOpen((prev) => !prev)
-            queryClient.invalidateQueries({ queryKey: ['event'] })
+            queryClient.invalidateQueries({ queryKey: ['events', 'prospects'] })
         },
     })
 
     const onSubmit = (e: CrmObjectType) => {
         try {
             mutation.mutate(e)
-            setOpen((prev) => !prev)
         } catch (error) {
             console.error(error)
         }
@@ -113,10 +94,18 @@ export const EventPopUps = ({
                 isMobile={isMobile}
                 setOpen={setOpen}
                 convertir={convertir}
-                event={evenement}
-                setEvenement={setEvenement}
                 mutation={mutation}
             />
         </div>
+    )
+}
+
+const getInitialValues = (events: any[]) => {
+    if (!events) return
+    return Object.fromEntries(
+        events.map((event, index) => [
+            index,
+            { object: event.object, message: event.message },
+        ])
     )
 }

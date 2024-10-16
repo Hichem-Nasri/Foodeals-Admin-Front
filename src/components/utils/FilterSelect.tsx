@@ -20,8 +20,8 @@ export const FilterSelect: FC<FilterSelectProps> = ({
     placeholder,
 }) => {
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <Label label={label} htmlFor={label} />
+        <div className="flex flex-col gap-2 w-full text-xs">
+            <Label label={label} htmlFor={label} className="text-xs" />
             <Select
                 label=""
                 placeholder={placeholder || 'Sélectionner'}

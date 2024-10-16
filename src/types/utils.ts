@@ -1,20 +1,27 @@
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
-import { EvenetType, PartnerStatusType, ProspectType } from './CrmType'
 import { SelectIconProps } from '@radix-ui/react-select'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { ProspectType } from './CrmType'
 
 export const StyleStatus: Record<string, string> = {
-    [`VALIDER`]: 'bg-mountain-100 text-mountain-500',
-    [`EN COURS`]: 'bg-amethyst-100 text-amethyst-500',
-    [`BROUILLON`]: 'bg-lynch-100 text-lynch-500',
-    [`ANNULER`]: 'bg-red-100 text-coral-500',
+    [`VALID`]: 'bg-mountain-100 text-mountain-500',
+    [`IN_PROGRESS`]: 'bg-amethyst-100 text-amethyst-500',
+    [`DRAFT`]: 'bg-lynch-100 text-lynch-500',
+    [`CANCELED`]: 'bg-red-100 text-coral-500',
+}
+
+export const StringStatus: Record<string, string> = {
+    [`VALID`]: 'VALIDER',
+    [`IN_PROGRESS`]: 'EN COURS',
+    [`DRAFT`]: 'BROUILLON',
+    [`CANCELED`]: 'ANNULER',
 }
 
 export const IconStatus: Record<string, React.FC<SelectIconProps>> = {
     [`VALIDER`]: CheckCheck as React.FC<SelectIconProps>,
-    [`EN COURS`]: LoaderCircle as React.FC<SelectIconProps>,
-    [`BROUILLON`]: FileMinus as React.FC<SelectIconProps>,
-    [`ANNULER`]: X as React.FC<SelectIconProps>,
+    [`IN_PROGRESS`]: LoaderCircle as React.FC<SelectIconProps>,
+    [`DRAFT`]: FileMinus as React.FC<SelectIconProps>,
+    [`CANCELED`]: X as React.FC<SelectIconProps>,
 }
 
 export const OptionStatus: Record<string, MultiSelectOptionsType> = {
@@ -44,6 +51,11 @@ export const OptionStatus: Record<string, MultiSelectOptionsType> = {
         icon: X,
         className: 'text-coral-500 border border-coral-500 bg-coral-100',
     },
+}
+
+export function capitalize(str: string): string {
+    if (!str) return ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 export const extractDataEvent = (data: any): ProspectType => {

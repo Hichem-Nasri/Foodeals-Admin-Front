@@ -53,7 +53,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
                 <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                     <Label
                         htmlFor={name}
-                        className="text-xs font-semibold text-lynch-950"
+                        className="text-sm font-semibold text-lynch-950"
                         label={label}
                     />
                     <div className={cn('flex flex-col w-full', className)}>

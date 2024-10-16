@@ -22,8 +22,6 @@ interface AddNewEventProps {
     isMobile: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
-    event: EvenetType[]
-    setEvenement: React.Dispatch<React.SetStateAction<EvenetType[]>>
     mutation: any
 }
 
@@ -32,25 +30,13 @@ const AddNewEvent: FC<AddNewEventProps> = ({
     isMobile,
     setOpen,
     convertir,
-    event,
-    setEvenement,
     mutation,
 }) => {
     const myhandleSubmit = async (e: CrmObjectType) => {
-        console.log(e)
+        console.log('hello')
         try {
-            const newEvent = {
-                object: e.object,
-                message: e.message,
-                dateAndTime: new Date().toISOString(),
-                lead: 231, //Todo: Change this value to the lead id
-            }
-            mutation.mutate(newEvent)
-            setEvenement([
-                ...event,
-                { ...newEvent, date: newEvent.dateAndTime },
-            ])
-            setOpen(true)
+            mutation.mutate(e)
+            // setOpen(true)
         } catch (error) {}
     }
 
@@ -144,7 +130,6 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                                             onClick={() => {
                                                 console.log('Cancel')
                                                 setOpen((prev) => {
-                                                    console.log('prev :', prev)
                                                     return !prev
                                                 })
                                             }}

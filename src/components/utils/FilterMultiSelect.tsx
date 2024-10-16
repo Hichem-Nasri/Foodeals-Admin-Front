@@ -33,7 +33,7 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
 
     return (
         <div className="flex flex-col gap-3 w-full">
-            <Label label={label} htmlFor={label} />
+            <Label label={label} htmlFor={label} className="text-xs" />
             <MultiSelect
                 {...rest}
                 transform={transform}

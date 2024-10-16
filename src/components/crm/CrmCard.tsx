@@ -1,35 +1,17 @@
-import { PaymentStatusType, PaymentType } from '@/types/PaymentType'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Label } from '../Label'
 import {
-    Banknote,
-    Building,
-    Calendar,
-    CalendarCheck,
     CalendarClock,
-    CheckCheck,
-    CirclePercent,
-    Coins,
     Eye,
-    FileMinus,
-    Frame,
-    HandCoins,
     ListCollapse,
-    ListPlus,
-    LoaderCircle,
     Mail,
-    MailMinus,
     PhoneCall,
     User,
     UserCheck,
-    X,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { PartnerStatusType, CrmType } from '@/types/CrmType'
-import { Icon, SelectIconProps } from '@radix-ui/react-select'
 import Link from 'next/link'
 import { CustomButton } from '../custom/CustomButton'
 import { StyleStatus, IconStatus } from '@/types/utils'
+import { CrmType } from '@/types/Global-Type'
 
 interface CrmCardDetailsProps {
     crm: CrmType
@@ -59,13 +41,13 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
                         className=" font-normal text-lg text-lynch-950"
                     />
                     <Label
-                        label={crm.city}
+                        label={crm.address.city}
                         className="text-[14px] text-mountain-400 font-medium "
                     />
                     <div className="w-full text-lynch-500 flex justify-center items-center space-x-3 font-medium">
                         <CalendarClock className="size-[24px]" />
                         <Label
-                            label={crm.date.toLocaleDateString()}
+                            label={crm.createdAt}
                             className="text-md font-medium text-lynch-500"
                         />
                     </div>
@@ -80,14 +62,14 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
                         {crm.status.toString()}
                     </div>
                     <div className="flex justify-evenly items-center space-x-1">
-                        <Link href={`tel:${crm.phone}`}>
+                        <Link href={`tel:${crm.contact.phone}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={PhoneCall}
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full transition-all"
                             />
                         </Link>
-                        <Link href={`mailto:${crm.email}`}>
+                        <Link href={`mailto:${crm.contact.email}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={Mail}

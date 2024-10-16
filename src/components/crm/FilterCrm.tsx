@@ -5,17 +5,19 @@ import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
 import { CustomButton } from '../custom/CustomButton'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
-import { CrmType } from '@/types/CrmType'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { Button } from '../ui/button'
+import { CrmType } from '@/types/Global-Type'
 
 interface FilterCrmProps {
+    data: CrmType[]
     table: import('@tanstack/table-core').Table<CrmType>
     setColumnFilters: (value: ColumnFiltersState) => void
     columnFilters: ColumnFiltersState
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
+    data,
     table,
     setColumnFilters,
     columnFilters,
@@ -31,6 +33,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     Liste des prospects
                 </h2>
                 <FilterTableProspects
+                    data={data}
                     table={table}
                     columnFilters={columnFilters}
                     setColumnFilters={setColumnFilters}
@@ -45,6 +48,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTableProspects
+                    data={data}
                     table={table}
                     columnFilters={columnFilters}
                     setColumnFilters={setColumnFilters}

@@ -16,39 +16,37 @@ export type OptionsType = {
     city: MultiSelectOptionsType[]
     solution: MultiSelectOptionsType[]
 }
-export const extractOptions = (Delivery: DeliveryType[]) => {
+export const extractOptions = (deliveries: DeliveryType[]): OptionsType => {
     const options: OptionsType = {
-        id: [
-            ...new Set(
-                Delivery.map((delivery) => OptionGenerator(delivery.id!))
-            ),
-        ],
-        partner: [
-            ...new Set(
-                Delivery.map((delivery) =>
+        id: Array.from(
+            new Set(deliveries.map((delivery) => OptionGenerator(delivery.id!)))
+        ),
+        partner: Array.from(
+            new Set(
+                deliveries.map((delivery) =>
                     OptionGenerator(
                         delivery.partner.name,
                         delivery.partner.avatar
                     )
                 )
-            ),
-        ],
-        responsible: [
-            ...new Set(
-                Delivery.map((delivery) =>
+            )
+        ),
+        responsible: Array.from(
+            new Set(
+                deliveries.map((delivery) =>
                     OptionGenerator(
                         delivery.responsible.name,
                         delivery.responsible.avatar
                     )
                 )
-            ),
-        ],
-        city: [...new Set(Delivery.map((delivery) => delivery.city))].map(
-            (element) => OptionGenerator(element)
+            )
         ),
-        solution: [
-            ...new Set(Delivery.flatMap((delivery) => delivery.solution)),
-        ].map((element) => OptionGenerator(element)),
+        city: Array.from(
+            new Set(deliveries.map((delivery) => delivery.city))
+        ).map((city) => OptionGenerator(city)),
+        solution: Array.from(
+            new Set(deliveries.flatMap((delivery) => delivery.solution))
+        ).map((solution) => OptionGenerator(solution)),
     }
     return options
 }

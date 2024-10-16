@@ -29,25 +29,26 @@ interface CreateProps {
 export const Create: FC<CreateProps> = ({ prospect }) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const queryClient = useQueryClient()
-    const route = useRouter()
+    const router = useRouter()
+    const [Info, setInfo] = useState<any>(null)
     const mutate = useMutation({
         mutationFn: async (data: any) => {
             const res = await api
                 .post('http://localhost:8080/api/v1/crm/prospects/create', data)
-                .then((res) => res.data)
                 .catch((err) => console.log(err))
+            if (!res || ![201, 200].includes(res.status))
+                throw new Error('Failed to create prospect')
             console.log('done: ', res)
-            return res
+            return res.data
         },
         onSuccess: (data) => {
             setConvertir(true)
             setInfo(data)
-            route.replace('create', data.id)
-            // Invalidate and refetch
-            queryClient.invalidateQueries({ queryKey: ['todos'] })
+            console.log('create: ', data)
+            queryClient.invalidateQueries({ queryKey: ['prospects'] })
         },
         onError: (error) => {
-            console.log(error)
+            console.log(error) // Todo: add system notification for error
         },
     })
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
@@ -61,10 +62,13 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
     const { handleSubmit } = CrmInformation
     const onSubmit = () => {
         onSubmitCrmInfo(CrmInformation.getValues())
-
-        console.log('Submit')
+        setOpen((prev) => !prev)
     }
-    const [Info, setInfo] = useState<any>(null)
+    useEffect(() => {
+        if (Info) {
+            router.push(`/crm/prospects/${Info.id}`)
+        }
+    }, [Info, router])
     const onSaveData = (e: CrmInformationSchemaType) => {
         const [firstName, lastName] = e.responsable.split(' ')
         const createProspect = {
@@ -72,76 +76,76 @@ export const Create: FC<CreateProps> = ({ prospect }) => {
             activities: e.category,
             responsible: {
                 name: {
-                    firstName,
-                    lastName,
+                    firstName: firstName,
+                    lastName: lastName,
                 },
                 email: e.email,
                 phone: e.email,
             },
             powered_by: 1, // TODO: get from List
-            manager_id: 2, // TODO: get from List
+            manager_id: 1, // TODO: get from List
             address: {
+                country: e.country,
                 city: e.city,
                 address: e.address,
                 region: e.region,
             },
         }
-        const data = JSON.stringify(createProspect)
-
-        console.log(data)
+        // const data = JSON.stringify(createProspect)
+        console.log(createProspect)
         mutate.mutate(createProspect)
-        setInfo(e)
         console.log('Save data')
     }
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {}
     const [convertir, setConvertir] = useState(false)
     const [open, setOpen] = useState(false)
 
+    if (open)
+        return (
+            <EventPopUps
+                setOpen={setOpen}
+                open={open}
+                convertir={false}
+                prospect={prospect}
+            />
+        )
+
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
-            {!convertir ? (
-                <>
-                    {' '}
-                    <TopBar
-                        status={PartnerStatusType.DRAFT}
-                        primaryButtonDisabled={!convertir}
-                        secondaryButtonDisabled={convertir}
-                        onSaveData={handleSubmit((e) => onSaveData(e))}
-                        onSubmit={onSubmit}
-                    />
-                    <FormCrmInfo
-                        onSubmit={onSubmitCrmInfo}
-                        form={CrmInformation}
-                        countryCode={countryCode}
-                        setCountryCode={setCountryCode}
-                        disabled={convertir}
-                    />
-                    <NewEvenent
-                        Evenet={Info ? Info.events : []}
-                        setOpen={setOpen}
-                        convertir={convertir}
-                    />
-                    {Info && Info.events.length > 0 && (
-                        <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
-                            <CustomButton
-                                disabled={convertir}
-                                label="Lead Ko"
-                                onClick={() => console.log('Save')}
-                                className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
-                        transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"
-                                IconRight={Archive}
-                            />
-                        </div>
-                    )}
-                </>
-            ) : (
-                <EventPopUps
-                    setOpen={setOpen}
-                    open={open}
-                    convertir={convertir}
-                    prospect={prospect}
+            <>
+                {' '}
+                <TopBar
+                    status={PartnerStatusType.DRAFT}
+                    primaryButtonDisabled={!convertir}
+                    secondaryButtonDisabled={convertir}
+                    onSaveData={handleSubmit((e) => onSaveData(e))}
+                    onSubmit={onSubmit}
                 />
-            )}
+                <FormCrmInfo
+                    onSubmit={onSubmitCrmInfo}
+                    form={CrmInformation}
+                    countryCode={countryCode}
+                    setCountryCode={setCountryCode}
+                    disabled={convertir}
+                />
+                <NewEvenent
+                    Event={Info && Info.event ? Info.event : []}
+                    setOpen={setOpen}
+                    convertir={convertir}
+                />
+                {Info && Info.events && Info.events.length > 0 && (
+                    <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
+                        <CustomButton
+                            disabled={convertir}
+                            label="Lead Ko"
+                            onClick={() => console.log('Save')}
+                            className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
+                        transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"
+                            IconRight={Archive}
+                        />
+                    </div>
+                )}
+            </>
         </div>
     )
 }

@@ -21,9 +21,10 @@ import { AvatarImage } from '@radix-ui/react-avatar'
 import { Avatar } from '@/components/ui/avatar'
 import { LabelAndAvatar } from '@/components/custom/LabelAndAvatar'
 import LabelMultiItems from '@/components/custom/LabelMultiItems'
+import { CrmType } from '@/types/Global-Type'
 
 interface FormProspectInfoDisplayProps {
-    data: any
+    data: CrmType
     disabled?: boolean
     setCountryCode: (value: string) => void
     countryCode: string
@@ -69,7 +70,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                 />
                                 <LabelMultiItems
                                     label="Catégorie"
-                                    options={data.category}
+                                    options={[data.category]}
                                     disabled={disabled}
                                     name={''}
                                 />
@@ -77,9 +78,9 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     name=""
                                     onChange={() => {}}
                                     value={
-                                        data?.responsable.firstName +
+                                        data.contact.name.firstName +
                                         ' ' +
-                                        data?.responsable.lastName
+                                        data.contact.name.lastName
                                     }
                                     label="Responsable"
                                     disabled={disabled}
@@ -87,21 +88,21 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                             </div>
                             <div className="flex lg:flex-row flex-col items-start gap-3">
                                 <Input
-                                    name={data.phone}
+                                    name={data.contact.phone}
                                     label="Téléphone"
                                     // countryCode={countryCode}
                                     // onChangeCountryCode={setCountryCode}
                                     disabled={disabled}
                                     IconLeft={PhoneCall}
                                     onChange={() => {}}
-                                    value={data.phone}
+                                    value={data.contact.phone}
                                 />
                                 <Input
                                     name=""
                                     onChange={() => {}}
                                     IconLeft={Mail}
                                     label="Email"
-                                    value={data.email}
+                                    value={data.contact.email}
                                     disabled={disabled}
                                 />
                                 <LabelAndAvatar
@@ -131,7 +132,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     disabled={disabled}
                                 />
                                 <Input
-                                    value={data.country}
+                                    value={data.address.country}
                                     label="Pays"
                                     onChange={() => {}}
                                     name=""
@@ -140,7 +141,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                 />
                                 <Input
                                     name=""
-                                    value={data.city}
+                                    value={data.address.city}
                                     label="Ville"
                                     disabled={disabled}
                                     onChange={() => {}}
@@ -151,7 +152,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     name=""
                                     onChange={() => {}}
                                     className="col-span-1"
-                                    value={data.region}
+                                    value={data.address.region}
                                     label="Région"
                                     disabled={disabled}
                                 />
@@ -159,7 +160,7 @@ export const FormProspectInfoDisplay: FC<FormProspectInfoDisplayProps> = ({
                                     name=""
                                     onChange={() => {}}
                                     className=" flex-1 w-full col-span-2"
-                                    value={data.address}
+                                    value={data.address.address}
                                     label="Adresse"
                                     disabled={disabled}
                                 />

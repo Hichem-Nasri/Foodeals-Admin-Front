@@ -8,37 +8,12 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator,
-    CommandShortcut,
 } from '../ui/command'
-import {
-    Calendar,
-    Smile,
-    Calculator,
-    User,
-    CreditCard,
-    Settings,
-    ChevronDown,
-    ListPlus,
-    X,
-    Map,
-    MapPin,
-} from 'lucide-react'
+import { ChevronDown, ListPlus, X, Map, MapPin } from 'lucide-react'
 import { Switch } from '../ui/switch'
-import { Label } from '../ui/label'
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '../ui/select'
 import { cn } from '@/lib/utils'
 import { MultiSelect, MultiSelectOptionsType } from '../MultiSelect'
 import { valuesGetting } from '@/types/DeliveriesUtils'
-import DialogSide from './DialogSide'
 
 interface DialogMultiProps {
     setValue: React.Dispatch<React.SetStateAction<string>>
@@ -117,7 +92,7 @@ const DialogMulti: FC<DialogMultiProps> = ({
     useEffect(() => {
         const newOptions = dataToMultiOptions(selectedCity!, data)
         setOptions(newOptions)
-    }, [selectedCity])
+    }, [selectedCity, data])
     return (
         <Popover>
             <PopoverTrigger
