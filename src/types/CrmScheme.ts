@@ -30,6 +30,29 @@ export const CrmObjectSchema = z.object({
         .min(3, 'Le message doit contenir au moins 3 caractères'),
 })
 
+export interface NotificationType {
+    responsable: string
+    object: string
+    message: string
+    image: string
+}
+
+export const NotificationSchema = z.object({
+    responsable: z.string().min(3),
+    object: z.string().min(3, "L'objet doit contenir au moins 3 caractères"),
+    message: z
+        .string()
+        .min(3, 'Le message doit contenir au moins 3 caractères'),
+    image: z.string().min(1, "L'image est obligatoire"),
+})
+
+export const defaultNotificationData = {
+    responsable: '',
+    object: '',
+    message: '',
+    image: '',
+}
+
 export const defaultCrmInformationData = {
     companyName: '',
     category: [],

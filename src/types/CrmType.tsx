@@ -26,7 +26,9 @@ import api from '@/api/Auth'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { PartnerSolutionType } from './partners'
 import { IconStatus, StringStatus, StyleStatus } from './utils'
-import { CrmType, EventType } from './Global-Type'
+import { CrmType, EventType, ProfileType } from './Global-Type'
+import { AvatarAndName } from '@/components/AvatarAndName'
+import { DetailsEvenetNotification } from '@/components/crm/Demandes/details/DetailsNotification'
 
 export interface EvenetType {
     date: string
@@ -104,9 +106,18 @@ export const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+export interface TableNotificationType {
+    id: string
+    date: string
+    notifeFrom: ProfileType
+    object: string
+    message: string
+    image: string
+}
+
 export interface CrmDemandeType {
     id: string
-    date: Date
+    date: string
     companyName: string
     activity: string[]
     respansable: string
@@ -114,16 +125,72 @@ export interface CrmDemandeType {
     country: string
     city: string
     address: string
-    telephone: string
+    phone: string
     email: string
 }
 
+const columnCrmNotifHelper = createColumnHelper<TableNotificationType>()
+
 const columnDemandeHelper = createColumnHelper<CrmDemandeType>()
+
+export const columnsNotificationTable = () => [
+    columnCrmNotifHelper.accessor('date', {
+        cell: (info) => {
+            const date = new Date(info.getValue())
+            const formattedDate =
+                date.toLocaleDateString() + ' a ' + date.toLocaleTimeString()
+
+            return (
+                <span className="w-full max-w-44 text-ellipsis whitespace-nowrap">
+                    {formattedDate}
+                </span>
+            )
+        },
+        header: 'Date de création',
+        footer: (info) => info.column.id,
+    }),
+    columnCrmNotifHelper.accessor('notifeFrom', {
+        cell: (info) => {
+            const fullName = `${capitalize(
+                info.getValue().name.firstName
+            )} ${capitalize(info.getValue().name.lastName)}`
+            return (
+                <AvatarAndName
+                    name={fullName}
+                    avatar={info.getValue().avatarPath || ''}
+                />
+            )
+        },
+        header: 'Notifier par',
+        footer: (info) => info.column.id,
+    }),
+    columnCrmNotifHelper.accessor('object', {
+        cell: (info) => info.getValue(),
+        header: 'Object',
+        footer: (info) => info.column.id,
+    }),
+    columnCrmNotifHelper.accessor('message', {
+        cell: (info) => {
+            return (
+                <DetailsEvenetNotification
+                    className="hover:text-lynch-950 hover:border-lynch-300"
+                    detailsData={info.row.original}
+                >
+                    <button className="bg-transparent rounded-[8px] border-2 text-lynch-300 border-lynch-200 transition-all delay-100 duration-150 px-3 py-2 hover:scale-95 hover:text-black hover:bg-lynch-300">
+                        Plus de détails
+                    </button>
+                </DetailsEvenetNotification>
+            )
+        },
+        header: 'Actions',
+        footer: (info) => info.column.id,
+    }),
+]
 
 export const columnsDemandeTable = (router: AppRouterInstance) => [
     columnDemandeHelper.accessor('date', {
         cell: (info) => {
-            const date = info.getValue()
+            const date = new Date(info.getValue())
             const formattedDate = new Intl.DateTimeFormat('fr-FR', {
                 day: '2-digit',
                 month: 'short',
@@ -145,7 +212,7 @@ export const columnsDemandeTable = (router: AppRouterInstance) => [
             }
             const startDate = new Date(parse(filterValue[0]))
             const endDate = new Date(parse(filterValue[1]))
-            const date = row.original.date
+            const date = new Date(row.original.date)
             if (date >= startDate && date <= endDate) {
                 return true
             }
@@ -163,14 +230,14 @@ export const columnsDemandeTable = (router: AppRouterInstance) => [
                 {info.getValue().map((activity) => (
                     <span
                         key={activity}
-                        className="text-ellipsis whitespace-nowrap"
+                        className="text-ellipsis whitespace-pre-wrap"
                     >
                         {activity}
                     </span>
                 ))}
             </div>
         ),
-        header: 'Activité',
+        header: 'Secteurs d’activités',
         footer: (info) => info.column.id,
         filterFn: (row, columnId, filterValue) => {
             return filterValue.includes(row.original.activity)
@@ -186,7 +253,7 @@ export const columnsDemandeTable = (router: AppRouterInstance) => [
     }),
     columnDemandeHelper.accessor('role', {
         cell: (info) => info.getValue(),
-        header: 'Role',
+        header: 'Rôle',
         footer: (info) => info.column.id,
     }),
     columnDemandeHelper.accessor('country', {
@@ -211,7 +278,7 @@ export const columnsDemandeTable = (router: AppRouterInstance) => [
         header: 'Adresse',
         footer: (info) => info.column.id,
     }),
-    columnDemandeHelper.accessor('telephone', {
+    columnDemandeHelper.accessor('phone', {
         cell: (info) => {
             return <PhoneBadge phone={info.getValue()} />
         },
@@ -231,12 +298,21 @@ export const columnsDemandeTable = (router: AppRouterInstance) => [
                 id={info.getValue()}
                 menuList={[
                     {
-                        actions: () => {},
+                        actions: () => {
+                            router.push(
+                                AppRoutes.CrmDemandesDetails.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            )
+                        },
                         icon: Eye,
                         label: 'Voir',
                     },
                     {
-                        actions: () => {},
+                        actions: () => {
+                            router.push(AppRoutes.newCrmDemandes)
+                        },
                         icon: BellDot,
                         label: 'Notifier',
                     },
@@ -268,6 +344,22 @@ export interface ProspectType {
 const columnProspectHelper = createColumnHelper<EventType>()
 const columnHelper = createColumnHelper<CrmType>()
 let count = 1
+export const columnCrmAssociations = (
+    router: AppRouterInstance,
+    setData: any
+) => [
+    ...columnsCrmTable(router, setData),
+    columnHelper.accessor('typeAssocciation', {
+        cell: (info) => {
+            const value = info.getValue()
+            // Check if the value is null or empty
+            if (!value) return null // or return <span></span> for an empty cell
+            return <span>{value}</span> // Display the value if it exists
+        },
+        header: 'Type de compote',
+        footer: (info) => info.column.id,
+    }),
+]
 export const columnsProspectTable = (router: AppRouterInstance) => [
     columnProspectHelper.accessor('createdAt', {
         cell: (info) => {

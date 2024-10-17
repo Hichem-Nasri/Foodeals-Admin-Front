@@ -29,6 +29,7 @@ export type CrmType = {
     solutions: PartnerSolutionType[]
     event: EventType[]
     eventObject: string
+    typeAssocciation?: string
 }
 
 export type ContactType = {

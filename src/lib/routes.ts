@@ -1,3 +1,4 @@
+import CrmDemandes from '@/app/crm/demandes/crmDemandes'
 import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
 
 export const AppRoutes = {
@@ -11,8 +12,10 @@ export const AppRoutes = {
     newPartner: '/partenaires/partenair/:id',
     newConvertir: '/partenaires/convertir/:id',
     newProspect: '/crm/prospects/create',
-    prospects: '/crm/prospects/:id',
-    crmDemandes: 'crm/demandes',
+    prospects: '/crm/prospects/',
+    crmDemandes: '/crm/demandes',
+    CrmDemandesDetails: '/crm/demandes/:id',
+    newCrmDemandes: '/crm/demandes/create',
     collaboratorDetails:
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',

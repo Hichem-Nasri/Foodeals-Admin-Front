@@ -1,3 +1,4 @@
+'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import React, { Fragment } from 'react'
 
@@ -5,15 +6,18 @@ const SwitchToggleDemandes = () => {
     const items = ['Demande DCL', 'Demande Marcket PRO', 'Demande Donate']
     const [selectedItem, setSelectedItem] = React.useState(items[0])
     return (
-        <div className="w-full flex justify-start items-center p-2 bg-white">
-            <div className="w-fit relative h-14">
+        <div className="w-fit p-2  rounded-[14px] bg-white flex items-center justify-start">
+            <div className="w-auto rounded-[14px] bg-white flex items-center justify-start relative">
                 {items.map((item, index) => (
                     <Fragment key={index}>
-                        <CustomButton
+                        <button
                             onClick={() => setSelectedItem(item)}
-                            label={item}
-                            className="text-lynch-400 bg-white border-lynch-400 border hover:bg-lynch-400/80 hover:text-white transition-all"
-                        />
+                            className={`px-5 py-2 rounded-[4px] text-lynch-400 w-auto cursor-pointer text-sm transition-all z-10 min-w-48 ${
+                                item === selectedItem ? 'text-white' : ''
+                            }`}
+                        >
+                            {item}
+                        </button>
                     </Fragment>
                 ))}
                 <div
