@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+'use client'
+import React, { FC, useState } from 'react'
 import { Archive, ArrowRight, Database, UserRoundPlus } from 'lucide-react'
 import { FilterTableProspects } from './FilterTableProspects'
 import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
@@ -22,8 +23,18 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     setColumnFilters,
     columnFilters,
 }) => {
+    const [leadKo, setLeadKo] = useState(true)
     const handleArchive = () => {
-        // handle archive
+        // set column filters  by status that cancled
+        if (leadKo)
+            setColumnFilters([
+                {
+                    id: 'status',
+                    value: ['canceled'],
+                },
+            ])
+        else setColumnFilters([])
+        setLeadKo((prev) => !prev)
     }
 
     return (
@@ -57,10 +68,10 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label="Lead Ko"
+                    label={leadKo ? 'Lead Ko' : 'Prospects'}
                     className="text-lynch-500"
                     onClick={handleArchive}
-                    IconRight={Archive}
+                    IconRight={leadKo ? Archive : ArrowRight}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2 px-4">

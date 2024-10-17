@@ -25,9 +25,6 @@ export const CitySelectField: FC<CitySelectFieldProps> = ({
     className,
 }) => {
     const [value, setValue] = useState<string>('')
-    useEffect(() => {
-        console.log('value:', value)
-    }, [value])
     return (
         <FormField
             control={control}

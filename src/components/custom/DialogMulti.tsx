@@ -92,7 +92,7 @@ const DialogMulti: FC<DialogMultiProps> = ({
     useEffect(() => {
         const newOptions = dataToMultiOptions(selectedCity!, data)
         setOptions(newOptions)
-    }, [selectedCity, data])
+    }, [selectedCity])
     return (
         <Popover>
             <PopoverTrigger
