@@ -3,7 +3,7 @@
 import { CrmCardDetails } from '@/components/crm/CrmCard'
 import { FilterCrm } from '@/components/crm/FilterCrm'
 import { DataTable } from '@/components/DataTable'
-import { columnsCrmTable } from '@/types/CrmType'
+import { columnCrmAssociations, columnsCrmTable } from '@/types/CrmType'
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -26,13 +26,15 @@ import { RotateCw, UserRoundPlus } from 'lucide-react'
 import PaginationData from '@/components/utils/PaginationData'
 import { CrmType } from '@/types/Global-Type'
 import Statistics from '@/components/crm/Prospect/statistics'
+import { DataTableSkeleton } from '@/components/TableSkeleton'
+import SwitchProspects from '@/components/crm/Prospect/switchProspects'
 
 // Define the API endpoint URL as a constant
 const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
-    const [setSwitchTable, setSetSwitchTable] = useState<
+    const [switchTable, setSetSwitchTable] = useState<
         'partenaires' | 'associations'
     >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -55,13 +57,14 @@ export default function Crm() {
                             currentPage - 1
                         }&size=${pageSize}&sort=createdAt,desc`
                     )
-                    .then((res) => res.data)
-                    .catch((e) => console.error(e))
-                if (response) {
-                    setTotalPages(response.totalPages)
-                    setData(response.content)
+                    .then((res) => res)
+                    .catch((e) => {
+                        throw new Error(e)
+                    })
+                if (response.status === 200) {
+                    setData(response.data.content)
                 }
-                return response.content
+                return response
             } catch (error) {
                 console.error(error)
                 throw error
@@ -69,6 +72,18 @@ export default function Crm() {
         },
     })
     const router = useRouter()
+    const tableAssocciation = useReactTable({
+        data,
+        columns: columnCrmAssociations(router, setData),
+        state: {
+            columnFilters,
+        },
+        getCoreRowModel: getCoreRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+    })
 
     const table = useReactTable({
         data,
@@ -82,26 +97,35 @@ export default function Crm() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    if (isLoading) return <div>Loading...</div>
     if (error) return <div>Error: {error.message}</div>
     console.log(data)
 
     return (
         <div className="flex flex-col gap-3 w-full p-1">
-            <SwitchToggle setSwitchTable={setSetSwitchTable} />
+            <SwitchProspects data={data} setData={setData} />
             <Statistics />
             <FilterCrm
                 data={data || query}
-                table={table}
+                table={
+                    switchTable === 'partenaires' ? table : tableAssocciation
+                }
                 columnFilters={columnFilters}
                 setColumnFilters={setColumnFilters}
             />
-            <DataTable
-                table={table}
-                data={data || query}
-                title="Listes des prospects"
-                transform={(data: any) => <CrmCardDetails crm={data} />}
-            />
+            {isLoading ? (
+                <DataTableSkeleton columnCount={5} rowCount={5} />
+            ) : (
+                <DataTable
+                    table={
+                        switchTable === 'partenaires'
+                            ? table
+                            : tableAssocciation
+                    }
+                    data={data || query}
+                    title="Listes des prospects"
+                    transform={(data: any) => <CrmCardDetails crm={data} />}
+                />
+            )}
             <CustomButton
                 label="Voir plus"
                 onClick={() => {
