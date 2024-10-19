@@ -1,5 +1,5 @@
 import api from '@/api/Auth'
-import { ActionsMenu } from '@/components/custom/ActionsMenu'
+import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PartnerStatus } from '@/components/Partners/PartnerStatus'
@@ -25,8 +25,8 @@ export enum PartnerSolutionType {
 }
 
 export enum PartnerCompanyType {
-    UNDER_ACCOUNT = 'UNDER_ACCOUNT',
-    PRINCIPAL = 'PRINCIPAL',
+    NORMAL = 'Normal',
+    PRINCIPAL = 'Principal',
 }
 
 export interface PartnerType {
@@ -35,7 +35,7 @@ export interface PartnerType {
     logo: string
     companyName: string
     collaborators: number
-    underAccount: number
+    subAccount: number
     manager: {
         name: string
         avatar: string
@@ -44,11 +44,38 @@ export interface PartnerType {
     email: string
     phone: string
     city: string
-    solution: PartnerSolutionType[]
     companyType: PartnerCompanyType
+    solution: PartnerSolutionType[]
     offer: number
     order: number
 }
+export type SubAccountPartners = Omit<
+    PartnerType,
+    'manager' | 'status' | 'subAccount'
+> & {
+    ref: string
+}
+
+export const SubAccountData: SubAccountPartners[] = [
+    {
+        id: '1',
+        createdAt: new Date('2024-05-02'),
+        logo: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneGourmet',
+        companyName: 'Marjane Gourmet',
+        collaborators: 102,
+        email: 'example@gmail.com',
+        phone: '+212 0663 65 36 98',
+        city: 'Casablanca',
+        solution: [
+            PartnerSolutionType.MARKET_PRO,
+            PartnerSolutionType.DONATE_PRO,
+        ],
+        ref: 'REF-001',
+        offer: 25,
+        order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
+    },
+]
 
 export const partnersData: PartnerType[] = [
     {
@@ -57,7 +84,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneGourmet',
         companyName: 'Marjane Gourmet',
         collaborators: 102,
-        underAccount: 0,
+        subAccount: 0,
         manager: {
             name: 'Amine SABIR',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=AmineSABIR',
@@ -70,9 +97,9 @@ export const partnersData: PartnerType[] = [
             PartnerSolutionType.MARKET_PRO,
             PartnerSolutionType.DONATE_PRO,
         ],
-        companyType: PartnerCompanyType.UNDER_ACCOUNT,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.NORMAL,
     },
     {
         id: '2',
@@ -80,7 +107,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneHolding',
         companyName: 'Marjane Holding',
         collaborators: 50,
-        underAccount: 15,
+        subAccount: 15,
         manager: {
             name: 'Michael Jone',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=MichaelJone',
@@ -94,9 +121,9 @@ export const partnersData: PartnerType[] = [
             PartnerSolutionType.DLC_PRO,
             PartnerSolutionType.DONATE_PRO,
         ],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
     },
     {
         id: '3',
@@ -104,7 +131,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneMarket',
         companyName: 'Marjane Market',
         collaborators: 26,
-        underAccount: 0,
+        subAccount: 0,
         manager: {
             name: 'Jamila SARGHINI',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=JamilaSARGHINI',
@@ -114,9 +141,9 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Casablanca',
         solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
-        companyType: PartnerCompanyType.UNDER_ACCOUNT,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
     },
     {
         id: '4',
@@ -124,7 +151,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=BIM',
         companyName: 'BIM',
         collaborators: 220,
-        underAccount: 50,
+        subAccount: 50,
         manager: {
             name: 'Wade Warren',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=WadeWarren',
@@ -134,9 +161,9 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Fes',
         solution: [PartnerSolutionType.MARKET_PRO],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.NORMAL,
     },
     {
         id: '5',
@@ -144,7 +171,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=Chari',
         companyName: 'Chari',
         collaborators: 66,
-        underAccount: 10,
+        subAccount: 10,
         manager: {
             name: 'Esther Howard',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=EstherHoward',
@@ -154,9 +181,9 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Casablanca',
         solution: [PartnerSolutionType.DLC_PRO],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
     },
     {
         id: '6',
@@ -164,7 +191,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=Paul',
         companyName: 'Paul',
         collaborators: 56,
-        underAccount: 6,
+        subAccount: 6,
         manager: {
             name: 'Arlene McCoy',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=ArleneMcCoy',
@@ -174,9 +201,9 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Agadir',
         solution: [PartnerSolutionType.DLC_PRO],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
     },
     {
         id: '7',
@@ -184,7 +211,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=LabelVie',
         companyName: 'Label vie',
         collaborators: 23,
-        underAccount: 23,
+        subAccount: 23,
         manager: {
             name: 'Bessie Cooper',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=BessieCooper',
@@ -194,9 +221,9 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Casablanca',
         solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.NORMAL,
     },
     {
         id: '8',
@@ -204,7 +231,7 @@ export const partnersData: PartnerType[] = [
         logo: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
         companyName: 'Ikea',
         collaborators: 50,
-        underAccount: 5,
+        subAccount: 5,
         manager: {
             name: 'Robert Fox',
             avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=RobertFox',
@@ -214,17 +241,161 @@ export const partnersData: PartnerType[] = [
         phone: '+212 0663 65 36 98',
         city: 'Casablanca',
         solution: [PartnerSolutionType.MARKET_PRO, PartnerSolutionType.DLC_PRO],
-        companyType: PartnerCompanyType.PRINCIPAL,
         offer: 25,
         order: 233,
+        companyType: PartnerCompanyType.PRINCIPAL,
     },
 ]
 
-const strToPartnerType = {
-    ['DONATE']: 'DONATE_PRO',
-    ['DLC_PRO']: 'DLC_PRO',
-    ['MARKET_PRO']: 'MARKET_PRO',
-}
+const columnHelperSubAccount = createColumnHelper<SubAccountPartners>()
+
+export const columnsSubAccountTable = (router: AppRouterInstance) => [
+    columnHelperSubAccount.accessor('createdAt', {
+        cell: (info) => info.getValue<Date>().toLocaleDateString(),
+        header: 'Date de création',
+        footer: (info) => info.column.id,
+        filterFn: (row, columnId, filterValue) => {
+            const parse = (date: string) => {
+                const dateArray = date.split('/')
+                return `${dateArray[1]}/${dateArray[0]}/${dateArray[2]}`
+            }
+            const startDate = new Date(parse(filterValue[0]))
+            const endDate = new Date(parse(filterValue[1]))
+            const date = row.original.createdAt
+            if (date >= startDate && date <= endDate) {
+                return true
+            }
+            return false
+        },
+    }),
+    columnHelperSubAccount.accessor('logo', {
+        cell: (info) => (
+            <Avatar>
+                <AvatarImage src={info.getValue()} />
+                <AvatarFallback>
+                    {info.getValue()[0].toUpperCase()}
+                </AvatarFallback>
+            </Avatar>
+        ),
+        header: 'Logo',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('companyName', {
+        cell: (info) => info.getValue(),
+        header: 'Raison sociale',
+        footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            return filterValue.includes(rows.original.companyName)
+        },
+    }),
+    columnHelperSubAccount.accessor('offer', {
+        cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
+        header: 'Offres',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('order', {
+        cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
+        header: 'Commandes',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('collaborators', {
+        cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
+        header: 'Collaborateurs',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('ref', {
+        cell: (info) => info.getValue(),
+        header: 'Référence',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('city', {
+        cell: (info) => info.getValue(),
+        header: 'Ville',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('email', {
+        cell: (info) => <EmailBadge email={info.getValue()} />,
+        header: 'Email',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('phone', {
+        cell: (info) => <PhoneBadge phone={info.getValue()} />,
+        header: 'Téléphone',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubAccount.accessor('solution', {
+        cell: (info) => (
+            <div className="flex items-center gap-1">
+                {info.getValue().map((solution) => (
+                    <PartnerSolution solution={solution} key={solution} />
+                ))}
+            </div>
+        ),
+        header: 'Solution',
+        footer: (info) => info.column.id,
+        filterFn: (rows, id, filterValue) => {
+            const solutions = rows.original.solution.sort() //example: ['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']
+            const mySolution = filterValue.sort() // example:  ['MARKET_PRO', 'DLC_PRO']
+            return mySolution.every((solution: PartnerSolutionType) =>
+                solutions.includes(solution)
+            )
+        },
+    }),
+    columnHelperSubAccount.accessor('id', {
+        cell: (info) => (
+            <ActionsMenu
+                id={info.getValue()}
+                menuList={[
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Eye,
+                        label: 'Voir',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Store,
+                        label: 'Principal',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: Users,
+                        label: 'Collaborateurs',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newPartner.replace(
+                                    ':id',
+                                    info.getValue()!
+                                )
+                            ),
+                        icon: FileBadge,
+                        label: 'Contrat',
+                    },
+                ]}
+            />
+        ),
+        header: 'Activité',
+    }),
+]
 
 const columnHelper = createColumnHelper<PartnerType>()
 
@@ -277,8 +448,8 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         header: 'Collaborateurs',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('underAccount', {
-        cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
+    columnHelper.accessor('subAccount', {
+        cell: (info) => info.getValue(),
         header: 'Sous compte',
         footer: (info) => info.column.id,
     }),
@@ -320,6 +491,11 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         header: 'Ville',
         footer: (info) => info.column.id,
     }),
+    columnHelper.accessor('companyType', {
+        cell: (info) => info.getValue(),
+        header: 'Type de compte',
+        footer: (info) => info.column.id,
+    }),
     columnHelper.accessor('solution', {
         cell: (info) => (
             <div className="flex items-center gap-1">
@@ -338,82 +514,87 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
             )
         },
     }),
-    columnHelper.accessor('companyType', {
-        cell: (info) =>
-            info.getValue() === PartnerCompanyType.PRINCIPAL
-                ? 'Principal'
-                : 'Sous compte',
-        header: 'Type de société',
-        footer: (info) => info.column.id,
-    }),
     columnHelper.accessor('id', {
-        cell: (info) => (
-            <ActionsMenu
-                id={info.getValue()}
-                menuList={[
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
+        cell: (info) => {
+            const found =
+                info.row.original.companyType === PartnerCompanyType.PRINCIPAL
+
+            // Define common actions
+            const commonActions: ActionType[] = [
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.newPartner.replace(
+                                ':id',
+                                info.getValue()!
+                            )
+                        ),
+                    icon: Eye,
+                    label: 'Voir',
+                },
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.newPartner.replace(
+                                ':id',
+                                info.getValue()!
+                            )
+                        ),
+                    icon: Pencil,
+                    label: 'Modifier',
+                },
+                {
+                    actions: (id) =>
+                        router.push(AppRoutes.collaborator.replace(':id', id)),
+                    icon: Users,
+                    label: 'Collaborateurs',
+                },
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.newPartner.replace(
+                                ':id',
+                                info.getValue()!
+                            )
+                        ),
+                    icon: FileBadge,
+                    label: 'Contrat',
+                },
+                {
+                    actions: () => {
+                        // const res = api.delete(`http://localhost:8080/api/v1/...`)
+                        console.log('archive')
                     },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Pencil,
-                        label: 'Modifier',
-                    },
-                    {
-                        actions: (id) =>
-                            router.push(
-                                AppRoutes.collaborator.replace(':id', id)
-                            ),
-                        icon: Users,
-                        label: 'Collaborateurs',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Store,
-                        label: 'Sous Comptes',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: FileBadge,
-                        label: 'Contrat',
-                    },
-                    {
-                        actions: () => {
-                            // const res = api.delete(`http://localhost:8080/api/v1/...`)
-                            console.log('archive')
-                        },
-                        icon: Archive,
-                        label: 'Archiver',
-                    },
-                ]}
-            />
-        ),
+                    icon: Archive,
+                    label: 'Archiver',
+                },
+            ]
+
+            // Define principal actions
+            const principalActions: ActionType[] = found
+                ? [
+                      {
+                          actions: () =>
+                              router.push(
+                                  AppRoutes.subAccountPartner.replace(
+                                      ':id',
+                                      info.getValue()!
+                                  )
+                              ),
+                          icon: Store,
+                          label: 'Sous Comptes',
+                      },
+                  ]
+                : []
+
+            const menuList: ActionType[] = [
+                ...commonActions.slice(0, 2),
+                ...principalActions,
+                ...commonActions.slice(2),
+            ]
+
+            return <ActionsMenu id={info.getValue()} menuList={menuList} />
+        },
         header: 'Activité',
     }),
 ]

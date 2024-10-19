@@ -1,5 +1,14 @@
 import { FC } from 'react'
-import { Copy, FileBadge, Save, SendIcon, Share } from 'lucide-react'
+import {
+    Circle,
+    CircleCheck,
+    CircleCheckBig,
+    Copy,
+    FileBadge,
+    Save,
+    SendIcon,
+    Share,
+} from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerStatus } from '../PartnerStatus'
 import { PartnerStatusType } from '@/types/partners'
@@ -88,8 +97,9 @@ export const TopBar: FC<TopBarProps> = ({
                         disabled={primaryButtonDisabled}
                         onClick={onSubmit}
                         size="sm"
-                        label="Valider le contrat"
-                        IconRight={FileBadge}
+                        label="Confirmer"
+                        className="disabled:bg-lynch-300"
+                        IconRight={CircleCheckBig}
                     />
                 ) : status === PartnerStatusType.VALIDATED ? (
                     <Drawer>

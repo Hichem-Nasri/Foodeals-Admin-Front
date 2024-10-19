@@ -115,7 +115,6 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
                     <PartnerCard partner={value} key={value.id} />
                 )}
             />
-            <PaginationData />
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton
                     size="sm"

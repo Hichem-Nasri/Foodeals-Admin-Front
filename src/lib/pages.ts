@@ -49,7 +49,7 @@ export const pagesData: PageData[] = [
             },
             {
                 label: 'Partenaire livraison',
-                href: AppRoutes.delivery,
+                href: AppRoutes.deliveryPayment,
                 icon: Box,
             },
             {

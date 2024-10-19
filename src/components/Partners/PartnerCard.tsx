@@ -32,18 +32,11 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
 
     const dataArray = [
         {
-            label:
-                partner.companyType === PartnerCompanyType.PRINCIPAL
-                    ? 'Principal'
-                    : 'Sous compte',
-            icon: Building,
-        },
-        {
             label: partner.collaborators,
             icon: Store,
         },
         {
-            label: partner.underAccount,
+            label: partner.subAccount,
             icon: Users,
         },
         {

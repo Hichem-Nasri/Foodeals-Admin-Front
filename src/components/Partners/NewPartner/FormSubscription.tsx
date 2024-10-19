@@ -65,7 +65,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                 className="text-lynch-400 text-[1.375rem] font-normal"
             >
                 <AccordionTrigger className="font-normal text-[1.375rem] py-0">
-                    Abonnement
+                    Subscription
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-[1.875rem] pt-7">
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,7 +73,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                             <div className="flex flex-col gap-[1.875rem]">
                                 <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
                                     <Label
-                                        label="Type d’abonnement"
+                                        label="Type d’Subscription"
                                         className="text-sm font-medium"
                                     />
                                     <RadioButton
@@ -82,11 +82,11 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                         options={[
                                             {
                                                 key: 'general',
-                                                label: 'Abonnement générale',
+                                                label: 'Subscription générale',
                                             },
                                             {
                                                 key: 'personalized',
-                                                label: 'Abonnement personnalisée',
+                                                label: 'Subscription personnalisée',
                                             },
                                         ]}
                                         disabled={disabled}
