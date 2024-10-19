@@ -109,6 +109,22 @@ const config: Config = {
                         width: '0',
                     },
                 },
+                'notification-slide-left': {
+                    from: {
+                        transform: 'translateX(100%)',
+                    },
+                    to: {
+                        transform: 'translateX(0)',
+                    },
+                },
+                'notification-slide-down': {
+                    from: {
+                        transform: 'translateY(-100%)',
+                    },
+                    to: {
+                        transform: 'translateY(0)',
+                    },
+                },
             },
             animation: {
                 'accordion-down': 'accordion-down 0.2s ease-out',
@@ -116,6 +132,10 @@ const config: Config = {
                 'accordion-left': 'accordion-left 2s ease-out',
                 'accordion-right': 'accordion-right 2s ease-out',
                 'dialog-right': 'dialog-right 10s ease-in-out',
+                'notification-slide-left':
+                    'notification-slide-left 0.5s ease-out',
+                'notification-slide-down':
+                    'notification-slide-down 0.5s ease-out',
             },
         },
     },

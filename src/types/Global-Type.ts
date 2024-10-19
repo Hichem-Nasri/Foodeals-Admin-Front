@@ -8,6 +8,12 @@ export type ProfileType = {
     avatarPath?: string
 }
 
+export enum NotificationType {
+    SUCCESS,
+    ERROR,
+    INFO,
+}
+
 export type FilteredData<T> = {
     [K in keyof T]: T[K] extends (infer U)[]
         ? U[]

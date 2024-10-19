@@ -51,3 +51,18 @@ html {
 ::-webkit-scrollbar-track {
     background-color: #f1f1f1; /* Light gray background */
 }
+
+.alert {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.alert.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.progress-bar {
+    transition: width 0.1s ease; /* Smooth transition for width changes */
+}
