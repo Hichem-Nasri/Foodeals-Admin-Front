@@ -1,48 +1,48 @@
 'use client'
+import { CustomButton } from '@/components/custom/CustomButton'
+import { DataTable } from '@/components/DataTable'
+import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
+import { CardTotalValue } from '@/components/payment/CardTotalValue'
+import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
+import { FilterPayment } from '@/components/payment/FilterPayment'
+import { PaymentCardDetails } from '@/components/payment/PaymentCardDetails'
+import SwitchPayment from '@/components/payment/switchPayment'
 import {
+    columnsPaymentDeliveriesTable,
     columnsPaymentsTable,
     PaymentFilterSchema,
     PaymentType,
+    PaymentDeliveriesType,
 } from '@/types/PaymentType'
-import { FC, useState } from 'react'
-import { FilterPayment } from './FilterPayment'
-import { z } from 'zod'
-import { CardTotalValue } from './CardTotalValue'
-import { ArrowRight, CalendarClock, RotateCw } from 'lucide-react'
-import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
 import {
     ColumnFiltersState,
+    useReactTable,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
-    useReactTable,
+    getPaginationRowModel,
 } from '@tanstack/react-table'
-import { DataTable } from '../DataTable'
-import { CustomButton } from '../custom/CustomButton'
-import { PaymentCardDetails } from './PaymentCardDetails'
+import { CalendarClock, ArrowRight, RotateCw, CheckCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import SwitchPayment from './switchPayment'
+import { FC, Fragment, useState } from 'react'
+import { z } from 'zod'
 
 interface PaymentProps {
-    payments: PaymentType[]
+    payments: PaymentDeliveriesType[]
 }
 
-export const Payment: FC<PaymentProps> = ({ payments }) => {
+export const PaymentDeliveries: FC<PaymentProps> = ({ payments }) => {
     const [data, _setData] = useState(() => [...payments])
     const router = useRouter()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
-    const totalCommission = payments.reduce(
-        (acc, payment) => acc + payment.totalCommission,
-        0
-    )
-    const total = payments.reduce((acc, payment) => acc + payment.toPay, 0)
+    const totalCommission = 12222
+    const total = 9948652
 
     const table = useReactTable({
         data,
-        columns: columnsPaymentsTable(router),
+        columns: columnsPaymentDeliveriesTable(),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -69,19 +69,27 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
             </div>
             <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
                 <ColumnVisibilityModal table={table} />
-                <CustomButton
-                    label={payments.length.toString()}
-                    IconLeft={ArrowRight}
-                    disabled
-                    variant="outline"
-                    className="disabled:border-primary disabled:opacity-100 disabled:text-primary font-semibold text-lg py-3 px-5 h-fit"
-                />
+                <div className="flex justify-center items-center space-x-2">
+                    <ConfirmPayment
+                        id=""
+                        label="Confirmer tout"
+                        className="rounded-[12px]"
+                        IconRight={CheckCheck}
+                    />
+                    <CustomButton
+                        label={payments.length.toString()}
+                        IconLeft={ArrowRight}
+                        disabled
+                        variant="outline"
+                        className="disabled:border-primary h-12 disabled:opacity-100 disabled:text-primary font-semibold text-lg py-3 px-5 "
+                    />
+                </div>
             </div>
             <DataTable
                 table={table}
                 data={data}
-                title="Tableau commission des livraison"
-                transform={(data) => <PaymentCardDetails payment={data} />}
+                title="Tableau de validation des commission"
+                transform={(data) => <Fragment />}
                 hideColumns={['payByFoodeals']}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">

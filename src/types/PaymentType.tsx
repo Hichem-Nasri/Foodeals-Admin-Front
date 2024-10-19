@@ -10,6 +10,9 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { z } from 'zod'
 import { PartnerSolutionType } from './partners'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import { AvatarAndName } from '@/components/AvatarAndName'
+import { Drawer, DrawerTrigger } from '@/components/ui/drawer'
+import { CustomButton } from '@/components/custom/CustomButton'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
@@ -49,6 +52,107 @@ export const defaultValuesConfirmPayment = {
     },
 }
 
+export interface PaymentDeliveriesType {
+    id: string
+    month: string
+    deliveryCost: number
+    commissionCost: number
+    NbrOrder: number
+    commissionfoodleas: number
+    toReceive: number
+    validation: string
+}
+
+const columnHelperPaymentDeliveries =
+    createColumnHelper<PaymentDeliveriesType>()
+
+export const columnsPaymentDeliveriesTable = () => [
+    columnHelperPaymentDeliveries.accessor('month', {
+        cell: (info) => info.getValue(),
+        header: 'Mois',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('deliveryCost', {
+        cell: (info) => {
+            return <span>{info.getValue() + 'DH'}</span>
+        },
+        header: 'Coût de livraison',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('commissionCost', {
+        cell: (info) => {
+            return <span>{info.getValue() + 'DH'}</span>
+        },
+        header: 'Coût de commission',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('NbrOrder', {
+        cell: (info) => {
+            return <span>{info.getValue() + 'DH'}</span>
+        },
+        header: 'Nbr de commande',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('commissionfoodleas', {
+        cell: (info) => {
+            return <span>{info.getValue() + 'DH'}</span>
+        },
+        header: 'Commission Foodeals',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('toReceive', {
+        cell: (info) => {
+            return <span>{info.getValue() + 'DH'}</span>
+        },
+        header: 'A recevoir',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperPaymentDeliveries.accessor('validation', {
+        cell: (info) => (
+            <ConfirmPayment
+                id={info.getValue()}
+                label={'Confirmer'}
+                disabled={false}
+            />
+        ),
+        header: 'Validation',
+        footer: (info) => info.column.id,
+    }),
+]
+
+export const defaultDataPaymentDeliveriesTable: PaymentDeliveriesType[] = [
+    {
+        id: '1',
+        month: 'Janvier',
+        deliveryCost: 1000,
+        commissionCost: 1000,
+        NbrOrder: 1000,
+        commissionfoodleas: 1000,
+        toReceive: 1000,
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '2',
+        month: 'Février',
+        deliveryCost: 1000,
+        commissionCost: 1000,
+        NbrOrder: 1000,
+        commissionfoodleas: 1000,
+        toReceive: 1000,
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '3',
+        month: 'Mars',
+        deliveryCost: 1000,
+        commissionCost: 1000,
+        NbrOrder: 1000,
+        commissionfoodleas: 1000,
+        toReceive: 1000,
+        validation: PaymentStatusType.CANCELED,
+    },
+]
+
 export interface PaymentType {
     id: string
     ref: string
@@ -68,17 +172,103 @@ export interface PaymentType {
     payByFoodeals: boolean
 }
 
-export interface partnerAbonnementType {
+export interface partnerCommissionType {
     id: string
     ref: string
     type: string
-    magasin: string
+    magasin: {
+        id: string
+        name: string
+        avatar: string
+    }
+    date: Date
+    totalVente: number
+    commission: number
+    toPaid: number
+    toReceive: number
+    typeCommission: 'paid' | 'receive'
+    validation: PaymentStatusType
+}
+
+export type partnerCommissionSSType = Omit<partnerCommissionType, 'type'>
+
+export type partnerCommissionMonthType = {
+    id: string
+    ref: string
+    product: {
+        name: string
+        avatar: string
+    }
+    price: number
+    quantity: number
+    TBC: number
+    CT: number
+    CBC: number
+    CPC: number
+}
+export interface partnerSubscriptionType {
+    id: string
+    ref: string
+    type: string
+    magasin: {
+        id: string
+        name: string
+        avatar: string
+    }
     date: Date
     nbEcheance: number
     totalEcheance: number
     prixEcheance: number
     solution: string[]
 }
+
+export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
+    {
+        id: '1',
+        ref: '1',
+        type: 'Type',
+        magasin: {
+            id: '1',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        nbEcheance: 5,
+        totalEcheance: 5000,
+        prixEcheance: 1000,
+        solution: [PartnerSolutionType.MARKET_PRO],
+    },
+    {
+        id: '2',
+        ref: '2',
+        type: 'Type',
+        magasin: {
+            id: '1',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        nbEcheance: 5,
+        totalEcheance: 5000,
+        prixEcheance: 1000,
+        solution: [PartnerSolutionType.DONATE_PRO],
+    },
+    {
+        id: '3',
+        ref: '3',
+        type: 'Type',
+        magasin: {
+            id: '1',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        nbEcheance: 5,
+        totalEcheance: 5000,
+        prixEcheance: 1000,
+        solution: [PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
+    },
+]
 
 export const PaymentFilterSchema = z.object({
     date: z.date().optional(),
@@ -154,45 +344,466 @@ export interface FormData {
     file?: string
 }
 
-const columnHelperAbonnement = createColumnHelper<partnerAbonnementType>()
+const columnHelperCommissionMonth =
+    createColumnHelper<partnerCommissionMonthType>()
 
-export const columnsAbonnementTable = (router: AppRouterInstance) => [
-    columnHelperAbonnement.accessor('ref', {
+export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
+    columnHelperCommissionMonth.accessor('ref', {
         cell: (info) => info.getValue(),
         header: 'Réf',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('type', {
-        cell: (info) => info.getValue(),
-        header: 'Type',
+    columnHelperCommissionMonth.accessor('product', {
+        cell: (info) => {
+            return (
+                <AvatarAndName
+                    className="flex items-center gap-1 text-nowrap"
+                    name={info.getValue().name}
+                    avatar={info.getValue().avatar}
+                />
+            )
+        },
+        header: 'Produit',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('magasin', {
+    columnHelperCommissionMonth.accessor('price', {
+        cell: (info) => {
+            return (
+                <span>
+                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                </span>
+            )
+        },
+        header: 'Prix',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionMonth.accessor('quantity', {
         cell: (info) => info.getValue(),
+        header: 'Qté',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionMonth.accessor('TBC', {
+        cell: (info) => {
+            return (
+                <span>
+                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                </span>
+            )
+        },
+        header: 'V. par carte',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionMonth.accessor('CT', {
+        cell: (info) => {
+            return (
+                <span>
+                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                </span>
+            )
+        },
+        header: 'V. par espèce',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionMonth.accessor('CBC', {
+        cell: (info) => {
+            return (
+                <span>
+                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                </span>
+            )
+        },
+        header: 'C. par carte',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionMonth.accessor('CPC', {
+        cell: (info) => {
+            return (
+                <span>
+                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                </span>
+            )
+        },
+        header: 'C. par espèce',
+        footer: (info) => info.column.id,
+    }),
+]
+
+export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
+    {
+        id: '1',
+        ref: '1',
+        product: {
+            name: 'Nom du produit',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        price: 1000,
+        quantity: 1,
+        TBC: 1000,
+        CT: 1000,
+        CBC: 1000,
+        CPC: 1000,
+    },
+    {
+        id: '2',
+        ref: '2',
+        product: {
+            name: 'Nom du produit',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        price: 1000,
+        quantity: 1,
+        TBC: 1000,
+        CT: 1000,
+        CBC: 1000,
+        CPC: 1000,
+    },
+    {
+        id: '3',
+        ref: '3',
+        product: {
+            name: 'Nom du produit',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        price: 1000,
+        quantity: 1,
+        TBC: 1000,
+        CT: 1000,
+        CBC: 1000,
+        CPC: 1000,
+    },
+]
+
+const columnHelperCommissionSS = createColumnHelper<partnerCommissionSSType>()
+
+export const columnsCommissionSSTable = (
+    router: AppRouterInstance,
+    id: string
+) => [
+    columnHelperCommissionSS.accessor('ref', {
+        cell: (info) => info.getValue(),
+        header: 'Réf',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionSS.accessor('magasin', {
+        cell: (info) => {
+            return (
+                <AvatarAndName
+                    className="flex items-center gap-1 text-nowrap"
+                    name={info.getValue().name}
+                    avatar={info.getValue().avatar}
+                />
+            )
+        },
         header: 'Magasin',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('date', {
+    columnHelperCommissionSS.accessor('date', {
         cell: (info) => info.getValue().toLocaleDateString(),
         header: 'Date',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('nbEcheance', {
+    columnHelperCommissionSS.accessor('totalVente', {
         cell: (info) => info.getValue(),
-        header: "Nombre d'échéance",
+        header: 'Vente totale',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('totalEcheance', {
+    columnHelperCommissionSS.accessor('commission', {
         cell: (info) => info.getValue(),
-        header: 'Total échéance',
+        header: 'Commission',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('prixEcheance', {
-        cell: (info) => info.getValue(),
-        header: 'Prix échéance',
+    columnHelperCommissionSS.accessor('toPaid', {
+        cell: (info) => {
+            return <span className={''}>{info.getValue()}</span>
+        },
+        header: 'A payer',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('solution', {
+    columnHelperCommissionSS.accessor('toReceive', {
+        cell: (info) => {
+            return <span className={''}>{info.getValue()}</span>
+        },
+        header: 'A recevoir',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionSS.accessor('validation', {
+        cell: (info) => (
+            <PaymentValidation
+                id={info.getValue()}
+                label={'Confirmer'}
+                disabled={
+                    !(info.row.getValue('status') === PaymentStatusType.PENDING)
+                }
+            />
+        ),
+        header: 'Validation',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommissionSS.accessor('id', {
+        cell: (info) => (
+            <div
+                title="Voir"
+                onClick={() => {
+                    router.push(AppRoutes.SubStoreCommission.replace(':id', id))
+                }}
+                className="flex items-center justify-center"
+            >
+                <div
+                    className=" flex items-center justify-center
+                        p-2 rounded-full   bg-lynch-300 w-10 h-10 cursor-pointer text-white"
+                >
+                    <Eye size={20} />
+                </div>
+            </div>
+        ),
+        header: 'Activité',
+    }),
+]
+
+export const defaultDataCommissionSSTable: partnerCommissionSSType[] = [
+    {
+        id: '1',
+        ref: '1',
+        magasin: {
+            id: '1',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'paid',
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '2',
+        ref: '2',
+        magasin: {
+            id: '2',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'receive',
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '3',
+        ref: '3',
+        magasin: {
+            id: '3',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'paid',
+        validation: PaymentStatusType.CANCELED,
+    },
+]
+
+const columnHelperCommission = createColumnHelper<partnerCommissionType>()
+
+export const columnsCommissionTable = (router: AppRouterInstance) => [
+    columnHelperCommission.accessor('ref', {
+        cell: (info) => info.getValue(),
+        header: 'Réf',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('type', {
+        cell: (info) => info.getValue(),
+        header: 'Type',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('magasin', {
+        cell: (info) => {
+            return (
+                <AvatarAndName
+                    className="flex items-center gap-1 text-nowrap"
+                    name={info.getValue().name}
+                    avatar={info.getValue().avatar}
+                />
+            )
+        },
+        header: 'Magasin',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('date', {
+        cell: (info) => info.getValue().toLocaleDateString(),
+        header: 'Date',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('totalVente', {
+        cell: (info) => info.getValue(),
+        header: 'Vente totale',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('commission', {
+        cell: (info) => info.getValue(),
+        header: 'Commission',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('toPaid', {
+        cell: (info) => {
+            return <span className={''}>{info.getValue()}</span>
+        },
+        header: 'A payer',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('toReceive', {
+        cell: (info) => {
+            return <span className={''}>{info.getValue()}</span>
+        },
+        header: 'A recevoir',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('validation', {
+        cell: (info) => (
+            <PaymentValidation
+                id={info.getValue()}
+                label={'Confirmer'}
+                disabled={false}
+            />
+        ),
+        header: 'Validation',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('id', {
+        cell: (info) => (
+            <div
+                title="Voir"
+                onClick={() =>
+                    router.push(
+                        AppRoutes.PBCommissionDetails.replace(
+                            ':id',
+                            info.getValue()
+                        )
+                    )
+                }
+                className="flex items-center justify-center"
+            >
+                <div
+                    className=" flex items-center justify-center 
+					 p-2 rounded-full   bg-lynch-300 w-10 h-10 cursor-pointer text-white"
+                >
+                    <Eye size={20} />
+                </div>
+            </div>
+        ),
+        header: 'Activité',
+    }),
+]
+
+export const defaultDataCommissionTable: partnerCommissionType[] = [
+    {
+        id: '1',
+        ref: '1',
+        type: 'Type',
+        magasin: {
+            id: '1',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'paid',
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '2',
+        ref: '2',
+        type: 'Type',
+        magasin: {
+            id: '2',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'receive',
+        validation: PaymentStatusType.PENDING,
+    },
+    {
+        id: '3',
+        ref: '3',
+        type: 'Type',
+        magasin: {
+            id: '3',
+            name: 'Nom du magasin',
+            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        },
+        date: new Date(),
+        totalVente: 1000,
+        commission: 1000,
+        toPaid: 1000,
+        toReceive: 1000,
+        typeCommission: 'paid',
+        validation: PaymentStatusType.CANCELED,
+    },
+]
+
+const columnHelperSubscription = createColumnHelper<partnerSubscriptionType>()
+
+export const columnsSubscriptionTable = (router: AppRouterInstance) => [
+    columnHelperSubscription.accessor('ref', {
+        cell: (info) => info.getValue(),
+        header: 'Réf',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('type', {
+        cell: (info) => info.getValue(),
+        header: 'Type',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('magasin', {
+        cell: (info) => {
+            return (
+                <AvatarAndName
+                    className="flex items-center gap-1 text-nowrap"
+                    name={info.getValue().name}
+                    avatar={info.getValue().avatar}
+                />
+            )
+        },
+        header: 'Magasin',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('date', {
+        cell: (info) => info.getValue().toLocaleDateString(),
+        header: "Date d'échéance",
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('nbEcheance', {
+        cell: (info) => info.getValue(),
+        header: "Nbr d'échéance",
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('totalEcheance', {
+        cell: (info) => info.getValue(),
+        header: "Total d'échéance",
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('prixEcheance', {
+        cell: (info) => info.getValue(),
+        header: "Prix d'échéance",
+        footer: (info) => info.column.id,
+    }),
+    columnHelperSubscription.accessor('solution', {
         cell: (info) => (
             <div className="flex items-center gap-1">
                 {info.getValue().map((solution) => (
@@ -206,35 +817,27 @@ export const columnsAbonnementTable = (router: AppRouterInstance) => [
         header: 'Solution',
         footer: (info) => info.column.id,
     }),
-    columnHelperAbonnement.accessor('id', {
+    columnHelperSubscription.accessor('id', {
         cell: (info) => (
-            <ActionsMenu
-                id={info.getValue()}
-                menuList={[
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.paymentDetails.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.paymentDetails.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Pencil,
-                        label: 'Modifier',
-                    },
-                ]}
-            />
+            <div
+                title="Voir"
+                onClick={() =>
+                    router.push(
+                        AppRoutes.PBSubscriptionDetails.replace(
+                            ':id',
+                            info.getValue()
+                        )
+                    )
+                }
+                className="flex items-center justify-center"
+            >
+                <div
+                    className=" flex items-center justify-center 
+					 p-2 rounded-full   bg-lynch-300 w-10 h-10 cursor-pointer text-white"
+                >
+                    <Eye size={20} />
+                </div>
+            </div>
         ),
         header: 'Activité',
     }),
@@ -529,29 +1132,21 @@ export const columnsValidationTable = [
     }),
     columnValidationSubscriptionHelper.accessor('deadline', {
         cell: (info) => info.getValue().toLocaleDateString(),
-        header: 'Date limite',
+        header: 'Date d’échéance',
         footer: (info) => info.column.id,
     }),
     columnValidationSubscriptionHelper.accessor('price', {
         cell: (info) => info.getValue(),
-        header: 'Prix',
-        footer: (info) => info.column.id,
-    }),
-    columnValidationSubscriptionHelper.accessor('solution', {
-        cell: (info) => (
-            <div className="flex items-center gap-1">
-                {info.getValue().map((solution) => (
-                    <PartnerSolution solution={solution} key={solution} />
-                ))}
-            </div>
-        ),
-        header: 'Solution',
+        header: 'Prix d’échéance',
         footer: (info) => info.column.id,
     }),
     columnValidationSubscriptionHelper.accessor('validation', {
-        cell: (info) => <PaymentStatus status={info.getValue()} />,
-        header: 'Statut',
+        cell: (info) => {
+            return <ConfirmPayment id={info.getValue()} label={'A Recevoir'} />
+        },
+        header: 'Validation',
         footer: (info) => info.column.id,
+        maxSize: 1,
     }),
 ]
 
@@ -578,3 +1173,11 @@ export const defaultDataValidationTable: ValidationSubscriptionType[] = [
         validation: PaymentStatusType.PENDING,
     },
 ]
+
+export type SubscriptionsValidationsType = {
+    id: string
+    ref: string
+    deadline: string
+    price: number
+    validation: string
+}

@@ -50,7 +50,7 @@ export const FilterPayment: FC<FilterPayment> = ({ onSubmit }) => {
                         />
                     </div>
                     <SelectField
-                        name="partner"
+                        name="Partner"
                         options={adaptOptions}
                         control={control}
                         label="Partenaire"

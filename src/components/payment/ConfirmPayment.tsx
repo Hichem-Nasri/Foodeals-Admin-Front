@@ -1,5 +1,11 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
+import {
+    FC,
+    ForwardRefExoticComponent,
+    RefAttributes,
+    useEffect,
+    useState,
+} from 'react'
 
 import {
     Dialog,
@@ -15,9 +21,9 @@ import {
 } from '@/types/PaymentType'
 import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
-import { CheckCheck, CheckCircle, X } from 'lucide-react'
+import { CheckCheck, CheckCircle, LucideProps, X } from 'lucide-react'
 import { AvatarProfile } from '../AvatarProfile'
-import { PartnerOptions } from '@/lib/utils'
+import { cn, PartnerOptions } from '@/lib/utils'
 import { Select } from '../custom/Select'
 import { Input } from '../custom/Input'
 import { getConfirmationInfo } from '@/lib/api/fetchConfirmationInfo'
@@ -28,6 +34,13 @@ interface ConfirmPaymentProps {
     label: string
     disabled?: boolean
     isMobile?: boolean
+    className?: string
+    IconLeft?: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >
+    IconRight?: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >
 }
 
 export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
@@ -35,6 +48,9 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
     id,
     label,
     isMobile = false,
+    IconLeft,
+    IconRight,
+    className,
 }) => {
     const [confirmationDetails, setConfirmationDetails] =
         useState<ConfirmPaymentType>(defaultValuesConfirmPayment)
@@ -48,7 +64,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
             const res = (await getConfirmationInfo(id)) as ConfirmPaymentType
             setConfirmationDetails(res)
         }
-        fetchDate()
+        // fetchDate()
     }, [confirmationDetails, id])
 
     // INFO: the PartnerOptions is an array of stores as objects with the following structure: { id: string, name: string, avatar: string }
@@ -63,16 +79,24 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                 {!isMobile ? (
                     <CustomButton
                         label={label}
-                        className="lg:flex hidden h-fit py-3 px-7 rounded-[6px] text-white ml-1"
+                        className={cn(
+                            'lg:flex hidden h-fit py-3 px-7 rounded-[6px] text-white ml-1',
+                            className
+                        )}
                         disabled={disabled}
+                        IconRight={IconRight}
+                        IconLeft={IconLeft}
                     />
                 ) : (
                     <CustomButton
                         label={label}
                         variant="outline"
-                        className="flex lg:hidden h-fit py-3 px-7 rounded-[18px] text-primary border-primary ml-1"
+                        className={cn(
+                            'flex lg:hidden h-fit py-3 px-7 rounded-[18px] text-primary border-primary ml-1',
+                            className
+                        )}
                         disabled={disabled}
-                        IconRight={CheckCheck}
+                        IconRight={IconRight ? IconRight : CheckCheck}
                     />
                 )}
             </DialogTrigger>

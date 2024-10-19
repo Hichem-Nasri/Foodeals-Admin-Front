@@ -60,20 +60,21 @@ export const UploadFile: FC<UploadFileProps> = ({
                 disabled={disabled}
             />
             <div className="flex gap-3 items-center absolute top-1/2 -translate-y-1/2 left-4">
-                {files.map((file) => (
-                    <span
-                        className="flex items-center gap-3 py-[0.4rem] px-3 bg-lynch-200 text-lynch-500 rounded-[100px] z-20"
-                        key={file.name}
-                    >
-                        <FileMinus size={14} />
-                        {file.name.split('.')[0]}
-                        <X
-                            className="cursor-pointer"
-                            size={14}
-                            onClick={() => handleRemoveFile(file)}
-                        />
-                    </span>
-                ))}
+                {files &&
+                    files.map((file) => (
+                        <span
+                            className="flex items-center gap-3 py-[0.4rem] px-3 bg-lynch-200 text-lynch-500 rounded-[100px] z-20"
+                            key={file.name}
+                        >
+                            <FileMinus size={14} />
+                            {file.name.split('.')[0]}
+                            <X
+                                className="cursor-pointer"
+                                size={14}
+                                onClick={() => handleRemoveFile(file)}
+                            />
+                        </span>
+                    ))}
             </div>
         </div>
     )
