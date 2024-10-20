@@ -44,7 +44,10 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                         setSrc(URL.createObjectURL(e.currentTarget.files[0]))
                     }
                 />
-                <AvatarImage src={src} className="object-cover" />
+                <AvatarImage
+                    src={src || '/emptyImage.svg'}
+                    className={`object-cover ${!src && 'size-10'}`}
+                />
                 <AvatarFallback>{alt[0].toUpperCase()}</AvatarFallback>
             </Avatar>
         </div>

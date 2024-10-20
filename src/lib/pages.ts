@@ -70,6 +70,11 @@ export const pagesData: PageData[] = [
         icon: Store,
     },
     {
+        label: 'Produits',
+        href: AppRoutes.products,
+        icon: Salad,
+    },
+    {
         label: 'Livraison',
         href: AppRoutes.delivery,
         icon: Truck,

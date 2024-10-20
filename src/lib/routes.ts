@@ -1,4 +1,5 @@
 import CrmDemandes from '@/app/crm/demandes/crmDemandes'
+import Product from '@/app/produits/Product'
 import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
 
 export const AppRoutes = {
@@ -26,6 +27,9 @@ export const AppRoutes = {
     collaboratorDetails:
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',
+    products: '/produits',
+    newProduct: '/produits/create',
+    ProductDetails: '/produits/:id',
     delivery: '/livraisons',
     newDelivery: '/livraisons/partenaire-livraison/:id',
     deliveryCollaborator: '/livraisons/collaborateurs/:id',
