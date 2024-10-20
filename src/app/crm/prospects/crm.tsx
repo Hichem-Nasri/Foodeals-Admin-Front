@@ -24,10 +24,11 @@ import { AppRoutes } from '@/lib/routes'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { RotateCw, UserRoundPlus } from 'lucide-react'
 import PaginationData from '@/components/utils/PaginationData'
-import { CrmType } from '@/types/Global-Type'
+import { CrmType, NotificationType } from '@/types/Global-Type'
 import Statistics from '@/components/crm/Prospect/statistics'
 import { DataTableSkeleton } from '@/components/TableSkeleton'
 import SwitchProspects from '@/components/crm/Prospect/switchProspects'
+import { useNotification } from '@/context/NotifContext'
 
 // Define the API endpoint URL as a constant
 const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects'
@@ -41,7 +42,7 @@ export default function Crm() {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
-
+    const Notif = useNotification()
     const {
         data: query,
         isSuccess,
@@ -66,8 +67,11 @@ export default function Crm() {
                 }
                 return response
             } catch (error) {
+                Notif.notify(
+                    NotificationType.ERROR,
+                    "Erreur lors de l'obtention des données des prospects"
+                )
                 console.error(error)
-                throw error
             }
         },
     })

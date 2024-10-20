@@ -33,7 +33,7 @@ function Notif({ type, message }: NotificationProps) {
         const timer = setTimeout(() => {
             setShow(false)
             clearInterval(id)
-        }, 2000)
+        }, 5000)
 
         setHideTimerId(timer)
 
@@ -71,14 +71,19 @@ function Notif({ type, message }: NotificationProps) {
         // Resume hiding after mouse leaves
         const timer = setTimeout(() => {
             setShow(false)
-        }, 2000)
+        }, 5000)
         setHideTimerId(timer)
     }
 
     if (!show) return null
 
     return (
-        <div className="w-full lg:w-auto absolute right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2">
+        <div
+            className="w-full lg:w-auto absolute right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2 "
+            style={{
+                zIndex: 999,
+            }}
+        >
             <Alert
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}

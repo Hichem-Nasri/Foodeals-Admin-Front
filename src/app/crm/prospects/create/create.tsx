@@ -16,14 +16,14 @@ import { Archive, Router } from 'lucide-react'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { EventContext } from '@/context/EventContext'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useRouter } from 'next/navigation'
 import { EventPopUpsNew } from '@/components/crm/NewEvent/EventPopUpsNew'
-import { EventType } from '@/types/Global-Type'
+import { EventType, NotificationType } from '@/types/Global-Type'
+import { useNotification } from '@/context/NotifContext'
 
 interface CreateProps {}
 
@@ -33,6 +33,7 @@ export const Create: FC<CreateProps> = () => {
     const router = useRouter()
     const [Info, setInfo] = useState<any>(null)
     const [events, setEvents] = useState<EventType[]>([])
+    const Notif = useNotification()
     const mutate = useMutation({
         mutationFn: async (data: any) => {
             const res = await api
@@ -50,6 +51,7 @@ export const Create: FC<CreateProps> = () => {
             queryClient.invalidateQueries({ queryKey: ['prospects'] })
         },
         onError: (error) => {
+            Notif.notify(NotificationType.ERROR, 'Failed to create prospect')
             console.log(error) // Todo: add system notification for error
         },
     })

@@ -19,6 +19,8 @@ import { MultiSelectField } from '@/components/custom/MultiSelectField'
 import { CountryData } from '@/types/utils'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/api/Auth'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/Global-Type'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -36,22 +38,31 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
     disabled,
 }) => {
     const { handleSubmit, control } = form
+    const Notif = useNotification()
     const { data: companyTypeOptions } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => {
-            const res = await api
-                .get('http://localhost:8080/Activities')
-                .then((res) => res.data)
-                .catch((error) => console.log(error))
-            console.log('done: ', res)
-            return Array.from(
-                res.map((item: { id: string; name: string }) => {
-                    return {
-                        label: item.name,
-                        key: item.name,
-                    }
-                })
-            )
+            try {
+                const res = await api
+                    .get('http://localhost:8080/Activities')
+                    .then((res) => res.data)
+                    .catch((error) => console.log(error))
+                console.log('done: ', res)
+                return Array.from(
+                    res.map((item: { id: string; name: string }) => {
+                        return {
+                            label: item.name,
+                            key: item.name,
+                        }
+                    })
+                )
+            } catch (error) {
+                Notif.notify(
+                    NotificationType.ERROR,
+                    'Failed to fetch Activities'
+                )
+                console.log(error)
+            }
         },
     })
     return (
@@ -85,7 +96,12 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             control={control}
                                             name="category"
                                             label="Catégorie"
-                                            options={companyTypeOptions as { key: string | number; label: string }[] || []}
+                                            options={
+                                                (companyTypeOptions as {
+                                                    key: string | number
+                                                    label: string
+                                                }[]) || []
+                                            }
                                             disabled={disabled}
                                             className=""
                                             placeholder="Sélectionner"
