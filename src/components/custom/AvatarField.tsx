@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { AvatarProfile } from '../AvatarProfile'
-import { FormField } from '../ui/form'
+import { FormField, FormMessage } from '../ui/form'
 import { UseFormReturn } from 'react-hook-form'
 import { cn } from '@/lib/utils'
 
@@ -31,12 +31,14 @@ export const AvatarField: FC<AvatarFieldProps> = ({
             render={({ field }) => (
                 <div className={cn('flex flex-col items-start', className)}>
                     <AvatarProfile
+                        onChange={(file) => field.onChange(file)} // Pass the file to the form state
                         iUrl={field.value}
                         alt={alt}
                         className={classNameAvatar}
                         label={label}
                         disabled={disabled}
                     />
+                    <FormMessage />
                 </div>
             )}
         />
