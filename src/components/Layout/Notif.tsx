@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { Terminal, CheckCircle, XCircle, X, Info } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { NotificationType } from '@/types/Global-Type'
@@ -17,6 +17,11 @@ function Notif({ type, message }: NotificationProps) {
     const [hideTimerId, setHideTimerId] = useState<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
+        // Total duration for the notification to be shown
+        const totalDuration = 5000 // 5 seconds
+        const intervalDuration = 100 // 0.1 seconds
+        const decrementAmount = (100 / totalDuration) * intervalDuration // Calculate how much to decrement each interval
+
         const id = setInterval(() => {
             setProgress((prev) => {
                 if (prev <= 0) {
@@ -24,16 +29,16 @@ function Notif({ type, message }: NotificationProps) {
                     setShow(false)
                     return 0
                 }
-                return prev - 5
+                return prev - decrementAmount // Decrement progress
             })
-        }, 100)
+        }, intervalDuration)
 
         setIntervalId(id)
 
         const timer = setTimeout(() => {
             setShow(false)
             clearInterval(id)
-        }, 5000)
+        }, totalDuration)
 
         setHideTimerId(timer)
 
@@ -63,7 +68,7 @@ function Notif({ type, message }: NotificationProps) {
                         clearInterval(id)
                         return 0
                     }
-                    return prev - 5
+                    return prev - 100 / (5000 / 100) // Resume decrementing
                 })
             }, 100)
             setIntervalId(id)
@@ -79,7 +84,7 @@ function Notif({ type, message }: NotificationProps) {
 
     return (
         <div
-            className="w-full lg:w-auto absolute right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2 "
+            className="w-full lg:w-auto absolute right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2"
             style={{
                 zIndex: 999,
             }}
@@ -93,12 +98,15 @@ function Notif({ type, message }: NotificationProps) {
                     type === NotificationType.SUCCESS &&
                     ' bg-mountain-400 border-mountain-50'
                 }
-            ${
-                type === NotificationType.ERROR &&
-                ' bg-coral-500 border-coral-50'
-            }
-            ${type === NotificationType.INFO && ' bg-lynch-500 border-lynch-50'}
-            `}
+                ${
+                    type === NotificationType.ERROR &&
+                    ' bg-coral-500 border-coral-50'
+                }
+                ${
+                    type === NotificationType.INFO &&
+                    ' bg-lynch-500 border-lynch-50'
+                }
+                `}
             >
                 <AlertTitle className="flex justify-start items-center space-x-2 px-4 pt-4 ">
                     <div className="rounded-full animate-bounce">
