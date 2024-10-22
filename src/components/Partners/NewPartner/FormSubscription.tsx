@@ -26,6 +26,7 @@ interface FormSubscriptionProps {
     disabled?: boolean
     isContractGenerated?: boolean
     status: PartnerStatusType
+    onContractUpload: (file: File[]) => void
 }
 
 enum FileTypes {
@@ -39,9 +40,20 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
     disabled,
     isContractGenerated,
     status,
+    onContractUpload,
 }) => {
     const { handleSubmit } = form
     const { subscriptionType } = form.watch()
+    const partnerType = [
+        {
+            key: 'NORMAL_PARTNER',
+            label: 'Normal',
+        },
+        {
+            key: 'PARTNER_WITH_SB',
+            label: 'Principal',
+        },
+    ]
     const documents = [
         {
             fileName: 'contrat.word',
@@ -139,16 +151,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             control={form.control}
                                             name="accountType"
                                             label="Type de compte"
-                                            options={[
-                                                {
-                                                    key: 'transfer',
-                                                    label: 'Virement',
-                                                },
-                                                {
-                                                    key: 'check',
-                                                    label: 'check',
-                                                },
-                                            ]}
+                                            options={partnerType}
                                             className="lg:w-2/4"
                                             disabled={disabled}
                                         />
@@ -177,46 +180,47 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                     label="Ajouter le contrat"
                                     className="text-lynch-950 text-sm font-medium"
                                 />
-                                <UploadFile />
+                                <UploadFile onChange={onContractUpload} />
                             </div>
                         </Fragment>
                     )}
                     {status === PartnerStatusType.DRAFT && (
                         <span className="w-fill h-[1px] bg-lynch-100" />
                     )}
-                    {status === PartnerStatusType.DRAFT && (
-                        <div className="flex flex-col gap-3">
-                            <Label
-                                label="Documents & Contrat"
-                                className="text-lynch-950 text-sm font-medium"
-                            />
-                            <div className="flex items-center gap-3">
-                                {documents.map((document) => (
-                                    <span
-                                        key={document.fileID}
-                                        className="flex flex-col justify-center items-center gap-5 rounded-[24px] bg-lynch-50 px-4 py-6 w-fit"
-                                    >
-                                        <Image
-                                            width={48}
-                                            height={48}
-                                            alt="Word"
-                                            src={
-                                                document.fileName.includes(
-                                                    'pdf'
-                                                )
-                                                    ? '/word-icon.png'
-                                                    : '/pdf-icon.png'
-                                            }
-                                        />
-                                        <Label
-                                            label={document.fileName}
-                                            className="text-lynch-500 text-base font-normal"
-                                        />
-                                    </span>
-                                ))}
+                    {!isContractGenerated &&
+                        status === PartnerStatusType.DRAFT && (
+                            <div className="flex flex-col gap-3">
+                                <Label
+                                    label="Documents & Contrat"
+                                    className="text-lynch-950 text-sm font-medium"
+                                />
+                                <div className="flex items-center gap-3">
+                                    {documents.map((document) => (
+                                        <span
+                                            key={document.fileID}
+                                            className="flex flex-col justify-center items-center gap-5 rounded-[24px] bg-lynch-50 px-4 py-6 w-fit"
+                                        >
+                                            <Image
+                                                width={48}
+                                                height={48}
+                                                alt="Word"
+                                                src={
+                                                    document.fileName.includes(
+                                                        'pdf'
+                                                    )
+                                                        ? '/word-icon.png'
+                                                        : '/pdf-icon.png'
+                                                }
+                                            />
+                                            <Label
+                                                label={document.fileName}
+                                                className="text-lynch-500 text-base font-normal"
+                                            />
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

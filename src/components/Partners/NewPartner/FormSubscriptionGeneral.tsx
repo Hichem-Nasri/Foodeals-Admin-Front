@@ -22,6 +22,16 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
     disabled,
 }) => {
     const { dlcPro, donate, marketPro } = form.watch()
+    const optionsT = [
+        { key: 5, label: '5' },
+        { key: 10, label: '10' },
+        { key: 15, label: '15' },
+    ]
+    const optionsAb = [
+        { key: 6, label: '6 mois' },
+        { key: 12, label: '12 mois' },
+        { key: 24, label: '24 mois' },
+    ]
     return (
         <Fragment>
             <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -55,12 +65,9 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                 <SelectField
                     control={form.control}
                     name="marketPro.duration"
-                    label="Subscription"
-                    options={[
-                        { key: '6', label: '6 mois' },
-                        { key: '12', label: '12 mois' },
-                        { key: '24', label: '24 mois' },
-                    ]}
+                    label="Abonnement"
+                    options={optionsAb}
+                    type="number"
                     disabled={!marketPro?.selected || disabled}
                 />
                 <InputFieldForm
@@ -75,11 +82,8 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="marketPro.expiration"
                     label="Échéance"
-                    options={[
-                        { key: '5', label: '5' },
-                        { key: '10', label: '10' },
-                        { key: '15', label: '15' },
-                    ]}
+                    options={optionsT}
+                    type="number"
                     disabled={!marketPro?.selected || disabled}
                 />
             </div>
@@ -90,19 +94,20 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     label="Gérer par"
                     options={[
                         {
-                            key: PartnerCompanyType.PRINCIPAL,
+                            key: 'PARTNER_WITH_SB',
                             label: 'Principal',
                         },
                         {
-                            key: PartnerCompanyType.NORMAL,
+                            key: 'NORMAL_PARTNER',
                             label: 'Sous compte',
                         },
                     ]}
+                    placeholder="Sélectionnez type magasin"
                     disabled={!marketPro?.selected || disabled}
                 />
                 <InputFieldForm
                     control={form.control}
-                    label="Montant"
+                    label="Commission par espèce"
                     name="marketPro.commissionCash"
                     type="number"
                     placeholder="Saisir le montant"
@@ -111,7 +116,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     disabled={!marketPro?.selected || disabled}
                 />
                 <InputFieldForm
-                    label="Montant"
+                    label="Commission par carte"
                     name="marketPro.commissionCard"
                     type="number"
                     control={form.control}
@@ -152,12 +157,9 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                 <SelectField
                     control={form.control}
                     name="dlcPro.duration"
-                    label="Subscription"
-                    options={[
-                        { key: '6', label: '6 mois' },
-                        { key: '12', label: '12 mois' },
-                        { key: '24', label: '24 mois' },
-                    ]}
+                    label="Abonnement"
+                    options={optionsAb}
+                    type="number"
                     disabled={!dlcPro?.selected || disabled}
                 />
                 <InputFieldForm
@@ -172,11 +174,8 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="dlcPro.expiration"
                     label="Échéance"
-                    options={[
-                        { key: '5', label: '5' },
-                        { key: '10', label: '10' },
-                        { key: '15', label: '15' },
-                    ]}
+                    options={optionsT}
+                    type="number"
                     disabled={!dlcPro?.selected || disabled}
                 />
             </div>
@@ -212,12 +211,9 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                 <SelectField
                     control={form.control}
                     name="donate.duration"
-                    label="Subscription"
-                    options={[
-                        { key: '6', label: '6 mois' },
-                        { key: '12', label: '12 mois' },
-                        { key: '24', label: '24 mois' },
-                    ]}
+                    label="Abonnement"
+                    options={optionsAb}
+                    type="number"
                     disabled={!donate?.selected || disabled}
                 />
                 <InputFieldForm
@@ -232,11 +228,8 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="donate.expiration"
                     label="Échéance"
-                    options={[
-                        { key: '5', label: '5' },
-                        { key: '10', label: '10' },
-                        { key: '15', label: '15' },
-                    ]}
+                    options={optionsAb}
+                    type="number"
                     disabled={!donate?.selected || disabled}
                 />
             </div>

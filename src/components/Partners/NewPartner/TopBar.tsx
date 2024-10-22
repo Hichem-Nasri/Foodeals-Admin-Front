@@ -1,13 +1,17 @@
-import { FC } from 'react'
+import { FC, Fragment, useState } from 'react'
 import {
     Circle,
     CircleCheck,
     CircleCheckBig,
     Copy,
     FileBadge,
+    FileChartLine,
+    FilePenLine,
+    PencilLine,
     Save,
     SendIcon,
     Share,
+    Share2,
 } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerStatus } from '../PartnerStatus'
@@ -21,13 +25,15 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from '@/components/ui/drawer'
+import { getContract } from '@/lib/api/partner/getContract'
 
 interface TopBarProps {
     primaryButtonDisabled?: boolean
     secondaryButtonDisabled?: boolean
     status?: PartnerStatusType
-    onSaveData: () => void
+    onSaveData: (modify?: boolean) => void
     onSubmit: () => void
+    id: string
 }
 
 export const TopBar: FC<TopBarProps> = ({
@@ -36,7 +42,10 @@ export const TopBar: FC<TopBarProps> = ({
     primaryButtonDisabled,
     secondaryButtonDisabled,
     onSubmit,
+    id,
 }) => {
+    const [isDownloading, setIsDownloading] = useState(false)
+    console.log('status', status)
     const listOfActions = [
         {
             icon: Copy,
@@ -67,9 +76,22 @@ export const TopBar: FC<TopBarProps> = ({
             },
         },
     ]
+    const handleGenerateContract = async () => {
+        try {
+            const contractData = await getContract(id)
+            const url = window.URL.createObjectURL(contractData)
 
-    const handleGenerateContract = () => {
-        // TODO: Add the logic to generate the contract
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', `contract_${id}.pdf`)
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+            setIsDownloading(true)
+        } catch (error) {
+            console.error('Error generating contract:', error)
+        }
     }
 
     return (
@@ -80,32 +102,46 @@ export const TopBar: FC<TopBarProps> = ({
                 </div>
             )}
             <div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
-                {status === PartnerStatusType.DRAFT ||
-                status === PartnerStatusType.VALIDATED ? (
+                {status !== PartnerStatusType.VALIDATED ? (
                     <CustomButton
                         onClick={onSaveData}
                         disabled={secondaryButtonDisabled}
                         size="sm"
+                        type="submit"
                         className="bg-white text-primary border-[1.5px] border-primary hover:text-white hover:bg-primary/60"
                         label="Enregistrer"
                         IconRight={Save}
                         variant="outline"
                     />
-                ) : null}
-                {status === PartnerStatusType.DRAFT ? (
+                ) : (
+                    <CustomButton
+                        onClick={() => {
+                            setIsDownloading(false)
+                            onSaveData(true)
+                        }}
+                        disabled={secondaryButtonDisabled}
+                        size="sm"
+                        type="submit"
+                        className="bg-white text-lynch-400 border-[1.5px] border-lynch-400 hover:text-white hover:bg-lynch-400/60"
+                        label="Modifier le partenaire"
+                        IconRight={PencilLine}
+                        variant="outline"
+                    />
+                )}
+                {status !== PartnerStatusType.VALIDATED && !isDownloading ? (
                     <CustomButton
                         disabled={primaryButtonDisabled}
-                        onClick={onSubmit}
+                        onClick={handleGenerateContract}
                         size="sm"
-                        label="Confirmer"
+                        label="Générer le contrat"
                         className="disabled:bg-lynch-300"
-                        IconRight={CircleCheckBig}
+                        IconRight={FileBadge}
                     />
                 ) : status === PartnerStatusType.VALIDATED ? (
                     <Drawer>
                         <DrawerTrigger className="flex justify-center items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-primary text-sm font-normal text-neutral-50 hover:bg-primary/90 disabled:bg-lynch-300">
-                            Partager
-                            <Share />
+                            Partager le contrat
+                            <Share2 />
                         </DrawerTrigger>
                         <DrawerContent>
                             <DrawerHeader>
@@ -133,9 +169,9 @@ export const TopBar: FC<TopBarProps> = ({
                 ) : (
                     <CustomButton
                         disabled={primaryButtonDisabled}
-                        onClick={handleGenerateContract}
+                        onClick={onSubmit}
                         size="sm"
-                        label="Générer le contrat"
+                        label="Valider le contrat"
                         IconRight={FileBadge}
                     />
                 )}

@@ -17,6 +17,13 @@ export enum PartnerStatusType {
     DRAFT = 'DRAFT',
 }
 
+export const PartnerStatusOptions = {
+    ['IN_PROGRESS']: PartnerStatusType.PENDING,
+    ['VALIDATED']: PartnerStatusType.VALIDATED,
+    ['ANNULLED']: PartnerStatusType.ANNULLED,
+    ['DRAFT']: PartnerStatusType.DRAFT,
+}
+
 export enum PartnerSolutionType {
     MARKET_PRO = 'MARKET_PRO',
     DLC_PRO = 'DLC_PRO',
@@ -27,6 +34,27 @@ export enum PartnerSolutionType {
 export enum PartnerCompanyType {
     NORMAL = 'Normal',
     PRINCIPAL = 'Principal',
+}
+
+export const PartnerCompanyTypeOptions = {
+    ['NORMAL_PARTNER']: PartnerCompanyType.NORMAL,
+    ['PARTNER_WITH_SB']: PartnerCompanyType.PRINCIPAL,
+}
+
+export const SolutionsTypeOptions = {
+    ['pro_donate']: PartnerSolutionType.DONATE_PRO,
+    ['pro_market']: PartnerSolutionType.MARKET_PRO,
+    ['pro_dlc']: PartnerSolutionType.DLC_PRO,
+}
+
+export const exportSolutionType = (solutions: string[]) => {
+    const newSolution: PartnerSolutionType[] = []
+    solutions.forEach((elem) => {
+        newSolution.push(
+            SolutionsTypeOptions[elem as keyof typeof SolutionsTypeOptions]
+        )
+    })
+    return newSolution
 }
 
 export interface PartnerType {
@@ -423,7 +451,7 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
             <Avatar>
                 <AvatarImage src={info.getValue()} />
                 <AvatarFallback>
-                    {info.getValue()[0].toUpperCase()}
+                    {info.getValue() && info.getValue()[0].toUpperCase()}
                 </AvatarFallback>
             </Avatar>
         ),
@@ -444,7 +472,7 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('collaborators', {
-        cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
+        cell: (info) => info.getValue(),
         header: 'Collaborateurs',
         footer: (info) => info.column.id,
     }),

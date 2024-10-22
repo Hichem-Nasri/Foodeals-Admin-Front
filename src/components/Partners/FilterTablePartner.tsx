@@ -27,7 +27,6 @@ import {
 
 interface FilterTablePartnerProps {
     partners: PartnerType[]
-    form: UseFormReturn<any>
     setColumnFilters: React.Dispatch<
         React.SetStateAction<import('@tanstack/react-table').ColumnFiltersState>
     >
@@ -35,7 +34,6 @@ interface FilterTablePartnerProps {
 
 export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
     partners,
-    form,
     setColumnFilters,
 }) => {
     const options: OptionsType = extractOptions(partners)

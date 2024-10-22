@@ -1,19 +1,10 @@
 'use client'
-import {
-    columnsPartnersTable,
-    PartnerSolutionType,
-    PartnerType,
-} from '@/types/partners'
-import { FC, useReducer, useState } from 'react'
+import { columnsPartnersTable, PartnerType } from '@/types/partners'
+import React, { FC, useState } from 'react'
 import { FilterAndCreatePartners } from './FilterAndCreatePartners'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
     ColumnFiltersState,
-    createColumnHelper,
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -25,8 +16,13 @@ import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
-import PaginationData from '../utils/PaginationData'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
+import api from '@/api/Auth'
+// import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
 
+const API_ENDPOINT = 'localhost:8080/api/v1/organizations/partners'
 interface PartnersProps {
     partners: PartnerType[]
 }
@@ -37,57 +33,34 @@ export interface TableRowType {
 }
 
 export const Partners: FC<PartnersProps> = ({ partners }) => {
+    const [partnersData, setPartnersData] = useState<PartnerType[]>(partners)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
     const router = useRouter()
-    const schema = z.object({
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-        company: z
-            .array(
-                z.object({
-                    label: z.string().optional(),
-                    key: z.string().optional(),
-                    avatar: z.string().optional(),
-                })
-            )
-            .optional(),
-        collaborators: z
-            .array(
-                z.object({
-                    label: z.string().optional(),
-                    key: z.string().optional(),
-                    avatar: z.string().optional(),
-                })
-            )
-            .optional(),
-        email: z.string().optional(),
-        phone: z.string().optional(),
-        city: z.string().optional(),
-        companyType: z.string().optional(),
-        solution: z
-            .array(z.enum(['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']))
-            .optional(),
-    })
-    const form = useForm<z.infer<typeof schema>>({
-        resolver: zodResolver(schema),
-        mode: 'onBlur',
-        defaultValues: {
-            startDate: undefined,
-            endDate: undefined,
-            company: [],
-            collaborators: [],
-            email: '',
-            phone: '',
-            city: '',
-            companyType: '',
-            solution: [],
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['partners', currentPage, pageSize],
+        queryFn: async () => {
+            try {
+                const res = await api
+                    .get(
+                        `http://${API_ENDPOINT}?page=${currentPage}&size=${pageSize}`
+                    )
+                    .then((res) => res.data)
+                    .catch((err) => {
+                        throw new Error(err)
+                    })
+                console.log('res: ', res)
+                return exportAllPartnerGET(res.content as PartnerGET[])
+            } catch (error) {
+                console.log(error)
+            }
         },
     })
 
-    const [data, _setData] = useState(() => [...partners])
-
     const table = useReactTable({
-        data,
+        data: data || [],
         columns: columnsPartnersTable(router),
         state: {
             columnFilters,
@@ -98,23 +71,24 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
+    if (isLoading) return <div>Loading...</div>
+    console.log('data', data)
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
                 table={table}
-                form={form}
-                partners={partners}
+                partners={data!}
                 setColumnFilters={setColumnFilters}
             />
             <DataTable
-                data={data}
+                data={data!}
                 table={table}
                 title="Listes des partenaires"
                 transform={(value) => (
                     <PartnerCard partner={value} key={value.id} />
                 )}
             />
+            {/* <PaginationData /> */}
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton
                     size="sm"

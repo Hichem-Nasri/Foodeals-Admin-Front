@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import {
     Accordion,
@@ -17,6 +17,11 @@ import { Mail } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
 import { IframeRenderer } from './IframeRender'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
+import { Input } from 'postcss'
+import { getCities, getCountries, getRegions } from '@/lib/api/fetchAddress'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import SelectManager from '@/components/utils/SelectManager'
+import { fetchActivities } from '@/lib/api/partner/fetchActivites'
 
 interface FormPartnerInfoProps {
     form: UseFormReturn<z.infer<typeof PartnerInformationSchema>>
@@ -34,17 +39,54 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
     disabled,
 }) => {
     const { handleSubmit, control } = form
-    const companyTypeOptions = [
-        { key: 'supermarché', label: 'Supermarché' },
-        { key: 'superettes', label: 'Superettes' },
-        { key: 'épiceries', label: 'Épiceries' },
-        { key: 'boulangeries', label: 'Boulangeries' },
-        { key: 'cafés', label: 'Cafés' },
-        { key: 'restaurants', label: 'Restaurants' },
-        { key: 'hôtels', label: 'Hôtels' },
-        { key: 'traiteurs', label: 'Traiteurs' },
-        { key: 'autres', label: 'Autres' },
-    ]
+
+    const [address, setAddress] = useState<{
+        countryId: string
+        cityId: string
+        regionId: string
+    }>({
+        countryId: '',
+        cityId: '',
+        regionId: '',
+    })
+    const [activity, setActivity] = useState<MultiSelectOptionsType[]>([])
+    const [cities, setCities] = useState<MultiSelectOptionsType[]>([])
+    const [regions, setRegions] = useState<MultiSelectOptionsType[]>([])
+    const [country, setCountry] = useState<MultiSelectOptionsType[]>([])
+    useEffect(() => {
+        const fetchAddress = async () => {
+            const activities = await fetchActivities()
+            const countries = await getCountries()
+            console.log('Fetched countries:', countries)
+            setCountry(countries)
+            console.log('Fetched activities:', activities)
+            setActivity(activities)
+        }
+        fetchAddress()
+    }, [])
+
+    useEffect(() => {
+        const fetchCities = async () => {
+            if (address.countryId) {
+                const citiesData = await getCities(address.countryId)
+                console.log('Fetched cities:', citiesData)
+                setCities(citiesData)
+            }
+        }
+        fetchCities()
+    }, [address.countryId])
+
+    useEffect(() => {
+        const fetchRegions = async () => {
+            if (address.cityId) {
+                const regionsData = await getRegions(address.cityId)
+                console.log('Fetched regions:', regionsData)
+                setRegions(regionsData)
+            }
+        }
+        fetchRegions()
+    }, [address.cityId])
+
     return (
         <Accordion
             type="single"
@@ -61,7 +103,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                 </AccordionTrigger>
                 <AccordionContent className="pt-7">
                     <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        <form onSubmit={handleSubmit((e) => onSubmit(e))}>
                             <div className="flex flex-col gap-[1.875rem]">
                                 <div className="flex relative gap-5 lg:pb-0 pb-14">
                                     <AvatarField
@@ -95,7 +137,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             control={control}
                                             name="companyType"
                                             label="Type"
-                                            options={companyTypeOptions}
+                                            options={activity}
                                             disabled={disabled}
                                             placeholder="Sélectionner"
                                             transform={(value) =>
@@ -109,20 +151,11 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                                 ))
                                             }
                                         />
-                                        <SelectField
+                                        <InputFieldForm
                                             control={control}
-                                            name="companyCategory"
+                                            name="responsible"
                                             label="Responsable"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
+                                            placeholder="Nom du responsable"
                                             disabled={disabled}
                                         />
                                     </div>
@@ -154,52 +187,41 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <SelectField
+                                        <MultiSelectField
                                             control={control}
                                             name="partnerType"
                                             label="Type de partenaire"
                                             options={[
                                                 {
-                                                    key: '1',
-                                                    label: 'Responsable',
+                                                    key: 'buyer_pro',
+                                                    label: 'Acheter Pro',
                                                 },
                                                 {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
+                                                    key: 'seller_pro',
+                                                    label: 'Vendeur Pro',
                                                 },
                                             ]}
+                                            disabled={disabled}
+                                        />
+                                        <SelectManager
+                                            control={control}
                                             disabled={disabled}
                                         />
                                         <SelectField
                                             control={control}
                                             name="country"
                                             label="Pays"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
-                                            disabled={disabled}
-                                        />
-                                        <SelectField
-                                            control={control}
-                                            name="managerId"
-                                            label="Manager"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
+                                            options={country}
+                                            onChange={(value: string) => {
+                                                const id = country.find(
+                                                    (values) =>
+                                                        values.key === value
+                                                )?.id
+                                                setAddress({
+                                                    ...address,
+                                                    countryId: id!,
+                                                })
+                                            }}
                                             disabled={disabled}
                                         />
                                     </div>
@@ -208,32 +230,36 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             control={control}
                                             name="city"
                                             label="Ville"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
+                                            options={cities}
+                                            onChange={(value) => {
+                                                const id = cities.find(
+                                                    (values) =>
+                                                        values.key === value
+                                                )?.id
+                                                setAddress({
+                                                    ...address,
+                                                    cityId: id!,
+                                                })
+                                                console.log('address', address)
+                                            }}
                                             disabled={disabled}
                                         />
                                         <SelectField
                                             control={control}
                                             name="region"
                                             label="Région"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
+                                            options={regions}
+                                            onChange={(value) => {
+                                                const id = regions.find(
+                                                    (values) =>
+                                                        values.key === value
+                                                )?.id
+                                                setAddress({
+                                                    ...address,
+                                                    regionId: id!,
+                                                })
+                                                console.log('address', address)
+                                            }}
                                             disabled={disabled}
                                         />
                                         <InputFieldForm

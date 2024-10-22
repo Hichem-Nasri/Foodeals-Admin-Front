@@ -122,10 +122,11 @@ export const FormSubscriptionPersonalized: FC<
                     name="solutions.duration"
                     label="Subscription"
                     options={[
-                        { key: '6', label: '6 mois' },
-                        { key: '12', label: '12 mois' },
-                        { key: '24', label: '24 mois' },
+                        { key: 6, label: '6 mois' },
+                        { key: 12, label: '12 mois' },
+                        { key: 24, label: '24 mois' },
                     ]}
+                    type="number"
                     disabled={disabled}
                 />
                 <InputFieldForm
@@ -141,10 +142,11 @@ export const FormSubscriptionPersonalized: FC<
                     name="solutions.expiration"
                     label="Échéance"
                     options={[
-                        { key: '5', label: '5' },
-                        { key: '10', label: '10' },
-                        { key: '15', label: '15' },
+                        { key: 5, label: '5' },
+                        { key: 10, label: '10' },
+                        { key: 15, label: '15' },
                     ]}
+                    type="number"
                     disabled={disabled}
                 />
             </div>
@@ -167,6 +169,7 @@ export const FormSubscriptionPersonalized: FC<
                                     label: 'Sous compte',
                                 },
                             ]}
+                            placeholder="Sélectionnez type magasin"
                             disabled={disabled}
                         />
                         <InputFieldForm

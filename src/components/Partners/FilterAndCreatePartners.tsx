@@ -10,7 +10,6 @@ import { AppRoutes } from '@/lib/routes'
 
 interface FilterAndCreatePartnersProps {
     partners: PartnerType[]
-    form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<PartnerType>
     setColumnFilters: React.Dispatch<
         React.SetStateAction<import('@tanstack/react-table').ColumnFiltersState>
@@ -19,7 +18,6 @@ interface FilterAndCreatePartnersProps {
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
     partners,
-    form,
     table,
     setColumnFilters,
 }) => {
@@ -34,14 +32,12 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 </h2>
                 <FilterTablePartner
                     partners={partners}
-                    form={form}
                     setColumnFilters={setColumnFilters}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTablePartner
                     partners={partners}
-                    form={form}
                     setColumnFilters={setColumnFilters}
                 />
                 <ColumnVisibilityModal table={table} />

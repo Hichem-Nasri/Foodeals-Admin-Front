@@ -7,6 +7,22 @@ export type ProfileType = {
     }
     avatarPath?: string
 }
+export interface PartnersType {
+    id: string
+    entityName: string
+    type: string
+    city: string
+    solutions: string[]
+    createdAt: string
+    partnerInfo: PartnerInfoDto
+    contractStatus: string
+    contact: ContactType
+}
+
+export interface PartnerInfoDto {
+    name: string
+    avatarPath: string
+}
 
 export enum NotificationType {
     SUCCESS,
