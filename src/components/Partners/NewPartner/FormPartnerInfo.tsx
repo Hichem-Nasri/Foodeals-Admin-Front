@@ -107,6 +107,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                             <div className="flex flex-col gap-[1.875rem]">
                                 <div className="flex relative gap-5 lg:pb-0 pb-14">
                                     <AvatarField
+                                        disabled={disabled}
                                         form={form}
                                         name="logo"
                                         alt="Logo"
@@ -115,6 +116,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         classNameAvatar="rounded-full"
                                     />
                                     <AvatarField
+                                        disabled={disabled}
                                         form={form}
                                         name="cover"
                                         alt="cover"
@@ -140,6 +142,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             options={activity}
                                             disabled={disabled}
                                             placeholder="Sélectionner"
+                                            len={2}
                                             transform={(value) =>
                                                 value.map((item) => (
                                                     <span

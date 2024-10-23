@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { CustomButton } from '../custom/CustomButton'
-import { Archive, ArrowRight, Store } from 'lucide-react'
+import { Archive, ArrowLeft, ArrowRight, Store } from 'lucide-react'
 import { FilterTablePartner } from './FilterTablePartner'
 import { PartnerType } from '@/types/partners'
 import { UseFormReturn } from 'react-hook-form'
@@ -14,14 +14,19 @@ interface FilterAndCreatePartnersProps {
     setColumnFilters: React.Dispatch<
         React.SetStateAction<import('@tanstack/react-table').ColumnFiltersState>
     >
+    setArchive: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
     partners,
     table,
     setColumnFilters,
+    setArchive,
+    archive,
 }) => {
     const handleArchive = () => {
+        setArchive((prev) => !prev)
         // handle archive
     }
     return (
@@ -44,10 +49,10 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label="Archive"
+                    label={archive ? 'Partners' : 'Archive'}
                     className="text-lynch-500"
                     onClick={handleArchive}
-                    IconRight={Archive}
+                    IconRight={archive ? ArrowLeft : Archive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">

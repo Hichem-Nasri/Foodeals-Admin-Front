@@ -47,9 +47,7 @@ export const Select: FC<SelectProps> = ({
                 className="text-sm font-semibold text-lynch-950"
             />
             <SelectShadCn
-                disabled={
-                    ((options && options.length === 0) || disabled) && !search
-                }
+                disabled={(options && options.length === 0) || disabled}
                 value={value}
                 onValueChange={(value) => {
                     console.log('value', value)

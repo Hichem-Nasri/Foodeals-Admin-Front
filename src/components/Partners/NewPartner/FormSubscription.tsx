@@ -180,7 +180,10 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                     label="Ajouter le contrat"
                                     className="text-lynch-950 text-sm font-medium"
                                 />
-                                <UploadFile onChange={onContractUpload} />
+                                <UploadFile
+                                    onChange={onContractUpload}
+                                    disabled={disabled}
+                                />
                             </div>
                         </Fragment>
                     )}

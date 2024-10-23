@@ -1,5 +1,5 @@
 import { Layout } from '@/components/Layout/Layout'
-import { NewPartner } from '@/components/Partners/NewPartner'
+import { NewPartner } from '@/components/Partners/NewPartner/newParnter'
 import { getPartnerData } from '@/lib/api/partner/fetchPartnerData'
 
 interface PartnersPageProps {

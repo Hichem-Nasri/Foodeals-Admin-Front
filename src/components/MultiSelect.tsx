@@ -34,6 +34,7 @@ export type MultiSelectOptionsType = {
     icon?: ForwardRefExoticComponent<
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
+    id?: string
 }
 interface MultiSelectProps {
     options: MultiSelectOptionsType[]
@@ -92,8 +93,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     normalTransform = false,
     region = false,
 }) => {
-    const selectedOptions = options.filter((option) =>
-        selectedValues.includes(option.key.toString())
+    const selectedOptions = options.filter(
+        (option) =>
+            selectedValues.includes(option.key.toString()) ||
+            selectedValues.includes(option.label)
     )
     const len = length ?? 3
     if (normalTransform) {
@@ -101,7 +104,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
     return (
         <Popover>
-            <PopoverTrigger disabled={disabled} id={id} className="w-full">
+            <PopoverTrigger id={id} disabled={disabled} className="w-full">
                 <div
                     className={cn(
                         'flex items-center gap-2 py-2 px-3 w-full rounded-[12px] bg-lynch-50 border-0 text-lynch-400 hover:text-lynch-700 font-normal text-base min-h-14 max-w-[32.625rem] min-w-full flex-1',
@@ -166,9 +169,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     )}
                 </div>
             </PopoverTrigger>
-            <PopoverContent className="rounded-[16px] p-3">
+            <PopoverContent className="rounded-[16px] p-3 ">
                 <Command className="flex flex-col gap-5 p-0">
-                    {type != 'status' && (
+                    {!disabled && type != 'status' && (
                         <CommandInput
                             className="bg-lynch-50 placeholder:text-base placeholder:font-normal text-base font-normal placeholder:text-input text-textGray"
                             placeholder={searchPlaceholder}

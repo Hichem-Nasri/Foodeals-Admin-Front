@@ -17,6 +17,7 @@ interface MultiSelectFieldProps {
     disabled?: boolean
     className?: string
     transform?: (value: MultiSelectOptionsType[]) => JSX.Element[]
+    len?: number
 }
 
 export const MultiSelectField: FC<MultiSelectFieldProps> = ({
@@ -28,30 +29,35 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     disabled = false,
     className,
     transform,
+    len,
 }) => {
     return (
         <FormField
             control={control}
             name={name}
-            render={({ field }) => (
-                <div className={cn('flex flex-col w-full', className)}>
-                    <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                        <Label
-                            label={label}
-                            className="text-sm font-semibold text-lynch-950"
-                        />
-                        <MultiSelect
-                            options={options}
-                            disabled={options.length === 0 || disabled}
-                            selectedValues={field.value}
-                            onSelect={(value) => field.onChange(value)}
-                            placeholder={placeholder}
-                            transform={transform}
-                        />
+            render={({ field }) => {
+                console.log('value', field.value)
+                return (
+                    <div className={cn('flex flex-col w-full', className)}>
+                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                            <Label
+                                label={label}
+                                className="text-sm font-semibold text-lynch-950"
+                            />
+                            <MultiSelect
+                                options={options}
+                                disabled={options.length === 0 || disabled}
+                                selectedValues={field.value}
+                                onSelect={(value) => field.onChange(value)}
+                                placeholder={placeholder}
+                                transform={transform}
+                                length={len}
+                            />
+                        </div>
+                        <FormMessage />
                     </div>
-                    <FormMessage />
-                </div>
-            )}
+                )
+            }}
         />
     )
 }

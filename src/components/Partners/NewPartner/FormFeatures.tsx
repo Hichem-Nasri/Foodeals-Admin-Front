@@ -21,14 +21,14 @@ import { AppRoutes } from '@/lib/routes'
 
 interface FormFeaturesProps {
     form: UseFormReturn<z.infer<typeof PartnerFeaturesSchema>>
-    omSubmit: (data: z.infer<typeof PartnerFeaturesSchema>) => void
+    onSubmit: (data: z.infer<typeof PartnerFeaturesSchema>) => void
     disabled?: boolean
     status?: PartnerStatusType
 }
 
 export const FormFeatures: FC<FormFeaturesProps> = ({
     form,
-    omSubmit,
+    onSubmit,
     disabled,
     status,
 }) => {
@@ -52,7 +52,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                     Fonctionnalités
                 </AccordionTrigger>
                 <AccordionContent className="pt-7">
-                    <form onSubmit={handleSubmit(omSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         <Form {...form}>
                             <div className="flex lg:flex-row flex-col lg:items-end gap-[1.875rem]">
                                 <div className="lg:w-1/4">
@@ -65,14 +65,34 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                                         disabled={disabled}
                                     />
                                 </div>
-                                {/* {status === PartnerStatusType.VALIDATED && ( */}
-                                <CustomButton
-                                    className="h-fit py-4"
-                                    label="Voir la liste"
-                                    IconRight={LayoutList}
-                                    onClick={showAllPartners}
-                                />
-                                {/* )} */}
+                                <div className="lg:w-1/4">
+                                    <InputFieldForm
+                                        label="Nombre de compte"
+                                        name="maxNumberOfAccounts"
+                                        control={form.control}
+                                        placeholder="Saisir le nombre"
+                                        type="number"
+                                        disabled={disabled}
+                                    />
+                                </div>
+                                <div className="lg:w-1/4">
+                                    <InputFieldForm
+                                        label="minimum de Réduction"
+                                        name="minimumReduction"
+                                        control={form.control}
+                                        placeholder="Saisir le nombre"
+                                        type="number"
+                                        disabled={disabled}
+                                    />
+                                </div>
+                                {status === PartnerStatusType.VALIDATED && (
+                                    <CustomButton
+                                        className="h-fit py-4"
+                                        label="Voir la liste"
+                                        IconRight={LayoutList}
+                                        onClick={showAllPartners}
+                                    />
+                                )}
                                 <div className="flex items-center my-auto h-full gap-2 lg:w-1/4">
                                     <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                                         <Label
