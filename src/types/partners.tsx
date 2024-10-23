@@ -565,7 +565,7 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
                         router.push(
                             AppRoutes.newPartner.replace(
                                 ':id',
-                                info.getValue()!
+                                info.getValue()! + '?mode=edit'
                             )
                         ),
                     icon: Pencil,

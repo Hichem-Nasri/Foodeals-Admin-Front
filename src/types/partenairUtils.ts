@@ -5,6 +5,7 @@ import {
     PartnerStatusOptions,
     PartnerStatusType,
     PartnerType,
+    SubAccountPartners,
 } from './partners'
 import { defaultPartnerData, PartnerDataType } from './PartnerSchema'
 
@@ -58,10 +59,49 @@ const exportPartnerGET = (Partner: PartnerGET) => {
 export const exportAllPartnerGET = (partners: PartnerGET[]): PartnerType[] => {
     return partners.map((partner) => exportPartnerGET(partner))
 }
+export interface SubPartnerGET {
+    id: string
+    offers: number
+    orders: number
+    users: number
+    reference: string
+    city: string
+    solutions: string[]
+    createdAt: Date
+    partnerInfoDto: PartnerInfoDto
+    contactDto: ContactDto
+}
 
 export interface PartnerInfoDto {
     name: string
-    avatarPath: null
+    avatarPath: string
+}
+
+const exportSubPartnerGET: (subPartner: SubPartnerGET) => SubAccountPartners = (
+    subPartner
+) => {
+    const subAccount: SubAccountPartners = {
+        id: subPartner.id,
+        offer: subPartner.offers,
+        order: subPartner.orders,
+        collaborators: subPartner.users,
+        ref: subPartner.reference,
+        city: subPartner.city,
+        solution: exportSolutionType(subPartner.solutions),
+        createdAt: new Date(subPartner.createdAt),
+        companyName: subPartner.partnerInfoDto.name,
+        logo: subPartner.partnerInfoDto.avatarPath!,
+        email: subPartner.contactDto.email,
+        phone: subPartner.contactDto.phone,
+        companyType: PartnerCompanyTypeOptions.NORMAL_PARTNER,
+    }
+    return subAccount
+}
+
+export const exportAllSubPartnerGET = (
+    subPartners: SubPartnerGET[]
+): SubAccountPartners[] => {
+    return subPartners.map((subPartner) => exportSubPartnerGET(subPartner))
 }
 
 const ParnterSolutionExport: (solution: string) => PartnerSolutionType = (
@@ -187,13 +227,12 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
                 partner.solutionsContractDto[0]?.contractCommissionDto
                     ?.withCash || 0,
         },
+        maxNumberOfAccounts: partner.maxNumberOfAccounts,
+        minimumReduction: partner.minimumReduction,
         contractId: '',
         status: PartnerStatusType.PENDING,
-        proofId: '',
-        proofName: '',
-        contractName: '',
-        logo: '',
-        cover: '',
+        logo: null,
+        cover: null,
         paymentMethod: 'transfer',
         numberOfStores: partner.maxNumberOfSubEntities,
         fileType: [],

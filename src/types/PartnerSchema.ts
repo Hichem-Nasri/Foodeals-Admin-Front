@@ -3,43 +3,16 @@ import { PartnerStatusType } from './partners'
 
 export const PartnerInformationSchema = z.object({
     logo: z
-        .union([
-            z
-                .instanceof(File)
-                .refine((file) => file.size > 0, {
-                    message: 'Veuillez ajouter une image de logo',
-                })
-                .optional(), // Logo can be a File or undefined
-            z
-                .string()
-                .refine(
-                    (value) => value === 'https://via.placeholder.com/120',
-                    {
-                        message: 'Veuillez ajouter une image de logo',
-                    }
-                )
-                .optional(), // Logo can also be a string or undefined
-        ])
-        .optional(), // Overall logo property is optional
-
+        .instanceof(File)
+        .refine((file) => file.size > 0, {
+            message: 'Veuillez ajouter une image de logo',
+        })
+        .optional(),
     cover: z
-        .union([
-            z
-                .instanceof(File)
-                .refine((file) => file.size > 0, {
-                    message: 'Veuillez ajouter une image de couverture',
-                })
-                .optional(), // Cover can be a File or undefined
-            z
-                .string()
-                .refine(
-                    (value) => value === 'https://via.placeholder.com/740x223',
-                    {
-                        message: 'Veuillez ajouter une image de couverture',
-                    }
-                )
-                .optional(), // Cover can also be a string or undefined
-        ])
+        .instanceof(File)
+        .refine((file) => file.size > 0, {
+            message: 'Veuillez ajouter une image de couverture',
+        })
         .optional(),
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
@@ -62,8 +35,8 @@ export const PartnerInformationSchema = z.object({
 })
 
 export const defaultPartnerInformationData = {
-    logo: 'https://via.placeholder.com/120',
-    cover: 'https://via.placeholder.com/740x223',
+    logo: null,
+    cover: null,
     companyName: '',
     companyType: [],
     responsible: '',
@@ -80,8 +53,8 @@ export const defaultPartnerInformationData = {
 }
 
 export interface PartnerInformationSchemaType {
-    logo: File | string
-    cover: File | string
+    logo: File | null
+    cover: File | null
     companyName: string
     companyType: string[]
     responsible: string
@@ -241,16 +214,22 @@ export interface PartnerSubscriptionSchemaType {
 
 export const PartnerFeaturesSchema = z.object({
     numberOfStores: z.number(),
+    maxNumberOfAccounts: z.number(),
+    minimumReduction: z.number(),
     fileType: z.array(z.string()),
 })
 
 export const defaultPartnerFeaturesData = {
     numberOfStores: 0,
+    maxNumberOfAccounts: 0,
+    minimumReduction: 0,
     fileType: [],
 }
 
 export interface PartnerFeaturesSchemaType {
     numberOfStores: number
+    maxNumberOfAccounts: number
+    minimumReduction: number
     fileType: string[]
 }
 
@@ -261,17 +240,11 @@ export interface PartnerDataType
     contractId: string
     status: PartnerStatusType
     id?: string
-    proofId: string
-    proofName: string
-    contractName: string
 }
 
 export const defaultPartnerData: PartnerDataType = {
     contractId: '',
     status: PartnerStatusType.DRAFT,
-    proofId: '',
-    proofName: '',
-    contractName: '',
     ...defaultPartnerInformationData,
     ...defaultPartnerSubscriptionData,
     ...defaultPartnerFeaturesData,

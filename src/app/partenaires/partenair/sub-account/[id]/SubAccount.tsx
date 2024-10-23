@@ -20,15 +20,18 @@ import {
 import { table } from 'console'
 import { RotateCw, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { FC } from 'react'
 
-const SubAccount = () => {
-    const data: SubAccountPartners[] = SubAccountData
+interface SubAccountProps {
+    subAccount: SubAccountPartners[]
+}
+
+const SubAccount: FC<SubAccountProps> = ({ subAccount }) => {
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
     const router = useRouter()
     const table = useReactTable({
-        data,
+        data: subAccount,
         columns: columnsSubAccountTable(router),
         state: {
             columnFilters,
@@ -47,11 +50,11 @@ const SubAccount = () => {
     }
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4 scroll">
-            <HeaderSubAccount collaborators={data} table={table} />
+            <HeaderSubAccount collaborators={subAccount} table={table} />
             <DataTable
                 title="Listes des sous comptes"
                 table={table}
-                data={data}
+                data={subAccount}
                 transform={(value) => (
                     <PartnerCollaboratesCard partner={value} key={value.id} />
                 )}
