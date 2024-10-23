@@ -46,6 +46,7 @@ export const UploadFile: FC<UploadFileProps> = ({
     return (
         <div className="flex relative w-full">
             <Input
+                className="disabled:opacity-50 disabled:cursor-not-allowed"
                 name="file"
                 disabled={disabled}
                 onChange={() => {}}
@@ -55,7 +56,7 @@ export const UploadFile: FC<UploadFileProps> = ({
             />
             <input
                 type="file"
-                className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer text-opacity-0 disabled:cursor-not-allowed"
                 onChange={handleFileChange}
                 disabled={disabled}
             />
