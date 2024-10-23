@@ -27,7 +27,9 @@ export const getCountries = async () => {
                 }
             )
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+            throw new Error(error)
+        })
     console.log('resCountry', resCountry)
     return resCountry
 }
@@ -50,7 +52,9 @@ export const getCities = async (countryID: string) => {
                 }
             )
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+            throw new Error(error)
+        })
     return resCity
 }
 
@@ -72,6 +76,8 @@ export const getRegions = async (cityID: string) => {
                 }
             )
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+            throw new Error(error)
+        })
     return resRegion
 }

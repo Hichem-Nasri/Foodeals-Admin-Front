@@ -7,7 +7,9 @@ export const fetchActivities = async () => {
         const response = await api
             .get(API_URL)
             .then((res) => res.data)
-            .catch((error) => console.error(error))
+            .catch((error) => {
+                throw new Error(error)
+            })
 
         const data = response.content.map(
             (user: { id: string; name: string }) => ({

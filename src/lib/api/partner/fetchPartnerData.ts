@@ -9,10 +9,17 @@ export const getPartnerData = async (
 ): Promise<PartnerDataType | undefined> => {
     // console.log('partnerId', partnerId)
     if (!partnerId || partnerId == '%3Aid') return defaultPartnerData
-    const url = `http://localhost:8080/api/v1/organizations/partners/form-data/${partnerId}`
-    const response = await api
-        .get(url)
-        .then((res) => res.data)
-        .catch((error) => console.error(error))
-    return exportPartnerPost(response)
+    try {
+        const url = `http://localhost:8080/api/v1/organizations/partners/form-data/${partnerId}`
+        const response = await api
+            .get(url)
+            .then((res) => res.data)
+            .catch((error) => {
+                throw new Error(error)
+            })
+        return exportPartnerPost(response)
+    } catch (error) {
+        console.error('error', error)
+        return defaultPartnerData
+    }
 }

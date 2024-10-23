@@ -7,7 +7,7 @@ async function validateContract(
     const url = `http://localhost:8080/api/v1/organizations/partners/validate/${id}`
 
     const formData = new FormData()
-    formData.append('contract', contractFile[0])
+    formData.append('document', contractFile[0])
 
     try {
         const response = await api
