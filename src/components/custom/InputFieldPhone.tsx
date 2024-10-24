@@ -49,58 +49,67 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
         <FormField
             control={control}
             name={name}
-            render={({ field }) => (
-                <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                    <Label
-                        htmlFor={name}
-                        className="text-sm font-semibold text-lynch-950"
-                        label={label}
-                    />
-                    <div className={cn('flex flex-col w-full', className)}>
-                        <div className="flex items-center gap-[0.375rem] w-full">
-                            <Select
-                                value={countryCode}
-                                onValueChange={onChangeCountryCode}
-                                disabled={disabled}
-                            >
-                                <SelectTrigger className="rounded-[12px] border-0 font-light text-base flex gap-[0.625rem] w-fit min-w-[8rem]">
-                                    {countryCodes.map((option) =>
-                                        option.value == countryCode
-                                            ? option.flag
-                                            : null
-                                    )}
-                                    <span>{countryCode}</span>
-                                </SelectTrigger>
-                                <SelectContent className="text-textNeutral">
-                                    {countryCodes.map((option) => (
-                                        <SelectItem
-                                            key={option.value}
-                                            value={option.value}
-                                            className="cursor-pointer flex gap-[0.625rem]"
-                                        >
-                                            {option.flag}
-                                            <span className="ml-2">
-                                                {option.value}
-                                            </span>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Input
-                                {...field}
-                                value={field.value}
-                                onChange={field.onChange}
-                                className="w-full"
-                                placeholder={placeholder}
-                                IconRight={IconRight}
-                                IconLeft={PhoneCall}
-                                disabled={disabled}
-                            />
+            render={({ field }) => {
+                // const countryCode = countryCodes.filter((option) => {
+                //     if (option && field.value)
+                //         field.value.includes(option.value)
+                //     return false
+                // })[0]?.value
+                // console.log('countryCode', countryCode)
+
+                return (
+                    <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                        <Label
+                            htmlFor={name}
+                            className="text-sm font-semibold text-lynch-950"
+                            label={label}
+                        />
+                        <div className={cn('flex flex-col w-full', className)}>
+                            <div className="flex items-center gap-[0.375rem] w-full">
+                                <Select
+                                    value={countryCode}
+                                    onValueChange={onChangeCountryCode}
+                                    disabled={disabled}
+                                >
+                                    <SelectTrigger className="rounded-[12px] border-0 font-light text-base flex gap-[0.625rem] w-fit min-w-[8rem]">
+                                        {countryCodes.map((option) =>
+                                            option.value == countryCode
+                                                ? option.flag
+                                                : null
+                                        )}
+                                        <span>{countryCode}</span>
+                                    </SelectTrigger>
+                                    <SelectContent className="text-textNeutral">
+                                        {countryCodes.map((option) => (
+                                            <SelectItem
+                                                key={option.value}
+                                                value={option.value}
+                                                className="cursor-pointer flex gap-[0.625rem]"
+                                            >
+                                                {option.flag}
+                                                <span className="ml-2">
+                                                    {option.value}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Input
+                                    {...field}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    className="w-full"
+                                    placeholder={placeholder}
+                                    IconRight={IconRight}
+                                    IconLeft={PhoneCall}
+                                    disabled={disabled}
+                                />
+                            </div>
+                            <FormMessage />
                         </div>
-                        <FormMessage />
                     </div>
-                </div>
-            )}
+                )
+            }}
         />
     )
 }

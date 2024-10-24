@@ -14,6 +14,7 @@ import { Switch } from '../ui/switch'
 import { cn } from '@/lib/utils'
 import { MultiSelect, MultiSelectOptionsType } from '../MultiSelect'
 import { valuesGetting } from '@/types/DeliveriesUtils'
+import { getAllCities, getRegions } from '@/lib/api/fetchAddress'
 
 interface DialogMultiProps {
     setValue: React.Dispatch<React.SetStateAction<string>>
@@ -22,6 +23,11 @@ interface DialogMultiProps {
     transform?: ((value: MultiSelectOptionsType[]) => Element[]) | undefined
     disabled?: boolean
     placeholder?: string
+}
+
+type ZoneType = {
+    name: string
+    location: string[]
 }
 
 const getMultiSelectOption = (option: string) => {
@@ -85,14 +91,46 @@ const DialogMulti: FC<DialogMultiProps> = ({
             'al manal',
         ],
     }
+    const [myData, setData] = useState<ZoneType[]>([])
+    useEffect(() => {
+        const fetchCities = async () => {
+            const cities = await getAllCities()
+            const allregion: ZoneType[] = cities.map(
+                async (value: MultiSelectOptionsType) => {
+                    const regions = await getRegions(value.id!)
+                    return {
+                        name: value.label,
+                        location: regions.map(
+                            (region: MultiSelectOptionsType) => region.label
+                        ),
+                    }
+                }
+            )
+            const data = await Promise.all(allregion)
+            console.log('region Data: ', data)
+            setData(data)
+        }
+        fetchCities()
+    }, [])
     const [selectedCity, setSelectedCity] = useState<string[] | null>(null)
     const [selectedRegion, setSelectedRegion] = useState<string[]>([])
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const [open, setOpen] = useState(false)
     useEffect(() => {
-        const newOptions = dataToMultiOptions(selectedCity!, data)
+        if (!selectedCity) return
+        const newOptions = myData
+            .filter((value) => selectedCity.includes(value.name))
+            .flatMap((city) =>
+                city.location.map((region) => ({
+                    key: city.name + '-' + region,
+                    label: region,
+                }))
+            )
         setOptions(newOptions)
     }, [selectedCity])
+    useEffect(() => {
+        console.log('region: ', options)
+    }, [options])
     return (
         <Popover>
             <PopoverTrigger
@@ -218,10 +256,7 @@ const DialogMulti: FC<DialogMultiProps> = ({
                                                     item.key.toString() + index
                                                 }
                                             >
-                                                {item.label
-                                                    .split('-')
-                                                    .slice(1)
-                                                    .join(' ')}
+                                                {item.label}
                                             </div>
                                         )
                                     })
@@ -243,35 +278,42 @@ const DialogMulti: FC<DialogMultiProps> = ({
                             className="text-sm font-base text-lynch-500 mt-4"
                         >
                             {/* list of city using switch ui*/}
-                            {Object.keys(data).map((city) => (
-                                <CommandItem key={city}>
+                            {myData.map((city, index) => (
+                                <CommandItem key={index}>
                                     <div
                                         className={cn(
                                             'flex items-center space-x-2 h-12 justify-between px-2 w-full',
                                             `${
-                                                selectedCity?.includes(city) &&
+                                                selectedCity?.includes(
+                                                    city.name
+                                                ) &&
                                                 'bg-lynch-50 rounded-[12px] w-full'
                                             }`
                                         )}
                                     >
-                                        <div>{city}</div>
+                                        <div>{city.name}</div>
                                         <Switch
                                             checked={selectedCity?.includes(
-                                                city
+                                                city.name
                                             )}
                                             className="h-5"
-                                            id={city}
+                                            id={city.name}
                                             onCheckedChange={() => {
                                                 setSelectedCity((prev) => {
-                                                    if (prev?.includes(city)) {
+                                                    if (
+                                                        prev?.includes(
+                                                            city.name
+                                                        )
+                                                    ) {
                                                         return prev?.filter(
                                                             (item) =>
-                                                                item !== city
+                                                                item !==
+                                                                city.name
                                                         )
                                                     }
                                                     return [
                                                         ...(prev || []),
-                                                        city,
+                                                        city.name,
                                                     ]
                                                 })
                                             }}

@@ -36,7 +36,8 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
             control={control}
             name={name}
             render={({ field }) => {
-                console.log('value', field.value)
+                // console.log('value', field.value)
+                // console.log('options', options)
                 return (
                     <div className={cn('flex flex-col w-full', className)}>
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">

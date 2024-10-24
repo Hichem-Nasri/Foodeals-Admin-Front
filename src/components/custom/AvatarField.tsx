@@ -38,7 +38,7 @@ export const AvatarField: FC<AvatarFieldProps> = ({
                         label={label}
                         disabled={disabled}
                     />
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                 </div>
             )}
         />
