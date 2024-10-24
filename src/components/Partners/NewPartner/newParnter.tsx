@@ -52,9 +52,9 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const [partnerData, setPartnerData] =
         useState<PartnerPOST>(emptyPartnerPOST)
     const [contractUpload, setContractUpload] = useState<File[] | null>(null)
-    const [readOnly, setReadOnly] = useState<boolean>(partnerId !== '')
-    const searchParams = useSearchParams() // Use useSearchParams
     const notif = useNotification()
+    const [readOnly, setReadOnly] = useState<boolean>(partnerId !== '')
+    const searchParams = useSearchParams()
 
     useEffect(() => {
         const mode = searchParams.get('mode') // Access the mode from searchParams
@@ -96,9 +96,12 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                 partnerDetails.cover
             )
             const formData = new FormData()
-            const blob = new Blob([JSON.stringify(data.data)], {
+            // remover status from data
+            const { status, ...rest } = data.data
+            const blob = new Blob([JSON.stringify(rest)], {
                 type: 'application/json',
             })
+            console.log(data.data)
             formData.append('dto', blob)
             formData.append('logo', partnerDetails.logo as Blob)
             formData.append('cover', partnerDetails.cover as Blob)
@@ -149,6 +152,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                 cover: data.cover as File,
             }))
         }
+        console.log(data.companyType)
         setPartnerData((prev) => ({
             ...prev,
             features: data.partnerType,
@@ -271,11 +275,16 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             }))
             return
         }
-
+        console.log('hello')
         const partnerInfoResult = await partnerInformation.trigger()
         const partnerSubscriptionResult = await partnerSubscription.trigger()
         const partnerFeaturesResult = await partnerFeatures.trigger()
-
+        console.log(
+            'status: ',
+            partnerInfoResult,
+            partnerSubscriptionResult,
+            partnerFeaturesResult
+        )
         if (partnerId !== '' && !contractUpload) {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
@@ -325,7 +334,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             <TopBar
                 status={partnerDetails.status || PartnerStatusType.DRAFT}
                 primaryButtonDisabled={partnerId === '' || readOnly}
-                secondaryButtonDisabled={false}
+                secondaryButtonDisabled={readOnly}
                 onSaveData={handleSaveData}
                 onSubmit={handleSubmit}
                 id={partnerId}

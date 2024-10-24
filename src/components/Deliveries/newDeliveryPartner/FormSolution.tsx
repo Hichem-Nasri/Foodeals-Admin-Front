@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import {
     Accordion,
@@ -9,7 +9,7 @@ import {
 import { InputFieldForm } from '@/components/custom/InputField'
 import { z } from 'zod'
 import { UseFormReturn } from 'react-hook-form'
-import { Form, FormField } from '@/components/ui/form'
+import { Form, FormField, FormMessage } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/Label'
 import { LayoutList } from 'lucide-react'
@@ -25,18 +25,21 @@ interface FormSolutionProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSolutionSchema>>
     onSubmit: (data: z.infer<typeof DeliveryPartnerSolutionSchema>) => void
     disabled?: boolean
+    selectedSolution: PartnerSolutionType[]
 }
 
 export const FormSolution: FC<FormSolutionProps> = ({
     form,
     onSubmit,
     disabled,
+    selectedSolution,
 }) => {
     const { handleSubmit } = form
     const router = useRouter()
     const showAllPartners = () => {
         router.push(AppRoutes.collaborator)
     }
+
     return (
         <Accordion
             type="single"
@@ -69,84 +72,92 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                 control={form.control}
                                                 name="solutions"
                                                 render={({ field }) => (
-                                                    <div className="flex gap-3 items-center">
-                                                        <div className="flex items-center my-auto h-full gap-2">
-                                                            <Checkbox
-                                                                name={
-                                                                    PartnerSolutionType.MARKET_PRO
-                                                                }
-                                                                className="size-5"
-                                                                checked={field.value.includes(
-                                                                    PartnerSolutionType.MARKET_PRO
-                                                                )}
-                                                                onClick={() =>
-                                                                    field.onChange(
+                                                    <>
+                                                        <div className="flex gap-3 items-center">
+                                                            <div className="flex items-center my-auto h-full gap-2">
+                                                                <Checkbox
+                                                                    name={
+                                                                        PartnerSolutionType.MARKET_PRO
+                                                                    }
+                                                                    className="size-5"
+                                                                    checked={
                                                                         field.value.includes(
                                                                             PartnerSolutionType.MARKET_PRO
+                                                                        ) ||
+                                                                        selectedSolution.includes(
+                                                                            PartnerSolutionType.MARKET_PRO
                                                                         )
-                                                                            ? [
-                                                                                  ...field.value.filter(
-                                                                                      (
-                                                                                          item
-                                                                                      ) =>
-                                                                                          item !==
-                                                                                          PartnerSolutionType.MARKET_PRO
-                                                                                  ),
-                                                                              ]
-                                                                            : [
-                                                                                  ...field.value,
-                                                                                  PartnerSolutionType.MARKET_PRO,
-                                                                              ]
-                                                                    )
-                                                                }
-                                                            />
-                                                            <PartnerSolution
-                                                                solution={
-                                                                    PartnerSolutionType.MARKET_PRO
-                                                                }
-                                                                className="px-4 py-[0.4rem] my-3"
-                                                                size={20}
-                                                            />
-                                                        </div>
-                                                        <div className="flex items-center my-auto h-full gap-2">
-                                                            <Checkbox
-                                                                name={
-                                                                    PartnerSolutionType.DONATE_PRO
-                                                                }
-                                                                className="size-5"
-                                                                checked={field.value.includes(
-                                                                    PartnerSolutionType.DONATE_PRO
-                                                                )}
-                                                                onClick={() =>
-                                                                    field.onChange(
-                                                                        field.value.includes(
-                                                                            PartnerSolutionType.DONATE_PRO
+                                                                    }
+                                                                    onClick={() =>
+                                                                        field.onChange(
+                                                                            field.value.includes(
+                                                                                PartnerSolutionType.MARKET_PRO
+                                                                            )
+                                                                                ? [
+                                                                                      ...field.value.filter(
+                                                                                          (
+                                                                                              item
+                                                                                          ) =>
+                                                                                              item !==
+                                                                                              PartnerSolutionType.MARKET_PRO
+                                                                                      ),
+                                                                                  ]
+                                                                                : [
+                                                                                      ...field.value,
+                                                                                      PartnerSolutionType.MARKET_PRO,
+                                                                                  ]
                                                                         )
-                                                                            ? [
-                                                                                  ...field.value.filter(
-                                                                                      (
-                                                                                          item
-                                                                                      ) =>
-                                                                                          item !==
-                                                                                          PartnerSolutionType.DONATE_PRO
-                                                                                  ),
-                                                                              ]
-                                                                            : [
-                                                                                  ...field.value,
-                                                                                  PartnerSolutionType.DONATE_PRO,
-                                                                              ]
-                                                                    )
-                                                                }
-                                                            />
-                                                            <PartnerSolution
-                                                                solution={
-                                                                    PartnerSolutionType.DONATE_PRO
-                                                                }
-                                                                className="px-4 py-[0.4rem] my-3"
-                                                                size={20}
-                                                            />
+                                                                    }
+                                                                />
+                                                                <PartnerSolution
+                                                                    solution={
+                                                                        PartnerSolutionType.MARKET_PRO
+                                                                    }
+                                                                    className="px-4 py-[0.4rem] my-3"
+                                                                    size={20}
+                                                                />
+                                                            </div>
+                                                            <div className="flex items-center my-auto h-full gap-2">
+                                                                <Checkbox
+                                                                    name={
+                                                                        PartnerSolutionType.DONATE_PRO
+                                                                    }
+                                                                    className="size-5"
+                                                                    checked={field.value.includes(
+                                                                        PartnerSolutionType.DONATE_PRO
+                                                                    )}
+                                                                    onClick={() =>
+                                                                        field.onChange(
+                                                                            field.value.includes(
+                                                                                PartnerSolutionType.DONATE_PRO
+                                                                            )
+                                                                                ? [
+                                                                                      ...field.value.filter(
+                                                                                          (
+                                                                                              item
+                                                                                          ) =>
+                                                                                              item !==
+                                                                                              PartnerSolutionType.DONATE_PRO
+                                                                                      ),
+                                                                                  ]
+                                                                                : [
+                                                                                      ...field.value,
+                                                                                      PartnerSolutionType.DONATE_PRO,
+                                                                                  ]
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <PartnerSolution
+                                                                    solution={
+                                                                        PartnerSolutionType.DONATE_PRO
+                                                                    }
+                                                                    className="px-4 py-[0.4rem] my-3"
+                                                                    size={20}
+                                                                />
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                        <FormMessage />
+                                                    </>
                                                 )}
                                             />
                                         </div>
@@ -172,7 +183,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                 </div>
                                 <FormField
                                     control={form.control}
-                                    name={'document' as any}
+                                    name={'documents' as any}
                                     render={({ field }) => (
                                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                                             <Label
@@ -180,9 +191,13 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                 className="text-xs font-semibold text-lynch-950"
                                             />
                                             <UploadFile
-                                                onChange={field.onChange}
-                                                value={field.value}
+                                                onChange={(files) =>
+                                                    files &&
+                                                    field.onChange(files)
+                                                }
+                                                value={field.value!}
                                             />
+                                            <FormMessage />
                                         </div>
                                     )}
                                 />

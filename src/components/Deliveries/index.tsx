@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -18,9 +18,21 @@ import { CustomButton } from '../custom/CustomButton'
 import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
-import { columnsDeliveriesTable, DeliveryType } from '@/types/deliveries'
+import {
+    columnsDeliveriesTable,
+    DeliveryType,
+    exportDeliveryData,
+} from '@/types/deliveries'
 import { FiltersDeliveries } from './FilterDeliveries'
 import { DeliveryCard } from './DeliveryCard'
+import { useNotification } from '@/context/NotifContext'
+import { fetchPartners } from '@/lib/api/partner/fetchPartners'
+import { NotificationType } from '@/types/Global-Type'
+import { useQuery } from '@tanstack/react-query'
+import { fetchDeliveryPartners } from '@/lib/api/delivery/fetchDeliveryParnters'
+import { API_PARTNERS } from '@/lib/api_url'
+import api from '@/api/Auth'
+import { exportAllPartnerGET } from '@/types/partenairUtils'
 interface DeliveriesProps {
     deliveries: DeliveryType[]
 }
@@ -32,53 +44,30 @@ export interface TableRowType {
 
 export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
+    const notify = useNotification()
     const router = useRouter()
-    const schema = z.object({
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-        company: z
-            .array(
-                z.object({
-                    label: z.string().optional(),
-                    key: z.string().optional(),
-                    avatar: z.string().optional(),
-                })
-            )
-            .optional(),
-        collaborators: z
-            .array(
-                z.object({
-                    label: z.string().optional(),
-                    key: z.string().optional(),
-                    avatar: z.string().optional(),
-                })
-            )
-            .optional(),
-        email: z.string().optional(),
-        phone: z.string().optional(),
-        city: z.string().optional(),
-        companyType: z.string().optional(),
-        solution: z
-            .array(z.enum(['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']))
-            .optional(),
-    })
-    const form = useForm<z.infer<typeof schema>>({
-        resolver: zodResolver(schema),
-        mode: 'onBlur',
-        defaultValues: {
-            startDate: undefined,
-            endDate: undefined,
-            company: [],
-            collaborators: [],
-            email: '',
-            phone: '',
-            city: '',
-            companyType: '',
-            solution: [],
+    const [archive, setArchive] = useState(false)
+    const [data, setData] = useState<DeliveryType[]>([])
+
+    const { error, isLoading, refetch } = useQuery({
+        queryKey: ['partners', currentPage, pageSize],
+        queryFn: async () => {
+            try {
+                const data = await fetchDeliveryPartners(currentPage, pageSize)
+                if (data.status === 500)
+                    throw new Error('Error fetching partners')
+                setData(data.data)
+                return data.data
+            } catch (error) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                console.log(error)
+                setData([])
+            }
         },
     })
-
-    const [data, _setData] = useState(() => [...deliveries])
 
     const table = useReactTable({
         data,
@@ -92,14 +81,46 @@ export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
+    useEffect(() => {
+        if (error) {
+            notify.notify(NotificationType.ERROR, error.message)
+        }
+        if (archive) {
+            const fetchArchive = async () => {
+                try {
+                    const response = await api
+                        .get(
+                            `${API_PARTNERS}/deleted?page=0&size=20&sort=deletedAt,desc`
+                        )
+                        .then((res) => res.data)
+                        .catch((error) => {
+                            throw new Error(error)
+                        })
+                    const data = exportDeliveryData(response.content)
+                    setData(data)
+                } catch (error) {
+                    notify.notify(
+                        NotificationType.ERROR,
+                        'Error fetching partners'
+                    )
+                    setData([])
+                    console.log(error)
+                }
+            } //TODO: Check recive data from backend is correct
+            // fetchArchive()
+        } else {
+            refetch()
+        }
+    }, [archive, error])
+    if (isLoading) return <div>Loading...</div>
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersDeliveries
                 table={table}
-                form={form}
                 data={deliveries}
                 setColumnFilters={setColumnFilters}
+                setArchive={setArchive}
+                archive={archive}
             />
             <DataTable
                 data={data}

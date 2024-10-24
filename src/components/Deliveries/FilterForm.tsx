@@ -227,13 +227,15 @@ export const FormFilter: FC<FormFilterProps> = ({ data, setColumnFilters }) => {
                             type="submit"
                         />
                     </DialogClose>
-                    <CustomButton
-                        label="Confirmer"
-                        onClick={handleFilter}
-                        className="px-5 py-3 h-fit"
-                        IconRight={Check}
-                        type="submit"
-                    />
+                    <DialogClose>
+                        <CustomButton
+                            label="Confirmer"
+                            onClick={handleFilter}
+                            className="px-5 py-3 h-fit"
+                            IconRight={Check}
+                            type="submit"
+                        />
+                    </DialogClose>
                 </DialogDescription>
             </DialogContent>
         </Dialog>

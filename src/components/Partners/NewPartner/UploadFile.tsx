@@ -15,18 +15,13 @@ export const UploadFile: FC<UploadFileProps> = ({
     value = [],
     placeholder = 'Charger le contrat',
 }) => {
-    const [files, setFiles] = useState<File[]>(value)
-
-    useEffect(() => {
-        if (onChange) {
-            onChange(files)
-        }
-    }, [files, onChange])
+    const [files, setFiles] = useState<File[]>(value || [])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files
         if (selectedFiles && selectedFiles.length > 0) {
             const newFile = selectedFiles[0]
+            onChange && onChange([newFile])
             setFiles((prev) => [...prev, newFile])
         }
     }
@@ -46,7 +41,7 @@ export const UploadFile: FC<UploadFileProps> = ({
     return (
         <div className="flex relative w-full">
             <Input
-                className="disabled:opacity-50 disabled:cursor-not-allowed"
+                className="disabled:opacity-50 disabled:cursor-not-allowed text-opacity-0 "
                 name="file"
                 disabled={disabled}
                 onChange={() => {}}

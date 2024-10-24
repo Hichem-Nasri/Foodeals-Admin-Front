@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { countryCodes } from '@/lib/utils'
 import { TopBar } from '@/components/Partners/NewPartner/TopBar'
 import { FormDeliveryPartner } from './FormDeliveryPartner'
@@ -13,21 +13,121 @@ import {
     DeliveryPartnerSchema,
     DeliveryPartnerSchemaType,
     DeliveryPartnerSolutionSchema,
+    DeliveryPartnerType,
 } from '@/types/DeliverySchema'
 import { FormSolution } from './FormSolution'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { useMutation } from '@tanstack/react-query'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/Global-Type'
+import api from '@/api/Auth'
+import {
+    CityRegion,
+    emptyPartnerPOST,
+    PartnerPOST,
+} from '@/types/partenairUtils'
+import { useSearchParams } from 'next/navigation'
 
 interface NewDeliveryProps {
-    partnerDetails?: DeliveryPartnerSchemaType
+    partnerDetails: DeliveryPartnerType
+    id: string
 }
 
-export const NewDelivery: React.FC<NewDeliveryProps> = ({ partnerDetails }) => {
+function transformCityRegionArray(
+    arr: string[],
+    country: string
+): CityRegion[] {
+    const cityMap: { [key: string]: string[] } = {}
+
+    arr.forEach((item) => {
+        const [city, region] = item.split('-')
+
+        if (!cityMap[city]) {
+            cityMap[city] = []
+        }
+        cityMap[city].push(region)
+    })
+
+    return Object.entries(cityMap).map(([city, regions]) => ({
+        country,
+        city,
+        regions,
+    }))
+}
+
+export const NewDelivery: React.FC<NewDeliveryProps> = ({
+    partnerDetails,
+    id,
+}) => {
+    const [deliveryId, setDeliveryId] = useState(id === 'new' ? '' : id)
+    const [deliveryPartnerData, setDeliveryPartnerData] =
+        useState<DeliveryPartnerType>(partnerDetails)
+    const [data, setData] = useState<PartnerPOST>(emptyPartnerPOST)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
+    const [readOnly, setReadOnly] = useState<boolean>(deliveryId !== '')
+    const searchParams = useSearchParams()
+    const [saved, setSaved] = useState(false)
+    const notif = useNotification()
+
+    useEffect(() => {
+        const mode = searchParams.get('mode') // Access the mode from searchParams
+        if (mode === 'edit') {
+            setReadOnly(false)
+        }
+    }, [searchParams])
     const deliveryPartner = useForm<z.infer<typeof DeliveryPartnerSchema>>({
         resolver: zodResolver(DeliveryPartnerSchema),
         mode: 'onBlur',
         defaultValues: {
-            ...(partnerDetails ? partnerDetails : defaultDeliveryPartnerData),
+            ...deliveryPartnerData,
+            documents: [] as File[],
+        },
+    })
+    const mutation = useMutation({
+        mutationKey: ['delivery-partner'],
+        mutationFn: async (data: { id: string; data: PartnerPOST }) => {
+            console.log(
+                'logo and cover: ',
+                deliveryPartnerData.logo,
+                deliveryPartnerData.cover
+            )
+            const formData = new FormData()
+            // remover status from data
+            const { status, ...rest } = data.data
+            const blob = new Blob([JSON.stringify(rest)], {
+                type: 'application/json',
+            })
+            console.log(data.data)
+            formData.append('dto', blob)
+            formData.append('logo', deliveryPartnerData.logo as Blob)
+            formData.append('cover', deliveryPartnerData.cover as Blob)
+            const url = deliveryId
+                ? `http://localhost:8080/api/v1/organizations/partners/edit/${deliveryId}`
+                : 'http://localhost:8080/api/v1/organizations/partners/create'
+            const method = deliveryId ? 'put' : 'post'
+            const response = await api[method](url, formData).catch((err) => {
+                console.log(err)
+                notif.notify(NotificationType.ERROR, 'Failed to save partner')
+                throw new Error('Failed to save partner')
+            })
+
+            if (![200, 201].includes(response.status)) {
+                notif.notify(NotificationType.ERROR, 'Failed to save partner')
+                throw new Error('Failed to save partner')
+            }
+            notif.notify(
+                NotificationType.SUCCESS,
+                `The ${
+                    method == 'put' ? 'Change' : 'Form'
+                } has been saved successfully`
+            )
+            return response.data
+        },
+        onSuccess: (data) => {
+            setDeliveryId(data.id)
+        },
+        onError: (err) => {
+            console.log(err)
         },
     })
 
@@ -36,11 +136,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({ partnerDetails }) => {
     >({
         resolver: zodResolver(DeliveryPartnerSolutionSchema),
         mode: 'onBlur',
-        defaultValues: {
-            ...(partnerDetails
-                ? partnerDetails
-                : defaultDeliveryPartnerSolutionData),
-        },
+        defaultValues:
+            deliveryPartnerData || defaultDeliveryPartnerSolutionData,
     })
     const { handleSubmit } = deliveryPartner
 
@@ -48,12 +145,72 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({ partnerDetails }) => {
         data: z.infer<typeof DeliveryPartnerSchema>
     ) => {
         console.log('partnerInfo: ', data)
+
+        if (data.logo && data.cover) {
+            setDeliveryPartnerData((prev: DeliveryPartnerType) => {
+                return {
+                    ...prev,
+                    logo: data.logo,
+                    cover: data.cover,
+                }
+            })
+        }
+        const mySolution = data.solutions.map((solution) => {
+            if (solution === 'DONATE_PRO') return 'pro_donate'
+            return 'pro_market'
+        })
+        // parse zone by mapping through it with name that have - between city and region and return an array of object with city and array of region
+        const myZone = transformCityRegionArray(data.zone, data.country)
+
+        setData((prev) => ({
+            ...prev,
+            entityType: 'DELIVERY_PARTNER',
+            entityName: data.companyName,
+            // commercialNumber: data.commercialRegisterNumber.toString(),
+            solutions: mySolution,
+            contactDto: {
+                name: {
+                    firstName: data.responsibleId.split(' ')[0],
+                    lastName: data.responsibleId.split(' ').slice(1).join(' '),
+                },
+                email: data.email,
+                phone: data.phone,
+            },
+            entityAddressDto: {
+                country: data.country,
+                city: data.siege,
+                region: data.region,
+                address: data.address,
+                iframe: '',
+            },
+            coveredZonesDtos: myZone,
+            activities: data.companyType,
+            commissionPayedBySubEntities: true,
+            // managerId: +data.managerId,
+        }))
     }
 
     const onSubmitEngagement = (
         data: z.infer<typeof DeliveryPartnerSolutionSchema>
     ) => {
-        console.log(data)
+        console.log('partnerSolution: ', data)
+        const mySolution = data.solutions
+            .map((solution) => {
+                if (solution === 'DONATE_PRO') return 'pro_donate'
+                return 'pro_market'
+            })
+            .map((solution) => {
+                return {
+                    solution: solution,
+                    amount: data.deliveryCost,
+                    commission: data.commission,
+                }
+            })
+        console.log('partnerSolution: ', mySolution)
+        setData((prev) => ({
+            ...prev,
+            deliveryPartnerContract: mySolution,
+        }))
     }
 
     const onSubmit = () => {
@@ -61,25 +218,57 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({ partnerDetails }) => {
         onSubmitEngagement(DeliveryPartnerSolution.getValues())
     }
 
-    const onSaveData = (e: any) => {
+    const onSaveData = async () => {
         console.log('Save data')
         console.log(
             deliveryPartner.getValues(),
             DeliveryPartnerSolution.getValues()
         )
+
+        // Check for validation errors in both forms
+        const isValidPartner =
+            Object.keys(deliveryPartner.formState.errors).length === 0
+        const isValidSolution =
+            Object.keys(DeliveryPartnerSolution.formState.errors).length === 0
+
+        console.log('isValid: ', isValidPartner, isValidSolution)
+        console.log('Partner errors: ', deliveryPartner.formState.errors)
+        console.log(
+            'Solution errors: ',
+            DeliveryPartnerSolution.formState.errors
+        )
+        console.log(
+            deliveryPartner.formState.isValid,
+            DeliveryPartnerSolution.formState.isValid
+        )
+
+        if (isValidPartner && isValidSolution) {
+            onSubmitPartnerInfo(deliveryPartner.getValues())
+            onSubmitEngagement(DeliveryPartnerSolution.getValues())
+            setSaved(true)
+        } else {
+            // Optionally, you can show a notification or a message to the user here
+            notif.notify(
+                NotificationType.ERROR,
+                'Please fill in all required fields.'
+            )
+        }
     }
+    useEffect(() => {
+        if (saved) {
+            setSaved(false)
+            mutation.mutate({ id: deliveryId, data })
+            console.log('save data')
+        }
+    }, [saved])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
-                primaryButtonDisabled={
-                    !deliveryPartner.formState.isDirty &&
-                    !deliveryPartner.formState.isValid &&
-                    !DeliveryPartnerSolution.formState.isDirty &&
-                    !DeliveryPartnerSolution.formState.isValid
-                }
-                secondaryButtonDisabled={deliveryPartner.formState.isValid}
-                onSaveData={handleSubmit((e) => onSaveData(e))}
+                id={''}
+                primaryButtonDisabled={deliveryId === '' || readOnly}
+                secondaryButtonDisabled={readOnly}
+                onSaveData={onSaveData}
                 onSubmit={onSubmit}
                 status={PartnerStatusType.DRAFT}
             />
@@ -89,12 +278,15 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({ partnerDetails }) => {
                     form={deliveryPartner}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
-                    disabled={!!partnerDetails}
+                    disabled={readOnly}
                 />
                 <FormSolution
+                    selectedSolution={DeliveryPartnerSolution.getValues().solutions.map(
+                        (solution) => solution as PartnerSolutionType
+                    )}
                     form={DeliveryPartnerSolution}
                     onSubmit={onSubmitEngagement}
-                    disabled={!partnerDetails}
+                    disabled={readOnly}
                 />
             </div>
         </div>

@@ -10,16 +10,18 @@ import { DeliveryType } from '@/types/deliveries'
 
 interface FiltersDeliveriesProps {
     data: DeliveryType[]
-    form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<any>
     setColumnFilters: (val: any) => void
+    setArchive: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
 }
 
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
     data,
-    form,
     table,
     setColumnFilters,
+    archive,
+    setArchive,
 }) => {
     const router = useRouter()
     return (
@@ -36,9 +38,10 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label="Archive"
+                    label={archive ? 'Deliveries' : 'Archives'}
                     className="flex items-center gap-3 rounded-[12px] border border-lynch-200 text-lynch-500 font-medium text-sm px-5 py-3 hover:text-black hover:bg-neutral-100 h-fit"
-                    IconRight={Archive}
+                    IconRight={archive ? ArrowRight : Archive}
+                    onClick={() => setArchive((prev: boolean) => !prev)}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">

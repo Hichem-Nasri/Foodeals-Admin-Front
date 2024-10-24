@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import {
     Accordion,
@@ -22,6 +22,12 @@ import { PartnerSolutionType } from '@/types/partners'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { AppRoutes } from '@/lib/routes'
 import { useParams, useRouter } from 'next/navigation'
+import { fetchActivities } from '@/lib/api/partner/fetchActivites'
+import FieldActivities from '@/components/utils/FieldActivities'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import FieldCountry from '@/components/utils/FieldCountry'
+import FieldCity from '@/components/utils/FieldCity'
+import FieldRegion from '@/components/utils/FieldRegion'
 
 interface FormDeliveryPartnerProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
@@ -36,21 +42,20 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
     form,
     onSubmit,
     setCountryCode,
-    disabled,
+    disabled = false,
 }) => {
     const { id } = useParams()
     const { handleSubmit, control } = form
-    const companyTypeOptions = [
-        { key: 'supermarché', label: 'Supermarché' },
-        { key: 'superettes', label: 'Superettes' },
-        { key: 'épiceries', label: 'Épiceries' },
-        { key: 'boulangeries', label: 'Boulangeries' },
-        { key: 'cafés', label: 'Cafés' },
-        { key: 'restaurants', label: 'Restaurants' },
-        { key: 'hôtels', label: 'Hôtels' },
-        { key: 'traiteurs', label: 'Traiteurs' },
-        { key: 'autres', label: 'Autres' },
-    ]
+    const [address, setAddress] = useState<{
+        countryId: string
+        cityId: string
+        regionId: string
+    }>({
+        countryId: '',
+        cityId: '',
+        regionId: '',
+    })
+
     const router = useRouter()
     return (
         <Accordion
@@ -76,7 +81,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
-                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10"
+                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
                                         classNameAvatar="rounded-full"
                                     />
                                     <AvatarField
@@ -98,38 +103,17 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             placeholder="Nom de rasions sociale"
                                             disabled={disabled}
                                         />
-                                        <MultiSelectField
+                                        <FieldActivities
                                             control={control}
                                             name="companyType"
-                                            label="Type"
-                                            options={companyTypeOptions}
+                                            label="Activité"
                                             disabled={disabled}
-                                            placeholder="Sélectionner"
-                                            transform={(value) =>
-                                                value.map((item) => (
-                                                    <span
-                                                        key={item.key}
-                                                        className="text-[0.625rem] font-bold text-lynch-500 bg-lynch-200 px-3 py-[0.469rem] rounded-full"
-                                                    >
-                                                        {item.label}
-                                                    </span>
-                                                ))
-                                            }
                                         />
-                                        <SelectField
+                                        <InputFieldForm
                                             control={control}
                                             name="responsibleId"
                                             label="Responsable"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
+                                            placeholder="Nom du responsable"
                                             disabled={disabled}
                                         />
                                     </div>
@@ -141,8 +125,8 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             label="Solutions"
                                             options={[
                                                 {
-                                                    key: PartnerSolutionType.DLC_PRO,
-                                                    label: PartnerSolutionType.DLC_PRO,
+                                                    key: PartnerSolutionType.MARKET_PRO,
+                                                    label: PartnerSolutionType.MARKET_PRO,
                                                 },
                                                 {
                                                     key: PartnerSolutionType.DONATE_PRO,
@@ -182,22 +166,48 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <SelectField
+                                        <FieldCountry
+                                            control={control}
+                                            name="country"
+                                            label="Pays"
+                                            disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    countryId: value,
+                                                }))
+                                            }}
+                                        />
+                                        <FieldCity
                                             control={control}
                                             name="siege"
                                             label="Siège"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseur',
-                                                },
-                                            ]}
                                             disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    cityId: value,
+                                                }))
+                                            }}
                                         />
+                                        <FieldRegion
+                                            control={control}
+                                            name="region"
+                                            label="Région"
+                                            disabled={disabled}
+                                            country={address.countryId}
+                                            city={address.cityId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    regionId: value,
+                                                }))
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <InputFieldForm
                                             label="Adresse"
                                             name="address"
@@ -205,25 +215,8 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             placeholder="Saisir l’adresse"
                                             disabled={disabled}
                                         />
-                                        <SelectField
-                                            control={control}
-                                            name="associationType"
-                                            label="Type d’association"
-                                            options={[
-                                                {
-                                                    key: '1',
-                                                    label: 'Responsable',
-                                                },
-                                                {
-                                                    key: '2',
-                                                    label: 'Fournisseurs    ',
-                                                },
-                                            ]}
-                                            disabled={disabled}
-                                        />
-                                    </div>
-                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <CitySelectField
+                                            country={address.countryId}
                                             control={control}
                                             label="Zone Couverte"
                                             name="zone"
