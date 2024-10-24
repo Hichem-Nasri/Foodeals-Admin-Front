@@ -18,9 +18,13 @@ import { fetchManager } from '@/lib/api/fetchManager'
 const SelectManager = ({
     control,
     disabled = false,
+    name,
+    label,
 }: {
     control: Control<any>
     disabled?: boolean
+    name: string
+    label: string
 }) => {
     const [search, setSearch] = useState('') // Initial search state
     const inputRef = useRef<HTMLInputElement>(null) // Reference for the input
@@ -43,8 +47,8 @@ const SelectManager = ({
     return (
         <SelectField
             control={control}
-            name="managerId"
-            label="Manager"
+            name={name}
+            label={label}
             options={options || []}
             disabled={disabled}
             search={true} // Enable search

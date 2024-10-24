@@ -14,6 +14,7 @@ interface CitySelectFieldProps {
     name: string
     disabled?: boolean
     className?: string
+    country: string
 }
 
 export const CitySelectField: FC<CitySelectFieldProps> = ({
@@ -22,6 +23,7 @@ export const CitySelectField: FC<CitySelectFieldProps> = ({
     label,
     name,
     disabled = false,
+    country,
     className,
 }) => {
     const [value, setValue] = useState<string>('')
