@@ -1,16 +1,19 @@
 import { z } from 'zod'
+import { PartnerPOST } from './partenairUtils'
 
 export const DeliveryPartnerSchema = z.object({
     logo: z
-        .string()
-        .refine((value) => !value.includes('https://via.placeholder.com/120'), {
+        .instanceof(File)
+        .refine((file) => file.size > 0, {
             message: 'Veuillez ajouter une image de logo',
-        }),
+        })
+        .optional(), // Make logo optional
     cover: z
-        .string()
-        .refine((value) => !value.includes('https://via.placeholder.com/740'), {
+        .instanceof(File)
+        .refine((file) => file.size > 0, {
             message: 'Veuillez ajouter une image de couverture',
-        }),
+        })
+        .optional(),
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
     responsibleId: z.string().min(3),
@@ -22,15 +25,55 @@ export const DeliveryPartnerSchema = z.object({
             message: 'Le numéro de téléphone ne doit contenir que des chiffres',
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
+    country: z.string(),
     siege: z.string().min(3),
     zone: z.array(z.string()).min(1),
+    region: z.string().min(3),
     address: z.string().min(3),
-    associationType: z.string().min(3),
 })
 
+export type DeliveryPartnerType = {
+    logo: File | null
+    cover: File | null
+    companyName: string
+    companyType: string[]
+    responsibleId: string
+    solutions: string[]
+    phone: string
+    email: string
+    country: string
+    siege: string
+    region: string
+    zone: string[]
+    address: string
+    documents: File[]
+    deliveryCost: number
+    commission: number
+}
+
+export const emptyDeliveryPartner = {
+    logo: null,
+    cover: null,
+    companyName: '',
+    companyType: [],
+    responsibleId: '',
+    solutions: [],
+    phone: '',
+    email: '',
+    country: '',
+    siege: '',
+    zone: [],
+    address: '',
+    documents: [],
+    deliveryCost: 0,
+    commission: 0,
+}
+
+// export const importDeliveryData: PartnerPOST = (data: )
+
 export const defaultDeliveryPartnerData = {
-    logo: 'https://via.placeholder.com/120',
-    cover: 'https://via.placeholder.com/740x223',
+    logo: null,
+    cover: null,
     companyName: '',
     companyType: [],
     responsibleId: '',
@@ -40,12 +83,12 @@ export const defaultDeliveryPartnerData = {
     siege: '',
     zone: [],
     address: '',
-    associationType: '',
+    country: '',
 }
 
 export const DeliveryPartnerSolutionSchema = z.object({
     solutions: z.array(z.string()).min(1, 'selectionner au moins une solution'),
-    documents: z.array(z.string()).min(1, 'selectionner au moins un document'),
+    documents: z.instanceof(File).optional(),
     deliveryCost: z
         .number()
         .min(1, 'le cout de livraison doit etre superieur a 0'),
@@ -56,7 +99,7 @@ export const DeliveryPartnerSolutionSchema = z.object({
 
 export const defaultDeliveryPartnerSolutionData = {
     solutions: [],
-    documents: [],
+    documents: null,
     deliveryCost: 0,
     commission: 0,
 }

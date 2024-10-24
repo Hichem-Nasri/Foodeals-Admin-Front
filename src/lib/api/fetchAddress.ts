@@ -8,6 +8,31 @@ type AddressType = {
     region: MultiSelectOptionsType[]
 }
 
+export const getAllCities = async () => {
+    // TODO: handle exception
+    const resCity = await api
+        .get(API_CITIES)
+        .then((res) => res.data)
+        .then((data) => {
+            return data.map(
+                (city: {
+                    id: string
+                    name: string
+                }): MultiSelectOptionsType => {
+                    return {
+                        key: city.name,
+                        label: city.name,
+                        id: city.id,
+                    }
+                }
+            )
+        })
+        .catch((error) => {
+            throw new Error(error)
+        })
+    return resCity
+}
+
 export const getCountries = async () => {
     const resCountry = await api
         .get(API_COUNTRIES)

@@ -22,6 +22,7 @@ import { getCities, getCountries, getRegions } from '@/lib/api/fetchAddress'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import SelectManager from '@/components/utils/SelectManager'
 import { fetchActivities } from '@/lib/api/partner/fetchActivites'
+import FieldActivities from '@/components/utils/FieldActivities'
 
 interface FormPartnerInfoProps {
     form: UseFormReturn<z.infer<typeof PartnerInformationSchema>>
@@ -49,18 +50,14 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
         cityId: '',
         regionId: '',
     })
-    const [activity, setActivity] = useState<MultiSelectOptionsType[]>([])
     const [cities, setCities] = useState<MultiSelectOptionsType[]>([])
     const [regions, setRegions] = useState<MultiSelectOptionsType[]>([])
     const [country, setCountry] = useState<MultiSelectOptionsType[]>([])
     useEffect(() => {
         const fetchAddress = async () => {
-            const activities = await fetchActivities()
             const countries = await getCountries()
             console.log('Fetched countries:', countries)
             setCountry(countries)
-            console.log('Fetched activities:', activities)
-            setActivity(activities)
         }
         fetchAddress()
     }, [])
@@ -103,7 +100,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                 </AccordionTrigger>
                 <AccordionContent className="pt-7">
                     <Form {...form}>
-                        <form onSubmit={handleSubmit((e) => onSubmit(e))}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-[1.875rem]">
                                 <div className="flex relative gap-5 lg:pb-0 pb-14">
                                     <AvatarField
@@ -135,24 +132,11 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             placeholder="Nom de rasions sociale"
                                             disabled={disabled}
                                         />
-                                        <MultiSelectField
+                                        <FieldActivities
                                             control={control}
                                             name="companyType"
                                             label="Type"
-                                            options={activity}
-                                            disabled={disabled}
-                                            placeholder="Sélectionner"
-                                            len={2}
-                                            transform={(value) =>
-                                                value.map((item) => (
-                                                    <span
-                                                        key={item.key}
-                                                        className="text-[0.625rem] font-bold text-lynch-500 bg-lynch-200 px-3 py-[0.469rem] rounded-full"
-                                                    >
-                                                        {item.label}
-                                                    </span>
-                                                ))
-                                            }
+                                            disabled={disabled!}
                                         />
                                         <InputFieldForm
                                             control={control}
@@ -207,6 +191,8 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             disabled={disabled}
                                         />
                                         <SelectManager
+                                            name="managerId"
+                                            label="Manager"
                                             control={control}
                                             disabled={disabled}
                                         />

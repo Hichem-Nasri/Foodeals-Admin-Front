@@ -65,7 +65,6 @@ export const TopBar: FC<TopBarProps> = ({
 }) => {
     const [isDownloading, setIsDownloading] = useState(false)
     const notif = useNotification()
-    console.log('status', status)
     const handleOpenContract = async () => {
         try {
             const contractData = await getContract(id)

@@ -22,17 +22,15 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
     onChange,
 }) => {
     const [src, setSrc] = useState(iUrl)
-    const [file, setFile] = useState<File | null>(null)
-
-    useEffect(() => {
-        if (onChange) onChange(file) // Send the file to the parent component
-    }, [file, onChange])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.files && e.currentTarget.files.length > 0) {
             const selectedFile = e.currentTarget.files[0]
             setSrc(URL.createObjectURL(selectedFile))
-            setFile(selectedFile) // Store the file
+            if (onChange) onChange(selectedFile) // Send the file to the parent component
+        } else {
+            setSrc(iUrl)
+            if (onChange) onChange(null) // Send null to the parent component
         }
     }
 
@@ -58,7 +56,7 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                 />
                 <AvatarImage
                     src={src || '/emptyImage.svg'}
-                    className={`object-cover ${!src && 'w-1/2 m-auto'}`}
+                    className={`object-cover ${!src && 'w-[20%] m-auto'}`}
                 />
                 <AvatarFallback>{alt[0].toUpperCase()}</AvatarFallback>
             </Avatar>

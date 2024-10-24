@@ -33,6 +33,45 @@ export interface DeliveryType {
     solution: PartnerSolutionType[]
 }
 
+export const exportDeliveryData = (data: any) => {
+    const deliveryData: DeliveryType[] = data.map((delivery: any) => ({
+        id: delivery.id,
+        createdAt: new Date(delivery.createdAt),
+        partner: {
+            name: delivery.partnerInfoDto.name,
+            avatar: delivery.partnerInfoDto.avatar,
+        },
+        responsible: {
+            name:
+                delivery.responsibleInfoDto.name.firstName +
+                ' ' +
+                delivery.responsibleInfoDto.name.lastName,
+            avatar: delivery.responsibleInfoDto.avatar,
+        },
+        numberOfDeliveries: delivery.numberOfDeliveries,
+        commands: delivery.numberOfDeliveryPeople,
+        city: delivery.city,
+        phone: delivery.responsibleInfoDto.phone,
+        email: delivery.responsibleInfoDto.email,
+        solution: delivery.solutions.map((solutions: any) => {
+            switch (solutions) {
+                case 'pro_market':
+                    return PartnerSolutionType.MARKET_PRO
+                    break
+                case 'pro_donate':
+                    return PartnerSolutionType.DONATE_PRO
+                    break
+                case 'pro_dlc':
+                    return PartnerSolutionType.DLC_PRO
+                    break
+                default:
+                    return PartnerSolutionType.NONE
+            }
+        }),
+    }))
+    return deliveryData
+}
+
 const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()
 
 export const columnsDeliveriesTable = (router: AppRouterInstance) => [
@@ -153,7 +192,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                     },
                     {
                         actions: (id) =>
-                            AppRoutes.newDelivery.replace(':id', id),
+                            AppRoutes.newDelivery.replace(
+                                ':id',
+                                id + '?mode=edit'
+                            ),
                         icon: Pen,
                         label: 'Modifier',
                     },
@@ -213,7 +255,7 @@ export const deliveriesData: DeliveryType[] = [
         phone: '0123456789',
         responsible: {
             avatar: 'https://via.placeholder.com/150',
-            name: 'Test User',
+            name: 'Test User1',
         },
         solution: [PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
     },
@@ -231,7 +273,7 @@ export const deliveriesData: DeliveryType[] = [
         phone: '0123456789',
         responsible: {
             avatar: 'https://via.placeholder.com/150',
-            name: 'Test User',
+            name: 'Test User2',
         },
         solution: [
             PartnerSolutionType.DLC_PRO,

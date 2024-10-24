@@ -230,7 +230,9 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         maxNumberOfAccounts: partner.maxNumberOfAccounts,
         minimumReduction: partner.minimumReduction,
         contractId: '',
-        status: PartnerStatusType.PENDING,
+        status: partner.status
+            ? (partner.status as PartnerStatusType)
+            : PartnerStatusType.PENDING,
         logo: null,
         cover: null,
         paymentMethod: 'transfer',
@@ -238,6 +240,12 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         fileType: [],
     }
     return newPartner
+}
+
+export interface CityRegion {
+    country: string
+    city: string
+    regions: string[]
 }
 
 export interface PartnerPOST {
@@ -257,8 +265,9 @@ export interface PartnerPOST {
     commissionPayedBySubEntities: boolean
     oneSubscription: boolean
     solutionsContractDto: SolutionsContractDto[]
-    coveredZonesDtos: any[]
+    coveredZonesDtos: CityRegion[]
     deliveryPartnerContract: any[]
+    status: string
 }
 
 export const emptyPartnerPOST: PartnerPOST = {
@@ -297,6 +306,7 @@ export const emptyPartnerPOST: PartnerPOST = {
     solutionsContractDto: [],
     coveredZonesDtos: [],
     deliveryPartnerContract: [],
+    status: PartnerStatusType.PENDING,
 }
 
 export interface ContactDto {

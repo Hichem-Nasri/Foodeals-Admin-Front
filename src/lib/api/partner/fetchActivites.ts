@@ -13,7 +13,7 @@ export const fetchActivities = async () => {
 
         const data = response.content.map(
             (user: { id: string; name: string }) => ({
-                key: user.id,
+                key: user.name,
                 label: user.name,
             })
         )

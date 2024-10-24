@@ -210,14 +210,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                             {type == 'company' ? (
                                                 <AvatarAndName
                                                     avatar={option.avatar}
-                                                    name={
-                                                        region
-                                                            ? option.label
-                                                                  .split('-')
-                                                                  .slice(1)
-                                                                  .join(' ')
-                                                            : option.label
-                                                    }
+                                                    name={option.label}
                                                 />
                                             ) : (
                                                 <div
