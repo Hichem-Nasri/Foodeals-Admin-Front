@@ -30,7 +30,13 @@ import { FilterSelect } from '../utils/FilterSelect'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
 import { set } from 'date-fns'
-import { FilterData, emptyFilterData } from '@/types/CrmUtils'
+import {
+    FilterData,
+    emptyFilterData,
+    getDataFilter,
+    setMultiSelect,
+    setMultiSelectPerson,
+} from '@/types/CrmUtils'
 import {
     AddressType,
     CrmType,
@@ -44,71 +50,6 @@ interface FilterTableProspectsProps {
     table: import('@tanstack/table-core').Table<CrmType>
     columnFilters: ColumnFiltersState
     setColumnFilters: (value: ColumnFiltersState) => void
-}
-
-const setMultiSelectPerson = (value: ProfileType[]) => {
-    return Array.from(
-        new Set(
-            value.map(
-                (items) => items.name.firstName + ' ' + items.name.lastName
-            )
-        )
-    ).map((items) => ({
-        key: items,
-        label: items,
-        avatarPath: value.find(
-            (item) => item.name.firstName + ' ' + item.name.lastName === items
-        )?.avatarPath,
-    }))
-}
-
-const setMultiSelect = (value: string[]) => {
-    return Array.from(new Set(value)).map((items) => ({
-        key: items,
-        label: items,
-    }))
-}
-
-const getDataFilter = (data: CrmType[]) => {
-    const filterTable: CustomFilterType = {
-        date: Array.from(new Set(data.map((items) => items.createdAt))),
-        companyName: Array.from(
-            new Set(data.map((items) => items.companyName))
-        ),
-        category: Array.from(new Set(data.map((items) => items.category))),
-        creatorInfo: Array.from(
-            new Set(
-                data.map((item) =>
-                    JSON.stringify({
-                        name: {
-                            firstName: item.creatorInfo.name.firstName,
-                            lastName: item.creatorInfo.name.lastName,
-                        },
-                        avatarPath: item.creatorInfo.avatarPath,
-                    })
-                )
-            )
-        ).map((person) => JSON.parse(person)),
-        managerInfo: Array.from(
-            new Set(
-                data.map((item) =>
-                    JSON.stringify({
-                        name: {
-                            firstName: item.managerInfo.name.firstName,
-                            lastName: item.managerInfo.name.lastName,
-                        },
-                        avatarPath: item.managerInfo.avatarPath,
-                    })
-                )
-            )
-        ).map((person) => JSON.parse(person)),
-        status: Array.from(new Set(data.map((items) => items.status))),
-        city: Array.from(new Set(data.map((items) => items.address.city))),
-        country: Array.from(
-            new Set(data.map((items) => items.address.country))
-        ),
-    }
-    return filterTable
 }
 
 export const FilterTableProspects: FC<FilterTableProspectsProps> = ({

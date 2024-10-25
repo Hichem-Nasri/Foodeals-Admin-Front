@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 
 import {
     Accordion,
@@ -21,6 +21,10 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/Global-Type'
+import FieldActivities from '@/components/utils/FieldActivities'
+import FieldCountry from '@/components/utils/FieldCountry'
+import FieldCity from '@/components/utils/FieldCity'
+import FieldRegion from '@/components/utils/FieldRegion'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -35,36 +39,18 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
     onSubmit,
     countryCode,
     setCountryCode,
-    disabled,
+    disabled = false,
 }) => {
-    const { handleSubmit, control } = form
-    const Notif = useNotification()
-    const { data: companyTypeOptions } = useQuery({
-        queryKey: ['activities'],
-        queryFn: async () => {
-            try {
-                const res = await api
-                    .get('http://localhost:8080/Activities')
-                    .then((res) => res.data)
-                    .catch((error) => console.log(error))
-                console.log('done: ', res)
-                return Array.from(
-                    res.map((item: { id: string; name: string }) => {
-                        return {
-                            label: item.name,
-                            key: item.name,
-                        }
-                    })
-                )
-            } catch (error) {
-                Notif.notify(
-                    NotificationType.ERROR,
-                    'Failed to fetch Activities'
-                )
-                console.log(error)
-            }
-        },
+    const [address, setAddress] = useState<{
+        countryId: string
+        cityId: string
+        regionId: string
+    }>({
+        countryId: '',
+        cityId: '',
+        regionId: '',
     })
+    const { handleSubmit, control } = form
     return (
         <Accordion
             type="single"
@@ -92,29 +78,11 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             placeholder="Nom de rasions sociale"
                                             disabled={disabled}
                                         />
-                                        <MultiSelectField
+                                        <FieldActivities
                                             control={control}
                                             name="category"
                                             label="Catégorie"
-                                            options={
-                                                (companyTypeOptions as {
-                                                    key: string | number
-                                                    label: string
-                                                }[]) || []
-                                            }
                                             disabled={disabled}
-                                            className=""
-                                            placeholder="Sélectionner"
-                                            transform={(value) =>
-                                                value.map((item) => (
-                                                    <span
-                                                        key={item.key}
-                                                        className="text-[0.625rem] font-bold text-lynch-500 bg-lynch-200 px-3 py-[0.469rem] rounded-full"
-                                                    >
-                                                        {item.label}
-                                                    </span>
-                                                ))
-                                            }
                                         />
                                         <InputFieldForm
                                             control={control}
@@ -183,47 +151,50 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             placeholder="Nom du manager"
                                             disabled={disabled}
                                         />
-                                        <SelectField
+                                        <FieldCountry
                                             control={control}
                                             name="country"
                                             label="Pays"
-                                            options={[
-                                                {
-                                                    label: 'Morocco',
-                                                    key: 'Morocco',
-                                                },
-                                            ]}
-                                            className="[&_*_.avatar]:grid [&_*_.avatar]:size-8 [&_*_.avatar]:rounded-full [&_*_.avatar]:place-items-center [&_*_.avatar]:m-auto"
+                                            placeholder="Pays"
                                             disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    countryId: value,
+                                                }))
+                                            }}
                                         />
-                                        <SelectField
-                                            options={[
-                                                {
-                                                    label: 'Casablanca',
-                                                    key: 'Casablanca',
-                                                },
-                                            ]}
+                                        <FieldCity
                                             control={control}
                                             name="city"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    cityId: value,
+                                                }))
+                                            }}
                                         />
                                     </div>
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
-                                        <SelectField
-                                            options={[
-                                                {
-                                                    label: 'maarif',
-                                                    key: 'maarif',
-                                                },
-                                            ]}
-                                            className="col-span-1"
+                                        <FieldRegion
                                             control={control}
                                             name="region"
                                             label="Région"
                                             placeholder="Région"
                                             disabled={disabled}
+                                            country={address.countryId}
+                                            city={address.cityId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    regionId: value,
+                                                }))
+                                            }}
                                         />
                                         <InputFieldForm
                                             classNameParent="col-span-2"
@@ -235,7 +206,6 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             disabled={disabled}
                                         />
                                     </div>
-                                    {/* <IframeRenderer form={form} disabled={disabled} /> */}
                                 </div>
                             </div>
                         </form>

@@ -48,6 +48,7 @@ export default function Crm() {
         isSuccess,
         isLoading,
         error,
+        refetch,
     } = useQuery({
         queryKey: ['prospects', currentPage, pageSize],
         queryFn: async () => {
@@ -101,6 +102,14 @@ export default function Crm() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    useEffect(() => {
+        if (isSuccess) {
+            setTotalPages(query?.data.totalPages)
+        }
+        if (totalPages !== 0) {
+            refetch()
+        }
+    }, [currentPage, pageSize])
     if (error) return <div>Error: {error.message}</div>
     console.log(data)
 
@@ -151,8 +160,6 @@ export default function Crm() {
             </Link>
             <PaginationData
                 className="items-center"
-                setData={setData}
-                url={API_ENDPOINT}
                 setCurrentPage={setCurrentPage}
                 currentPage={currentPage}
                 totalPages={totalPages}

@@ -3,6 +3,7 @@ import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { PartnerStatusType } from './CrmType'
 import { PartnerSolutionType } from './partners'
 import { OptionStatus } from './utils'
+import { ProfileType, CrmType, CustomFilterType } from './Global-Type'
 
 export const extractData = (element: any) => {
     return {
@@ -42,6 +43,71 @@ export const extractData = (element: any) => {
                 ? element.event[0].object
                 : '',
     }
+}
+
+export const setMultiSelectPerson = (value: ProfileType[]) => {
+    return Array.from(
+        new Set(
+            value.map(
+                (items) => items.name.firstName + ' ' + items.name.lastName
+            )
+        )
+    ).map((items) => ({
+        key: items,
+        label: items,
+        avatarPath: value.find(
+            (item) => item.name.firstName + ' ' + item.name.lastName === items
+        )?.avatarPath,
+    }))
+}
+
+export const setMultiSelect = (value: string[]) => {
+    return Array.from(new Set(value)).map((items) => ({
+        key: items,
+        label: items,
+    }))
+}
+
+export const getDataFilter = (data: CrmType[]) => {
+    const filterTable: CustomFilterType = {
+        date: Array.from(new Set(data.map((items) => items.createdAt))),
+        companyName: Array.from(
+            new Set(data.map((items) => items.companyName))
+        ),
+        category: Array.from(new Set(data.map((items) => items.category))),
+        creatorInfo: Array.from(
+            new Set(
+                data.map((item) =>
+                    JSON.stringify({
+                        name: {
+                            firstName: item.creatorInfo.name.firstName,
+                            lastName: item.creatorInfo.name.lastName,
+                        },
+                        avatarPath: item.creatorInfo.avatarPath,
+                    })
+                )
+            )
+        ).map((person) => JSON.parse(person)),
+        managerInfo: Array.from(
+            new Set(
+                data.map((item) =>
+                    JSON.stringify({
+                        name: {
+                            firstName: item.managerInfo.name.firstName,
+                            lastName: item.managerInfo.name.lastName,
+                        },
+                        avatarPath: item.managerInfo.avatarPath,
+                    })
+                )
+            )
+        ).map((person) => JSON.parse(person)),
+        status: Array.from(new Set(data.map((items) => items.status))),
+        city: Array.from(new Set(data.map((items) => items.address.city))),
+        country: Array.from(
+            new Set(data.map((items) => items.address.country))
+        ),
+    }
+    return filterTable
 }
 
 export interface FilterData {
