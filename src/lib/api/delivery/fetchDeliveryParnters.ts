@@ -1,7 +1,12 @@
 import api from '@/api/Auth'
 import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
+import { getSolutions } from '@/lib/utils'
 import { DeliveryType, exportDeliveryData } from '@/types/deliveries'
-import { DeliveryPartnerType } from '@/types/DeliverySchema'
+import {
+    defaultDeliveryPartnerData,
+    DeliveryPartnerType,
+    emptyDeliveryPartner,
+} from '@/types/DeliverySchema'
 import {
     exportAllPartnerGET,
     PartnerGET,
@@ -62,16 +67,24 @@ export const getDelivery = async (id: string) => {
                 cover: null,
                 companyName: data.entityName,
                 companyType: data.activities || [],
-                solutions: data.solutions,
+                solutions: getSolutions(data.solutions),
                 documents: [],
-                deliveryCost: 0,
-                commission: 0,
+                deliveryCost:
+                    (data.solutionsContractDto.length > 0 &&
+                        data.solutionsContractDto.at(0)?.contractCommissionDto
+                            .deliveryAmount) ||
+                    0,
+                commission:
+                    (data.solutionsContractDto.length > 0 &&
+                        data.solutionsContractDto.at(0)?.contractCommissionDto
+                            .deliveryCommission) ||
+                    0,
             }
             console.log('hello:', deliveryData)
             return deliveryData
         }
     } catch (e) {
         console.log(e)
-        return null
+        return emptyDeliveryPartner
     }
 }

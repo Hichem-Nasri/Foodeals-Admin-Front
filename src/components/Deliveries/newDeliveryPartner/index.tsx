@@ -14,6 +14,7 @@ import {
     DeliveryPartnerSchemaType,
     DeliveryPartnerSolutionSchema,
     DeliveryPartnerType,
+    emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
 import { FormSolution } from './FormSolution'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
@@ -27,6 +28,7 @@ import {
     PartnerPOST,
 } from '@/types/partenairUtils'
 import { useSearchParams } from 'next/navigation'
+import validateContract from '@/lib/api/partner/validateContract'
 
 interface NewDeliveryProps {
     partnerDetails: DeliveryPartnerType
@@ -61,14 +63,17 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
 }) => {
     const [deliveryId, setDeliveryId] = useState(id === 'new' ? '' : id)
     const [deliveryPartnerData, setDeliveryPartnerData] =
-        useState<DeliveryPartnerType>(partnerDetails)
+        useState<DeliveryPartnerType>(partnerDetails || emptyDeliveryPartner)
     const [data, setData] = useState<PartnerPOST>(emptyPartnerPOST)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [readOnly, setReadOnly] = useState<boolean>(deliveryId !== '')
     const searchParams = useSearchParams()
     const [saved, setSaved] = useState(false)
     const notif = useNotification()
-
+    const [status, setStatus] = useState<PartnerStatusType>(
+        deliveryId == '' ? PartnerStatusType.DRAFT : PartnerStatusType.PENDING
+    )
+    console.log(deliveryId)
     useEffect(() => {
         const mode = searchParams.get('mode') // Access the mode from searchParams
         if (mode === 'edit') {
@@ -80,7 +85,18 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         mode: 'onBlur',
         defaultValues: {
             ...deliveryPartnerData,
-            documents: [] as File[],
+            logo: undefined,
+            cover: undefined,
+        },
+    })
+    const DeliveryPartnerSolution = useForm<
+        z.infer<typeof DeliveryPartnerSolutionSchema>
+    >({
+        resolver: zodResolver(DeliveryPartnerSolutionSchema),
+        mode: 'onBlur',
+        defaultValues: {
+            ...deliveryPartnerData,
+            documents: undefined,
         },
     })
     const mutation = useMutation({
@@ -131,16 +147,6 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         },
     })
 
-    const DeliveryPartnerSolution = useForm<
-        z.infer<typeof DeliveryPartnerSolutionSchema>
-    >({
-        resolver: zodResolver(DeliveryPartnerSolutionSchema),
-        mode: 'onBlur',
-        defaultValues:
-            deliveryPartnerData || defaultDeliveryPartnerSolutionData,
-    })
-    const { handleSubmit } = deliveryPartner
-
     const onSubmitPartnerInfo = (
         data: z.infer<typeof DeliveryPartnerSchema>
     ) => {
@@ -150,8 +156,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             setDeliveryPartnerData((prev: DeliveryPartnerType) => {
                 return {
                     ...prev,
-                    logo: data.logo,
-                    cover: data.cover,
+                    logo: data.logo!,
+                    cover: data.cover!,
                 }
             })
         }
@@ -194,6 +200,14 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         data: z.infer<typeof DeliveryPartnerSolutionSchema>
     ) => {
         console.log('partnerSolution: ', data)
+        if (data.documents) {
+            setDeliveryPartnerData((prev) => {
+                return {
+                    ...prev,
+                    documents: data.documents!,
+                }
+            })
+        }
         const mySolution = data.solutions
             .map((solution) => {
                 if (solution === 'DONATE_PRO') return 'pro_donate'
@@ -213,12 +227,29 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         }))
     }
 
-    const onSubmit = () => {
-        onSubmitPartnerInfo(deliveryPartner.getValues())
-        onSubmitEngagement(DeliveryPartnerSolution.getValues())
+    const onSubmit = async () => {
+        const document = DeliveryPartnerSolution.getValues('documents')?.filter(
+            (docs) => docs !== undefined
+        )
+        if (!document) {
+            notif.notify(NotificationType.ERROR, "importer d'abord le contrat")
+            return
+        }
+        console.log(document)
+        const res = await validateContract(deliveryId, document)
+        if (res.status === 200) {
+            notif.notify(NotificationType.SUCCESS, 'Contract validated')
+            setStatus(PartnerStatusType.VALIDATED)
+        } else {
+            notif.notify(NotificationType.ERROR, 'Failed to validate contract')
+        }
     }
 
-    const onSaveData = async () => {
+    const onSaveData = async (modify?: boolean) => {
+        if (modify === true) {
+            setStatus(PartnerStatusType.PENDING)
+            return
+        }
         console.log('Save data')
         console.log(
             deliveryPartner.getValues(),
@@ -265,12 +296,13 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
-                id={''}
+                id={deliveryId}
                 primaryButtonDisabled={deliveryId === '' || readOnly}
                 secondaryButtonDisabled={readOnly}
                 onSaveData={onSaveData}
                 onSubmit={onSubmit}
-                status={PartnerStatusType.DRAFT}
+                status={status}
+                hideStatus={true}
             />
             <div className="flex flex-col gap-[1.875rem] h-full w-full">
                 <FormDeliveryPartner

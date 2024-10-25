@@ -76,6 +76,9 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                         <div className="flex gap-3 items-center">
                                                             <div className="flex items-center my-auto h-full gap-2">
                                                                 <Checkbox
+                                                                    disabled={
+                                                                        disabled
+                                                                    }
                                                                     name={
                                                                         PartnerSolutionType.MARKET_PRO
                                                                     }
@@ -119,6 +122,9 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                             </div>
                                                             <div className="flex items-center my-auto h-full gap-2">
                                                                 <Checkbox
+                                                                    disabled={
+                                                                        disabled
+                                                                    }
                                                                     name={
                                                                         PartnerSolutionType.DONATE_PRO
                                                                     }

@@ -222,6 +222,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             name="zone"
                                             placeholder="Sélectionnez"
                                             className="col-span-1"
+                                            disabled={disabled}
                                         />
                                         {disabled && (
                                             <CustomButton

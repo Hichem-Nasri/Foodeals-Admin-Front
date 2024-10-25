@@ -266,8 +266,14 @@ export interface PartnerPOST {
     oneSubscription: boolean
     solutionsContractDto: SolutionsContractDto[]
     coveredZonesDtos: CityRegion[]
-    deliveryPartnerContract: any[]
+    deliveryPartnerContract: deliveryPartnerContract[]
     status: string
+}
+
+export interface deliveryPartnerContract {
+    solution: string
+    amount: number
+    commission: number
 }
 
 export const emptyPartnerPOST: PartnerPOST = {
@@ -343,6 +349,8 @@ export interface SolutionsContractDto {
 export interface ContractCommissionDto {
     withCard: number
     withCash: number
+    deliveryAmount?: number
+    deliveryCommission?: number
 }
 
 export interface ContractSubscriptionDto {
