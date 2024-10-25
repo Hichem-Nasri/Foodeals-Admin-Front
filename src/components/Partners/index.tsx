@@ -1,6 +1,6 @@
 'use client'
 import { columnsPartnersTable, PartnerType } from '@/types/partners'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FilterAndCreatePartners } from './FilterAndCreatePartners'
 
 import {
@@ -20,11 +20,19 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
 import api from '@/api/Auth'
+import { API_PARTNERS } from '@/lib/api_url'
+import { fetchPartners } from '@/lib/api/partner/fetchPartners'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/Global-Type'
+import { set } from 'date-fns'
 // import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
 
-const API_ENDPOINT = 'localhost:8080/api/v1/organizations/partners'
 interface PartnersProps {
     partners: PartnerType[]
+    params?: {
+        id: string
+        query: string
+    }
 }
 
 export interface TableRowType {
@@ -32,35 +40,35 @@ export interface TableRowType {
     label: string
 }
 
-export const Partners: FC<PartnersProps> = ({ partners }) => {
-    const [partnersData, setPartnersData] = useState<PartnerType[]>(partners)
+export const Partners: FC<PartnersProps> = ({ params }) => {
+    console.log('query: ', params)
+    const [archive, setArchive] = React.useState(false)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [partners, setPartners] = useState<PartnerType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const notify = useNotification()
     const router = useRouter()
-    const { data, error, isLoading } = useQuery({
+    const { error, isLoading, refetch } = useQuery({
         queryKey: ['partners', currentPage, pageSize],
         queryFn: async () => {
             try {
-                const res = await api
-                    .get(
-                        `http://${API_ENDPOINT}?page=${currentPage}&size=${pageSize}`
-                    )
-                    .then((res) => res.data)
-                    .catch((err) => {
-                        throw new Error(err)
-                    })
-                console.log('res: ', res)
-                return exportAllPartnerGET(res.content as PartnerGET[])
+                const data = await fetchPartners(currentPage, pageSize)
+                if (data.status === 500)
+                    throw new Error('Error fetching partners')
+                setPartners(data.data)
+                return data.data
             } catch (error) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
                 console.log(error)
+                setPartners([])
             }
         },
     })
 
     const table = useReactTable({
-        data: data || [],
+        data: partners || [],
         columns: columnsPartnersTable(router),
         state: {
             columnFilters,
@@ -71,23 +79,60 @@ export const Partners: FC<PartnersProps> = ({ partners }) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    useEffect(() => {
+        if (archive) {
+            const fetchArchive = async () => {
+                try {
+                    const response = await api
+                        .get(
+                            `${API_PARTNERS}/deleted?page=0&size=20&sort=deletedAt,desc`
+                        )
+                        .then((res) => res.data)
+                        .catch((error) => {
+                            throw new Error(error)
+                        })
+                    const data = exportAllPartnerGET(response.content)
+                    setPartners(data)
+                } catch (error) {
+                    notify.notify(
+                        NotificationType.ERROR,
+                        'Error fetching partners'
+                    )
+                    setPartners([])
+                    console.log(error)
+                }
+            }
+            fetchArchive()
+        } else {
+            refetch()
+        }
+    }, [archive])
     if (isLoading) return <div>Loading...</div>
-    console.log('data', data)
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
                 table={table}
-                partners={data!}
+                partners={partners!}
                 setColumnFilters={setColumnFilters}
+                setArchive={setArchive}
+                archive={archive}
             />
+
             <DataTable
-                data={data!}
+                data={partners!}
                 table={table}
                 title="Listes des partenaires"
                 transform={(value) => (
                     <PartnerCard partner={value} key={value.id} />
                 )}
             />
+            {archive && partners.length === 0 ? (
+                <div className="flex flex-col items-center gap-4">
+                    <h2 className="text-lg font-semibold text-lynch-950">
+                        Aucun partenaire archivé
+                    </h2>
+                </div>
+            ) : null}
             {/* <PaginationData /> */}
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton

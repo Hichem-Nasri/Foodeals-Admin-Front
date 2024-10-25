@@ -34,6 +34,7 @@ interface TopBarProps {
     onSaveData: (modify?: boolean) => void
     onSubmit: () => void
     id: string
+    hideStatus?: boolean
 }
 
 const Whatsapp = () => (
@@ -62,6 +63,7 @@ export const TopBar: FC<TopBarProps> = ({
     secondaryButtonDisabled,
     onSubmit,
     id,
+    hideStatus = false,
 }) => {
     const [isDownloading, setIsDownloading] = useState(false)
     const notif = useNotification()
@@ -114,6 +116,7 @@ export const TopBar: FC<TopBarProps> = ({
     ]
     const handleGenerateContract = async () => {
         try {
+            console.log(id, 'contract')
             const contractData = await getContract(id)
             const url = window.URL.createObjectURL(contractData)
 
@@ -132,7 +135,7 @@ export const TopBar: FC<TopBarProps> = ({
 
     return (
         <div className="flex lg:relative fixed bottom-0 left-0 z-30 justify-between w-full rounded-[18px] lg:bg-white">
-            {status && (
+            {!hideStatus && status && (
                 <div className="lg:flex items-center hidden gap-3 p-[1.125rem]">
                     <PartnerStatus status={status} />
                 </div>
