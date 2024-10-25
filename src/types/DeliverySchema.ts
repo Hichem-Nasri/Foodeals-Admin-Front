@@ -49,6 +49,7 @@ export type DeliveryPartnerType = {
     documents: File[]
     deliveryCost: number
     commission: number
+    status?: string
 }
 
 export const emptyDeliveryPartner = {
@@ -88,7 +89,7 @@ export const defaultDeliveryPartnerData = {
 
 export const DeliveryPartnerSolutionSchema = z.object({
     solutions: z.array(z.string()).min(1, 'selectionner au moins une solution'),
-    documents: z.instanceof(File).optional(),
+    documents: z.array(z.instanceof(File).optional()).optional(),
     deliveryCost: z
         .number()
         .min(1, 'le cout de livraison doit etre superieur a 0'),

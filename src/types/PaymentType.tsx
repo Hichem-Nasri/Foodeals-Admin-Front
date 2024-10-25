@@ -13,6 +13,13 @@ import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { AvatarAndName } from '@/components/AvatarAndName'
 import { Drawer, DrawerTrigger } from '@/components/ui/drawer'
 import { CustomButton } from '@/components/custom/CustomButton'
+import {
+    PartnerType,
+    PaymentCommision,
+    PaymentStatusEnum,
+} from './paymentUtils'
+import SubAccount from '@/app/partenaires/partenair/sub-account/[id]/SubAccount'
+import App from 'next/app'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
@@ -611,84 +618,158 @@ export const defaultDataCommissionSSTable: partnerCommissionSSType[] = [
     },
 ]
 
-const columnHelperCommission = createColumnHelper<partnerCommissionType>()
+const columnHelperCommission = createColumnHelper<PaymentCommision>()
 
-export const columnsCommissionTable = (router: AppRouterInstance) => [
+export const columnsCommissionTable = (
+    router: AppRouterInstance,
+    setPartener: (id: string) => void,
+    SubAccount: boolean
+) => [
     columnHelperCommission.accessor('ref', {
         cell: (info) => info.getValue(),
         header: 'Réf',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('type', {
-        cell: (info) => info.getValue(),
+    columnHelperCommission.accessor('partnerType', {
+        cell: (info) => {
+            return (
+                <div>
+                    {info.getValue() == PartnerType.SUB_ENTITY
+                        ? 'sous compte'
+                        : 'Principal'}
+                </div>
+            )
+        },
         header: 'Type',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('magasin', {
+    columnHelperCommission.accessor('partnerInfoDto', {
         cell: (info) => {
             return (
                 <AvatarAndName
                     className="flex items-center gap-1 text-nowrap"
                     name={info.getValue().name}
-                    avatar={info.getValue().avatar}
+                    avatar={info.getValue().avatarPath}
                 />
             )
         },
         header: 'Magasin',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('date', {
-        cell: (info) => info.getValue().toLocaleDateString(),
-        header: 'Date',
-        footer: (info) => info.column.id,
-    }),
-    columnHelperCommission.accessor('totalVente', {
+    columnHelperCommission.accessor('totalAmount', {
         cell: (info) => info.getValue(),
         header: 'Vente totale',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('commission', {
+    columnHelperCommission.accessor('foodealsCommission', {
         cell: (info) => info.getValue(),
         header: 'Commission',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('toPaid', {
+    columnHelperCommission.accessor('toPay', {
         cell: (info) => {
-            return <span className={''}>{info.getValue()}</span>
+            return (
+                <span className={''}>
+                    {info.getValue() > 0 ? info.getValue() : 'N/A'}
+                </span>
+            )
         },
         header: 'A payer',
         footer: (info) => info.column.id,
     }),
     columnHelperCommission.accessor('toReceive', {
         cell: (info) => {
-            return <span className={''}>{info.getValue()}</span>
+            return (
+                <span className={''}>
+                    {info.getValue() > 0 ? info.getValue() : 'N/A'}
+                </span>
+            )
         },
         header: 'A recevoir',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('validation', {
-        cell: (info) => (
-            <PaymentValidation
-                id={info.getValue()}
-                label={'Confirmer'}
-                disabled={false}
-            />
-        ),
+    columnHelperCommission.accessor('payable', {
+        cell: () => null,
+        header: '',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('entityId', {
+        cell: () => null,
+        header: '',
+        footer: (info) => info.column.id,
+    }),
+    columnHelperCommission.accessor('paymentStatus', {
+        cell: (info) => {
+            const payable = info.row.getValue('payable')
+            const type = info.row.getValue('partnerType')
+            if (!payable) {
+                return (
+                    <CustomButton
+                        label={
+                            'Paid by ' + type == PartnerType.SUB_ENTITY
+                                ? 'Sub'
+                                : 'Pri'
+                        }
+                        disabled
+                        className="rounded-[12px] disabled:bg-lynch-400 disabled:text-white"
+                    />
+                )
+            } else {
+                const status = info.row.getValue(
+                    'paymentStatus'
+                ) as PaymentStatusEnum
+                const paid = info.row.getValue('toPay') == 0
+                if (paid) {
+                    // VALIDATED_BY_BOTH or VALIDATED_BY_PARTNER or IN_VALID
+                    return (
+                        <ConfirmPayment
+                            id={info.getValue()}
+                            label={
+                                status == PaymentStatusEnum.VALIDATED_BY_BOTH
+                                    ? 'Paid'
+                                    : 'Confirmer'
+                            }
+                            disabled={[
+                                PaymentStatusEnum.IN_VALID,
+                                PaymentStatusEnum.VALIDATED_BY_BOTH,
+                            ].includes(status as PaymentStatusEnum)}
+                        />
+                    )
+                } else {
+                    return (
+                        <PaymentValidation
+                            className="min-w-full"
+                            id={info.getValue()}
+                            label={
+                                status == PaymentStatusEnum.IN_VALID
+                                    ? 'Payé'
+                                    : 'Paid'
+                            }
+                            disabled={[
+                                PaymentStatusEnum.VALIDATED_BY_FOODEALS,
+                                PaymentStatusEnum.VALIDATED_BY_BOTH,
+                            ].includes(status as PaymentStatusEnum)}
+                        />
+                    )
+                }
+            }
+        },
         header: 'Validation',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('id', {
+    columnHelperCommission.accessor('oraganizationId', {
         cell: (info) => (
             <div
                 title="Voir"
-                onClick={() =>
-                    router.push(
-                        AppRoutes.PBCommissionDetails.replace(
-                            ':id',
-                            info.getValue()
+                onClick={() => {
+                    if (SubAccount) {
+                        const id = info.row.getValue('entityId') as string
+                        console.log('redirect to sub account', id)
+                        router.push(
+                            AppRoutes.SubStoreCommission.replace(':id', id)
                         )
-                    )
-                }
+                    } else setPartener(info.getValue())
+                }}
                 className="flex items-center justify-center"
             >
                 <div
@@ -703,57 +784,63 @@ export const columnsCommissionTable = (router: AppRouterInstance) => [
     }),
 ]
 
-export const defaultDataCommissionTable: partnerCommissionType[] = [
+export const defaultDataCommissionTable: PaymentCommision[] = [
     {
-        id: '1',
-        ref: '1',
-        type: 'Type',
-        magasin: {
-            id: '1',
-            name: 'Nom du magasin',
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        id: '4',
+        ref: '4',
+        partnerType: PartnerType.SUB_ENTITY,
+        partnerInfoDto: {
+            name: 'Partner 4',
+            avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner4',
         },
-        date: new Date(),
-        totalVente: 1000,
-        commission: 1000,
-        toPaid: 1000,
-        toReceive: 1000,
-        typeCommission: 'paid',
-        validation: PaymentStatusType.PENDING,
+        totalAmount: 4000,
+        foodealsCommission: 400,
+        toPay: 3600,
+        toReceive: 0,
+        payable: true,
+        paymentStatus: PaymentStatusEnum.IN_VALID,
+        commissionPayedBySubEntities: false,
+        date: '2021-09-01',
+        entityId: '4',
+        oraganizationId: '4',
     },
     {
-        id: '2',
-        ref: '2',
-        type: 'Type',
-        magasin: {
-            id: '2',
-            name: 'Nom du magasin',
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        id: '5',
+        ref: '5',
+        entityId: '5',
+        oraganizationId: '5',
+        date: '2021-09-01',
+        partnerType: PartnerType.NORMAL_PARTNER,
+        partnerInfoDto: {
+            name: 'Partner 5',
+            avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner5',
         },
-        date: new Date(),
-        totalVente: 1000,
-        commission: 1000,
-        toPaid: 1000,
-        toReceive: 1000,
-        typeCommission: 'receive',
-        validation: PaymentStatusType.PENDING,
+        totalAmount: 5000,
+        foodealsCommission: 500,
+        toPay: 0,
+        toReceive: 540,
+        payable: true,
+        paymentStatus: PaymentStatusEnum.VALIDATED_BY_PARTNER,
+        commissionPayedBySubEntities: false,
     },
     {
-        id: '3',
-        ref: '3',
-        type: 'Type',
-        magasin: {
-            id: '3',
-            name: 'Nom du magasin',
-            avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+        id: '6',
+        ref: '6',
+        partnerType: PartnerType.SUB_ENTITY,
+        partnerInfoDto: {
+            name: 'Partner 6',
+            avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner6',
         },
-        date: new Date(),
-        totalVente: 1000,
-        commission: 1000,
-        toPaid: 1000,
-        toReceive: 1000,
-        typeCommission: 'paid',
-        validation: PaymentStatusType.CANCELED,
+        totalAmount: 6000,
+        foodealsCommission: 600,
+        toPay: 5400,
+        toReceive: 0,
+        payable: true,
+        paymentStatus: PaymentStatusEnum.VALIDATED_BY_BOTH,
+        commissionPayedBySubEntities: true,
+        date: '2021-09-01',
+        entityId: '6',
+        oraganizationId: '6',
     },
 ]
 

@@ -2,6 +2,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import SwitchToggle from '../ui/SwitchToggle'
+import { AppRoutes } from '@/lib/routes'
 
 function SwitchPayment() {
     const router = useRouter()
@@ -20,9 +21,9 @@ function SwitchPayment() {
         if (type === switchToggle) return
         setSwitchToggle(type)
         if (type === 'Partenaire business') {
-            router.push('/payment/partenaire-business')
+            router.push(AppRoutes.businessPartner)
         } else {
-            router.push('/payment/partenaire-livraison')
+            router.push(AppRoutes.deliveryPayment)
         }
     }
     return (
