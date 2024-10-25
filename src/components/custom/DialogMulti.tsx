@@ -19,7 +19,7 @@ import { getAllCities, getRegions } from '@/lib/api/fetchAddress'
 interface DialogMultiProps {
     setValue: React.Dispatch<React.SetStateAction<string>>
     onChange: React.Dispatch<React.SetStateAction<string[]>>
-    value: string
+    value: string[]
     transform?: ((value: MultiSelectOptionsType[]) => Element[]) | undefined
     disabled?: boolean
     placeholder?: string
@@ -37,18 +37,6 @@ const getMultiSelectOption = (option: string) => {
     }
 }
 
-const dataToMultiOptions = (selectedCity: string[], data: any) => {
-    const Options: MultiSelectOptionsType[] = []
-    Object.keys(data)
-        .filter((city) => selectedCity?.includes(city))
-        .map((city) =>
-            data[city].map((region: string) => {
-                Options.push(getMultiSelectOption(city + '-' + region))
-            })
-        )
-    return Options
-}
-
 const DialogMulti: FC<DialogMultiProps> = ({
     setValue,
     onChange,
@@ -57,40 +45,41 @@ const DialogMulti: FC<DialogMultiProps> = ({
     placeholder,
     disabled = false,
 }) => {
-    const data: Record<string, string[]> = {
-        CaseBlanca: [
-            'ain diab',
-            'anfa',
-            'bouskoura',
-            'bouskoura golf city',
-            'californie',
-            'casablanca',
-            'centre ville',
-            'dar bouazza',
-            'gauthier',
-            'hay hassani',
-            'hay riad',
-            'maarif',
-            'mohammedia',
-            'ouled saleh',
-        ],
-        rabat: [
-            'agdal',
-            'ain aouda',
-            'ain el aouda',
-            'akreuch',
-            'al irfane',
-            'al manal',
-        ],
-        fes: [
-            'agdal',
-            'ain aouda',
-            'ain el aouda',
-            'akreuch',
-            'al irfane',
-            'al manal',
-        ],
-    }
+    console.log(value)
+    // const data: Record<string, string[]> = {
+    //     CaseBlanca: [
+    //         'ain diab',
+    //         'anfa',
+    //         'bouskoura',
+    //         'bouskoura golf city',
+    //         'californie',
+    //         'casablanca',
+    //         'centre ville',
+    //         'dar bouazza',
+    //         'gauthier',
+    //         'hay hassani',
+    //         'hay riad',
+    //         'maarif',
+    //         'mohammedia',
+    //         'ouled saleh',
+    //     ],
+    //     rabat: [
+    //         'agdal',
+    //         'ain aouda',
+    //         'ain el aouda',
+    //         'akreuch',
+    //         'al irfane',
+    //         'al manal',
+    //     ],
+    //     fes: [
+    //         'agdal',
+    //         'ain aouda',
+    //         'ain el aouda',
+    //         'akreuch',
+    //         'al irfane',
+    //         'al manal',
+    //     ],
+    // }
     const [myData, setData] = useState<ZoneType[]>([])
     useEffect(() => {
         const fetchCities = async () => {
@@ -112,8 +101,11 @@ const DialogMulti: FC<DialogMultiProps> = ({
         }
         fetchCities()
     }, [])
-    const [selectedCity, setSelectedCity] = useState<string[] | null>(null)
-    const [selectedRegion, setSelectedRegion] = useState<string[]>([])
+    const [selectedCity, setSelectedCity] = useState<string[] | null>(() => {
+        if (!value) return null
+        return value.map((item) => item.split('-')[0])
+    })
+    const [selectedRegion, setSelectedRegion] = useState<string[]>(value)
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const [open, setOpen] = useState(false)
     useEffect(() => {
@@ -138,6 +130,7 @@ const DialogMulti: FC<DialogMultiProps> = ({
                     // options?.find((option) => option.key == value)?.label
                     value ? 'border-textGray' : ''
                 } `}
+                disabled={disabled}
             >
                 {selectedRegion.length > 1 ? (
                     <span className="text-base text-start font-normal line-clamp-1 ">

@@ -12,6 +12,7 @@ import { AvatarImage } from '@radix-ui/react-avatar'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { Input } from './Input'
 import { Search, SearchCheck } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface SelectProps {
     onChange: (value: string) => void
@@ -24,6 +25,7 @@ interface SelectProps {
     search?: boolean
     onChangeSearch?: (value: string) => void
     inputRef?: React.RefObject<HTMLInputElement>
+    className?: string
 }
 
 export const Select: FC<SelectProps> = ({
@@ -36,15 +38,21 @@ export const Select: FC<SelectProps> = ({
     label,
     search,
     onChangeSearch,
+    className,
     inputRef,
 }) => {
-    const avatar = options?.find((option) => option.key === value)?.avatar
+    const avatar = options?.find(
+        (option) => option.key.toString() === value
+    )?.avatar
 
     return (
         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
             <Label
                 label={label}
-                className="text-sm font-semibold text-lynch-950"
+                className={cn(
+                    'text-sm font-semibold text-lynch-950',
+                    className
+                )}
             />
             <SelectShadCn
                 disabled={(options && options.length === 0) || disabled}
@@ -79,37 +87,26 @@ export const Select: FC<SelectProps> = ({
                                 avatar ? ' justify-start gap-2' : ''
                             }`}
                         >
-                            {avatar && (
-                                <Avatar>
-                                    <AvatarImage
-                                        className="avatar"
-                                        src={avatar}
-                                        alt={
-                                            options?.find(
-                                                (option) =>
-                                                    option.key.toString() ===
-                                                    value.toString()
-                                            )?.label
-                                        }
-                                    />
-                                    <AvatarFallback>
-                                        {
-                                            options?.find(
-                                                (option) =>
-                                                    option.key.toString() ===
-                                                    value.toString()
-                                            )?.label
-                                        }
-                                    </AvatarFallback>
-                                </Avatar>
+                            {avatar ? (
+                                <AvatarAndName
+                                    name={
+                                        options?.find(
+                                            (option) =>
+                                                option.key.toString() ===
+                                                value.toString()
+                                        )?.label!
+                                    }
+                                    avatar={avatar}
+                                />
+                            ) : options?.length ? (
+                                options?.find(
+                                    (option) =>
+                                        option.key.toString() ===
+                                        value.toString()
+                                )?.label
+                            ) : (
+                                value
                             )}
-                            {options?.length
-                                ? options?.find(
-                                      (option) =>
-                                          option.key.toString() ===
-                                          value.toString()
-                                  )?.label
-                                : value}
                         </div>
                     )}
                 </SelectTrigger>

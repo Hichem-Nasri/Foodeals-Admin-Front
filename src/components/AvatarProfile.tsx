@@ -58,7 +58,7 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                     src={src || '/emptyImage.svg'}
                     className={`object-cover ${!src && 'w-[20%] m-auto'}`}
                 />
-                <AvatarFallback>{alt[0].toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{alt && alt[0].toUpperCase()}</AvatarFallback>
             </Avatar>
         </div>
     )

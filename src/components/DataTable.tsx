@@ -93,64 +93,67 @@ export const DataTable: FC<DataTableProps<any>> = ({
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) =>
-                                        hideColumns?.includes(header.id) ? (
-                                            <></>
-                                        ) : (
-                                            <TableHead
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                className={cn(
-                                                    'cursor-pointer min-w-40',
-                                                    header.column.id ===
-                                                        'createdAt' ||
+                                    {headerGroup.headers.map(
+                                        (header) =>
+                                            !hideColumns?.includes(
+                                                header.id
+                                            ) && (
+                                                <TableHead
+                                                    key={header.id}
+                                                    onClick={header.column.getToggleSortingHandler()}
+                                                    className={cn(
+                                                        'cursor-pointer min-w-40',
                                                         header.column.id ===
-                                                            'date'
-                                                        ? 'min-w-48'
-                                                        : header.column.id ===
-                                                          'logo'
-                                                        ? 'min-w-28'
-                                                        : header.id === 'id'
-                                                        ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
-                                                        : '',
-                                                    header.column.id ===
-                                                        'email' ||
+                                                            'createdAt' ||
+                                                            header.column.id ===
+                                                                'date'
+                                                            ? 'min-w-48'
+                                                            : header.column
+                                                                  .id === 'logo'
+                                                            ? 'min-w-28'
+                                                            : header.id === 'id'
+                                                            ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
+                                                            : '',
                                                         header.column.id ===
-                                                            'phone'
-                                                        ? 'min-w-60'
-                                                        : ''
-                                                )}
-                                            >
-                                                <div className="flex justify-between items-center w-full">
-                                                    {header.isPlaceholder
-                                                        ? null
-                                                        : flexRender(
-                                                              header.column
-                                                                  .columnDef
-                                                                  .header,
-                                                              header.getContext()
-                                                          )}
-                                                    {(header.id !== 'id' &&
-                                                        {
-                                                            asc: <ChevronUp />,
-                                                            desc: (
-                                                                <ChevronDown />
-                                                            ),
-                                                        }[
-                                                            header.column.getIsSorted() as string
-                                                        ]) ?? (
-                                                        <ChevronsUpDown />
+                                                            'email' ||
+                                                            header.column.id ===
+                                                                'phone'
+                                                            ? 'min-w-60'
+                                                            : ''
                                                     )}
-                                                </div>
-                                            </TableHead>
-                                        )
+                                                >
+                                                    <div className="flex justify-between items-center w-full">
+                                                        {header.isPlaceholder
+                                                            ? null
+                                                            : flexRender(
+                                                                  header.column
+                                                                      .columnDef
+                                                                      .header,
+                                                                  header.getContext()
+                                                              )}
+                                                        {(header.id !== 'id' &&
+                                                            {
+                                                                asc: (
+                                                                    <ChevronUp />
+                                                                ),
+                                                                desc: (
+                                                                    <ChevronDown />
+                                                                ),
+                                                            }[
+                                                                header.column.getIsSorted() as string
+                                                            ]) ?? (
+                                                            <ChevronsUpDown />
+                                                        )}
+                                                    </div>
+                                                </TableHead>
+                                            )
                                     )}
                                 </TableRow>
                             ))}
                         </TableHeader>
                         <TableBody>
-                            {table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
+                            {table.getRowModel().rows.map((row, index) => (
+                                <TableRow key={row.id + index}>
                                     {row.getVisibleCells().map((cell) =>
                                         hideColumns?.includes(
                                             cell.column.id

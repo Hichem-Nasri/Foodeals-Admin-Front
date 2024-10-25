@@ -43,6 +43,7 @@ export const CitySelectField: FC<CitySelectFieldProps> = ({
                             value={field.value}
                             setValue={setValue}
                             onChange={(e) => field.onChange(e)}
+                            disabled={disabled}
                         />
                     </div>
                     <FormMessage />
