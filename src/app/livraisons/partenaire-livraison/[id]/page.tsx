@@ -15,7 +15,10 @@ export default async function DeliveryPage({
     console.log('delivery', delivery)
     return (
         <Layout formTitle="Nouvelle partenaire - livraison">
-            <NewDelivery id={params.id} partnerDetails={delivery!} />
+            <NewDelivery
+                id={params.id}
+                partnerDetails={delivery as DeliveryPartnerType}
+            />
         </Layout>
     )
 }
