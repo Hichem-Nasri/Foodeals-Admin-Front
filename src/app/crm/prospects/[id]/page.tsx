@@ -7,19 +7,23 @@ import { TopBar } from '@/components/crm/NewProspect/TopBar'
 import { FormProspectInfoDisplay } from '@/components/crm/Prospect/FormProspectInfoDispaly'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { Layout } from '@/components/Layout/Layout'
+import { AppRoutes } from '@/lib/routes'
 import { CrmType } from '@/types/Global-Type'
 import { PartnerStatusType } from '@/types/partners'
 import { useQuery } from '@tanstack/react-query'
+import { get } from 'http'
 import { Archive } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
-import React from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect } from 'react'
 
 const API_ENDPOINT_GET = 'http://localhost:8080/api/v1/crm/prospects'
 const API_ENDPOINT_DELETE = 'http://localhost:8080/api/v1/crm/prospects'
 
 const ProspectElement = ({ prospect }: { prospect: CrmType }) => {
+    const params = useSearchParams()
     const [countryCode, setCountryCode] = React.useState('')
     const [open, setOpen] = React.useState(false)
+    const [readOnly, setReadOnly] = React.useState(true)
     const route = useRouter()
     const { id } = useParams()
     console.log(id)
@@ -29,16 +33,29 @@ const ProspectElement = ({ prospect }: { prospect: CrmType }) => {
             .catch((e) => console.error(e))
         route.push('/crm')
     }
+    const router = useRouter()
+    useEffect(() => {
+        if (params.get('mode') === 'edit') {
+            setReadOnly(false)
+        }
+    }, [params.get('mode')])
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             {!open ? (
                 <>
                     <TopBar
-                        status={prospect.status}
-                        primaryButtonDisabled={false}
+                        status={PartnerStatusType.DRAFT}
+                        primaryButtonDisabled={readOnly}
                         secondaryButtonDisabled={true}
                         onSaveData={() => {}}
-                        onSubmit={() => {}}
+                        onSubmit={() => {
+                            router.push(
+                                AppRoutes.newConvertir.replace(
+                                    ':id',
+                                    id as string
+                                )
+                            )
+                        }}
                     />
                     <FormProspectInfoDisplay
                         data={prospect}
@@ -104,9 +121,30 @@ const ProspectPage = () => {
     )
 }
 
+enum SubscriptionStatus {
+    NOT_STARTED = 'NOT_STARTED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    VALID = 'VALID',
+    CANCELED = 'CANCELED',
+}
+
 export default ProspectPage
 
 const getProspect = async (id: string) => {
+    const getStatus = (status: string) => {
+        switch (status) {
+            case SubscriptionStatus.NOT_STARTED:
+                return PartnerStatusType.DRAFT
+            case SubscriptionStatus.IN_PROGRESS:
+                return PartnerStatusType.PENDING
+            case SubscriptionStatus.VALID:
+                return PartnerStatusType.VALIDATED
+            case SubscriptionStatus.CANCELED:
+                return PartnerStatusType.ANNULLED
+            default:
+                return PartnerStatusType.DRAFT
+        }
+    }
     if (id) {
         try {
             const res = await api
@@ -115,7 +153,8 @@ const getProspect = async (id: string) => {
                 .catch((err) => {
                     throw new Error(err)
                 })
-            return res
+            const data = { ...res, status: getStatus(res.status) }
+            return data
         } catch (e) {
             console.error(e)
         }

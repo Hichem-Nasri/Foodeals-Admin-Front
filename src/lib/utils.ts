@@ -1,3 +1,4 @@
+import { PartnerSolutionType } from '@/types/partners'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -6,10 +7,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MjkwODQzNDEsImV4cCI6MTcyOTY4OTE0MX0.vwr018bD7kObVRJEG_KTA0gKltt4sy4Zl1veu_w73LA73Y0D1F4EhKzEAXmimTmBb2Eck5-_YEL8pphrgIofZQ'
+    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk4MDgwNDIsImV4cCI6MTczMjQwMDA0Mn0.5oMMNpnpBvP5FuDA81h5zJFVKGFAbDdP2UGsGBmmvfPn5-ISJ6MCZkBJqJPVdVL_zQvn3i_S88pyntldVi7lIA'
 
 export const headers = {
     Authorization: 'Bearer ' + accessToken,
+}
+
+export const getSolutions = (solutions: string[]) => {
+    return solutions.map((solution) => {
+        switch (solution) {
+            case 'pro_market':
+                return PartnerSolutionType.MARKET_PRO
+            case 'pro_dlc':
+                return PartnerSolutionType.DLC_PRO
+            case 'pro_donate':
+                return PartnerSolutionType.DONATE_PRO
+            default:
+                return PartnerSolutionType.NONE
+        }
+    })
 }
 
 export const countryCodes = [

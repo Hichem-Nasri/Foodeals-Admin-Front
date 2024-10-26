@@ -48,7 +48,7 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                             <MultiSelect
                                 options={options}
                                 disabled={options.length === 0 || disabled}
-                                selectedValues={field.value}
+                                selectedValues={field.value || []}
                                 onSelect={(value) => field.onChange(value)}
                                 placeholder={placeholder}
                                 transform={transform}

@@ -86,14 +86,14 @@ export interface CrmInformationSchemaType {
     companyName: string
     category: string[]
     responsable: string
-    managerInfo: string // id
-    creatorInfo: string // id
+    managerInfo: string //
     phone: string
     email: string
     country: string
     city: string
     region: string
     address: string
+    solutions: string[]
 }
 
 export interface CrmObjectType {
@@ -566,12 +566,14 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                 info.getValue().name.firstName
             )} ${capitalize(info.getValue().name.lastName)}`
             return (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-full">
                     <Avatar>
                         <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>{fullName}</AvatarFallback>
+                        <AvatarFallback>
+                            {fullName && fullName.at(0)?.toUpperCase()}
+                        </AvatarFallback>
                     </Avatar>
-                    <span>{fullName}</span>
+                    <span className="text-nowrap">{fullName}</span>
                 </div>
             )
         },
@@ -593,7 +595,9 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                 <div className="flex items-center gap-2 min-w-44">
                     <Avatar>
                         <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>{fullName}</AvatarFallback>
+                        <AvatarFallback>
+                            {fullName && fullName.at(0)?.toUpperCase()}
+                        </AvatarFallback>
                     </Avatar>
                     <span>{fullName}</span>
                 </div>
@@ -638,10 +642,7 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.prospects.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
+                                AppRoutes.prospects + '/' + info.getValue()
                             ),
                         icon: Eye,
                         label: 'Voir',
@@ -649,10 +650,10 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.prospects.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
+                                AppRoutes.prospects +
+                                    '/' +
+                                    info.getValue() +
+                                    '?mode=edit'
                             ),
                         icon: Pencil,
                         label: 'Modifier',

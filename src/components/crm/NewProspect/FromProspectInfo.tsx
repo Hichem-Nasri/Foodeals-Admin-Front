@@ -25,6 +25,8 @@ import FieldActivities from '@/components/utils/FieldActivities'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
+import SelectManager from '@/components/utils/SelectManager'
+import FieldSolutions from '@/components/utils/FieldSolutions'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -111,46 +113,14 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
                                         />
-                                        <SelectField
-                                            label="Alimenter par"
-                                            name="creatorInfo"
-                                            options={[
-                                                {
-                                                    label: 'Creator 1',
-                                                    key: 'creator1',
-                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Felix',
-                                                },
-                                                {
-                                                    label: 'Creator 2',
-                                                    key: 'creator2',
-                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=John',
-                                                },
-                                            ]}
+                                        <SelectManager
                                             control={control}
-                                            placeholder="Nom"
+                                            name="managerInfo"
+                                            label="Manager"
                                             disabled={disabled}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <SelectField
-                                            control={control}
-                                            options={[
-                                                {
-                                                    label: 'Creator 1',
-                                                    key: 'creator1',
-                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Felix',
-                                                },
-                                                {
-                                                    label: 'Creator 2',
-                                                    key: 'creator2',
-                                                    avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=John',
-                                                },
-                                            ]}
-                                            name="managerInfo"
-                                            label="Manager"
-                                            placeholder="Nom du manager"
-                                            disabled={disabled}
-                                        />
                                         <FieldCountry
                                             control={control}
                                             name="country"
@@ -179,8 +149,6 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
-                                    </div>
-                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldRegion
                                             control={control}
                                             name="region"
@@ -195,6 +163,12 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                     regionId: value,
                                                 }))
                                             }}
+                                        />
+                                    </div>
+                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
+                                        <FieldSolutions
+                                            control={control}
+                                            disabled={disabled}
                                         />
                                         <InputFieldForm
                                             classNameParent="col-span-2"

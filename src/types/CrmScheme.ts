@@ -16,10 +16,10 @@ export const CrmInformationSchema = z.object({
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
     country: z.string().min(3),
-    creatorInfo: z.string().min(3),
-    managerInfo: z.string().min(3),
+    managerInfo: z.string(),
     city: z.string().min(3),
     region: z.string().min(3),
+    solutions: z.array(z.string()).min(1),
     address: z.string().min(3),
 })
 

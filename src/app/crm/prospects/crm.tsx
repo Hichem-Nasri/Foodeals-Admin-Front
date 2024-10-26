@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { setDate } from 'date-fns'
-import { accessToken } from '@/lib/utils'
+import { accessToken, getSolutions } from '@/lib/utils'
 import api from '@/api/Auth'
 import SwitchToggle from '@/components/ui/SwitchToggle'
 import Link from 'next/link'
@@ -64,7 +64,13 @@ export default function Crm() {
                         throw new Error(e)
                     })
                 if (response.status === 200) {
-                    setData(response.data.content)
+                    const data = response.data.content.map((crm: any) => {
+                        return {
+                            ...crm,
+                            solutions: getSolutions(crm.solutions),
+                        }
+                    })
+                    setData(data)
                 }
                 return response
             } catch (error) {

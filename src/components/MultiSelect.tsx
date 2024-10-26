@@ -95,8 +95,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 }) => {
     const selectedOptions = options.filter(
         (option) =>
-            selectedValues.includes(option.key.toString()) ||
-            selectedValues.includes(option.label)
+            selectedValues &&
+            (selectedValues.includes(option.key.toString()) ||
+                selectedValues.includes(option.label))
     )
     const len = length ?? 3
     if (normalTransform) {

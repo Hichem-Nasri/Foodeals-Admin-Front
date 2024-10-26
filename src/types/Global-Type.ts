@@ -1,6 +1,7 @@
 import { PartnerSolutionType, PartnerStatusType } from './partners'
 
 export type ProfileType = {
+    id: string
     name: {
         firstName: string
         lastName: string
@@ -50,7 +51,6 @@ export type CrmType = {
     status: PartnerStatusType
     solutions: PartnerSolutionType[]
     event: EventType[]
-    eventObject: string
     typeAssocciation?: string
 }
 
@@ -77,6 +77,7 @@ export type AddressType = {
     city: string
     address: string
     region: string
+    iframe: string
 }
 export type EventType = {
     id: string

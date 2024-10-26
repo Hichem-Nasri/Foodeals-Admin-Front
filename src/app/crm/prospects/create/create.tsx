@@ -10,7 +10,7 @@ import {
     getInfoData,
 } from '@/types/CrmScheme'
 import { CrmInformationSchemaType, CrmObjectType } from '@/types/CrmType'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Archive, Router } from 'lucide-react'
 import React, { FC, useContext, useEffect, useState } from 'react'
@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation'
 import { EventPopUpsNew } from '@/components/crm/NewEvent/EventPopUpsNew'
 import { EventType, NotificationType } from '@/types/Global-Type'
 import { useNotification } from '@/context/NotifContext'
+import { AppRoutes } from '@/lib/routes'
 
 interface CreateProps {}
 
@@ -60,14 +61,14 @@ export const Create: FC<CreateProps> = () => {
         mode: 'onBlur',
         defaultValues: { ...getInfoData(Info) },
     })
-
     const { handleSubmit } = CrmInformation
     const onSubmit = () => {
-        onSubmitCrmInfo(CrmInformation.getValues())
         setOpen((prev) => !prev)
+        router.push(AppRoutes.newConvertir.replace(':id', Info.id))
     }
     const onSaveData = (e: CrmInformationSchemaType) => {
         const [firstName, lastName] = e.responsable.split(' ')
+        console.log('e', e)
         const createProspect = {
             companyName: e.companyName,
             activities: e.category,
@@ -79,14 +80,26 @@ export const Create: FC<CreateProps> = () => {
                 email: e.email,
                 phone: e.email,
             },
-            powered_by: 1, // TODO: get from List
-            manager_id: 1, // TODO: get from List
+            manager_id: e.managerInfo,
             address: {
                 country: e.country,
                 city: e.city,
                 address: e.address,
                 region: e.region,
             },
+            event: null,
+            solutions: e.solutions.map((sol) => {
+                switch (sol) {
+                    case PartnerSolutionType.DLC_PRO:
+                        return 'pro_dlc'
+                    case PartnerSolutionType.DONATE_PRO:
+                        return 'pro_donate'
+                    case PartnerSolutionType.MARKET_PRO:
+                        return 'pro_market'
+                    default:
+                        return 'none'
+                }
+            }),
         }
         mutate.mutate(createProspect)
         console.log('Save data')
