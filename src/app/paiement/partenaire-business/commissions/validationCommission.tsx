@@ -28,6 +28,7 @@ import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/Global-Type'
 import { PaymentCommision } from '@/types/paymentUtils'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import PaymentCommissionCard from '@/components/payment/PaymentCommissionCard'
 
 interface OperationsProps {}
 
@@ -87,7 +88,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 })
                 setTotalCommission(totalCommission)
                 setTotalSales(totalSales)
-                setCommission(response.data)
+                // setCommission(response.data)
                 // setOptions(options)
                 return response.data
             } catch (error) {
@@ -102,13 +103,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
 
     const tableCommission = useReactTable({
         data: commission,
-        columns: columnsCommissionTable(
-            router,
-            (id: string) => {
-                setDateAndPartner({ ...dateAndPartner, partner: id })
-            },
-            !['all', ''].includes(dateAndPartner.partner)
-        ),
+        columns: columnsCommissionTable(router),
         state: {
             columnFilters,
         },
@@ -118,19 +113,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    useEffect(() => {
-        if (dateAndPartner.partner === '') return
-        else if (dateAndPartner.partner === 'all') {
-            setColumnFilters([])
-        } else
-            setColumnFilters([
-                {
-                    id: 'oraganizationId',
-                    value: [dateAndPartner.partner],
-                },
-            ])
-        console.log('dateAndPartner', dateAndPartner)
-    }, [dateAndPartner.partner])
+    useEffect(() => {}, [])
 
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -180,12 +163,10 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 table={tableCommission}
                 data={defaultDataCommissionTable}
                 title="Tableau de validation des commission"
-                transform={(data) => <Fragment />}
-                hideColumns={[
-                    'payable',
-                    'entityId',
-                    dateAndPartner.partner !== 'all' ? 'partnerType' : '',
-                ]}
+                transform={(data) => (
+                    <PaymentCommissionCard commission={data} path="partner" />
+                )}
+                hideColumns={['payable', 'entityId']}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton

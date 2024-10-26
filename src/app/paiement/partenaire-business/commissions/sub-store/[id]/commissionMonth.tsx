@@ -13,6 +13,7 @@ import {
     defaultDataCommissionTable,
     columnsCommissionMonthTable,
     defaultDataCommissionMonthTable,
+    partnerCommissionMonthType,
 } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
@@ -25,17 +26,83 @@ import {
 import { Coins, Percent, ArrowRight, RotateCw, CheckCheck } from 'lucide-react'
 import { PaymentValidation } from '@/components/payment/PaymentValidation'
 import SwitchPayment from '@/components/payment/switchPayment'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { useNotification } from '@/context/NotifContext'
+import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
+import { NotificationType } from '@/types/Global-Type'
+import { PaymentCommision } from '@/types/paymentUtils'
+import { useQuery } from '@tanstack/react-query'
+import { fetchPaymentCommissionMonth } from '@/lib/api/payment/getCommissionMonth'
 
 const CommissionMonth = () => {
     const { id } = useParams()
     const fetchCommissionMonth = async () => {
         // fetch CommissionMonth by id
     }
+    const [commissionMonth, setCommissionMonth] = useState<
+        partnerCommissionMonthType[]
+    >(defaultDataCommissionMonthTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const onSubmit = () => {}
-    const totalCommission = 12222
-    const totalSales = 51554516
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
+        return [
+            ...defaultDataCommissionTable.map(
+                (partner) =>
+                    ({
+                        key: partner.oraganizationId,
+                        label: partner.partnerInfoDto.name,
+                    } as MultiSelectOptionsType)
+            ),
+            {
+                key: 'all',
+                label: 'Tous les partenaires',
+                avatar: '/all-partners.svg',
+            },
+        ]
+    })
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalCommission, setTotalCommission] = useState(0)
+    const [totalSales, setTotalSales] = useState(0)
+    const notify = useNotification()
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
     const router = useRouter()
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['commissionMonth', id],
+        queryFn: async () => {
+            try {
+                const response = await fetchPaymentCommissionMonth(
+                    currentPage,
+                    pageSize,
+                    id as string,
+                    dateAndPartner.date
+                )
+                let totalCommission = 0,
+                    totalSales = 0
+                response.data.forEach((partner) => {
+                    if (partner.payable) {
+                        totalCommission +=
+                            partner.commissionCard || partner.cashCommission
+                        totalSales += partner.cashAmount || partner.cardAmount
+                    }
+                })
+                setTotalCommission(totalCommission)
+                setTotalSales(totalSales)
+                setCommissionMonth(response.data)
+                // setOptions(options)
+                return response.data
+            } catch (error) {
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des données'
+                )
+                throw new Error('Error fetching commissions')
+            }
+        },
+    })
 
     const tableCommission = useReactTable({
         data: defaultDataCommissionMonthTable,
@@ -50,17 +117,25 @@ const CommissionMonth = () => {
     const handleConfirmAll = () => {
         // handle confirm all
     }
-    const PaymentData = {
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        city: 'Casablanca',
-    }
 
     return (
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={Coins}
                     title="Total des ventes"
@@ -81,7 +156,7 @@ const CommissionMonth = () => {
                 </div>
                 <div className="flex justify-center items-center space-x-4">
                     <PaymentValidation
-                        id=""
+                        id={id as string}
                         label="Confirmer tout"
                         className="rounded-[12px] h-12"
                         IconRight={CheckCheck}

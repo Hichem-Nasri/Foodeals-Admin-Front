@@ -1,22 +1,14 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
-import {
-    ArrowRight,
-    CheckCheck,
-    Coins,
-    FileBadge,
-    LoaderCircle,
-    Percent,
-    RotateCw,
-} from 'lucide-react'
+import { ArrowRight, FileBadge, Percent, RotateCw } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
     columnsSubscriptionTable,
-    columnsPaymentsDetailsTable,
-    columnsValidationTable,
     defaultDataSubscriptionTable,
-    defaultDataPaymentsDetailsTable,
-    defaultDataValidationTable,
+    columnsSubscriptionOnesTable,
+    partnerSubscriptionType,
+    partnerSubscriptonOnesType,
+    defaultDataSubscriptionOnesTable,
 } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
@@ -26,39 +18,79 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { Fragment, useState } from 'react'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { FilterPayment } from '@/components/payment/FilterPayment'
-import { SubscriptionCard } from '@/components/payment/PaymentDetails/SubscriptionCard'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
 import SwitchPayment from '@/components/payment/switchPayment'
+import { useQuery } from '@tanstack/react-query'
+import { NotificationType, PartnerInfoDto } from '@/types/Global-Type'
+import { useNotification } from '@/context/NotifContext'
+import { fetchSubscription } from '@/lib/api/payment/getSubscription'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import PaymentSubscriptionCard from '@/components/payment/paymentSubscriptionCard'
+import PaymentOnesSubscriptionCard from '@/components/payment/paymentOneSubscriptionCard'
 
 interface OperationsProps {}
 
 export const ValidationSubscription = ({}: OperationsProps) => {
+    const [subscriptionData, setSubscriptionData] = useState<
+        partnerSubscriptionType[]
+    >(defaultDataSubscriptionTable)
+    const [partnerSubscripton, setParnterSubscription] = useState<
+        partnerSubscriptonOnesType[]
+    >(defaultDataSubscriptionOnesTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [showOperations, setShowOperations] = useState(true)
-    const onSubmit = () => {}
-    const totalPending = 12222
-    const totalSales = 51554516
-
-    // const tableOperations = useReactTable({
-    //     data: defaultDataPaymentsDetailsTable,
-    //     columns: columnsPaymentsDetailsTable,
-    //     getCoreRowModel: getCoreRowModel(),
-    //     onColumnFiltersChange: setColumnFilters,
-    //     getFilteredRowModel: getFilteredRowModel(),
-    //     getSortedRowModel: getSortedRowModel(),
-    //     getPaginationRowModel: getPaginationRowModel(),
-    // })
-
+    const [subscriptionID, setSubscriptionId] = useState('')
+    const [store, setStore] = useState<PartnerInfoDto>({
+        name: '',
+        avatarPath: '',
+    })
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPending, setTotalPending] = useState(0)
+    const [totalSales, setTotalSales] = useState(0)
+    const notify = useNotification()
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
     const router = useRouter()
-    const tableSubscription = useReactTable({
-        data: defaultDataSubscriptionTable,
-        columns: columnsSubscriptionTable(router),
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['subscription'],
+        queryFn: async () => {
+            try {
+                const response = await fetchSubscription(currentPage, pageSize)
+                let totalPending = 0,
+                    totalSales = 0
+                response.data.forEach((partner) => {
+                    if (partner.payable) {
+                        // totalCommission +=
+                        //     partner.commissionCard || partner.cashCommission
+                        // totalSales += partner.cashAmount || partner.cardAmount
+                    }
+                })
+                setTotalPending(totalPending)
+                setTotalSales(totalSales)
+                // setCommissionMonth(response.data)
+                // setOptions(options)
+                return response.data
+            } catch (error) {
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des données'
+                )
+                throw new Error('Error fetching commissions')
+            }
+        },
+    })
+    const tableOperations = useReactTable({
+        data: partnerSubscripton,
+        columns: columnsSubscriptionOnesTable(router),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -66,17 +98,48 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    const PaymentData = {
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        city: 'Casablanca',
-    }
+    const tableSubscription = useReactTable({
+        data: subscriptionData,
+        columns: columnsSubscriptionTable(router, setSubscriptionId),
+        getCoreRowModel: getCoreRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+    })
+
+    useEffect(() => {
+        if (subscriptionID) {
+            console.log('subscriptionID', subscriptionID)
+            const store = subscriptionData.find(
+                (data) => data.id === subscriptionID
+            )?.magasin
+            setStore({
+                name: store?.name!,
+                avatarPath: store?.avatar!,
+            })
+            // const partnerSub =
+        }
+    }, [subscriptionID])
 
     return (
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={FileBadge}
                     title="Total des Subscriptions"
@@ -103,12 +166,38 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                     className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
                 />
             </div>
-            <DataTable
-                table={tableSubscription}
-                data={defaultDataSubscriptionTable}
-                title="Tableau de validation des Subscription"
-                transform={(data) => <Fragment />}
-            />
+            {subscriptionID ? (
+                <>
+                    <DataTable
+                        table={tableOperations}
+                        data={partnerSubscripton}
+                        title="Tableau de validation des Subscription"
+                        transform={(data) => (
+                            <PaymentOnesSubscriptionCard
+                                subscription={data}
+                                store={store}
+                            />
+                        )}
+                        partnerData={{
+                            name: store.name,
+                            avatar: store.avatarPath,
+                            city: '',
+                        }}
+                    />
+                </>
+            ) : (
+                <DataTable
+                    table={tableSubscription}
+                    data={subscriptionData}
+                    title="Tableau de validation des Subscription"
+                    transform={(data) => (
+                        <PaymentSubscriptionCard
+                            subscription={data}
+                            setSubscriptionId={setSubscriptionId}
+                        />
+                    )}
+                />
+            )}
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton
                     size="sm"

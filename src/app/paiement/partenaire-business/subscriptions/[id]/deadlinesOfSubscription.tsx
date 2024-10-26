@@ -3,6 +3,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
+import OperationSubscriptionCard from '@/components/payment/PaymentDetails/OperationSubscriptionCard'
 import SwitchPayment from '@/components/payment/switchPayment'
 import {
     columnsValidationTable,
@@ -59,7 +60,9 @@ function DeadlinesOfSubscription() {
                 table={table}
                 data={defaultDataValidationTable}
                 title="Tableau de validation des écheances"
-                transform={(data) => <Fragment />}
+                transform={(data) => (
+                    <OperationSubscriptionCard subscription={data} />
+                )}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton

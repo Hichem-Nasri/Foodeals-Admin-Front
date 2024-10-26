@@ -12,6 +12,7 @@ import {
     columnsCommissionTable,
     columnsCommissionSSTable,
     defaultDataCommissionSSTable,
+    columnsSubscriptionOnesTable,
 } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
@@ -23,22 +24,31 @@ import {
 } from '@tanstack/react-table'
 import { Coins, Percent, ArrowRight, RotateCw } from 'lucide-react'
 import SwitchPayment from '@/components/payment/switchPayment'
+import { PaymentCommision } from '@/types/paymentUtils'
+import PaymentCommissionCard from '@/components/payment/PaymentCommissionCard'
 
 const SubStoreCommission = () => {
     const { id } = useParams()
-
-    const fetchSubStore = async () => {
-        // fetch sub store by id
-    }
+    const [commissionSubStore, setCommissionSubStore] = useState<
+        PaymentCommision[]
+    >(defaultDataCommissionTable)
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
+    const [options, setOptions] = useState([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const onSubmit = () => {}
     const totalCommission = 12222
     const totalSales = 51554516
     const router = useRouter()
 
-    const tableCommission = useReactTable({
-        data: defaultDataCommissionSSTable,
-        columns: columnsCommissionSSTable(router, id as string),
+    const table = useReactTable({
+        data: commissionSubStore,
+        columns: columnsCommissionTable(router, 'subStore'),
+        state: {
+            columnFilters,
+        },
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -56,7 +66,20 @@ const SubStoreCommission = () => {
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={Coins}
                     title="Total des ventes"
@@ -72,7 +95,7 @@ const SubStoreCommission = () => {
             </div>
             <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
                 <div className="flex justify-center items-center space-x-4">
-                    <ColumnVisibilityModal table={tableCommission} />
+                    <ColumnVisibilityModal table={table} />
                     <SwitchValidation />
                 </div>
                 <CustomButton
@@ -84,10 +107,13 @@ const SubStoreCommission = () => {
                 />
             </div>
             <DataTable
-                table={tableCommission}
-                data={defaultDataCommissionTable}
+                table={table}
+                data={commissionSubStore}
                 title="Tableau de validation des commission"
-                transform={(data) => <Fragment />}
+                hideColumns={['payable', 'entityId', 'partnerType']}
+                transform={(data) => (
+                    <PaymentCommissionCard commission={data} path="subStore" />
+                )}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton

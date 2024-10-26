@@ -30,7 +30,7 @@ export const FilterPayment: FC<FilterPayment> = ({
     options,
 }) => {
     return (
-        <div className="w-1/2">
+        <div className="w-full lg:w-1/2">
             <div className="flex lg:flex-row flex-col items-center gap-3 p-4 bg-white rounded-[14px] w-full">
                 <div className="flex flex-col gap-3 w-full">
                     <Label
@@ -38,6 +38,7 @@ export const FilterPayment: FC<FilterPayment> = ({
                         className="text-sm font-medium text-lynch-950"
                     />
                     <DatePicker
+                        myFormat="MM/yyyy"
                         onChange={(date) => setData(date)}
                         value={date}
                     />

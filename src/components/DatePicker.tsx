@@ -17,6 +17,7 @@ interface DatePickerProps {
     onChange?: (date: Date) => void
     value?: Date
     disabled?: boolean
+    myFormat?: string
 }
 
 export const DatePicker: FC<DatePickerProps> = ({
@@ -24,6 +25,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     disabled,
     onChange,
     value = undefined,
+    myFormat = 'MM/dd/yyyy',
 }) => {
     const [date, setDate] = useState<Date | undefined>(value)
 
@@ -38,7 +40,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                 >
                     <CalendarIcon className="text-green-400" size={24} />
                     {date ? (
-                        format(date, 'MM/dd/yyyy')
+                        format(date, myFormat)
                     ) : (
                         <span className="text-lynch-400">
                             Sélectionner une date

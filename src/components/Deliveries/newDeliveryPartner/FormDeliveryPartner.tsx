@@ -28,6 +28,7 @@ import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
+import FieldSolutions from '@/components/utils/FieldSolutions'
 
 interface FormDeliveryPartnerProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
@@ -118,11 +119,9 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <MultiSelectField
+                                        <FieldSolutions
                                             control={control}
-                                            name="solutions"
-                                            className="h-auto"
-                                            label="Solutions"
+                                            disabled={disabled}
                                             options={[
                                                 {
                                                     key: PartnerSolutionType.MARKET_PRO,
@@ -133,19 +132,6 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                     label: PartnerSolutionType.DONATE_PRO,
                                                 },
                                             ]}
-                                            transform={(values) => {
-                                                return values.map((value) => (
-                                                    <PartnerSolution
-                                                        key={value.key}
-                                                        solution={
-                                                            value.label as PartnerSolutionType
-                                                        }
-                                                        className="px-4 py-[0.4rem]"
-                                                        size={20}
-                                                    />
-                                                ))
-                                            }}
-                                            disabled={disabled}
                                         />
                                         <InputPhoneField
                                             control={control}

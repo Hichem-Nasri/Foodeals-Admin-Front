@@ -1,3 +1,4 @@
+import { CrmType } from './Global-Type'
 import {
     exportSolutionType,
     PartnerCompanyTypeOptions,
@@ -119,30 +120,109 @@ const ParnterSolutionExport: (solution: string) => PartnerSolutionType = (
     }
 }
 export const checkAllForms = (partnerData: PartnerPOST) => {
-    if (
-        partnerData.entityName === '' ||
-        partnerData.commercialNumber === '' ||
-        partnerData.contactDto.email === '' ||
-        partnerData.contactDto.phone === '' ||
-        partnerData.entityAddressDto.address === '' ||
-        partnerData.entityAddressDto.city === '' ||
-        partnerData.entityAddressDto.country === '' ||
-        partnerData.entityAddressDto.region === '' ||
-        partnerData.entityAddressDto.iframe === '' ||
-        partnerData.managerId === 0 ||
-        partnerData.activities.length === 0 ||
-        partnerData.features.length === 0 ||
-        partnerData.entityType === '' ||
-        partnerData.entityBankInformationDto.beneficiaryName === '' ||
-        partnerData.entityBankInformationDto.bankName === '' ||
-        partnerData.entityBankInformationDto.rib === '' ||
-        partnerData.solutions.length === 0 ||
-        partnerData.solutionsContractDto.length === 0 ||
-        partnerData.maxNumberOfSubEntities === 0
-    ) {
+    const requiredFields = [
+        partnerData.entityName,
+        partnerData.commercialNumber,
+        partnerData.contactDto.email,
+        partnerData.contactDto.phone,
+        partnerData.entityAddressDto.address,
+        partnerData.entityAddressDto.city,
+        partnerData.entityAddressDto.country,
+        partnerData.entityAddressDto.region,
+        partnerData.entityAddressDto.iframe,
+        partnerData.managerId,
+        partnerData.activities.length,
+        partnerData.features.length,
+        partnerData.entityType,
+        partnerData.entityBankInformationDto.beneficiaryName,
+        partnerData.entityBankInformationDto.bankName,
+        partnerData.entityBankInformationDto.rib,
+        partnerData.solutions.length,
+        partnerData.solutionsContractDto.length,
+        partnerData.maxNumberOfSubEntities,
+    ]
+
+    if (requiredFields.some((field) => field === '' || field === 0)) {
+        const missingFields = [
+            partnerData.entityName === '' ? 'entityName' : '',
+            partnerData.commercialNumber === '' ? 'commercialNumber' : '',
+            partnerData.contactDto.email === '' ? 'contactDto.email' : '',
+            partnerData.contactDto.phone === '' ? 'contactDto.phone' : '',
+            partnerData.entityAddressDto.address === ''
+                ? 'entityAddressDto.address'
+                : '',
+            partnerData.entityAddressDto.city === ''
+                ? 'entityAddressDto.city'
+                : '',
+            partnerData.entityAddressDto.country === ''
+                ? 'entityAddressDto.country'
+                : '',
+            partnerData.entityAddressDto.region === ''
+                ? 'entityAddressDto.region'
+                : '',
+            partnerData.entityAddressDto.iframe === ''
+                ? 'entityAddressDto.iframe'
+                : '',
+            partnerData.managerId === 0 ? 'managerId' : '',
+            partnerData.activities.length === 0 ? 'activities' : '',
+            partnerData.features.length === 0 ? 'features' : '',
+            partnerData.entityType === '' ? 'entityType' : '',
+            partnerData.entityBankInformationDto.beneficiaryName === ''
+                ? 'entityBankInformationDto.beneficiaryName'
+                : '',
+            partnerData.entityBankInformationDto.bankName === ''
+                ? 'entityBankInformationDto.bankName'
+                : '',
+            partnerData.entityBankInformationDto.rib === ''
+                ? 'entityBankInformationDto.rib'
+                : '',
+            partnerData.solutions.length === 0 ? 'solutions' : '',
+            partnerData.solutionsContractDto.length === 0
+                ? 'solutionsContractDto'
+                : '',
+            partnerData.maxNumberOfSubEntities === 0
+                ? 'maxNumberOfSubEntities'
+                : '',
+        ].filter(Boolean)
+        console.log('missingFields', missingFields)
         return false
     }
+
     return true
+}
+
+export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
+    partner
+) => {
+    return {
+        ...defaultPartnerData,
+        companyName: partner.companyName,
+        companyType: [partner.category],
+        responsible:
+            partner.contact.name.firstName +
+            ' ' +
+            partner.contact.name.lastName,
+        solutions: {
+            solutionsId: partner.solutions.map((solution) =>
+                ParnterSolutionExport(solution)
+            ),
+            duration: 0,
+            amount: 0,
+            expiration: 0,
+            managerId: '',
+            commissionCash: 0,
+            commissionCard: 0,
+        },
+        mapLocation: partner.address.iframe,
+        phone: partner.contact.phone,
+        email: partner.contact.email,
+        managerId: partner.managerInfo.id,
+        country: partner.address.country,
+        city: partner.address.city,
+        region: partner.address.region,
+        address: partner.address.address,
+        status: PartnerStatusType.PENDING,
+    }
 }
 
 export const exportPartnerPost = (partner: PartnerPOST) => {

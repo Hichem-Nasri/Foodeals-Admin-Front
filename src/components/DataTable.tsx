@@ -111,7 +111,10 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                             : header.column
                                                                   .id === 'logo'
                                                             ? 'min-w-28'
-                                                            : header.id === 'id'
+                                                            : header.id ===
+                                                                  'id' ||
+                                                              header.id ===
+                                                                  'oraganizationId'
                                                             ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
                                                             : '',
                                                         header.column.id ===
@@ -132,6 +135,8 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                                   header.getContext()
                                                               )}
                                                         {(header.id !== 'id' &&
+                                                            header.id !==
+                                                                'oraganizationId' &&
                                                             {
                                                                 asc: (
                                                                     <ChevronUp />
@@ -164,7 +169,9 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                 key={cell.id}
                                                 className={cn(
                                                     'w-fit',
-                                                    cell.column.id === 'id'
+                                                    cell.column.id === 'id' ||
+                                                        cell.column.id ==
+                                                            'oraganizationId'
                                                         ? 'sticky right-0 shadow-md bg-white min-w-none'
                                                         : ''
                                                 )}
