@@ -12,9 +12,22 @@ import {
 } from '@/components/ui/sheet'
 import { pagesData } from '@/lib/pages'
 import Link from 'next/link'
-import { Bell, ChevronLeft, ChevronRight, LogOut } from 'lucide-react'
+import {
+    Bell,
+    ChevronLeft,
+    ChevronRight,
+    FilePenLine,
+    LogOut,
+    LucideProps,
+    SquareUser,
+} from 'lucide-react'
 import { Button } from '../ui/button'
-import { Fragment } from 'react'
+import {
+    ForwardRefExoticComponent,
+    Fragment,
+    RefAttributes,
+    useState,
+} from 'react'
 import { CustomButton } from '../custom/CustomButton'
 import { Label } from '../Label'
 import { cn } from '@/lib/utils'
@@ -30,9 +43,19 @@ import { AppRoutes } from '@/lib/routes'
 interface HeaderProps {
     formTitle?: string
 }
+interface SubPageType {
+    label: string
+    href: string
+    icon: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >
+    subPage: boolean
+    ListSubPage: SubPageType[]
+}
 
 export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
     const router = useRouter()
+    const [subPage, setSubPage] = useState<SubPageType | null>(null)
     return (
         <>
             <div
@@ -88,32 +111,83 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                             className="px-4 overflow-auto"
                         >
                             <SheetHeader>
-                                <SheetTitle className="ml-auto mb-3">
-                                    Site map
+                                <SheetTitle
+                                    className="ml-auto mb-3"
+                                    onClick={() => setSubPage(null)}
+                                >
+                                    {subPage ? subPage.label : 'Menu'}
                                 </SheetTitle>
                                 <span className="h-[1px] w-full bg-lynch-100" />
                                 <SheetDescription className="flex flex-col gap-4">
-                                    {pagesData.map((page, index) => (
-                                        <Fragment key={index}>
-                                            <Link
-                                                key={index}
-                                                href={page.href}
-                                                passHref
+                                    {subPage ? (
+                                        <Fragment>
+                                            <Button
+                                                className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
+                                                onClick={() => setSubPage(null)}
                                             >
-                                                <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
-                                                    <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
-                                                        <page.icon />
-                                                    </div>
-                                                    {page.label}
-                                                    <ChevronRight className="ml-auto" />
-                                                </Button>
-                                            </Link>
-
-                                            {page.href === '/marketing' && (
-                                                <span className="h-[1px] w-full bg-lynch-100" />
+                                                <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-transparent text-lynch-500   ">
+                                                    <ChevronLeft />
+                                                </div>
+                                                {'Menu principal'}
+                                            </Button>
+                                            {subPage.ListSubPage.map(
+                                                (page, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        href={page.href}
+                                                        passHref
+                                                    >
+                                                        <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
+                                                            <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
+                                                                <page.icon />
+                                                            </div>
+                                                            {page.label}
+                                                        </Button>
+                                                    </Link>
+                                                )
                                             )}
                                         </Fragment>
-                                    ))}
+                                    ) : (
+                                        <Fragment>
+                                            {pagesData.map((page, index) => (
+                                                <Fragment key={index}>
+                                                    {page.subPage ? (
+                                                        <Button
+                                                            className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
+                                                            onClick={() =>
+                                                                setSubPage(
+                                                                    page as SubPageType
+                                                                )
+                                                            }
+                                                        >
+                                                            <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
+                                                                <page.icon />
+                                                            </div>
+                                                            {page.label}
+                                                            <ChevronRight className="ml-auto" />
+                                                        </Button>
+                                                    ) : (
+                                                        <Link
+                                                            key={index}
+                                                            href={page.href}
+                                                            passHref
+                                                        >
+                                                            <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
+                                                                <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-primary text-white">
+                                                                    <page.icon />
+                                                                </div>
+                                                                {page.label}
+                                                            </Button>
+                                                        </Link>
+                                                    )}
+                                                    {page.href ===
+                                                        '/marketing' && (
+                                                        <span className="h-[1px] w-full bg-lynch-100" />
+                                                    )}
+                                                </Fragment>
+                                            ))}
+                                        </Fragment>
+                                    )}
                                     <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
                                         <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
                                             <LogOut />
