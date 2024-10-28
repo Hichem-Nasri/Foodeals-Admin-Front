@@ -9,15 +9,21 @@ import React, { FC, useEffect } from 'react'
 import { TableProspects } from '../NewProspect/TableProspects'
 import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { EventType } from '@/types/Global-Type'
+import { EventType } from '@/types/CrmType'
 
 interface EventProps {
     Event: EventType[]
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
+    disabled?: boolean
 }
 
-export const NewEvenent: FC<EventProps> = ({ Event, setOpen, convertir }) => {
+export const NewEvenent: FC<EventProps> = ({
+    Event,
+    setOpen,
+    convertir,
+    disabled,
+}) => {
     return (
         <div className="w-full self-start h-full relative">
             {Event.length == 0 ? (
@@ -63,7 +69,11 @@ export const NewEvenent: FC<EventProps> = ({ Event, setOpen, convertir }) => {
                     </AccordionItem>
                 </Accordion>
             ) : (
-                <TableProspects setOpen={setOpen} data={Event} />
+                <TableProspects
+                    setOpen={setOpen}
+                    data={Event}
+                    disabled={disabled}
+                />
             )}
         </div>
     )

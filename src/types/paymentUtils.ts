@@ -1,4 +1,4 @@
-import { PartnerInfoDto } from './Global-Type'
+import { PartnerInfoDto } from './GlobalType'
 
 export enum PartnerType {
     PARTNER_SB = 'PARTNER_SB',
@@ -7,9 +7,9 @@ export enum PartnerType {
 }
 export enum PaymentStatusEnum {
     IN_VALID = 'IN_VALID',
-    VALIDATED_BY_PARTNER = 'VALIDATED_BY_PARTNER',
-    VALIDATED_BY_FOODEALS = 'VALIDATED_BY_FOODEALS',
-    VALIDATED_BY_BOTH = 'VALIDATED_BY_BOTH',
+    VALID_BY_PARTNER = 'VALID_BY_PARTNER',
+    VALID_BY_FOODEALS = 'VALID_BY_FOODEALS',
+    VALID_BY_BOTH = 'VALID_BY_BOTH',
 }
 
 export type PaymentCommision = {

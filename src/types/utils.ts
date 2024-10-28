@@ -1,7 +1,7 @@
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
 import { SelectIconProps } from '@radix-ui/react-select'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
-import { ProspectType } from './CrmType'
+import { EventType } from './CrmType'
 
 export const StyleStatus: Record<string, string> = {
     [`VALID`]: 'bg-mountain-100 text-mountain-500',
@@ -18,7 +18,7 @@ export const StringStatus: Record<string, string> = {
 }
 
 export const IconStatus: Record<string, React.FC<SelectIconProps>> = {
-    [`VALIDER`]: CheckCheck as React.FC<SelectIconProps>,
+    [`VALID`]: CheckCheck as React.FC<SelectIconProps>,
     [`IN_PROGRESS`]: LoaderCircle as React.FC<SelectIconProps>,
     [`DRAFT`]: FileMinus as React.FC<SelectIconProps>,
     [`CANCELED`]: X as React.FC<SelectIconProps>,
@@ -34,7 +34,7 @@ export const OptionStatus: Record<string, MultiSelectOptionsType> = {
     },
     [`EN COURS`]: {
         label: 'en attente',
-        key: 'PENDING',
+        key: 'IN_PROGRESS',
         icon: LoaderCircle,
         className:
             'text-amethyst-500 border border-amethyst-500 bg-amethyst-100',
@@ -58,13 +58,15 @@ export function capitalize(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export const extractDataEvent = (data: any): ProspectType => {
+export const extractDataEvent = (data: any): EventType => {
     return {
-        key: data.id,
-        date: new Date(data.createAt),
+        id: data.id,
+        createdAt: data.createdAt,
         object: data.object,
         message: data.message,
+        dateAndTime: data.dateAndTime,
         lead: {
+            id: data.lead.id,
             name: {
                 firstName: data.lead.name.firstName,
                 lastName: data.lead.name.lastName,
@@ -74,7 +76,7 @@ export const extractDataEvent = (data: any): ProspectType => {
     }
 }
 
-export const extractEvent = (data: any): ProspectType[] => {
+export const extractEvent = (data: any): EventType[] => {
     return data.map((event: any) => {
         extractDataEvent(event)
     })

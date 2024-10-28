@@ -8,7 +8,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-import { ProspectType } from '@/types/CrmType'
 import { CalendarClock, CalendarMinus2Icon, ChevronLeft, X } from 'lucide-react'
 
 const DetailsProspect = ({
@@ -79,7 +78,7 @@ const DetailsProspect = ({
 }
 
 import React, { useEffect } from 'react'
-import { EventType } from '@/types/Global-Type'
+import { EventType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
 
 const DetailsEvenetProspect = ({

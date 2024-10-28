@@ -209,7 +209,7 @@ export const associationsData: AssociationType[] = [
         email: 'test@gmail.com',
         phone: '0123456789',
         solution: [PartnerSolutionType.MARKET_PRO],
-        status: PaymentStatusType.PENDING,
+        status: PaymentStatusType.IN_PROGRESS,
     },
 ]
 

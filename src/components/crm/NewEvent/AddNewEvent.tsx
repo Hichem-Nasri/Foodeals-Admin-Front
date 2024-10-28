@@ -15,14 +15,14 @@ import React, { FC } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { z } from 'zod'
-import { CrmObjectType, EvenetType } from '@/types/CrmType'
+import { CrmObjectType } from '@/types/CrmType'
 
 interface AddNewEventProps {
     form: UseFormReturn<z.infer<typeof CrmObjectSchema>>
     isMobile: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
-    mutation: any
+    onSubmit: (e: CrmObjectType) => void
 }
 
 const AddNewEvent: FC<AddNewEventProps> = ({
@@ -30,16 +30,8 @@ const AddNewEvent: FC<AddNewEventProps> = ({
     isMobile,
     setOpen,
     convertir,
-    mutation,
+    onSubmit,
 }) => {
-    const myhandleSubmit = async (e: CrmObjectType) => {
-        try {
-            mutation.mutate(e)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
     const { control, handleSubmit } = form
 
     return (
@@ -59,7 +51,7 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                 <AccordionContent className="min-h-full">
                     <Form {...form}>
                         <form
-                            onSubmit={handleSubmit(myhandleSubmit)}
+                            onSubmit={handleSubmit(onSubmit)}
                             className="w-full flex flex-col items-center space-y-4 "
                         >
                             <div className="w-full px-2 space-y-2">
@@ -106,12 +98,16 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                                 {isMobile && (
                                     <div className="w-full flex lg:flex-row flex-col space-y-2 space-x-0 justify-center items-center lg:space-x-4">
                                         <CustomButton
+                                            onClick={() => {
+                                                setOpen((prev) => {
+                                                    return !prev
+                                                })
+                                            }}
                                             title={
                                                 !convertir
                                                     ? 'Veuillez convertir le prospect avant de confirmer l’évènement'
                                                     : 'Confirmer l’évènement'
                                             }
-                                            disabled={!convertir}
                                             type="submit"
                                             label={
                                                 isMobile

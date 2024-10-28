@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table'
-import { ContactType } from './Global-Type'
+import { ContactType } from './GlobalType'
 import { AvatarAndName } from '@/components/AvatarAndName'
 import { capitalize } from './utils'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'

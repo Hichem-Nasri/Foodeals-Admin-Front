@@ -1,6 +1,6 @@
 'use client'
 import React, { createContext, useContext, useState } from 'react'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import Notif from '@/components/Layout/Notif'
 
 interface Notification {

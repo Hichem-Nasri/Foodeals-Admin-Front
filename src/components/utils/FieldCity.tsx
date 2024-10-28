@@ -23,7 +23,6 @@ const FieldCity: FC<FieldCityProps> = ({
     country,
     onChange,
 }) => {
-    console.log('FieldCity: ', country)
     const [cities, setCities] = useState<MultiSelectOptionsType[]>([])
     useEffect(() => {
         const fetchCountry = async () => {
@@ -42,7 +41,6 @@ const FieldCity: FC<FieldCityProps> = ({
             disabled={disabled}
             onChange={(value) => {
                 const id = cities.find((values) => values.key === value)?.id
-                console.log('id', id)
                 onChange(id!)
             }}
         />

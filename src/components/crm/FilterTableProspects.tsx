@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -8,42 +8,19 @@ import {
 } from '@/components/ui/dialog'
 import { CustomButton } from '../custom/CustomButton'
 import { ListFilter, Mail, PhoneCall, X, Check } from 'lucide-react'
-import { PartnerSolutionType } from '@/types/partners'
-import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
 import { MultiSelect, MultiSelectOptionsType } from '../MultiSelect'
 import { Input } from '../custom/Input'
 import { Select } from '../custom/Select'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { useMediaQuery } from 'react-responsive'
 import { cn } from '@/lib/utils'
-import { PartnerStatusType } from '@/types/CrmType'
-import {
-    IconStatus,
-    OptionStatus,
-    StringStatus,
-    StyleStatus,
-} from '@/types/utils'
-import { ColumnFiltersState, Row } from '@tanstack/react-table'
+import { CrmType } from '@/types/CrmType'
+import { ColumnFiltersState } from '@tanstack/react-table'
 import { DateFilter } from '../utils/DateFilters'
 import { FilterSelect } from '../utils/FilterSelect'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
-import { set } from 'date-fns'
-import {
-    FilterData,
-    emptyFilterData,
-    getDataFilter,
-    setMultiSelect,
-    setMultiSelectPerson,
-} from '@/types/CrmUtils'
-import {
-    AddressType,
-    CrmType,
-    CustomFilterType,
-    FilteredData,
-    ProfileType,
-} from '@/types/Global-Type'
+import { FilterData, emptyFilterData } from '@/types/CrmUtils'
 
 interface FilterTableProspectsProps {
     data: CrmType[]
@@ -58,12 +35,6 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
     columnFilters,
     setColumnFilters,
 }) => {
-    const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
-    const [filterTable, setFilterTable] = useState<CustomFilterType>(
-        getDataFilter(data)
-    )
-    console.log('data: ', filterTable)
-
     const [filterData, setFilterData] = useState<FilterData>(emptyFilterData)
     const handleConfirm = () => {
         const filterArray = Object.entries(filterData)
@@ -80,6 +51,20 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
             })
         setColumnFilters(filterArray)
     }
+    const options: MultiSelectOptionsType[] = [
+        {
+            label: 'Option 1',
+            key: 'option1',
+        },
+        {
+            label: 'Option 2',
+            key: 'option2',
+        },
+        {
+            label: 'Option 3',
+            key: 'option3',
+        },
+    ]
     return (
         <Dialog>
             <DialogTrigger className="flex  items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 lg:px-5 lg:py-3 hover:text-black hover:bg-neutral-100 my-4 lg:my-0 bg-white">
@@ -90,7 +75,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400">
                     Filtrer par
                 </DialogTitle>
-                <div className="flex flex-col gap-y-2 gap-x-4">
+                {/* <div className="flex flex-col gap-y-2 gap-x-4">
                     <DateFilter
                         date={filterData.date}
                         setDate={(date) =>
@@ -106,7 +91,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                                     companyName: item,
                                 })
                             }
-                            options={setMultiSelect(filterTable.companyName)}
+                            options={options}
                             label="Raison sociale"
                             emptyAvatar="/avatar/emptyUser.png"
                             // normalTransform={true}
@@ -116,7 +101,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(item) =>
                                 setFilterData({ ...filterData, category: item })
                             }
-                            options={setMultiSelect(filterTable.category)}
+                            options={options}
                             label="Categorie"
                             // normalTransform={true}
                             emptyAvatar="/avatar/emptyPartner.png"
@@ -129,9 +114,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(creatorInfo) =>
                                 setFilterData({ ...filterData, creatorInfo })
                             }
-                            options={setMultiSelectPerson(
-                                filterTable.creatorInfo || []
-                            )}
+                            options={options}
                             label="Alimente par"
                         />
                         <FilterSelect
@@ -139,9 +122,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(managerInfo) =>
                                 setFilterData({ ...filterData, managerInfo })
                             }
-                            options={setMultiSelectPerson(
-                                filterTable.managerInfo || []
-                            )}
+                            options={options}
                             label="Effectuée à"
                         />
                     </div>
@@ -171,10 +152,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(city) =>
                                 setFilterData({ ...filterData, city })
                             }
-                            options={filterTable.city?.map((city: string) => ({
-                                label: city,
-                                key: city,
-                            }))}
+                            options={options}
                             label="Ville"
                             placeholder="Sélectionner la ville"
                             normalTransform={true}
@@ -185,14 +163,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(country) =>
                                 setFilterData({ ...filterData, country })
                             }
-                            options={
-                                filterTable.country?.map((country: string) => {
-                                    return {
-                                        label: country,
-                                        key: country,
-                                    }
-                                }) || []
-                            }
+                            options={options}
                             label="Pays"
                             placeholder="Sélectionner le pays"
                             normalTransform={true}
@@ -204,17 +175,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             setItem={(status) =>
                                 setFilterData({ ...filterData, status })
                             }
-                            options={
-                                filterTable.status?.map((status: string) => {
-                                    const str = StringStatus[status]
-                                    return {
-                                        label: str,
-                                        key: status as string,
-                                        icon: IconStatus[status],
-                                        className: StyleStatus[status],
-                                    } as MultiSelectOptionsType
-                                }) || []
-                            }
+                            options={options}
                             label="Status"
                             length={2}
                             transform={(value: MultiSelectOptionsType[]) => {
@@ -233,8 +194,8 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                             }}
                         />
                     </div>
-                </div>
-
+                </div> */}
+                hello world
                 <DialogDescription className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <DialogClose className="lg:w-fit w-full">
                         <CustomButton

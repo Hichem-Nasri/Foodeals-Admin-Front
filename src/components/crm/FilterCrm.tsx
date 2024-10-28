@@ -8,13 +8,15 @@ import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { Button } from '../ui/button'
-import { CrmType } from '@/types/Global-Type'
+import { CrmType } from '@/types/CrmType'
 
 interface FilterCrmProps {
     data: CrmType[]
     table: import('@tanstack/table-core').Table<CrmType>
     setColumnFilters: (value: ColumnFiltersState) => void
     columnFilters: ColumnFiltersState
+    handleArchive: () => void
+    leadKo: boolean
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
@@ -22,21 +24,9 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     table,
     setColumnFilters,
     columnFilters,
+    handleArchive,
+    leadKo,
 }) => {
-    const [leadKo, setLeadKo] = useState(true)
-    const handleArchive = () => {
-        // set column filters  by status that cancled
-        if (leadKo)
-            setColumnFilters([
-                {
-                    id: 'status',
-                    value: ['canceled'],
-                },
-            ])
-        else setColumnFilters([])
-        setLeadKo((prev) => !prev)
-    }
-
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-start space-x-4 lg:space-x-0 w-full">

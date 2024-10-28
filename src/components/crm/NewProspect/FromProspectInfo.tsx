@@ -11,16 +11,8 @@ import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { Form } from '@/components/ui/form'
-import { SelectField } from '@/components/custom/SelectField'
 import { InputPhoneField } from '@/components/custom/InputFieldPhone'
 import { Mail, PhoneCall } from 'lucide-react'
-import { AvatarField } from '@/components/custom/AvatarField'
-import { MultiSelectField } from '@/components/custom/MultiSelectField'
-import { CountryData } from '@/types/utils'
-import { useQuery } from '@tanstack/react-query'
-import api from '@/api/Auth'
-import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
 import FieldActivities from '@/components/utils/FieldActivities'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
@@ -72,6 +64,13 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-[1.875rem] w-full">
                                 <div className="flex flex-col gap-[1.875rem] w-full">
+                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3 w-full">
+                                        <FieldSolutions
+                                            className="col-span-2"
+                                            control={control}
+                                            disabled={disabled}
+                                        />
+                                    </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3 w-full">
                                         <InputFieldForm
                                             label="Raison sociale"
@@ -166,10 +165,6 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
-                                        <FieldSolutions
-                                            control={control}
-                                            disabled={disabled}
-                                        />
                                         <InputFieldForm
                                             classNameParent="col-span-2"
                                             className=" flex-1 w-full"

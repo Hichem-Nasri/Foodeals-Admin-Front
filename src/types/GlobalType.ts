@@ -1,4 +1,4 @@
-import { PartnerSolutionType, PartnerStatusType } from './partners'
+import { PartnerSolutionType } from './partners'
 
 export type ProfileType = {
     id: string
@@ -31,29 +31,6 @@ export enum NotificationType {
     INFO,
 }
 
-export type FilteredData<T> = {
-    [K in keyof T]: T[K] extends (infer U)[]
-        ? U[]
-        : T[K] extends string
-        ? string[]
-        : T[K]
-}
-
-export type CrmType = {
-    id: string
-    createdAt: string
-    companyName: string
-    category: string
-    contact: ContactType
-    address: AddressType
-    creatorInfo: ProfileType
-    managerInfo: ProfileType
-    status: PartnerStatusType
-    solutions: PartnerSolutionType[]
-    event: EventType[]
-    typeAssocciation?: string
-}
-
 export type ContactType = {
     name: ProfileType['name']
     email: string
@@ -78,12 +55,4 @@ export type AddressType = {
     address: string
     region: string
     iframe: string
-}
-export type EventType = {
-    id: string
-    createdAt: string
-    lead: ProfileType
-    dateAndTime: string
-    object: string
-    message: string
 }

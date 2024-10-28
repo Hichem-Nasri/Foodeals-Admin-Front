@@ -20,11 +20,11 @@ import {
 } from './paymentUtils'
 import SubAccount from '@/app/partenaires/partenair/sub-account/[id]/SubAccount'
 import App from 'next/app'
-import { PartnerInfoDto } from './Global-Type'
+import { PartnerInfoDto } from './GlobalType'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
-    PENDING = 'PENDING',
+    IN_PROGRESS = 'IN_PROGRESS',
     CANCELED = 'CANCELED',
 }
 
@@ -137,7 +137,7 @@ export const defaultDataPaymentDeliveriesTable: PaymentDeliveriesType[] = [
         NbrOrder: 1000,
         commissionfoodleas: 1000,
         toReceive: 1000,
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '2',
@@ -147,7 +147,7 @@ export const defaultDataPaymentDeliveriesTable: PaymentDeliveriesType[] = [
         NbrOrder: 1000,
         commissionfoodleas: 1000,
         toReceive: 1000,
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '3',
@@ -442,7 +442,7 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
         cashCommission: 1000,
         commissionCard: 1000,
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALIDATED_BY_BOTH,
+        paymentStatus: PaymentStatusEnum.VALID_BY_BOTH,
     },
     {
         id: '2',
@@ -458,7 +458,7 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
         cashCommission: 1000,
         commissionCard: 1000,
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALIDATED_BY_FOODEALS,
+        paymentStatus: PaymentStatusEnum.VALID_BY_FOODEALS,
     },
     {
         id: '3',
@@ -474,7 +474,7 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
         cashCommission: 1000,
         commissionCard: 1000,
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALIDATED_BY_FOODEALS,
+        paymentStatus: PaymentStatusEnum.VALID_BY_FOODEALS,
     },
 ]
 
@@ -537,7 +537,10 @@ export const columnsCommissionSSTable = (
                 id={info.getValue()}
                 label={'Confirmer'}
                 disabled={
-                    !(info.row.getValue('status') === PaymentStatusType.PENDING)
+                    !(
+                        info.row.getValue('status') ===
+                        PaymentStatusType.IN_PROGRESS
+                    )
                 }
             />
         ),
@@ -580,7 +583,7 @@ export const defaultDataCommissionSSTable: partnerCommissionSSType[] = [
         toPaid: 1000,
         toReceive: 1000,
         typeCommission: 'paid',
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '2',
@@ -596,7 +599,7 @@ export const defaultDataCommissionSSTable: partnerCommissionSSType[] = [
         toPaid: 1000,
         toReceive: 1000,
         typeCommission: 'receive',
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '3',
@@ -691,7 +694,7 @@ export const columnsCommissionTable = (
             return (
                 <span
                     className={`${
-                        status != PaymentStatusEnum.VALIDATED_BY_BOTH &&
+                        status != PaymentStatusEnum.VALID_BY_BOTH &&
                         info.getValue() > 0 &&
                         'text-coral-500'
                     }`}
@@ -741,7 +744,7 @@ export const columnsCommissionTable = (
                             label={'Confirmer'}
                             disabled={[
                                 PaymentStatusEnum.IN_VALID,
-                                PaymentStatusEnum.VALIDATED_BY_BOTH,
+                                PaymentStatusEnum.VALID_BY_BOTH,
                             ].includes(status as PaymentStatusEnum)}
                         />
                     )
@@ -752,8 +755,8 @@ export const columnsCommissionTable = (
                             id={info.getValue()}
                             label={'Payé'}
                             disabled={[
-                                PaymentStatusEnum.VALIDATED_BY_FOODEALS,
-                                PaymentStatusEnum.VALIDATED_BY_BOTH,
+                                PaymentStatusEnum.VALID_BY_FOODEALS,
+                                PaymentStatusEnum.VALID_BY_BOTH,
                             ].includes(status as PaymentStatusEnum)}
                         />
                     )
@@ -833,7 +836,7 @@ export const defaultDataCommissionTable: PaymentCommision[] = [
         toPay: 0,
         toReceive: 540,
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALIDATED_BY_PARTNER,
+        paymentStatus: PaymentStatusEnum.VALID_BY_PARTNER,
         commissionPayedBySubEntities: false,
     },
     {
@@ -849,7 +852,7 @@ export const defaultDataCommissionTable: PaymentCommision[] = [
         toPay: 5400,
         toReceive: 0,
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALIDATED_BY_BOTH,
+        paymentStatus: PaymentStatusEnum.VALID_BY_BOTH,
         commissionPayedBySubEntities: true,
         date: '2021-09-01',
         entityId: '6',
@@ -1127,7 +1130,7 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
                         disabled={
                             !(
                                 info.row.getValue('status') ===
-                                PaymentStatusType.PENDING
+                                PaymentStatusType.IN_PROGRESS
                             )
                         }
                     />
@@ -1139,7 +1142,7 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
                     disabled={
                         !(
                             info.row.getValue('status') ===
-                            PaymentStatusType.PENDING
+                            PaymentStatusType.IN_PROGRESS
                         )
                     }
                 />
@@ -1203,7 +1206,7 @@ export const defaultDataPaymentsTable: PaymentType[] = [
         totalCommission: 1000,
         toPay: 1000,
         receiver: 1000,
-        status: PaymentStatusType.PENDING,
+        status: PaymentStatusType.IN_PROGRESS,
         payByFoodeals: true,
     },
     {
@@ -1221,7 +1224,7 @@ export const defaultDataPaymentsTable: PaymentType[] = [
         totalCommission: 1000,
         toPay: 1000,
         receiver: 1000,
-        status: PaymentStatusType.PENDING,
+        status: PaymentStatusType.IN_PROGRESS,
         payByFoodeals: false,
     },
     {
@@ -1347,7 +1350,7 @@ export const defaultDataValidationTable: ValidationSubscriptionType[] = [
         deadline: new Date(),
         price: 1000,
         solution: [PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '2',
@@ -1355,7 +1358,7 @@ export const defaultDataValidationTable: ValidationSubscriptionType[] = [
         deadline: new Date(),
         price: 1000,
         solution: [PartnerSolutionType.DLC_PRO],
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
     {
         id: '3',
@@ -1363,7 +1366,7 @@ export const defaultDataValidationTable: ValidationSubscriptionType[] = [
         deadline: new Date(),
         price: 1000,
         solution: [PartnerSolutionType.DLC_PRO],
-        validation: PaymentStatusType.PENDING,
+        validation: PaymentStatusType.IN_PROGRESS,
     },
 ]
 

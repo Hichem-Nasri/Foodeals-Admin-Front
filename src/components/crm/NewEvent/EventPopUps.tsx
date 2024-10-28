@@ -7,25 +7,31 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CrmObjectSchema, defaultCrmObjectData } from '@/types/CrmScheme'
 import AddNewEvent from './AddNewEvent'
-import { CrmObjectType, EvenetType } from '@/types/CrmType'
+import { CrmObjectType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
 import { useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
+import { createArchive } from '@/lib/api/crm/prospect/createEvents'
+import { NotificationType } from '@/types/GlobalType'
+import { useNotification } from '@/context/NotifContext'
 
 export const EventPopUps = ({
     setOpen,
     open,
     convertir,
     prospect,
+    disable,
 }: {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
     prospect: any
     open: boolean
+    disable?: boolean
 }) => {
-    const queryClient = useQueryClient()
     const { id } = useParams()
+    const Notify = useNotification()
+
     const onSaveData = () => {
         console.log('Save data')
     }
@@ -40,35 +46,30 @@ export const EventPopUps = ({
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }, [open])
-
     const mutation = useMutation({
-        mutationFn: async (e: CrmObjectType) => {
-            const evenet = {
-                object: e.object,
-                message: e.message,
-                dateAndTime: new Date().toISOString(),
-                lead: 1, //Todo: Change this value to the lead id
-            }
-            console.log(id, evenet)
-            const res = await api
-                .post(
-                    `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
-                    evenet
-                )
-                .then((res) => res.data)
-                .catch((error) => console.log(error))
-            return res
+        mutationFn: async (data: CrmObjectType) => {
+            console.log('data', data, id)
+            const res = await createArchive(data, id as string)
+            if ([200, 201].includes(res.status))
+                throw new Error('Failed to create event')
+            return res.data
         },
         onSuccess: (data) => {
-            console.log('data:', prospect)
+            Notify.notify(
+                NotificationType.SUCCESS,
+                'Event created successfully'
+            )
             prospect.event.push(data)
             setOpen((prev) => !prev)
-            queryClient.invalidateQueries({ queryKey: ['events', 'prospects'] })
+        },
+        onError: () => {
+            Notify.notify(NotificationType.ERROR, 'Failed to create event')
         },
     })
 
     const onSubmit = (e: CrmObjectType) => {
         try {
+            console.log('hello world')
             mutation.mutate(e)
         } catch (error) {
             console.error(error)
@@ -81,11 +82,12 @@ export const EventPopUps = ({
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto h-screen overflow-y-scroll scroll-smooth">
             {!isMobile && (
                 <TopBar
-                    status={PartnerStatusType.PENDING}
-                    primaryButtonDisabled={!convertir}
-                    secondaryButtonDisabled={convertir}
+                    status={prospect.status as PartnerStatusType}
+                    primaryButtonDisabled={convertir}
+                    secondaryButtonDisabled={!convertir}
                     onSaveData={onSaveData}
                     onSubmit={handleSubmit(onSubmit)}
+                    open={open}
                 />
             )}
             <AddNewEvent
@@ -93,7 +95,7 @@ export const EventPopUps = ({
                 isMobile={isMobile}
                 setOpen={setOpen}
                 convertir={convertir}
-                mutation={mutation}
+                onSubmit={onSubmit}
             />
         </div>
     )

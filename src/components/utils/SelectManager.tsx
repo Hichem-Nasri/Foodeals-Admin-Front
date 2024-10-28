@@ -27,10 +27,8 @@ const SelectManager = ({
     label: string
 }) => {
     const [search, setSearch] = useState('') // Initial search state
-    const inputRef = useRef<HTMLInputElement>(null) // Reference for the input
+    const inputRef = useRef<HTMLInputElement>(null)
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
-
-    // Use the search term in the query key and fetch data based on it
 
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()

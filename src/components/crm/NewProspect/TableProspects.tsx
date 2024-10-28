@@ -7,7 +7,6 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import React, { FC, useContext, useState } from 'react'
-import { FormEvenement } from '../NewEvent/FormEvenet'
 import { useRouter } from 'next/navigation'
 import {
     ColumnFiltersState,
@@ -17,21 +16,25 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { columnsProspectTable, defaultDataProspectTable } from '@/types/CrmType'
 import DetailsEventCard from '../NewEvent/DetailsEventCard'
 import { EventPopUps } from '../NewEvent/EventPopUps'
 import Link from 'next/link'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilePlus } from 'lucide-react'
-import { EventContext } from '@/context/EventContext'
-import { EventType } from '@/types/Global-Type'
+import { EventType } from '@/types/CrmType'
+import { columnsProspectTable } from '../Prospect/column/EventColumn'
 
 type TableProspectsProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     data: EventType[]
+    disabled?: boolean
 }
 
-export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {
+export const TableProspects: FC<TableProspectsProps> = ({
+    setOpen,
+    data,
+    disabled,
+}) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const router = useRouter()
     const table = useReactTable({
@@ -72,10 +75,11 @@ export const TableProspects: FC<TableProspectsProps> = ({ setOpen, data }) => {
                         </div>
                         <div className="self-end">
                             <CustomButton
+                                disabled={disabled}
                                 onClick={() => setOpen((prev) => !prev)}
                                 label="Ajouter un noueau événement"
                                 IconRight={FilePlus}
-                                className="w-full justify-center bg-transparent text-primary hover:bg-primary hover:text-white border-2 border-primary transition-all"
+                                className="disabled:text-white disabled:border-white w-full justify-center bg-transparent text-primary hover:bg-primary hover:text-white border-2 border-primary transition-all"
                             />
                         </div>
                     </div>

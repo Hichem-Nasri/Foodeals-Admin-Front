@@ -1,5 +1,4 @@
 'use client'
-import { CustomButton } from '@/components/custom/CustomButton'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { Label } from '@/components/Label'
 import {
@@ -9,20 +8,15 @@ import {
     AccordionContent,
 } from '@/components/ui/accordion'
 import { Textarea } from '@/components/ui/textarea'
-import {
-    CrmObjectSchema,
-    NotificationSchema,
-    NotificationType,
-} from '@/types/CrmScheme'
-import { CheckCheck, X } from 'lucide-react'
+import { NotificationSchema, NotificationType } from '@/types/CrmScheme'
 import React, { FC } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { z } from 'zod'
-import { CrmObjectType, EvenetType } from '@/types/CrmType'
 import { useRouter } from 'next/navigation'
 import { UploadFile } from '@/components/Partners/NewPartner/UploadFile'
 import { useMediaQuery } from 'react-responsive'
+import Image from 'next/image'
 
 interface NewNotificatoinProps {
     form: UseFormReturn<z.infer<typeof NotificationSchema>>
@@ -146,10 +140,13 @@ const NewNotificatoin: FC<NewNotificatoinProps> = ({
                             <div className="h-[1px] w-full bg-lynch-200 rounded-full" />
                             {form.watch('image') && (
                                 <div className="w-full flex justify-center items-center">
-                                    <img
+                                    <Image
                                         src={form.watch('image')}
                                         alt="image"
                                         className="w-full h-full rounded-2xl"
+                                        width={isMobile ? 300 : 500}
+                                        height={isMobile ? 300 : 500}
+                                        lazyBoundary="100px"
                                     />
                                 </div>
                             )}

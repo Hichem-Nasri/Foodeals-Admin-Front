@@ -1,4 +1,5 @@
 'use client'
+import { columnsDemandeTable } from '@/components/crm/Demandes/column/DemandsColumn'
 import CrmDemandesCard from '@/components/crm/Demandes/CrmDemandesCard'
 import FilterCrmDemandes from '@/components/crm/Demandes/filterCrmDemandes'
 import { FilterTableDemandes } from '@/components/crm/Demandes/FilterTableDemandes'
@@ -6,11 +7,7 @@ import SwitchToggleDemandes from '@/components/crm/Demandes/SwitchToggle'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
-import {
-    columnCrmAssociations,
-    columnsDemandeTable,
-    CrmDemandeType,
-} from '@/types/CrmType'
+import { CrmDemandeType } from '@/types/CrmType'
 import {
     ColumnFiltersState,
     getCoreRowModel,

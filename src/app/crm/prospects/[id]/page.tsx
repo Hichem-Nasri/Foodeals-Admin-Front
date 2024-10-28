@@ -4,50 +4,109 @@ import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
 import { FormCrmInfo } from '@/components/crm/NewProspect/FromProspectInfo'
 import { TopBar } from '@/components/crm/NewProspect/TopBar'
-import { FormProspectInfoDisplay } from '@/components/crm/Prospect/FormProspectInfoDispaly'
+import { FormCrmInfoDisplay } from '@/components/crm/Prospect/FormProspectInfoDispaly'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { Layout } from '@/components/Layout/Layout'
+import { useNotification } from '@/context/NotifContext'
+import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
+import { API_PROSPECTS } from '@/lib/api_url'
 import { AppRoutes } from '@/lib/routes'
-import { CrmType } from '@/types/Global-Type'
+import {
+    CrmInformationSchema,
+    getCrmCreateData,
+    getInfoData,
+} from '@/types/CrmScheme'
+import { CrmType } from '@/types/CrmType'
+import { NotificationType } from '@/types/GlobalType'
 import { PartnerStatusType } from '@/types/partners'
-import { useQuery } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { get } from 'http'
-import { Archive } from 'lucide-react'
+import { Archive, Info } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-const API_ENDPOINT_GET = 'http://localhost:8080/api/v1/crm/prospects'
-const API_ENDPOINT_DELETE = 'http://localhost:8080/api/v1/crm/prospects'
-
-const ProspectElement = ({ prospect }: { prospect: CrmType }) => {
+const ProspectElement = ({ data }: { data: CrmType }) => {
+    const [prospect, setProspect] = React.useState(data)
     const params = useSearchParams()
     const [countryCode, setCountryCode] = React.useState('')
     const [open, setOpen] = React.useState(false)
     const [readOnly, setReadOnly] = React.useState(true)
-    const route = useRouter()
+    const Notif = useNotification()
+    const router = useRouter()
     const { id } = useParams()
     console.log(id)
-    const handleArchiver = () => {
-        api.delete(`${API_ENDPOINT_DELETE}/${id}`)
-            .then((res) => res.data)
-            .catch((e) => console.error(e))
-        route.push('/crm')
+    const { mutate } = useMutation({
+        mutationKey: ['prospect'],
+        mutationFn: (data: any) => {
+            return api.put(`${API_PROSPECTS}/${id}`, data)
+        },
+        onSuccess: () => {
+            Notif.notify(
+                NotificationType.SUCCESS,
+                'Prospect updated successfully'
+            )
+        },
+        onError: () => {
+            Notif.notify(NotificationType.ERROR, 'Failed to update prospect')
+        },
+    })
+    const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
+        resolver: zodResolver(CrmInformationSchema),
+        mode: 'onBlur',
+        defaultValues: { ...getInfoData(prospect) },
+    })
+    const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {
+        const newData = {
+            ...getCrmCreateData(data),
+            powered_by: data.creatorInfo,
+        }
+        mutate(newData)
     }
-    const router = useRouter()
+
+    const onSubmitEvent = (data: any) => {
+        console.log(data)
+    }
+
+    const handleArchiver = async () => {
+        const res = await archiveProspect(prospect.id)
+        if (res.status === 200) {
+            Notif.notifications.push({
+                type: NotificationType.SUCCESS,
+                message: 'Prospect archived successfully',
+            })
+        } else {
+            Notif.notifications.push({
+                type: NotificationType.ERROR,
+                message: 'Failed to archive prospect',
+            })
+        }
+        setProspect((prev) => {
+            return { ...prev, status: PartnerStatusType.CANCELED }
+        })
+    }
+
     useEffect(() => {
         if (params.get('mode') === 'edit') {
             setReadOnly(false)
         }
-    }, [params.get('mode')])
+    }, [params, params.get('mode')])
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             {!open ? (
                 <>
                     <TopBar
-                        status={PartnerStatusType.DRAFT}
-                        primaryButtonDisabled={readOnly}
-                        secondaryButtonDisabled={true}
-                        onSaveData={() => {}}
+                        status={prospect.status as PartnerStatusType}
+                        primaryButtonDisabled={
+                            readOnly &&
+                            prospect.status == PartnerStatusType.IN_PROGRESS
+                        }
+                        secondaryButtonDisabled={readOnly}
+                        onSaveData={() => {
+                            CrmInformation.handleSubmit(onSubmitCrmInfo)()
+                        }}
                         onSubmit={() => {
                             router.push(
                                 AppRoutes.newConvertir.replace(
@@ -56,29 +115,33 @@ const ProspectElement = ({ prospect }: { prospect: CrmType }) => {
                                 )
                             )
                         }}
+                        open={open}
                     />
-                    <FormProspectInfoDisplay
-                        data={prospect}
+                    <FormCrmInfoDisplay
+                        onSubmit={onSubmitCrmInfo}
+                        form={CrmInformation}
                         countryCode={countryCode}
                         setCountryCode={setCountryCode}
-                        disabled={true}
+                        disabled={readOnly}
                     />
                     <NewEvenent
-                        Event={prospect.event || []}
+                        disabled={readOnly}
+                        Event={prospect.event}
                         setOpen={setOpen}
-                        convertir={true}
+                        convertir={readOnly}
                     />
                     {prospect.event && prospect.event.length > 0 && (
                         <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
                             <CustomButton
-                                disabled={false}
+                                disabled={readOnly}
+                                variant="outline"
                                 label="Archiver"
                                 onClick={() => {
                                     console.log('Archiver')
                                     handleArchiver()
                                 }}
                                 className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
-                        transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"
+                        transition-all delay-75 duration-100 w-[136px] py-0 px-4 font-normal text-center h-14"
                                 IconRight={Archive}
                             />
                         </div>
@@ -88,7 +151,7 @@ const ProspectElement = ({ prospect }: { prospect: CrmType }) => {
                 <EventPopUps
                     setOpen={setOpen}
                     open={open}
-                    convertir={true}
+                    convertir={readOnly}
                     prospect={prospect}
                 />
             )}
@@ -115,7 +178,7 @@ const ProspectPage = () => {
             ) : error ? (
                 <div>Error: {error?.message}</div>
             ) : (
-                <ProspectElement prospect={prospect} />
+                <ProspectElement data={prospect} />
             )}
         </Layout>
     )
@@ -136,11 +199,11 @@ const getProspect = async (id: string) => {
             case SubscriptionStatus.NOT_STARTED:
                 return PartnerStatusType.DRAFT
             case SubscriptionStatus.IN_PROGRESS:
-                return PartnerStatusType.PENDING
+                return PartnerStatusType.IN_PROGRESS
             case SubscriptionStatus.VALID:
-                return PartnerStatusType.VALIDATED
+                return PartnerStatusType.VALID
             case SubscriptionStatus.CANCELED:
-                return PartnerStatusType.ANNULLED
+                return PartnerStatusType.CANCELED
             default:
                 return PartnerStatusType.DRAFT
         }
@@ -148,7 +211,7 @@ const getProspect = async (id: string) => {
     if (id) {
         try {
             const res = await api
-                .get(`${API_ENDPOINT_GET}/${id}`)
+                .get(`${API_PROSPECTS}/${id}`)
                 .then((res) => res.data)
                 .catch((err) => {
                     throw new Error(err)

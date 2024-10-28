@@ -1,4 +1,4 @@
-import { CrmType } from './Global-Type'
+import { CrmType } from './CrmType'
 import {
     exportSolutionType,
     PartnerCompanyTypeOptions,
@@ -137,8 +137,8 @@ export const checkAllForms = (partnerData: PartnerPOST) => {
         partnerData.entityBankInformationDto.beneficiaryName,
         partnerData.entityBankInformationDto.bankName,
         partnerData.entityBankInformationDto.rib,
-        partnerData.solutions.length,
-        partnerData.solutionsContractDto.length,
+        // partnerData.solutions.length,
+        // partnerData.solutionsContractDto.length,
         partnerData.maxNumberOfSubEntities,
     ]
 
@@ -213,6 +213,7 @@ export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
             commissionCash: 0,
             commissionCard: 0,
         },
+        subscriptionType: 'general',
         mapLocation: partner.address.iframe,
         phone: partner.contact.phone,
         email: partner.contact.email,
@@ -221,7 +222,7 @@ export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
         city: partner.address.city,
         region: partner.address.region,
         address: partner.address.address,
-        status: PartnerStatusType.PENDING,
+        status: PartnerStatusType.IN_PROGRESS,
     }
 }
 
@@ -312,7 +313,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         contractId: '',
         status: partner.status
             ? (partner.status as PartnerStatusType)
-            : PartnerStatusType.PENDING,
+            : PartnerStatusType.IN_PROGRESS,
         logo: null,
         cover: null,
         paymentMethod: 'transfer',
@@ -392,7 +393,7 @@ export const emptyPartnerPOST: PartnerPOST = {
     solutionsContractDto: [],
     coveredZonesDtos: [],
     deliveryPartnerContract: [],
-    status: PartnerStatusType.PENDING,
+    status: PartnerStatusType.IN_PROGRESS,
 }
 
 export interface ContactDto {

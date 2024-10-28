@@ -50,7 +50,7 @@ export const exportDeliveryData = (data: any) => {
         },
         numberOfDeliveries: delivery.numberOfDeliveries,
         commands: delivery.numberOfDeliveryPeople,
-        city: delivery.city,
+        city: delivery.distribution,
         phone: delivery.responsibleInfoDto.phone,
         email: delivery.responsibleInfoDto.email,
         solution: delivery.solutions.map((solutions: any) => {
@@ -142,7 +142,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         footer: (info) => info.column.id,
     }),
     columnDeliveriesTableHelper.accessor('city', {
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+            console.log('info', info.getValue())
+            return info.getValue() == 'MULTI_CITY' ? 'Multi-ville' : 'Partout'
+        },
         header: 'Ville',
         footer: (info) => info.column.id,
     }),
@@ -192,9 +195,9 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                     },
                     {
                         actions: (id) =>
-                            AppRoutes.newDelivery.replace(
-                                ':id',
-                                id + '?mode=edit'
+                            router.push(
+                                AppRoutes.newDelivery.replace(':id', id) +
+                                    '?mode=edit'
                             ),
                         icon: Pen,
                         label: 'Modifier',
@@ -511,7 +514,10 @@ export const columnsDeliveryPaymentsTable = [
                 id={info.getValue()}
                 label="Confirmer"
                 disabled={
-                    !(info.row.getValue('status') === PaymentStatusType.PENDING)
+                    !(
+                        info.row.getValue('status') ===
+                        PaymentStatusType.IN_PROGRESS
+                    )
                 }
             />
         ),
@@ -528,7 +534,7 @@ export const defaultDeliveryPaymentsData: DeliveryPaymentsType[] = [
         commissionTotal: 100,
         month: 'Janvier',
         numberOfCommands: 10,
-        status: PaymentStatusType.PENDING,
+        status: PaymentStatusType.IN_PROGRESS,
         toPay: 100,
     },
     {

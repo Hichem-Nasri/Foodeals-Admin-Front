@@ -7,9 +7,14 @@ import { countryCodes } from '@/lib/utils'
 import {
     CrmInformationSchema,
     defaultCrmInformationData,
+    getCrmCreateData,
     getInfoData,
 } from '@/types/CrmScheme'
-import { CrmInformationSchemaType, CrmObjectType } from '@/types/CrmType'
+import {
+    CrmInformationSchemaType,
+    CrmObjectType,
+    EventType,
+} from '@/types/CrmType'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Archive, Router } from 'lucide-react'
@@ -22,9 +27,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useRouter } from 'next/navigation'
 import { EventPopUpsNew } from '@/components/crm/NewEvent/EventPopUpsNew'
-import { EventType, NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
 import { AppRoutes } from '@/lib/routes'
+import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 
 interface CreateProps {}
 
@@ -34,7 +40,10 @@ export const Create: FC<CreateProps> = () => {
     const router = useRouter()
     const [Info, setInfo] = useState<any>(null)
     const [events, setEvents] = useState<EventType[]>([])
+    const [convertir, setConvertir] = useState(false)
+    const [open, setOpen] = useState(false)
     const Notif = useNotification()
+
     const mutate = useMutation({
         mutationFn: async (data: any) => {
             const res = await api
@@ -48,7 +57,10 @@ export const Create: FC<CreateProps> = () => {
         onSuccess: (data) => {
             setConvertir(true)
             setInfo(data)
-            console.log('create: ', data)
+            Notif.notify(
+                NotificationType.SUCCESS,
+                'Prospect created successfully'
+            )
             queryClient.invalidateQueries({ queryKey: ['prospects'] })
         },
         onError: (error) => {
@@ -56,63 +68,35 @@ export const Create: FC<CreateProps> = () => {
             console.log(error) // Todo: add system notification for error
         },
     })
+    const handleLeadKO = async () => {
+        const res = await archiveProspect(Info.id)
+        if (res.status === 200) {
+            Notif.notify(NotificationType.SUCCESS, 'Lead KO')
+            router.push(AppRoutes.crm)
+        } else {
+            Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
+        }
+    }
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
         resolver: zodResolver(CrmInformationSchema),
         mode: 'onBlur',
         defaultValues: { ...getInfoData(Info) },
     })
-    const { handleSubmit } = CrmInformation
+
     const onSubmit = () => {
-        setOpen((prev) => !prev)
         router.push(AppRoutes.newConvertir.replace(':id', Info.id))
     }
     const onSaveData = (e: CrmInformationSchemaType) => {
-        const [firstName, lastName] = e.responsable.split(' ')
-        console.log('e', e)
-        const createProspect = {
-            companyName: e.companyName,
-            activities: e.category,
-            responsible: {
-                name: {
-                    firstName: firstName,
-                    lastName: lastName,
-                },
-                email: e.email,
-                phone: e.email,
-            },
-            manager_id: e.managerInfo,
-            address: {
-                country: e.country,
-                city: e.city,
-                address: e.address,
-                region: e.region,
-            },
-            event: null,
-            solutions: e.solutions.map((sol) => {
-                switch (sol) {
-                    case PartnerSolutionType.DLC_PRO:
-                        return 'pro_dlc'
-                    case PartnerSolutionType.DONATE_PRO:
-                        return 'pro_donate'
-                    case PartnerSolutionType.MARKET_PRO:
-                        return 'pro_market'
-                    default:
-                        return 'none'
-                }
-            }),
-        }
+        const createProspect = getCrmCreateData(e)
         mutate.mutate(createProspect)
-        console.log('Save data')
     }
+    const { handleSubmit } = CrmInformation
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {}
-    const [convertir, setConvertir] = useState(false)
-    const [open, setOpen] = useState(false)
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             {!open ? (
                 <>
-                    {' '}
                     <TopBar
                         status={PartnerStatusType.DRAFT}
                         primaryButtonDisabled={!convertir}
@@ -132,13 +116,14 @@ export const Create: FC<CreateProps> = () => {
                         setOpen={setOpen}
                         convertir={convertir}
                     />
-                    {Info && Info.events && Info.events.length > 0 && (
+                    {Info && Info.event && Info.events.length > 0 && (
                         <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">
                             <CustomButton
+                                variant="outline"
                                 disabled={convertir}
                                 label="Lead Ko"
-                                onClick={() => console.log('Save')}
-                                className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
+                                onClick={handleLeadKO}
+                                className="bg-coral-50 disabled:text-white disabled:border-white text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50
                         transition-all delay-75 duration-100 w-[136px] py-0 px-4 text-center h-14"
                                 IconRight={Archive}
                             />

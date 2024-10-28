@@ -7,16 +7,11 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { useMediaQuery } from 'react-responsive'
-import { cn } from '@/lib/utils'
-import { OptionStatus } from '@/types/utils'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { DateFilter } from '@/components/utils/DateFilters'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { FilterInput } from '@/components/utils/FilterInput'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
-import { FilterSelect } from '@/components/utils/FilterSelect'
 import { ListFilter, X, Check } from 'lucide-react'
 import { CrmDemandeType } from '@/types/CrmType'
 import { FilterData, emptyFilterData } from '@/types/CrmUtils'
@@ -28,50 +23,12 @@ interface FilterTableDemandesProps {
     setColumnFilters: (value: ColumnFiltersState) => void
 }
 
-const setMultiSelectPerson = (
-    value: { name: { firstName: string; lastName: string }; avatar: string }[]
-) => {
-    return Array.from(
-        new Set(
-            value.map(
-                (items) => items.name.firstName + ' ' + items.name.lastName
-            )
-        )
-    ).map((items) => ({
-        key: items,
-        label: items,
-        avatar: value.find(
-            (item) => item.name.firstName + ' ' + item.name.lastName === items
-        )?.avatar,
-    }))
-}
-
-const setMultiSelect = (value: string[]) => {
-    return Array.from(new Set(value)).map((items) => ({
-        key: items,
-        label: items,
-    }))
-}
-
-const getDateFilter = (data: CrmDemandeType[]) => {
-    return {
-        companyName: Array.from(new Set(data.map((item) => item.companyName))),
-        category: Array.from(new Set(data.map((item) => item.activity).flat())),
-        country: Array.from(new Set(data.map((item) => item.country))),
-        city: Array.from(new Set(data.map((item) => item.city))),
-        role: Array.from(new Set(data.map((item) => item.role))),
-    }
-}
-
 export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
     data,
     table,
     columnFilters,
     setColumnFilters,
 }) => {
-    const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
-    const [filterTable, setFilterTable] = useState(getDateFilter(data))
-
     const [filterData, setFilterData] = useState<
         FilterData & { role: string[] }
     >({ ...emptyFilterData, role: [] })
@@ -90,6 +47,10 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
             })
         setColumnFilters(filterArray)
     }
+    const options = [
+        { label: 'Admin', key: 'admin' },
+        { label: 'User', key: 'user' },
+    ]
     return (
         <Dialog>
             <DialogTrigger className="flex  items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 lg:px-5 lg:py-3 hover:text-black hover:bg-neutral-100 my-4 lg:my-0 bg-white">
@@ -116,7 +77,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                                     companyName: item,
                                 })
                             }
-                            options={setMultiSelect(filterTable.companyName)}
+                            options={options}
                             label="Raison sociale"
                             normalTransform={true}
                         />
@@ -125,7 +86,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                             setItem={(item) =>
                                 setFilterData({ ...filterData, category: item })
                             }
-                            options={setMultiSelect(filterTable.category)}
+                            options={options}
                             label="Categorie"
                             normalTransform={true}
                         />
@@ -136,10 +97,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                             setItem={(city) =>
                                 setFilterData({ ...filterData, city })
                             }
-                            options={filterTable.city.map((city) => ({
-                                label: city,
-                                key: city,
-                            }))}
+                            options={options}
                             label="Ville"
                             placeholder="Sélectionner la ville"
                             normalTransform={true}
@@ -149,7 +107,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                             setItem={(country) =>
                                 setFilterData({ ...filterData, country })
                             }
-                            options={setMultiSelect(filterTable.country)}
+                            options={options}
                             label="Pays"
                             placeholder="Sélectionner le pays"
                             normalTransform={true}
@@ -161,7 +119,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                             setItem={(role) =>
                                 setFilterData({ ...filterData, role: role })
                             }
-                            options={setMultiSelect(filterTable.role)}
+                            options={options}
                             label="Pays"
                             placeholder="Sélectionner le pays"
                             normalTransform={true}

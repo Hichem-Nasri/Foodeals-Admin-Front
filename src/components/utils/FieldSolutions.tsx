@@ -4,8 +4,10 @@ import { MultiSelectOptionsType } from '../MultiSelect'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partners'
 import { Control } from 'react-hook-form'
+import { cn } from '@/lib/utils'
 
 interface FieldSolutionProps {
+    className?: string
     control: Control<any>
     disabled: boolean
     options?: MultiSelectOptionsType[]
@@ -26,6 +28,7 @@ const defaultOptions: MultiSelectOptionsType[] = [
 ]
 
 const FieldSolutions: FC<FieldSolutionProps> = ({
+    className,
     control,
     options = defaultOptions,
     disabled,
@@ -34,7 +37,7 @@ const FieldSolutions: FC<FieldSolutionProps> = ({
         <MultiSelectField
             control={control}
             name="solutions"
-            className="h-auto"
+            className={cn('h-auto', className)}
             label="Solutions"
             options={options}
             transform={(values) => {
@@ -47,7 +50,6 @@ const FieldSolutions: FC<FieldSolutionProps> = ({
                     />
                 ))
             }}
-            len={2}
             disabled={disabled}
         />
     )

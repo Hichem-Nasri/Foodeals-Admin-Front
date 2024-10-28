@@ -1,9 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ProspectType } from '@/types/CrmType'
 import { CalendarMinus2, Eye, Mail, PhoneCall, TextQuote } from 'lucide-react'
 import React, { FC } from 'react'
 import { DetailsEvenetProspect } from './DetailsEvenet'
-import { EventType } from '@/types/Global-Type'
+import { EventType } from '@/types/CrmType'
 
 interface DetailsEventCardProps {
     detailsData: EventType

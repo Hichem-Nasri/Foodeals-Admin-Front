@@ -1,18 +1,18 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { TopBar } from '../NewProspect/TopBar'
 import { PartnerStatusType } from '@/types/partners'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CrmObjectSchema, defaultCrmObjectData } from '@/types/CrmScheme'
+import { CrmObjectSchema } from '@/types/CrmScheme'
 import AddNewEvent from './AddNewEvent'
-import { CrmObjectType, EvenetType } from '@/types/CrmType'
+import { CrmObjectType, EventType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
-import { useParams } from 'next/navigation'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '@/api/Auth'
-import { EventType } from '@/types/Global-Type'
+import { useMutation } from '@tanstack/react-query'
+import { NotificationType } from '@/types/GlobalType'
+import { createArchive } from '@/lib/api/crm/prospect/createEvents'
+import { useNotification } from '@/context/NotifContext'
 
 export const EventPopUpsNew = ({
     id,
@@ -32,37 +32,26 @@ export const EventPopUpsNew = ({
     const onSaveData = () => {
         console.log('Save data')
     }
-
+    const Notify = useNotification()
+    const isMobile = useMediaQuery({ query: '(max-width:1024px)' })
     const form = useForm<z.infer<typeof CrmObjectSchema>>({
         resolver: zodResolver(CrmObjectSchema),
         mode: 'onBlur',
         defaultValues: getInitialValues(events),
     })
-    useEffect(() => {
-        if (open) {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-    }, [open])
+    const { handleSubmit } = form
 
     const mutation = useMutation({
-        mutationFn: async (e: CrmObjectType) => {
-            const evenet = {
-                object: e.object,
-                message: e.message,
-                dateAndTime: new Date().toISOString(),
-                lead: 1, //Todo: Change this value to the lead id
-            }
-            console.log(id, evenet)
-            const res = await api
-                .post(
-                    `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
-                    evenet
-                )
-                .then((res) => res.data)
-                .catch((error) => console.log(error))
-            return res
+        mutationFn: async (data: CrmObjectType) => {
+            const res = await createArchive(data, id!)
+            if (res.status !== 200) throw new Error('Failed to create event')
+            return res.data
         },
         onSuccess: (data) => {
+            Notify.notify(
+                NotificationType.SUCCESS,
+                'Event created successfully'
+            )
             setEvents((prev) => [...prev, data])
             setOpen((prev) => !prev)
         },
@@ -72,17 +61,21 @@ export const EventPopUpsNew = ({
         try {
             mutation.mutate(e)
         } catch (error) {
-            console.error(error)
+            Notify.notify(NotificationType.ERROR, 'Failed to create event')
+            console.log(error)
         }
     }
-    const { handleSubmit } = form
-    const isMobile = useMediaQuery({ query: '(max-width:1024px)' })
+    useEffect(() => {
+        if (open) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }, [open])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto h-screen overflow-y-scroll scroll-smooth">
             {!isMobile && (
                 <TopBar
-                    status={PartnerStatusType.PENDING}
+                    status={PartnerStatusType.IN_PROGRESS}
                     primaryButtonDisabled={!convertir}
                     secondaryButtonDisabled={convertir}
                     onSaveData={onSaveData}
@@ -94,7 +87,7 @@ export const EventPopUpsNew = ({
                 isMobile={isMobile}
                 setOpen={setOpen}
                 convertir={convertir}
-                mutation={mutation}
+                onSubmit={onSubmit}
             />
         </div>
     )

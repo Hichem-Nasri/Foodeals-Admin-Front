@@ -11,7 +11,7 @@ import {
 import Link from 'next/link'
 import { CustomButton } from '../custom/CustomButton'
 import { StyleStatus, IconStatus } from '@/types/utils'
-import { CrmType } from '@/types/Global-Type'
+import { CrmType } from '@/types/CrmType'
 
 interface CrmCardDetailsProps {
     crm: CrmType
@@ -59,7 +59,7 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
                         {dataCrm.IconStatus && (
                             <dataCrm.IconStatus className="size-[18px]" />
                         )}
-                        {crm.status.toString()}
+                        {crm.status?.toString()}
                     </div>
                     <div className="flex justify-evenly items-center space-x-1">
                         <Link href={`tel:${crm.contact.phone}`}>

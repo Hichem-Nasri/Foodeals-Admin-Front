@@ -1,25 +1,12 @@
 'use client'
 import api from '@/api/Auth'
-import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
-import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
-import { FormCrmInfo } from '@/components/crm/NewProspect/FromProspectInfo'
-import { TopBar } from '@/components/crm/NewProspect/TopBar'
-import { FormProspectInfoDisplay } from '@/components/crm/Prospect/FormProspectInfoDispaly'
-import { CustomButton } from '@/components/custom/CustomButton'
 import { Layout } from '@/components/Layout/Layout'
-import { PartnerSolution } from '@/components/Partners/PartnerSolution'
-import { CrmType } from '@/types/Global-Type'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partners'
 import { useQuery } from '@tanstack/react-query'
-import { Archive } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { Fragment } from 'react'
 import { DetailsDemandesDisplay } from './DetailsDemandesDisplay'
-import {
-    columnsNotificationTable,
-    CrmDemandeType,
-    TableNotificationType,
-} from '@/types/CrmType'
+import { CrmDemandeType, TableNotificationType } from '@/types/CrmType'
 import {
     Accordion,
     AccordionContent,
@@ -36,6 +23,7 @@ import {
 } from '@tanstack/react-table'
 import { DataTable } from '@/components/DataTable'
 import { TopBarDemandes } from './TobBarDemandes'
+import { columnsNotificationTable } from '../column/NotificationColumn'
 const data: TableNotificationType[] = [
     {
         id: '1',
@@ -43,6 +31,7 @@ const data: TableNotificationType[] = [
         message: 'Title 1',
         object: 'Object 1',
         notifeFrom: {
+            id: '1',
             name: {
                 firstName: 'Alex',
                 lastName: 'Smith',
@@ -57,6 +46,7 @@ const data: TableNotificationType[] = [
         message: 'Title 2',
         object: 'Object 2',
         notifeFrom: {
+            id: '1',
             name: {
                 firstName: 'Alex',
                 lastName: 'Smith',
@@ -71,6 +61,7 @@ const data: TableNotificationType[] = [
         message: 'Title 3',
         object: 'Object 3',
         notifeFrom: {
+            id: '1',
             name: {
                 firstName: 'Alex',
                 lastName: 'Smith',
