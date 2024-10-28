@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Terminal, CheckCircle, XCircle, X, Info } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 
 interface NotificationProps {
     type: NotificationType
@@ -10,17 +10,15 @@ interface NotificationProps {
 }
 
 function Notif({ type, message }: NotificationProps) {
-    if (!message) return null
     const [show, setShow] = useState(true)
     const [progress, setProgress] = useState(100)
     const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
     const [hideTimerId, setHideTimerId] = useState<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
-        // Total duration for the notification to be shown
         const totalDuration = 5000 // 5 seconds
         const intervalDuration = 100 // 0.1 seconds
-        const decrementAmount = (100 / totalDuration) * intervalDuration // Calculate how much to decrement each interval
+        const decrementAmount = (100 / totalDuration) * intervalDuration
 
         const id = setInterval(() => {
             setProgress((prev) => {
@@ -29,7 +27,7 @@ function Notif({ type, message }: NotificationProps) {
                     setShow(false)
                     return 0
                 }
-                return prev - decrementAmount // Decrement progress
+                return prev - decrementAmount
             })
         }, intervalDuration)
 
@@ -48,6 +46,7 @@ function Notif({ type, message }: NotificationProps) {
         }
     }, [])
 
+    if (!message) return null
     const handleClose = () => {
         setShow(false)
         if (intervalId) clearInterval(intervalId)
@@ -73,7 +72,6 @@ function Notif({ type, message }: NotificationProps) {
             }, 100)
             setIntervalId(id)
         }
-        // Resume hiding after mouse leaves
         const timer = setTimeout(() => {
             setShow(false)
         }, 5000)
@@ -84,7 +82,7 @@ function Notif({ type, message }: NotificationProps) {
 
     return (
         <div
-            className="w-full lg:w-auto absolute right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2"
+            className="w-full lg:w-auto fixed right-0 top-0 lg:animate-notification-slide-left animate-notification-slide-down p-2"
             style={{
                 zIndex: 999,
             }}
@@ -123,7 +121,7 @@ function Notif({ type, message }: NotificationProps) {
                     <div className="text-sm font-semibold">
                         {type === NotificationType.SUCCESS && 'Success!'}
                         {type === NotificationType.ERROR && 'Error!'}
-                        {type === NotificationType.INFO && 'Info!'}
+                        {type === NotificationType.INFO && ' Info!'}
                     </div>
                 </AlertTitle>
                 <AlertDescription className="px-4 py-2 text-xs">
