@@ -13,8 +13,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { FilterInput } from '@/components/utils/FilterInput'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
 import { ListFilter, X, Check } from 'lucide-react'
-import { CrmDemandeType } from '@/types/CrmType'
-import { FilterData, emptyFilterData } from '@/types/CrmUtils'
+import { CrmDemandeType, FilterData, emptyFilterData } from '@/types/CrmType'
 
 interface FilterTableDemandesProps {
     data: CrmDemandeType[]

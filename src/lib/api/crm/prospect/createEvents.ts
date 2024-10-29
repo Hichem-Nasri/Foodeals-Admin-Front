@@ -1,9 +1,5 @@
 import api from '@/api/Auth'
-import { API_PARTNERS, API_PROSPECTS } from '@/lib/api_url'
 import { CrmObjectType } from '@/types/CrmType'
-import { CrmType } from '@/types/CrmType'
-import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
-import { PartnerType } from '@/types/partners'
 
 export async function createArchive(event: CrmObjectType, id: string) {
     try {
@@ -18,7 +14,6 @@ export async function createArchive(event: CrmObjectType, id: string) {
                 `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
                 newEvent
             )
-            .then((res) => res.data)
             .catch((error) => {
                 throw error
             })

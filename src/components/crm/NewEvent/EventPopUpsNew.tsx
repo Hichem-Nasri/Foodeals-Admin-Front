@@ -44,7 +44,9 @@ export const EventPopUpsNew = ({
     const mutation = useMutation({
         mutationFn: async (data: CrmObjectType) => {
             const res = await createArchive(data, id!)
-            if (res.status !== 200) throw new Error('Failed to create event')
+
+            if (![200, 201].includes(res.status))
+                throw new Error('Failed to create event')
             return res.data
         },
         onSuccess: (data) => {
@@ -54,6 +56,10 @@ export const EventPopUpsNew = ({
             )
             setEvents((prev) => [...prev, data])
             setOpen((prev) => !prev)
+        },
+        onError: (error) => {
+            Notify.notify(NotificationType.ERROR, 'Failed to create event')
+            console.log(error)
         },
     })
 
@@ -80,6 +86,7 @@ export const EventPopUpsNew = ({
                     secondaryButtonDisabled={convertir}
                     onSaveData={onSaveData}
                     onSubmit={handleSubmit(onSubmit)}
+                    open={open}
                 />
             )}
             <AddNewEvent

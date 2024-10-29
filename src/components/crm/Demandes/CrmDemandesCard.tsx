@@ -1,11 +1,4 @@
-import {
-    CalendarCheck2,
-    HomeIcon,
-    ListPlus,
-    Mail,
-    MailMinus,
-    Phone,
-} from 'lucide-react'
+import { CalendarCheck2, HomeIcon, ListPlus, Mail, Phone } from 'lucide-react'
 import React from 'react'
 
 interface CrmDemandesCardProps {}

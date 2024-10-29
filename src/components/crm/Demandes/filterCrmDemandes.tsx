@@ -1,16 +1,11 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
-import { AppRoutes } from '@/lib/routes'
-import { table } from 'console'
-import { Archive, ArrowRight, Database, UserRoundPlus } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import React, { FC, useState } from 'react'
-import { FilterTableProspects } from '../FilterTableProspects'
 import { CrmDemandeType } from '@/types/CrmType'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { FilterTableDemandes } from './FilterTableDemandes'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 
 interface FilterCrmDemandesProps {
     data: CrmDemandeType[]

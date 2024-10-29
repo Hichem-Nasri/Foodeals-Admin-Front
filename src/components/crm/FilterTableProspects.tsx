@@ -14,13 +14,12 @@ import { Input } from '../custom/Input'
 import { Select } from '../custom/Select'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { cn } from '@/lib/utils'
-import { CrmType } from '@/types/CrmType'
+import { CrmType, emptyFilterData, FilterData } from '@/types/CrmType'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { DateFilter } from '../utils/DateFilters'
 import { FilterSelect } from '../utils/FilterSelect'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
-import { FilterData, emptyFilterData } from '@/types/CrmUtils'
 
 interface FilterTableProspectsProps {
     data: CrmType[]

@@ -1,8 +1,6 @@
 import api from '@/api/Auth'
-import { API_PARTNERS, API_PROSPECTS } from '@/lib/api_url'
+import { API_PROSPECTS } from '@/lib/api_url'
 import { CrmType } from '@/types/CrmType'
-import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
-import { PartnerType } from '@/types/partners'
 
 export async function fetchProspect(
     currentPage: number,
