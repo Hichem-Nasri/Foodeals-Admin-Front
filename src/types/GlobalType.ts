@@ -21,8 +21,14 @@ export interface PartnersType {
 }
 
 export interface PartnerInfoDto {
+    id: string
     name: string
     avatarPath: string
+}
+
+export type PriceType = {
+    amount: number
+    currency: string
 }
 
 export enum NotificationType {

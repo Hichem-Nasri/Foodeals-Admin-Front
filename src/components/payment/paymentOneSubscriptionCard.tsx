@@ -22,7 +22,7 @@ import { Label } from '../Label'
 import { Arrow } from '@radix-ui/react-dropdown-menu'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partners'
-import { PartnerInfoDto } from '@/types/Global-Type'
+import { PartnerInfoDto } from '@/types/GlobalType'
 import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 

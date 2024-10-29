@@ -90,9 +90,10 @@ const PaymentSubscriptionCard = ({
                 ))}
             </div>
             <div className="flex flex-wrap justify-normal">
-                {subscription.solution.map((solution) => {
+                {subscription.solution.map((solution, index) => {
                     return (
                         <PartnerSolution
+                            key={solution + index}
                             solution={solution as PartnerSolutionType}
                         />
                     )

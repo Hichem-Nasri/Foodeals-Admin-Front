@@ -27,7 +27,7 @@ import { FiltersDeliveries } from './FilterDeliveries'
 import { DeliveryCard } from './DeliveryCard'
 import { useNotification } from '@/context/NotifContext'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDeliveryPartners } from '@/lib/api/delivery/fetchDeliveryParnters'
 import { API_PARTNERS } from '@/lib/api_url'
@@ -59,6 +59,7 @@ export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
                 const data = await fetchDeliveryPartners(currentPage, pageSize)
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
+                console.log('data', data)
                 setData(data.data)
                 return data.data
             } catch (error) {
@@ -90,7 +91,7 @@ export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
                 try {
                     const response = await api
                         .get(
-                            `${API_PARTNERS}/deleted?page=0&size=20&sort=deletedAt,desc`
+                            `${API_PARTNERS}/deleted?page=0&size=20&sort=deletedAt,desc&type=DELIVERY_PARTNER`
                         )
                         .then((res) => res.data)
                         .catch((error) => {
@@ -107,7 +108,7 @@ export const Deliveries: FC<DeliveriesProps> = ({ deliveries }) => {
                     console.log(error)
                 }
             } //TODO: Check recive data from backend is correct
-            // fetchArchive()
+            fetchArchive()
         } else {
             refetch()
         }

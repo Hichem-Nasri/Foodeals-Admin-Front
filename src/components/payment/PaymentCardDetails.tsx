@@ -110,7 +110,7 @@ export const PaymentCardDetails: React.FC<PaymentCardDetailsProps> = ({
                 ))}
             </div>
             <div>
-                {payment.status === PaymentStatusType.PENDING && (
+                {payment.status === PaymentStatusType.IN_PROGRESS && (
                     <PaymentValidation
                         label="CONFIRMER"
                         id={payment.ref}

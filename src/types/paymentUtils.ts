@@ -12,7 +12,7 @@ export enum PaymentStatusEnum {
     VALID_BY_BOTH = 'VALID_BY_BOTH',
 }
 
-export type PaymentCommision = {
+export type PaymentCommission = {
     id: string
     ref: string
     entityId: string

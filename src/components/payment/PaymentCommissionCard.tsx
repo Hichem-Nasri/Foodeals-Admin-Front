@@ -43,18 +43,17 @@ const PaymentCommissionCard = ({
     const className = !commission.payable
         ? ''
         : payed
-        ? commission.paymentStatus == PaymentStatusEnum.VALIDATED_BY_FOODEALS
+        ? commission.paymentStatus == PaymentStatusEnum.VALID_BY_FOODEALS
             ? ''
             : 'bg-mountain-100 text-mountain-500'
-        : commission.paymentStatus == PaymentStatusEnum.VALIDATED_BY_PARTNER
+        : commission.paymentStatus == PaymentStatusEnum.VALID_BY_PARTNER
         ? 'bg-coral-100 text-coral-500'
         : ''
     const showValidation =
         commission.payable &&
         ((payed && commission.paymentStatus == PaymentStatusEnum.IN_VALID) ||
             (!payed &&
-                commission.paymentStatus ==
-                    PaymentStatusEnum.VALIDATED_BY_PARTNER))
+                commission.paymentStatus == PaymentStatusEnum.VALID_BY_PARTNER))
     console.log('showValidation', showValidation, commission.payable)
     const router = useRouter()
     const dataArray = [

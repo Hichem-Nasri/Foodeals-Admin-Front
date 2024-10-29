@@ -5,12 +5,6 @@ import { CardTotalValue } from '../CardTotalValue'
 import { CheckCheck, LoaderCircle, RotateCw } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
-    columnsPaymentsDetailsTable,
-    columnsValidationTable,
-    defaultDataPaymentsDetailsTable,
-    defaultDataValidationTable,
-} from '@/types/PaymentType'
-import {
     ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
@@ -22,6 +16,16 @@ import { useState } from 'react'
 import { OperationCard } from './OperationCard'
 import { SubscriptionCard } from './SubscriptionCard'
 import { cn } from '@/lib/utils'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { defaultDataCommissionTable } from '../business/column/commissionColumn'
+import {
+    columnsPaymentsDetailsTable,
+    defaultDataPaymentsDetailsTable,
+} from '../business/column/paymentDetailsColumn'
+import {
+    columnsValidationTable,
+    defaultDataValidationTable,
+} from '../business/column/subscriptionColumn'
 
 interface OperationsProps {}
 
@@ -29,7 +33,27 @@ export const Operations = ({}: OperationsProps) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [showOperations, setShowOperations] = useState(true)
     const onSubmit = () => {}
-    const totalPending = 12222
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
+        return [
+            ...defaultDataCommissionTable.map(
+                (partner) =>
+                    ({
+                        key: partner.oraganizationId,
+                        label: partner.partnerInfoDto.name,
+                    } as MultiSelectOptionsType)
+            ),
+            {
+                key: 'all',
+                label: 'Tous les partenaires',
+                avatar: '/all-partners.svg',
+            },
+        ]
+    })
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
+    const totalIN_PROGRESS = 12222
     const totalSales = 51554516
 
     const tableOperations = useReactTable({
@@ -61,7 +85,20 @@ export const Operations = ({}: OperationsProps) => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <div className="flex lg:hidden items-center gap-2.5 bg-white p-3 rounded-[14px]">
                     <CustomButton
                         label="Opération du mois"
@@ -84,7 +121,7 @@ export const Operations = ({}: OperationsProps) => {
                 <CardTotalValue
                     Icon={LoaderCircle}
                     title="En cours"
-                    value={totalPending}
+                    value={totalIN_PROGRESS}
                     className="text-amethyst-500 bg-amethyst-500"
                 />
                 <CardTotalValue

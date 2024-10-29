@@ -1,9 +1,5 @@
 'use client'
-import {
-    columnsPaymentsTable,
-    PaymentFilterSchema,
-    PaymentType,
-} from '@/types/PaymentType'
+import { PaymentFilterSchema, PaymentType } from '@/types/PaymentType'
 import { FC, useState } from 'react'
 import { FilterPayment } from './FilterPayment'
 import { z } from 'zod'
@@ -23,6 +19,9 @@ import { CustomButton } from '../custom/CustomButton'
 import { PaymentCardDetails } from './PaymentCardDetails'
 import { useRouter } from 'next/navigation'
 import SwitchPayment from './switchPayment'
+import { MultiSelectOptionsType } from '../MultiSelect'
+import { defaultDataCommissionTable } from './business/column/commissionColumn'
+import { columnsPaymentsTable } from './business/column/paymentColumn'
 
 interface PaymentProps {
     payments: PaymentType[]
@@ -32,6 +31,26 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
     const [data, _setData] = useState(() => [...payments])
     const router = useRouter()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
+        return [
+            ...defaultDataCommissionTable.map(
+                (partner) =>
+                    ({
+                        key: partner.oraganizationId,
+                        label: partner.partnerInfoDto.name,
+                    } as MultiSelectOptionsType)
+            ),
+            {
+                key: 'all',
+                label: 'Tous les partenaires',
+                avatar: '/all-partners.svg',
+            },
+        ]
+    })
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
 
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
     const totalCommission = payments.reduce(
@@ -54,7 +73,20 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={CalendarClock}
                     title="Echéance"

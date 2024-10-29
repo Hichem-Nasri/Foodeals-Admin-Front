@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Arrow } from '@radix-ui/react-dropdown-menu'
 import { PartnerSolutionType } from '@/types/partners'
-import { PartnerInfoDto } from '@/types/Global-Type'
+import { PartnerInfoDto } from '@/types/GlobalType'
 import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 import { OperationCard } from './OperationCard'

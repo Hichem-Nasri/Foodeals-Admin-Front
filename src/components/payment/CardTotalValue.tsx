@@ -2,6 +2,7 @@ import { Currency, LucideProps } from 'lucide-react'
 import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
 import { Label } from '../Label'
 import { cn } from '@/lib/utils'
+import { Skeleton } from '../ui/skeleton'
 
 interface CardTotalValueProps {
     Icon: ForwardRefExoticComponent<
@@ -11,6 +12,7 @@ interface CardTotalValueProps {
     value: number
     currency?: boolean
     className?: string
+    isLoading?: boolean
 }
 
 export const CardTotalValue: FC<CardTotalValueProps> = ({
@@ -19,6 +21,7 @@ export const CardTotalValue: FC<CardTotalValueProps> = ({
     className,
     currency,
     Icon,
+    isLoading,
 }) => {
     const total = !currency ? `${value} MAD` : `${value}`
     return (
@@ -34,13 +37,18 @@ export const CardTotalValue: FC<CardTotalValueProps> = ({
                     className="text-lg font-medium text-lynch-950 whitespace-nowrap overflow-hidden"
                 />
             </div>
-            <Label
-                label={total}
-                className={cn(
-                    'text-[1.375rem] font-semibold text-primary ml-auto whitespace-nowrap overflow-hidden text-ellipsis',
-                    className?.replace('bg', '')
-                )}
-            />
+            {isLoading ? (
+                <Skeleton className="size-8 text-[1.375rem] font-semibold text-primary ml-auto whitespace-nowrap overflow-hidden text-ellipsis" />
+            ) : (
+                <div
+                    className={cn(
+                        'text-[1.375rem] font-semibold text-primary ml-auto whitespace-nowrap overflow-hidden text-ellipsis',
+                        className?.replace('bg', '')
+                    )}
+                >
+                    {total}
+                </div>
+            )}
         </div>
     )
 }
