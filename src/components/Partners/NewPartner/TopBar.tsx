@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { getContract } from '@/lib/api/partner/getContract'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 
 interface TopBarProps {
     primaryButtonDisabled?: boolean
@@ -141,7 +141,7 @@ export const TopBar: FC<TopBarProps> = ({
                 </div>
             )}
             <div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
-                {status !== PartnerStatusType.VALIDATED ? (
+                {status !== PartnerStatusType.VALID ? (
                     <CustomButton
                         onClick={onSaveData}
                         disabled={secondaryButtonDisabled}
@@ -167,7 +167,7 @@ export const TopBar: FC<TopBarProps> = ({
                         variant="outline"
                     />
                 )}
-                {status !== PartnerStatusType.VALIDATED && !isDownloading ? (
+                {status !== PartnerStatusType.VALID && !isDownloading ? (
                     <CustomButton
                         disabled={primaryButtonDisabled}
                         onClick={handleGenerateContract}
@@ -176,7 +176,7 @@ export const TopBar: FC<TopBarProps> = ({
                         className="disabled:bg-lynch-300"
                         IconRight={FileBadge}
                     />
-                ) : status === PartnerStatusType.VALIDATED ? (
+                ) : status === PartnerStatusType.VALID ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex justify-center items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-primary text-sm font-normal text-neutral-50 hover:bg-primary/90 disabled:bg-lynch-300">
                             Partager le contrat

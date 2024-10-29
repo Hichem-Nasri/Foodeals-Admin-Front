@@ -21,6 +21,8 @@ import Link from 'next/link'
 import { ActionsMenu, ActionType } from '../custom/ActionsMenu'
 import { AppRoutes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
+import { capitalize } from '@/types/utils'
+import { PartnerContractStatus } from './PartnerContractStatus'
 
 interface PartnerCardProps {
     partner?: PartnerType
@@ -32,19 +34,19 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
 
     const dataArray = [
         {
-            label: partner.collaborators,
+            label: partner.subEntities,
             icon: Store,
         },
         {
-            label: partner.subAccount,
+            label: partner.users,
             icon: Users,
         },
         {
-            label: partner.offer,
+            label: partner.offers,
             icon: Boxes,
         },
         {
-            label: partner.order,
+            label: partner.orders,
             icon: HandCoins,
         },
     ]
@@ -63,6 +65,10 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
             label: 'Collaborateurs',
         },
     ]
+    const name =
+        capitalize(partner.contactDto.name.firstName) +
+        ' ' +
+        capitalize(partner.contactDto.name.lastName)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -70,12 +76,12 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
                     <Avatar className="size-[2.875rem] shrink-0">
                         <AvatarImage className="" src={partner.logo} />
                         <AvatarFallback>
-                            {partner.companyName[0].toUpperCase()}
+                            {name && name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={partner.companyName}
+                            label={partner.partnerInfoDto.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -85,21 +91,21 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={partner.createdAt.toLocaleDateString()}
+                                label={partner.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[0.375rem]">
-                    <Link href={`tel:${partner.phone}`}>
+                    <Link href={`tel:${partner.contactDto?.phone}`}>
                         <CustomButton
                             label=""
                             IconLeft={PhoneCall}
                             className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                         />
                     </Link>
-                    <Link href={`mailto:${partner.email}`}>
+                    <Link href={`mailto:${partner.contactDto?.email}`}>
                         <CustomButton
                             label=""
                             IconLeft={Mail}
@@ -115,9 +121,9 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
             <span className="h-[1px] w-full bg-lynch-100" />
             <div className="flex items-start gap-3">
                 <div className="flex flex-wrap gap-[0.375rem]">
-                    {dataArray.map((data) => (
+                    {dataArray.map((data, index) => (
                         <div
-                            key={data.label}
+                            key={data.label + index}
                             className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
                         >
                             <data.icon size={18} key={data.label} />
@@ -128,7 +134,7 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
                         </div>
                     ))}
                 </div>
-                <PartnerStatus status={partner.status} />
+                <PartnerContractStatus status={partner.contractStatus} />
             </div>
         </div>
     )

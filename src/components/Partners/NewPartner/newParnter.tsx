@@ -12,7 +12,7 @@ import { countryCodes } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import validateContract from '@/lib/api/partner/validateContract'
 import {
     defaultPartnerFeaturesData,
@@ -47,7 +47,9 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const [partnerDetails, setPartnerDetails] = useState<PartnerDataType>(
         partner!
     )
-    const [partnerId, setPartnerId] = useState(id === '%3Aid' ? '' : id)
+    const [partnerId, setPartnerId] = useState(
+        id == '%3Aid' || id.includes('?convertir') ? '' : id
+    )
     const [saved, setSaved] = useState(false)
     const [partnerData, setPartnerData] =
         useState<PartnerPOST>(emptyPartnerPOST)
@@ -69,7 +71,11 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     >({
         resolver: zodResolver(PartnerInformationSchema),
         mode: 'onBlur',
-        defaultValues: partnerDetails || defaultPartnerInformationData,
+        defaultValues: {
+            ...partnerDetails,
+            logo: partnerDetails?.logo!,
+            cover: partnerDetails?.cover!,
+        },
     })
 
     const partnerSubscription = useForm<
@@ -101,10 +107,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             const blob = new Blob([JSON.stringify(rest)], {
                 type: 'application/json',
             })
-            console.log(data.data)
+            console.log(JSON.stringify(rest))
             formData.append('dto', blob)
-            formData.append('logo', partnerDetails.logo as Blob)
-            formData.append('cover', partnerDetails.cover as Blob)
+            // formData.append('logo', partnerDetails.logo as Blob)
+            // formData.append('cover', partnerDetails.cover as Blob)
             const url = partnerId
                 ? `http://localhost:8080/api/v1/organizations/partners/edit/${partnerId}`
                 : 'http://localhost:8080/api/v1/organizations/partners/create'
@@ -129,6 +135,20 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             return response.data
         },
         onSuccess: (data) => {
+            if (id.includes('?convertir')) {
+                const uid = id.split('?')[0]
+                const res = api
+                    .post(
+                        `http://localhost:8080/api/v1/crm/prospects/status/${uid}`,
+                        {
+                            status: 'VALID',
+                        }
+                    )
+                    .then((res) => res.data)
+                    .catch((e) => {
+                        console.log(e)
+                    })
+            }
             setPartnerId(data.id)
         },
         onError: (err) => {
@@ -216,6 +236,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                 oneSubscription: isGeneral,
                 solutions: selectedSolutions,
                 solutionsContractDto,
+
                 commissionPayedBySubEntities: isGeneral
                     ? data.marketPro?.selected
                         ? data.marketPro?.managerId ===
@@ -271,7 +292,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         if (modify === true) {
             setPartnerDetails((prev) => ({
                 ...prev,
-                status: PartnerStatusType.PENDING,
+                status: PartnerStatusType.IN_PROGRESS,
             }))
             return
         }
@@ -279,12 +300,8 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         const partnerInfoResult = await partnerInformation.trigger()
         const partnerSubscriptionResult = await partnerSubscription.trigger()
         const partnerFeaturesResult = await partnerFeatures.trigger()
-        console.log(
-            'status: ',
-            partnerInfoResult,
-            partnerSubscriptionResult,
-            partnerFeaturesResult
-        )
+
+        console.log('partnerId: ', partnerId)
         if (partnerId !== '' && !contractUpload) {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
@@ -298,6 +315,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             handlePartnerInfoSubmit(partnerInformation.getValues())
             handleSubscriptionSubmit(partnerSubscription.getValues())
             handleFeaturesSubmit(partnerFeatures.getValues())
+            console.log('saved')
             setSaved(true)
         }
     }
@@ -312,10 +330,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         const res = await validateContract(partnerId, contractUpload)
 
         if (res.status === 200) {
-            notif.notify(NotificationType.SUCCESS, 'Contract validated')
+            notif.notify(NotificationType.SUCCESS, 'Contract VALID')
             setPartnerDetails((prev) => ({
                 ...prev,
-                status: PartnerStatusType.VALIDATED,
+                status: PartnerStatusType.VALID,
             }))
         } else {
             notif.notify(NotificationType.ERROR, 'Failed to validate contract')
@@ -346,7 +364,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     disabled={
-                        partnerDetails.status === PartnerStatusType.VALIDATED ||
+                        partnerDetails.status === PartnerStatusType.VALID ||
                         readOnly
                     }
                 />
@@ -354,22 +372,22 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                     onSubmit={handleSubscriptionSubmit}
                     form={partnerSubscription}
                     disabled={
-                        partnerDetails.status === PartnerStatusType.VALIDATED ||
+                        partnerDetails.status === PartnerStatusType.VALID ||
                         readOnly
                     }
                     status={partnerDetails.status}
-                    isContractGenerated={partnerDetails.status !== 'VALIDATED'}
+                    isContractGenerated={partnerDetails.status !== 'VALID'}
                     onContractUpload={setContractUpload}
                 />
                 <FormFeatures
                     form={partnerFeatures}
                     onSubmit={handleFeaturesSubmit}
                     disabled={
-                        partnerDetails?.status ===
-                            PartnerStatusType.VALIDATED || readOnly
+                        partnerDetails?.status === PartnerStatusType.VALID ||
+                        readOnly
                     }
                 />
-                {partnerDetails.status === PartnerStatusType.VALIDATED && (
+                {partnerDetails.status === PartnerStatusType.VALID && (
                     <ArchivePartner partnerId={partnerId} />
                 )}
             </div>

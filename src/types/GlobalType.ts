@@ -1,5 +1,11 @@
 import { PartnerSolutionType } from './partners'
 
+export enum PartnerEntitiesType {
+    PARTNER_SB = 'PARTNER_SB',
+    NORMAL_PARTNER = 'NORMAL_PARTNER',
+    SUB_ENTITY = 'SUB_ENTITY',
+}
+
 export type ProfileType = {
     id: string
     name: {

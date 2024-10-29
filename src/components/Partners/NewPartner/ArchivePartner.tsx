@@ -23,7 +23,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/Label'
 import { useNotification } from '@/context/NotifContext'
 import archivePatner from '@/lib/api/partner/archiverPartner'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 
 interface ArchivePartnerProps {
     partnerId?: string

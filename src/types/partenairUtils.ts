@@ -1,4 +1,5 @@
 import { CrmType } from './CrmType'
+import { PartnerEntitiesType, PartnerInfoDto } from './GlobalType'
 import {
     exportSolutionType,
     PartnerCompanyTypeOptions,
@@ -25,41 +26,6 @@ export interface PartnerGET {
     contactDto: ContactDto
 }
 
-const exportPartnerGET = (Partner: PartnerGET) => {
-    const newPartner: PartnerType = {
-        id: Partner.id,
-        offer: Partner.offers,
-        order: Partner.orders,
-        collaborators: Partner.users,
-        subAccount: Partner.subEntities,
-        companyType:
-            PartnerCompanyTypeOptions[
-                Partner.type as keyof typeof PartnerCompanyTypeOptions
-            ],
-        city: Partner.city,
-        solution: exportSolutionType(Partner.solutions),
-        createdAt: new Date(Partner.createdAt),
-        manager: {
-            name:
-                Partner.contactDto.name.firstName +
-                ' ' +
-                Partner.contactDto.name.lastName,
-            avatar: '',
-        },
-        status: PartnerStatusOptions[
-            Partner.contractStatus as keyof typeof PartnerStatusOptions
-        ],
-        email: Partner.contactDto.email,
-        phone: Partner.contactDto.phone,
-        companyName: Partner.partnerInfoDto.name,
-        logo: Partner.partnerInfoDto.avatarPath!,
-    }
-    return newPartner
-}
-
-export const exportAllPartnerGET = (partners: PartnerGET[]): PartnerType[] => {
-    return partners.map((partner) => exportPartnerGET(partner))
-}
 export interface SubPartnerGET {
     id: string
     offers: number
@@ -71,38 +37,6 @@ export interface SubPartnerGET {
     createdAt: Date
     partnerInfoDto: PartnerInfoDto
     contactDto: ContactDto
-}
-
-export interface PartnerInfoDto {
-    name: string
-    avatarPath: string
-}
-
-const exportSubPartnerGET: (subPartner: SubPartnerGET) => SubAccountPartners = (
-    subPartner
-) => {
-    const subAccount: SubAccountPartners = {
-        id: subPartner.id,
-        offer: subPartner.offers,
-        order: subPartner.orders,
-        collaborators: subPartner.users,
-        ref: subPartner.reference,
-        city: subPartner.city,
-        solution: exportSolutionType(subPartner.solutions),
-        createdAt: new Date(subPartner.createdAt),
-        companyName: subPartner.partnerInfoDto.name,
-        logo: subPartner.partnerInfoDto.avatarPath!,
-        email: subPartner.contactDto.email,
-        phone: subPartner.contactDto.phone,
-        companyType: PartnerCompanyTypeOptions.NORMAL_PARTNER,
-    }
-    return subAccount
-}
-
-export const exportAllSubPartnerGET = (
-    subPartners: SubPartnerGET[]
-): SubAccountPartners[] => {
-    return subPartners.map((subPartner) => exportSubPartnerGET(subPartner))
 }
 
 const ParnterSolutionExport: (solution: string) => PartnerSolutionType = (

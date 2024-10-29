@@ -17,18 +17,13 @@ import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
 import api from '@/api/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
-import { set } from 'date-fns'
-// import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
+import { NotificationType } from '@/types/GlobalType'
 
 interface PartnersProps {
-    partners: PartnerType[]
     params?: {
         id: string
         query: string
@@ -40,8 +35,7 @@ export interface TableRowType {
     label: string
 }
 
-export const Partners: FC<PartnersProps> = ({ params }) => {
-    console.log('query: ', params)
+export const Partners: FC<PartnersProps> = ({}) => {
     const [archive, setArchive] = React.useState(false)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [partners, setPartners] = useState<PartnerType[]>([])
@@ -57,7 +51,8 @@ export const Partners: FC<PartnersProps> = ({ params }) => {
                 const data = await fetchPartners(currentPage, pageSize)
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setPartners(data.data)
+                setTotalPages(data.data.totalPages)
+                setPartners(data.data.content as PartnerType[])
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -91,7 +86,7 @@ export const Partners: FC<PartnersProps> = ({ params }) => {
                         .catch((error) => {
                             throw new Error(error)
                         })
-                    const data = exportAllPartnerGET(response.content)
+                    const data = response.content as PartnerType[]
                     setPartners(data)
                 } catch (error) {
                     notify.notify(

@@ -20,24 +20,32 @@ export const PartnerSolution: FC<PartnerSolutionProps> = ({
     size = 14,
 }) => {
     var solutionColor: {
+        name: string
         className: string
         Icon: FC<any>
-    } = { className: 'bg-lynch-100 text-lynch-500', Icon: Smartphone }
+    } = {
+        name: 'Pas de Solution',
+        className: 'bg-lynch-100 text-lynch-500',
+        Icon: Smartphone,
+    }
     switch (solution) {
         case PartnerSolutionType.MARKET_PRO:
             solutionColor = {
+                name: 'Market Pro',
                 className: 'bg-mountain-100 text-mountain-500',
                 Icon: ShoppingBag,
             }
             break
         case PartnerSolutionType.DONATE_PRO:
             solutionColor = {
+                name: 'Donate Pro',
                 className: 'bg-scooter-100 text-scooter-500',
                 Icon: HandCoins,
             }
             break
         case PartnerSolutionType.DLC_PRO:
             solutionColor = {
+                name: 'DLC Pro',
                 className: 'bg-tulip-100 text-tulip-500',
                 Icon: HeartHandshake,
             }
@@ -46,12 +54,12 @@ export const PartnerSolution: FC<PartnerSolutionProps> = ({
     return (
         <span
             className={cn(
-                `flex items-center gap-[0.375rem]   text-[0.625rem] font-bold py-[0.375rem] px-3 rounded-full h-fit ${solutionColor.className}`,
+                `flex items-center gap-[0.375rem] text-nowrap  text-[0.625rem] font-bold py-[0.375rem] px-3 rounded-full h-fit ${solutionColor.className}`,
                 className
             )}
         >
             <solutionColor.Icon size={size} />
-            {solution}
+            {solutionColor.name}
         </span>
     )
 }

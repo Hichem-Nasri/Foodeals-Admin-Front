@@ -228,7 +228,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="donate.expiration"
                     label="Échéance"
-                    options={optionsAb}
+                    options={optionsT}
                     type="number"
                     disabled={!donate?.selected || disabled}
                 />

@@ -85,7 +85,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                                         disabled={disabled}
                                     />
                                 </div>
-                                {status === PartnerStatusType.VALIDATED && (
+                                {status === PartnerStatusType.VALID && (
                                     <CustomButton
                                         className="h-fit py-4"
                                         label="Voir la liste"

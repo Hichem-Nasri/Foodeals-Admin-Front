@@ -1,7 +1,5 @@
 import api from '@/api/Auth'
-import { API_PARTNERS, API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
-import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
-import { PartnerType } from '@/types/partners'
+import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
 
 export async function fetchPaymentCommission(
     currentPage: number,

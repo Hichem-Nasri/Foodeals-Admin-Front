@@ -23,6 +23,9 @@ import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import SelectManager from '@/components/utils/SelectManager'
 import { fetchActivities } from '@/lib/api/partner/fetchActivites'
 import FieldActivities from '@/components/utils/FieldActivities'
+import FieldCountry from '@/components/utils/FieldCountry'
+import FieldCity from '@/components/utils/FieldCity'
+import FieldRegion from '@/components/utils/FieldRegion'
 
 interface FormPartnerInfoProps {
     form: UseFormReturn<z.infer<typeof PartnerInformationSchema>>
@@ -50,39 +53,6 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
         cityId: '',
         regionId: '',
     })
-    const [cities, setCities] = useState<MultiSelectOptionsType[]>([])
-    const [regions, setRegions] = useState<MultiSelectOptionsType[]>([])
-    const [country, setCountry] = useState<MultiSelectOptionsType[]>([])
-    useEffect(() => {
-        const fetchAddress = async () => {
-            const countries = await getCountries()
-            console.log('Fetched countries:', countries)
-            setCountry(countries)
-        }
-        fetchAddress()
-    }, [])
-
-    useEffect(() => {
-        const fetchCities = async () => {
-            if (address.countryId) {
-                const citiesData = await getCities(address.countryId)
-                console.log('Fetched cities:', citiesData)
-                setCities(citiesData)
-            }
-        }
-        fetchCities()
-    }, [address.countryId])
-
-    useEffect(() => {
-        const fetchRegions = async () => {
-            if (address.cityId) {
-                const regionsData = await getRegions(address.cityId)
-                console.log('Fetched regions:', regionsData)
-                setRegions(regionsData)
-            }
-        }
-        fetchRegions()
-    }, [address.cityId])
 
     return (
         <Accordion
@@ -196,60 +166,50 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             control={control}
                                             disabled={disabled}
                                         />
-                                        <SelectField
+                                        <FieldCountry
                                             control={control}
                                             name="country"
                                             label="Pays"
-                                            options={country}
-                                            onChange={(value: string) => {
-                                                const id = country.find(
-                                                    (values) =>
-                                                        values.key === value
-                                                )?.id
-                                                setAddress({
-                                                    ...address,
-                                                    countryId: id!,
-                                                })
+                                            placeholder="Pays"
+                                            disabled={disabled!}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    countryId: value,
+                                                }))
                                             }}
-                                            disabled={disabled}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
-                                        <SelectField
+                                        <FieldCity
                                             control={control}
                                             name="city"
                                             label="Ville"
-                                            options={cities}
+                                            placeholder="Ville"
+                                            disabled={disabled!}
+                                            country={address.countryId}
                                             onChange={(value) => {
-                                                const id = cities.find(
-                                                    (values) =>
-                                                        values.key === value
-                                                )?.id
-                                                setAddress({
-                                                    ...address,
-                                                    cityId: id!,
-                                                })
-                                                console.log('address', address)
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    cityId: value,
+                                                }))
                                             }}
-                                            disabled={disabled}
                                         />
-                                        <SelectField
+                                        <FieldRegion
                                             control={control}
                                             name="region"
                                             label="Région"
-                                            options={regions}
+                                            placeholder="Région"
+                                            disabled={disabled!}
+                                            country={address.countryId}
+                                            city={address.cityId}
                                             onChange={(value) => {
-                                                const id = regions.find(
-                                                    (values) =>
-                                                        values.key === value
-                                                )?.id
-                                                setAddress({
-                                                    ...address,
-                                                    regionId: id!,
-                                                })
-                                                console.log('address', address)
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    regionId: value,
+                                                }))
                                             }}
-                                            disabled={disabled}
                                         />
                                         <InputFieldForm
                                             label="Adresse"

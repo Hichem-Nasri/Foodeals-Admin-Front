@@ -35,21 +35,24 @@ import { set } from 'date-fns'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import validateContract from '@/lib/api/partner/validateContract'
+import Notif from '@/components/Layout/Notif'
 
 interface NewPartnerProps {
-    partner?: PartnerDataType
+    partner: PartnerDataType
     id: string
 }
 
 export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
-    const [partnerDetails, setPartnerDetails] = useState<PartnerDataType>(
-        partner!
+    const [partnerDetails, setPartnerDetails] =
+        useState<PartnerDataType>(partner)
+    const [partnerId, setPartnerId] = useState(
+        id == '%3Aid' || id.includes('?convertir') ? '' : id
     )
-    const [partnerId, setPartnerId] = useState(id == '%3Aid' ? '' : id)
     const [saved, setsaved] = useState(false)
+    const Notify = useNotification()
     const [PartnerData, setPartnerData] =
         useState<PartnerPOST>(emptyPartnerPOST)
     console.log('id: ', partnerId)
@@ -85,6 +88,23 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             }
         },
         onSuccess: (data) => {
+            if (id.includes('?convertir')) {
+                const uid = id.split('?')[0]
+                const res = api
+                    .post(
+                        `http:localhost:8080/api/v1/crm/prospects/status/${uid}`,
+                        {
+                            status: 'VALID',
+                        }
+                    )
+                    .then((res) => res.data)
+                    .catch((e) => {
+                        Notify.notify(
+                            NotificationType.ERROR,
+                            'Failed to convert'
+                        )
+                    })
+            }
             setPartnerId(data.id)
         },
         onError: (err) => {
@@ -97,9 +117,9 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         resolver: zodResolver(PartnerInformationSchema),
         mode: 'onBlur',
         defaultValues: {
-            ...(partnerDetails
-                ? partnerDetails
-                : defaultPartnerInformationData),
+            ...partnerDetails,
+            logo: partnerDetails?.logo!,
+            cover: partnerDetails?.cover!,
         },
     })
 
@@ -271,11 +291,11 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         }
         const res = await validateContract(partnerId, ContractUpload)
         if (res.status === 200) {
-            notif.notify(NotificationType.SUCCESS, 'Contract validated')
+            notif.notify(NotificationType.SUCCESS, 'Contract VALID')
             setPartnerDetails((prev) => {
                 return {
                     ...prev,
-                    status: PartnerStatusType.VALIDATED,
+                    status: PartnerStatusType.VALID,
                 }
             })
         } else {
@@ -288,7 +308,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             setPartnerDetails((prev) => {
                 return {
                     ...prev,
-                    status: PartnerStatusType.PENDING,
+                    status: PartnerStatusType.IN_PROGRESS,
                 }
             })
             return
@@ -297,12 +317,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         const partnerSubscriptionResult = await partnerSubscription.trigger()
         const partnerFeaturesResult = await partnerFeatures.trigger()
         // show error if any
-        console.log('partner info: ', partnerInformation.formState.errors)
-        console.log(
-            'partner subscription: ',
-            partnerSubscription.formState.errors
-        )
-        console.log('partner features: ', partnerFeatures.formState.errors)
         if (partnerId != '' && !ContractUpload) {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
@@ -349,8 +363,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                     setCountryCode={setCountryCode}
                     disabled={
                         partnerDetails
-                            ? partnerDetails.status ===
-                              PartnerStatusType.VALIDATED
+                            ? partnerDetails.status === PartnerStatusType.VALID
                             : false
                     }
                 />
@@ -359,8 +372,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                     form={partnerSubscription}
                     disabled={
                         partnerDetails
-                            ? partnerDetails.status ===
-                              PartnerStatusType.VALIDATED
+                            ? partnerDetails.status === PartnerStatusType.VALID
                             : false
                     }
                     status={
@@ -368,21 +380,20 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                             ? partnerDetails.status
                             : PartnerStatusType.DRAFT
                     }
-                    isContractGenerated={partnerDetails?.status !== 'VALIDATED'}
+                    isContractGenerated={partnerDetails?.status !== 'VALID'}
                     onContractUpload={setContractUpload}
                 />
                 <FormFeatures
                     form={partnerFeatures}
-                    omSubmit={onSubmitFeatures}
+                    onSubmit={onSubmitFeatures}
                     disabled={
                         partnerDetails
-                            ? partnerDetails.status ===
-                              PartnerStatusType.VALIDATED
+                            ? partnerDetails.status === PartnerStatusType.VALID
                             : false
                     }
                 />
                 {partnerDetails &&
-                    partnerDetails.status === PartnerStatusType.VALIDATED && (
+                    partnerDetails.status === PartnerStatusType.VALID && (
                         <ArchivePartner partnerId={partnerId} />
                     )}
             </div>

@@ -1,11 +1,8 @@
 'localhost:8080/api/v1/payments/commissions/02ad89b9-80f5-427e-a3d7-42889c38fb5f/monthly-operations/2024/10'
 
 import api from '@/api/Auth'
-import { API_PARTNERS, API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
-import { exportAllPartnerGET, PartnerGET } from '@/types/partenairUtils'
-import { PartnerType } from '@/types/partners'
+import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
 import { partnerCommissionMonthType } from '@/types/PaymentType'
-import { PaymentCommision } from '@/types/paymentUtils'
 
 export async function fetchPaymentCommissionMonth(
     currentPage: number,

@@ -4,11 +4,11 @@ import { DataTable } from '@/components/DataTable'
 import { FilterAndCreatePartnerCollaborators } from '@/components/Partners/collaborators/FilterAndCreatePartnerCollaborators'
 import { PartnerCollaboratesCard } from '@/components/Partners/collaborators/PartnerCollaboratorsCard'
 import { HeaderSubAccount } from '@/components/Partners/subAccount/HeaderSubAccount'
-import {
-    columnsSubAccountTable,
-    SubAccountData,
-    SubAccountPartners,
-} from '@/types/partners'
+import { useNotification } from '@/context/NotifContext'
+import fetchSubPartner from '@/lib/api/partner/fetchSubPartner'
+import { NotificationType } from '@/types/GlobalType'
+import { columnsSubAccountTable, SubAccountPartners } from '@/types/partners'
+import { useQuery } from '@tanstack/react-query'
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -20,16 +20,38 @@ import {
 import { table } from 'console'
 import { RotateCw, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
 interface SubAccountProps {
-    subAccount: SubAccountPartners[]
+    id: string
 }
 
-const SubAccount: FC<SubAccountProps> = ({ subAccount }) => {
+const SubAccount: FC<SubAccountProps> = ({ id }) => {
+    const [subAccount, setSubAccount] = useState<SubAccountPartners[]>([])
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
+    const notify = useNotification()
     const router = useRouter()
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['subEntities', id],
+        queryFn: async () => {
+            try {
+                const res = await fetchSubPartner(id, currentPage, pageSize)
+                if (res.status === 500)
+                    throw new Error('Error fetching partners')
+                setTotalPages(res.data.totalPages)
+                setSubAccount(res.data.content as SubAccountPartners[])
+                return res.data
+            } catch (e) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                console.log(e)
+                setSubAccount([])
+            }
+        },
+    })
     const table = useReactTable({
         data: subAccount,
         columns: columnsSubAccountTable(router),

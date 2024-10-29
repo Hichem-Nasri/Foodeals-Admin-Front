@@ -3,16 +3,10 @@ import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
 import { getSolutions } from '@/lib/utils'
 import { DeliveryType, exportDeliveryData } from '@/types/deliveries'
 import {
-    defaultDeliveryPartnerData,
     DeliveryPartnerType,
     emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
-import {
-    exportAllPartnerGET,
-    PartnerGET,
-    PartnerPOST,
-} from '@/types/partenairUtils'
-import { PartnerType } from '@/types/partners'
+import { PartnerPOST } from '@/types/partenairUtils'
 
 export async function fetchDeliveryPartners(
     currentPage: number,

@@ -1,26 +1,28 @@
-import { PartnerStatusType } from '@/types/partners'
+import { ContractStatus, PartnerStatusType } from '@/types/partners'
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
 import { FC } from 'react'
 
-interface PartnerStatusProps {
-    status: PartnerStatusType
+interface PartnerContractStatus {
+    status: ContractStatus
 }
 
-export const PartnerStatus: FC<PartnerStatusProps> = ({ status }) => {
+export const PartnerContractStatus: FC<PartnerContractStatus> = ({
+    status,
+}) => {
     const statusData =
-        status === PartnerStatusType.VALID
+        status === ContractStatus.VALIDATED
             ? {
                   style: 'text-mountain-500 bg-mountain-100',
                   icon: <CheckCheck strokeWidth="3px" size={14} />,
                   text: 'Validé',
               }
-            : status === PartnerStatusType.IN_PROGRESS
+            : status === ContractStatus.IN_PROGRESS
             ? {
                   style: 'bg-amethyst-100 text-amethyst-500',
                   icon: <LoaderCircle strokeWidth="3px" size={14} />,
                   text: 'En attente',
               }
-            : status === PartnerStatusType.CANCELED
+            : status === ContractStatus.REJECTED
             ? {
                   style: 'text-red-400 bg-red-100',
                   icon: <X strokeWidth="3px" size={14} />,

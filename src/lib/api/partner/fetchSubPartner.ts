@@ -1,12 +1,14 @@
 import api from '@/api/Auth'
-import { exportAllSubPartnerGET } from '@/types/partenairUtils'
-import { SubAccountPartners } from '@/types/partners'
 
-async function fetchSubPartner(id: string): Promise<{
+async function fetchSubPartner(
+    id: string,
+    currentPage: number,
+    pageSize: number
+): Promise<{
     status: number
-    data: SubAccountPartners[]
+    data: any
 }> {
-    const url = `http://localhost:8080/v1/sub-entities/partners/${id}`
+    const url = `http://localhost:8080/v1/sub-entities/partners/${id}?page=${currentPage}&size=${pageSize}`
 
     try {
         const response = await api.get(url).catch((error) => {
@@ -14,7 +16,7 @@ async function fetchSubPartner(id: string): Promise<{
         })
         return {
             status: 200,
-            data: exportAllSubPartnerGET(response.data.content),
+            data: response.data,
         }
     } catch (error) {
         console.error('Error fetching subpartner:', error)

@@ -24,6 +24,7 @@ import {
     OptionsType,
     PartnerFilerType,
 } from '@/types/PartnersUtils'
+import { MultiSelectOptionsType } from '../MultiSelect'
 
 interface FilterTablePartnerProps {
     partners: PartnerType[]
@@ -36,7 +37,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
     partners,
     setColumnFilters,
 }) => {
-    const options: OptionsType = extractOptions(partners)
+    const options: MultiSelectOptionsType[] = []
     const [filterData, setFilterData] = useState<PartnerFilerType>({
         createdAt: [],
         companyName: [],
@@ -88,7 +89,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                         <FilterMultiSelect
                             length={1}
                             label="Raison sociale"
-                            options={options.companyName}
+                            options={options}
                             emptyAvatar="/avatar/emptyPartner.png"
                             item={filterData.companyName}
                             setItem={(companyName) => {
@@ -98,7 +99,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                         <FilterMultiSelect
                             length={2}
                             label="Manager"
-                            options={options.manager}
+                            options={options}
                             emptyAvatar="/avatar/emptyUser.png"
                             item={filterData.manager}
                             setItem={(manager) => {
@@ -127,7 +128,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterSelect
                             label="Ville"
-                            options={options.city}
+                            options={options}
                             item={filterData.city}
                             setItem={(city) => {
                                 setFilterData({ ...filterData, city })
@@ -135,7 +136,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                         />
                         <FilterSelect
                             label="Type de compte"
-                            options={options.companyType}
+                            options={options}
                             item={filterData.companyType}
                             setItem={(companyType) => {
                                 setFilterData({ ...filterData, companyType })
@@ -161,7 +162,7 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                                 }}
                                 length={3}
                                 label="solutions"
-                                options={options.solution}
+                                options={options}
                                 item={filterData.solution}
                                 setItem={(solution) => {
                                     setFilterData({ ...filterData, solution })

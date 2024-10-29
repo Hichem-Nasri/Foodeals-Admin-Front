@@ -38,6 +38,9 @@ export const FormSubscriptionPersonalized: FC<
                                 <Checkbox
                                     name={PartnerSolutionType.MARKET_PRO}
                                     className="size-5"
+                                    checked={field.value.includes(
+                                        PartnerSolutionType.MARKET_PRO
+                                    )}
                                     onClick={(e) => {
                                         e.currentTarget.ariaChecked == 'false'
                                             ? field.onChange([
@@ -64,6 +67,9 @@ export const FormSubscriptionPersonalized: FC<
                                 <Checkbox
                                     name={PartnerSolutionType.DLC_PRO}
                                     className="size-5"
+                                    checked={field.value.includes(
+                                        PartnerSolutionType.DLC_PRO
+                                    )}
                                     onClick={(e) => {
                                         e.currentTarget.ariaChecked == 'false'
                                             ? field.onChange([
@@ -90,6 +96,9 @@ export const FormSubscriptionPersonalized: FC<
                                 <Checkbox
                                     name={PartnerSolutionType.DONATE_PRO}
                                     className="size-5"
+                                    checked={field.value.includes(
+                                        PartnerSolutionType.DONATE_PRO
+                                    )}
                                     onClick={(e) => {
                                         e.currentTarget.ariaChecked == 'false'
                                             ? field.onChange([
