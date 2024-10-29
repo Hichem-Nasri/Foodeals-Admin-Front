@@ -3,6 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from './ui/input'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import { ImagePlus, ImageUp } from 'lucide-react'
 
 interface AvatarProfileProps {
     iUrl: string
@@ -44,7 +46,9 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
             )}
             <Avatar
                 className={cn(
-                    `w-[7.5rem] h-[7.5rem] lg:rounded-[24px] border border-lynch-200`,
+                    `w-[7.5rem] h-[7.5rem] lg:rounded-[24px] border ${
+                        src ? 'border-lynch-200' : 'border-2 border-lynch-200'
+                    }`,
                     className
                 )}
             >
@@ -54,11 +58,23 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                     className="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer"
                     onChange={handleFileChange} // Update to use the new function
                 />
-                <AvatarImage
-                    src={src || '/emptyImage.svg'}
-                    className={`object-cover ${!src && 'w-[20%] m-auto'}`}
-                />
-                <AvatarFallback>{alt && alt[0].toUpperCase()}</AvatarFallback>
+                {src ? (
+                    <>
+                        <AvatarImage
+                            src={src || '/emptyImage.svg'}
+                            className={`object-cover ${
+                                !src && 'w-[20%] m-auto'
+                            }`}
+                        />
+                        <AvatarFallback>
+                            {alt && alt[0].toUpperCase()}
+                        </AvatarFallback>
+                    </>
+                ) : (
+                    <div className=" rounded-[24px] text-lynch-200 w-full h-full flex justify-center items-center bg-lynch-50">
+                        <ImageUp className="w-full" size={56} />
+                    </div>
+                )}
             </Avatar>
         </div>
     )
