@@ -1,4 +1,4 @@
-import { PartnerInfoDto } from './GlobalType'
+import { PartnerInfoDto, PriceType } from './GlobalType'
 
 export enum PartnerType {
     PARTNER_SB = 'PARTNER_SB',
@@ -16,14 +16,14 @@ export type PaymentCommission = {
     id: string
     ref: string
     entityId: string
-    oraganizationId: string
+    organizationId: string
     date: string
     partnerInfoDto: PartnerInfoDto
     partnerType: PartnerType
-    totalAmount: number
-    foodealsCommission: number
-    toPay: number
-    toReceive: number
+    totalAmount: PriceType
+    foodealsCommission: PriceType
+    toPay: PriceType
+    toReceive: PriceType
     paymentStatus: PaymentStatusEnum
     payable: boolean
     commissionPayedBySubEntities: boolean

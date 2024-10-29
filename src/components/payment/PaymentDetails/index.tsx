@@ -38,7 +38,7 @@ export const Operations = ({}: OperationsProps) => {
             ...defaultDataCommissionTable.map(
                 (partner) =>
                     ({
-                        key: partner.oraganizationId,
+                        key: partner.organizationId,
                         label: partner.partnerInfoDto.name,
                     } as MultiSelectOptionsType)
             ),

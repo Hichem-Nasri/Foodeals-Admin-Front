@@ -3,11 +3,6 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { ArrowRight, Coins, Percent, RotateCw } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
-    columnsCommissionTable,
-    defaultDataCommissionTable,
-    partnerCommissionType,
-} from '@/types/PaymentType'
-import {
     ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
@@ -25,28 +20,34 @@ import SwitchPayment from '@/components/payment/switchPayment'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
-import { PaymentCommision } from '@/types/paymentUtils'
+import { NotificationType } from '@/types/GlobalType'
+import { PaymentCommission } from '@/types/paymentUtils'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import PaymentCommissionCard from '@/components/payment/PaymentCommissionCard'
+import {
+    defaultDataCommissionTable,
+    columnsCommissionTable,
+} from '@/components/payment/business/column/commissionColumn'
 
 interface OperationsProps {}
 
 export const ValidationCommissions: FC<OperationsProps> = ({}) => {
-    const [commission, setCommission] = useState<PaymentCommision[]>(
+    const [commission, setCommission] = useState<PaymentCommission[]>(
         defaultDataCommissionTable
     )
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
     const [totalCommission, setTotalCommission] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
         return [
             ...defaultDataCommissionTable.map(
                 (partner) =>
                     ({
-                        key: partner.oraganizationId,
+                        key: partner.organizationId,
                         label: partner.partnerInfoDto.name,
                     } as MultiSelectOptionsType)
             ),
@@ -57,12 +58,11 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
             },
         ]
     })
-    const notify = useNotification()
     const [dateAndPartner, setDateAndPartner] = useState({
         date: new Date(),
         partner: 'all',
     })
-    const onSubmit = () => {}
+    const notify = useNotification()
     const router = useRouter()
 
     const { data, isLoading, error } = useQuery({
@@ -70,25 +70,18 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
-                    currentPage,
+                    currentPage - 1,
                     pageSize,
                     new Date()
                 )
-                const options = response.data.map((partner) => ({
-                    key: partner.oraganizationId,
-                    label: partner.partnerInfoDto.name,
-                }))
-                let totalCommission = 0,
-                    totalSales = 0
-                response.data.forEach((partner) => {
-                    if (partner.payable) {
-                        totalCommission += partner.foodealsCommission
-                        totalSales += partner.totalAmount
-                    }
-                })
-                setTotalCommission(totalCommission)
-                setTotalSales(totalSales)
-                // setCommission(response.data)
+                console.log(response)
+                const statistics = response.data.statistics
+                setTotalCommission(statistics.totalCommission.amount)
+                setTotalSales(statistics.total.amount)
+                const data = response.data.commissions
+                setTotalPages(data.totalPages)
+                setTotalElements(data.totalElements)
+                setCommission(data.content)
                 // setOptions(options)
                 return response.data
             } catch (error) {
@@ -113,7 +106,6 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    useEffect(() => {}, [])
 
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -148,11 +140,14 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
             </div>
             <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
                 <div className="flex justify-center items-center space-x-4">
-                    <ColumnVisibilityModal table={tableCommission} />
+                    <ColumnVisibilityModal
+                        table={tableCommission}
+                        hiddens={['payable', 'entityId']}
+                    />
                     <SwitchValidation />
                 </div>
                 <CustomButton
-                    label={'3025'}
+                    label={totalElements + ''}
                     IconLeft={ArrowRight}
                     disabled
                     variant="outline"
@@ -161,12 +156,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
             </div>
             <DataTable
                 table={tableCommission}
-                data={defaultDataCommissionTable}
+                data={commission}
                 title="Tableau de validation des commission"
                 transform={(data) => (
                     <PaymentCommissionCard commission={data} path="partner" />
                 )}
                 hideColumns={['payable', 'entityId']}
+                isLoading={isLoading}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton

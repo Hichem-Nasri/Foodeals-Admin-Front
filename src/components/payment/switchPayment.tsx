@@ -27,11 +27,13 @@ function SwitchPayment() {
         }
     }
     return (
-        <SwitchToggle
-            options={options}
-            selectedType={switchToggle}
-            setSwitchTable={handleSwitch}
-        />
+        <div className="flex lg:justify-start justify-center items-center">
+            <SwitchToggle
+                options={options}
+                selectedType={switchToggle}
+                setSwitchTable={handleSwitch}
+            />
+        </div>
     )
 }
 

@@ -218,7 +218,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 className="col-auto h-14 self-end w-4/5"
                                                 onClick={() => {
                                                     router.push(
-                                                        AppRoutes.deliveryCollaboratorDetails.replace(
+                                                        AppRoutes.deliveryCollaborator.replace(
                                                             ':id',
                                                             id as string
                                                         )

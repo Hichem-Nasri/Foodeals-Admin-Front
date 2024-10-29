@@ -8,13 +8,6 @@ import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { FilterPayment } from '@/components/payment/FilterPayment'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
 import {
-    defaultDataCommissionTable,
-    columnsCommissionTable,
-    columnsCommissionSSTable,
-    defaultDataCommissionSSTable,
-    columnsSubscriptionOnesTable,
-} from '@/types/PaymentType'
-import {
     ColumnFiltersState,
     useReactTable,
     getCoreRowModel,
@@ -24,13 +17,21 @@ import {
 } from '@tanstack/react-table'
 import { Coins, Percent, ArrowRight, RotateCw } from 'lucide-react'
 import SwitchPayment from '@/components/payment/switchPayment'
-import { PaymentCommision } from '@/types/paymentUtils'
 import PaymentCommissionCard from '@/components/payment/PaymentCommissionCard'
+import {
+    defaultDataCommissionTable,
+    columnsCommissionTable,
+} from '@/components/payment/business/column/commissionColumn'
+import { PaymentCommission } from '@/types/paymentUtils'
+import { useQuery } from '@tanstack/react-query'
+import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/GlobalType'
 
 const SubStoreCommission = () => {
     const { id } = useParams()
     const [commissionSubStore, setCommissionSubStore] = useState<
-        PaymentCommision[]
+        PaymentCommission[]
     >(defaultDataCommissionTable)
     const [dateAndPartner, setDateAndPartner] = useState({
         date: new Date(),
@@ -38,10 +39,45 @@ const SubStoreCommission = () => {
     })
     const [options, setOptions] = useState([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const onSubmit = () => {}
-    const totalCommission = 12222
-    const totalSales = 51554516
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
+    const [totalCommission, setTotalCommission] = useState(0)
+    const [totalSales, setTotalSales] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
+    const notify = useNotification()
     const router = useRouter()
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['commissions', id, currentPage, pageSize],
+        queryFn: async () => {
+            try {
+                const response = await fetchPaymentCommission(
+                    currentPage - 1,
+                    pageSize,
+                    new Date(),
+                    id as string
+                )
+                console.log(response)
+                const statistics = response.data.statistics
+                setTotalCommission(statistics.totalCommission.amount)
+                setTotalSales(statistics.total.amount)
+                const data = response.data.commissions
+                setTotalPages(data.totalPages)
+                setTotalElements(data.totalElements)
+                setCommissionSubStore(data.content)
+                // setOptions(options)
+                return response.data
+                return []
+            } catch (error) {
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des données'
+                )
+                throw new Error('Error fetching commissions')
+            } //TODO: add page of error
+        },
+    })
 
     const table = useReactTable({
         data: commissionSubStore,
@@ -55,12 +91,6 @@ const SubStoreCommission = () => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-    const PaymentData = {
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        city: 'Casablanca',
-    }
 
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -95,11 +125,14 @@ const SubStoreCommission = () => {
             </div>
             <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
                 <div className="flex justify-center items-center space-x-4">
-                    <ColumnVisibilityModal table={table} />
+                    <ColumnVisibilityModal
+                        table={table}
+                        hiddens={['payable', 'entityId', 'partnerType']}
+                    />
                     <SwitchValidation />
                 </div>
                 <CustomButton
-                    label={'3025'}
+                    label={totalElements + ''}
                     IconLeft={ArrowRight}
                     disabled
                     variant="outline"
@@ -114,6 +147,7 @@ const SubStoreCommission = () => {
                 transform={(data) => (
                     <PaymentCommissionCard commission={data} path="subStore" />
                 )}
+                isLoading={isLoading}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton

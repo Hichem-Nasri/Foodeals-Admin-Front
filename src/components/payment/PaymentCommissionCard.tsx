@@ -23,7 +23,7 @@ import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partners'
 import {
     PartnerType,
-    PaymentCommision,
+    PaymentCommission,
     PaymentStatusEnum,
 } from '@/types/paymentUtils'
 import { ConfirmPayment } from './ConfirmPayment'
@@ -34,10 +34,10 @@ const PaymentCommissionCard = ({
     commission,
     path,
 }: {
-    commission: PaymentCommision
+    commission: PaymentCommission
     path: 'partner' | 'subStore'
 }) => {
-    const payed = commission.toPay != 0
+    const payed = commission.toPay.amount != 0
     const label = payed ? 'A PAYER' : 'A RECEVOIR'
     const icon = payed ? Banknote : HandCoins
     const className = !commission.payable
@@ -58,7 +58,7 @@ const PaymentCommissionCard = ({
     const router = useRouter()
     const dataArray = [
         {
-            label: commission.ref,
+            label: commission.ref || '0236',
             icon: Frame,
         },
         {
@@ -86,6 +86,7 @@ const PaymentCommissionCard = ({
             className: className,
         },
     ]
+    const name = commission.partnerInfoDto.name
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="w-full flex justify-between items-start">
@@ -95,7 +96,7 @@ const PaymentCommissionCard = ({
                             src={commission.partnerInfoDto.avatarPath}
                         />
                         <AvatarFallback>
-                            {commission.partnerInfoDto.name[0].toUpperCase()}
+                            {name && name[0]?.toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">

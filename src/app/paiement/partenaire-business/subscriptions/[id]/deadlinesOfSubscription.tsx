@@ -2,13 +2,13 @@
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
-import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
-import OperationSubscriptionCard from '@/components/payment/PaymentDetails/OperationSubscriptionCard'
-import SwitchPayment from '@/components/payment/switchPayment'
 import {
     columnsValidationTable,
     defaultDataValidationTable,
-} from '@/types/PaymentType'
+} from '@/components/payment/business/column/subscriptionColumn'
+import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
+import OperationSubscriptionCard from '@/components/payment/PaymentDetails/OperationSubscriptionCard'
+import SwitchPayment from '@/components/payment/switchPayment'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -22,6 +22,7 @@ import React, { Fragment, useState } from 'react'
 
 function DeadlinesOfSubscription() {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
     const onSubmit = () => {}
     const table = useReactTable({
         data: defaultDataValidationTable,

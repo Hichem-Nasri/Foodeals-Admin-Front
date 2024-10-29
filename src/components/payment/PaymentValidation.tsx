@@ -90,7 +90,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                         label={label}
                         variant="outline"
                         className={cn(
-                            'flex lg:hidden h-fit py-3 px-7 rounded-[18px] text-primary border-primary ml-1',
+                            'flex lg:hidden min-w-[400px] h-fit py-3 px-7 rounded-[18px] text-white bg-primary border-primary ml-1',
                             className
                         )}
                         disabled={disabled}

@@ -36,7 +36,7 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
             ...defaultDataCommissionTable.map(
                 (partner) =>
                     ({
-                        key: partner.oraganizationId,
+                        key: partner.organizationId,
                         label: partner.partnerInfoDto.name,
                     } as MultiSelectOptionsType)
             ),

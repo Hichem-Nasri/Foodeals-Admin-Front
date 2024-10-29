@@ -50,12 +50,18 @@ export const columnsCommissionTable = (
         footer: (info) => info.column.id,
     }),
     columnHelperCommission.accessor('totalAmount', {
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+            const amount = info.getValue().amount
+            return <span>{amount}</span>
+        },
         header: 'Vente totale',
         footer: (info) => info.column.id,
     }),
     columnHelperCommission.accessor('foodealsCommission', {
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+            const amount = info.getValue().amount
+            return <span>{amount}</span>
+        },
         header: 'Commission',
         footer: (info) => info.column.id,
     }),
@@ -64,15 +70,16 @@ export const columnsCommissionTable = (
             const status = info.row.getValue(
                 'paymentStatus'
             ) as PaymentStatusEnum
+            const amount = info.getValue().amount
             return (
                 <span
                     className={`${
                         status == PaymentStatusEnum.IN_VALID &&
-                        info.getValue() > 0 &&
+                        amount > 0 &&
                         'text-coral-500'
                     }`}
                 >
-                    {info.getValue() > 0 ? info.getValue() : 'N/A'}
+                    {amount > 0 ? amount : 'N/A'}
                 </span>
             )
         },
@@ -84,15 +91,17 @@ export const columnsCommissionTable = (
             const status = info.row.getValue(
                 'paymentStatus'
             ) as PaymentStatusEnum
+            const amount = info.getValue().amount
+
             return (
                 <span
                     className={`${
                         status != PaymentStatusEnum.VALID_BY_BOTH &&
-                        info.getValue() > 0 &&
+                        amount > 0 &&
                         'text-coral-500'
                     }`}
                 >
-                    {info.getValue() > 0 ? info.getValue() : 'N/A'}
+                    {amount > 0 ? amount : 'N/A'}
                 </span>
             )
         },
@@ -115,13 +124,11 @@ export const columnsCommissionTable = (
             const type = info.row.getValue('partnerType')
             if (!payable) {
                 return (
-                    <CustomButton
-                        label={
-                            'Paid by ' +
-                            (type == PartnerType.SUB_ENTITY ? 'Sub' : 'Main')
-                        }
+                    <PaymentValidation
+                        className="min-w-full"
+                        id={info.getValue()}
+                        label={'Payé'}
                         disabled
-                        className="rounded-[12px] disabled:bg-lynch-400 disabled:text-white"
                     />
                 )
             } else {
@@ -159,25 +166,27 @@ export const columnsCommissionTable = (
         header: 'Validation',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('oraganizationId', {
+    columnHelperCommission.accessor('organizationId', {
         cell: (info) => (
             <div
                 title="Voir"
                 onClick={() => {
-                    if (path == 'subStore')
-                        router.push(
-                            AppRoutes.SubStoreCommission.replace(
-                                ':id',
-                                info.getValue()
-                            )
-                        )
-                    else
+                    const type = info.row.getValue('partnerType')
+                    if (path != 'subStore' && type == PartnerType.PARTNER_SB)
                         router.push(
                             AppRoutes.PBCommissionDetails.replace(
                                 ':id',
                                 info.getValue()
                             )
                         )
+                    else {
+                        router.push(
+                            AppRoutes.SubStoreCommission.replace(
+                                ':id',
+                                info.getValue()
+                            )
+                        )
+                    }
                 }}
                 className="flex items-center justify-center"
             >
@@ -204,22 +213,34 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
             name: 'Partner 4',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner4',
         },
-        totalAmount: 4000,
-        foodealsCommission: 400,
-        toPay: 3600,
-        toReceive: 0,
+        totalAmount: {
+            amount: 4000,
+            currency: 'USD',
+        },
+        foodealsCommission: {
+            amount: 400,
+            currency: 'USD',
+        },
+        toPay: {
+            amount: 3600,
+            currency: 'USD',
+        },
+        toReceive: {
+            amount: 0,
+            currency: 'USD',
+        },
         payable: true,
         paymentStatus: PaymentStatusEnum.IN_VALID,
         commissionPayedBySubEntities: false,
         date: '2021-09-01',
         entityId: '4',
-        oraganizationId: '4',
+        organizationId: '4',
     },
     {
         id: '5',
         ref: '5',
         entityId: '5',
-        oraganizationId: '5',
+        organizationId: '5',
         date: '2021-09-01',
         partnerType: PartnerType.NORMAL_PARTNER,
         partnerInfoDto: {
@@ -227,10 +248,22 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
             name: 'Partner 5',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner5',
         },
-        totalAmount: 5000,
-        foodealsCommission: 500,
-        toPay: 0,
-        toReceive: 540,
+        totalAmount: {
+            amount: 5000,
+            currency: 'USD',
+        },
+        foodealsCommission: {
+            amount: 500,
+            currency: 'USD',
+        },
+        toPay: {
+            amount: 4500,
+            currency: 'USD',
+        },
+        toReceive: {
+            amount: 0,
+            currency: 'USD',
+        },
         payable: true,
         paymentStatus: PaymentStatusEnum.VALID_BY_PARTNER,
         commissionPayedBySubEntities: false,
@@ -244,15 +277,27 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
             name: 'Partner 6',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Partner6',
         },
-        totalAmount: 6000,
-        foodealsCommission: 600,
-        toPay: 5400,
-        toReceive: 0,
+        totalAmount: {
+            amount: 6000,
+            currency: 'USD',
+        },
+        foodealsCommission: {
+            amount: 400,
+            currency: 'MAD',
+        },
+        toPay: {
+            amount: 500,
+            currency: 'MAD',
+        },
+        toReceive: {
+            amount: 0,
+            currency: 'MAD',
+        },
         payable: true,
         paymentStatus: PaymentStatusEnum.VALID_BY_BOTH,
         commissionPayedBySubEntities: true,
         date: '2021-09-01',
         entityId: '6',
-        oraganizationId: '6',
+        organizationId: '6',
     },
 ]

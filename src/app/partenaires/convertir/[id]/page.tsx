@@ -1,8 +1,9 @@
 'use client'
 import { Layout } from '@/components/Layout/Layout'
-import { NewPartner } from '@/components/Partners/NewPartner'
+import { NewPartner } from '@/components/Partners/NewPartner/newParnter'
 import { fetchConvertirPartners } from '@/lib/api/partner/fetchConvertirPartners'
 import { defaultPartnerData, PartnerDataType } from '@/types/PartnerSchema'
+import { useQuery } from '@tanstack/react-query'
 import React, { FC, Suspense, useEffect, useState } from 'react'
 interface PartnerConvertirProps {
     params: {
@@ -11,22 +12,33 @@ interface PartnerConvertirProps {
 }
 
 const PartnerConvertirPage: FC<PartnerConvertirProps> = ({ params }) => {
-    const [convertirData, setconvertirData] = useState<PartnerDataType | null>(
-        null
-    )
-    useEffect(() => {
-        const fetch = async () => {
-            const data = await fetchConvertirPartners(params.id)
-            console.log(data)
-            setconvertirData(data!)
-        }
-        if (convertirData === null) fetch()
-    }, [])
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['partners', params.id],
+        queryFn: async () => {
+            try {
+                const data = await fetchConvertirPartners(params.id)
+                if (!data) return defaultPartnerData
+                return data
+            } catch (error) {
+                console.log(error)
+                return []
+            }
+        },
+    })
 
     return (
         <Layout>
             <Suspense fallback={<div>Loading...</div>}>
-                <NewPartner partner={convertirData!} id={'convertir'} />
+                {error ? (
+                    <div>Error</div>
+                ) : isLoading ? (
+                    <div>Loading...</div>
+                ) : (
+                    <NewPartner
+                        partner={data as PartnerDataType}
+                        id={params.id + '?convertir'}
+                    />
+                )}
             </Suspense>
         </Layout>
     )

@@ -11,14 +11,6 @@ import {
 } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
-    columnsSubscriptionTable,
-    columnsPaymentsDetailsTable,
-    columnsValidationTable,
-    defaultDataSubscriptionTable,
-    defaultDataPaymentsDetailsTable,
-    defaultDataValidationTable,
-} from '@/types/PaymentType'
-import {
     ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
@@ -33,6 +25,18 @@ import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { FilterPayment } from '@/components/payment/FilterPayment'
 import { SubscriptionCard } from '@/components/payment/PaymentDetails/SubscriptionCard'
 import { useRouter } from 'next/navigation'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
+import {
+    defaultDataPaymentsDetailsTable,
+    columnsPaymentsDetailsTable,
+} from '@/components/payment/business/column/paymentDetailsColumn'
+import {
+    columnsSubscriptionTable,
+    columnsValidationTable,
+    defaultDataSubscriptionTable,
+    defaultDataValidationTable,
+} from '@/components/payment/business/column/subscriptionColumn'
 
 interface OperationsProps {}
 
@@ -40,12 +44,32 @@ export const Operations = ({}: OperationsProps) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [showOperations, setShowOperations] = useState(true)
     const onSubmit = () => {}
-    const totalPending = 12222
+    const totalIN_PROGRESS = 12222
     const totalSales = 51554516
     const [typeValidation, setTypeValidation] = useState<
         'commission' | 'Subscription'
     >('commission')
-
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
+        return [
+            ...defaultDataCommissionTable.map(
+                (partner) =>
+                    ({
+                        key: partner.organizationId,
+                        label: partner.partnerInfoDto.name,
+                    } as MultiSelectOptionsType)
+            ),
+            {
+                key: 'all',
+                label: 'Tous les partenaires',
+                avatar: '/all-partners.svg',
+            },
+        ]
+    })
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
+    const [subscriptionData, setSubscriptionData] = useState<string>('')
     const tableOperations = useReactTable({
         data: defaultDataPaymentsDetailsTable,
         columns: columnsPaymentsDetailsTable,
@@ -68,7 +92,7 @@ export const Operations = ({}: OperationsProps) => {
     const router = useRouter()
     const tableAbonnemnet = useReactTable({
         data: defaultDataSubscriptionTable,
-        columns: columnsSubscriptionTable(router),
+        columns: columnsSubscriptionTable(router, setSubscriptionData),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -85,30 +109,24 @@ export const Operations = ({}: OperationsProps) => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
-                {/* <div className="flex lg:hidden items-center gap-2.5 bg-white p-3 rounded-[14px]">
-                    <CustomButton
-                        label="Opération du mois"
-                        variant="ghost"
-                        className={
-                            showOperations ? 'text-primary' : 'text-lynch-950'
-                        }
-                        onClick={() => setShowOperations(true)}
-                    />
-                    <span className="h-2/3 w-px bg-lynch-400" />
-                    <CustomButton
-                        label="Validation des paiement"
-                        variant="ghost"
-                        onClick={() => setShowOperations(false)}
-                        className={
-                            !showOperations ? 'text-primary' : 'text-lynch-950'
-                        }
-                    />
-                </div> */}
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={Coins}
                     title="Total des ventes"
-                    value={totalPending}
+                    value={totalIN_PROGRESS}
                     className="text-mountain-400 bg-mountain-400"
                 />
                 <CardTotalValue

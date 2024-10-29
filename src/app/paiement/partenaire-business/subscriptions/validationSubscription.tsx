@@ -3,9 +3,6 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { ArrowRight, FileBadge, Percent, RotateCw } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
-    columnsSubscriptionTable,
-    defaultDataSubscriptionTable,
-    columnsSubscriptionOnesTable,
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
     defaultDataSubscriptionOnesTable,
@@ -26,12 +23,17 @@ import { useRouter } from 'next/navigation'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
 import SwitchPayment from '@/components/payment/switchPayment'
 import { useQuery } from '@tanstack/react-query'
-import { NotificationType, PartnerInfoDto } from '@/types/Global-Type'
+import { NotificationType, PartnerInfoDto } from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
 import { fetchSubscription } from '@/lib/api/payment/getSubscription'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import PaymentSubscriptionCard from '@/components/payment/paymentSubscriptionCard'
 import PaymentOnesSubscriptionCard from '@/components/payment/paymentOneSubscriptionCard'
+import {
+    columnsSubscriptionOnesTable,
+    columnsSubscriptionTable,
+    defaultDataSubscriptionTable,
+} from '@/components/payment/business/column/subscriptionColumn'
 
 interface OperationsProps {}
 
@@ -45,12 +47,13 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [subscriptionID, setSubscriptionId] = useState('')
     const [store, setStore] = useState<PartnerInfoDto>({
+        id: '',
         name: '',
         avatarPath: '',
     })
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [totalPending, setTotalPending] = useState(0)
+    const [totalIN_PROGRESS, setTotalIN_PROGRESS] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
@@ -65,7 +68,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         queryFn: async () => {
             try {
                 const response = await fetchSubscription(currentPage, pageSize)
-                let totalPending = 0,
+                let totalIN_PROGRESS = 0,
                     totalSales = 0
                 response.data.forEach((partner) => {
                     if (partner.payable) {
@@ -74,7 +77,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                         // totalSales += partner.cashAmount || partner.cardAmount
                     }
                 })
-                setTotalPending(totalPending)
+                setTotalIN_PROGRESS(totalIN_PROGRESS)
                 setTotalSales(totalSales)
                 // setCommissionMonth(response.data)
                 // setOptions(options)
@@ -115,6 +118,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                 (data) => data.id === subscriptionID
             )?.magasin
             setStore({
+                id: store?.id!,
                 name: store?.name!,
                 avatarPath: store?.avatar!,
             })
@@ -143,7 +147,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                 <CardTotalValue
                     Icon={FileBadge}
                     title="Total des Subscriptions"
-                    value={totalPending}
+                    value={totalIN_PROGRESS}
                     className="text-mountain-400 bg-mountain-400"
                 />
                 <CardTotalValue

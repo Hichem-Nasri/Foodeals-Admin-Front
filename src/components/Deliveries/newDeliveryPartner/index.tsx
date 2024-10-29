@@ -20,7 +20,7 @@ import { FormSolution } from './FormSolution'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
 import { useMutation } from '@tanstack/react-query'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/Global-Type'
+import { NotificationType } from '@/types/GlobalType'
 import api from '@/api/Auth'
 import {
     CityRegion,
@@ -71,12 +71,15 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const [saved, setSaved] = useState(false)
     const notif = useNotification()
     const [status, setStatus] = useState<PartnerStatusType>(
-        deliveryId == '' ? PartnerStatusType.DRAFT : PartnerStatusType.PENDING
+        deliveryId == ''
+            ? PartnerStatusType.DRAFT
+            : PartnerStatusType.IN_PROGRESS
     )
     console.log(deliveryId)
     useEffect(() => {
         const mode = searchParams.get('mode') // Access the mode from searchParams
         if (mode === 'edit') {
+            console.log('edit mode')
             setReadOnly(false)
         }
     }, [searchParams])
@@ -115,8 +118,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             })
             console.log(data.data)
             formData.append('dto', blob)
-            formData.append('logo', deliveryPartnerData.logo as Blob)
-            formData.append('cover', deliveryPartnerData.cover as Blob)
+            formData.append('logo', deliveryPartnerData.logo!)
+            formData.append('cover', deliveryPartnerData.cover!)
             const url = deliveryId
                 ? `http://localhost:8080/api/v1/organizations/partners/edit/${deliveryId}`
                 : 'http://localhost:8080/api/v1/organizations/partners/create'
@@ -204,7 +207,9 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             setDeliveryPartnerData((prev) => {
                 return {
                     ...prev,
-                    documents: data.documents!,
+                    documents: data?.documents?.filter(
+                        (doc): doc is File => doc !== undefined
+                    )!,
                 }
             })
         }
@@ -238,8 +243,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         console.log(document)
         const res = await validateContract(deliveryId, document)
         if (res.status === 200) {
-            notif.notify(NotificationType.SUCCESS, 'Contract validated')
-            setStatus(PartnerStatusType.VALIDATED)
+            notif.notify(NotificationType.SUCCESS, 'Contract VALID')
+            setStatus(PartnerStatusType.VALID)
         } else {
             notif.notify(NotificationType.ERROR, 'Failed to validate contract')
         }
@@ -247,7 +252,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
 
     const onSaveData = async (modify?: boolean) => {
         if (modify === true) {
-            setStatus(PartnerStatusType.PENDING)
+            setStatus(PartnerStatusType.IN_PROGRESS)
             return
         }
         console.log('Save data')

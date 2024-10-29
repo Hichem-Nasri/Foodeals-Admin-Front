@@ -7,14 +7,7 @@ import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityMod
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { FilterPayment } from '@/components/payment/FilterPayment'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
-import {
-    defaultDataCommissionSSTable,
-    columnsCommissionSSTable,
-    defaultDataCommissionTable,
-    columnsCommissionMonthTable,
-    defaultDataCommissionMonthTable,
-    partnerCommissionMonthType,
-} from '@/types/PaymentType'
+import { partnerCommissionMonthType } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -29,10 +22,16 @@ import SwitchPayment from '@/components/payment/switchPayment'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { useNotification } from '@/context/NotifContext'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
-import { NotificationType } from '@/types/Global-Type'
-import { PaymentCommision } from '@/types/paymentUtils'
+import { NotificationType } from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommissionMonth } from '@/lib/api/payment/getCommissionMonth'
+import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import {
+    columnsCommissionMonthTable,
+    defaultDataCommissionMonthTable,
+} from '@/components/payment/business/column/commissionMonthColumn'
+import CommissionSubStoreCard from '@/components/payment/CommissionSubStoreCard'
 
 const CommissionMonth = () => {
     const { id } = useParams()
@@ -48,7 +47,7 @@ const CommissionMonth = () => {
             ...defaultDataCommissionTable.map(
                 (partner) =>
                     ({
-                        key: partner.oraganizationId,
+                        key: partner.organizationId,
                         label: partner.partnerInfoDto.name,
                     } as MultiSelectOptionsType)
             ),
@@ -121,7 +120,7 @@ const CommissionMonth = () => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
-            <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
+            <div className="hidden lg:flex lg:flex-row flex-col items-center gap-3 w-full">
                 <FilterPayment
                     date={dateAndPartner.date}
                     setData={(date) =>
@@ -173,17 +172,20 @@ const CommissionMonth = () => {
             </div>
             <DataTable
                 table={tableCommission}
-                data={defaultDataCommissionTable}
+                data={defaultDataCommissionMonthTable}
                 title="Tableau de validation des commission"
-                transform={(data) => <Fragment />}
+                transform={(data) => (
+                    <CommissionSubStoreCard commission={data} />
+                )}
+                isLoading={isLoading}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
+                <PaymentValidation
+                    id={id as string}
+                    label="Confirmer tout"
+                    className="rounded-[12px] h-12"
+                    IconRight={CheckCheck}
+                    isMobile={true}
                 />
             </div>
         </div>
