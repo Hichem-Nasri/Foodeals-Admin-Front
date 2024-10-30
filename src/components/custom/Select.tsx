@@ -26,6 +26,7 @@ interface SelectProps {
     onChangeSearch?: (value: string) => void
     inputRef?: React.RefObject<HTMLInputElement>
     className?: string
+    classNameParent?: string
 }
 
 export const Select: FC<SelectProps> = ({
@@ -40,13 +41,19 @@ export const Select: FC<SelectProps> = ({
     onChangeSearch,
     className,
     inputRef,
+    classNameParent,
 }) => {
     const avatar = options?.find(
         (option) => option.key.toString() === value
     )?.avatar
 
     return (
-        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+        <div
+            className={cn(
+                'flex flex-col items-start gap-3 w-full text-lynch-400',
+                classNameParent
+            )}
+        >
             <Label
                 label={label}
                 className={cn(
@@ -55,7 +62,7 @@ export const Select: FC<SelectProps> = ({
                 )}
             />
             <SelectShadCn
-                disabled={(options && options.length === 0) || disabled}
+                disabled={disabled}
                 value={value}
                 onValueChange={(value) => {
                     console.log('value', value)
@@ -63,7 +70,7 @@ export const Select: FC<SelectProps> = ({
                 }}
             >
                 <SelectTrigger
-                    className={`text-lynch-400 hover:text-lynch-700 border-0 ${
+                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-50 ${
                         options?.find((option) => option.key === value)?.label
                             ? 'border-textGray'
                             : ''
@@ -110,9 +117,7 @@ export const Select: FC<SelectProps> = ({
                         </div>
                     )}
                 </SelectTrigger>
-                <SelectContent className="absolute z-10">
-                    {' '}
-                    {/* Added absolute positioning */}
+                <SelectContent className="absolute z-50">
                     {search && (
                         <div className="py-2 space-x-2 px-1 flex justify-center items-center">
                             <Search className="w-5 h-5 text-lynch-400" />
@@ -147,7 +152,10 @@ export const Select: FC<SelectProps> = ({
                                     name={option.label}
                                 />
                             ) : (
-                                <>{option.label}</>
+                                <div className="flex items-center gap-2 p-2 hover:bg-lynch-10">
+                                    {option.icon && <option.icon size={20} />}
+                                    {option.label}
+                                </div>
                             )}
                         </SelectItem>
                     ))}

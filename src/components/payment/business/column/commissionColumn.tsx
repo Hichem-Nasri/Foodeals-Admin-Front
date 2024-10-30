@@ -118,15 +118,21 @@ export const columnsCommissionTable = (
         header: '',
         footer: (info) => info.column.id,
     }),
+    columnHelperCommission.accessor('id', {
+        cell: () => null,
+        header: '',
+        footer: (info) => info.column.id,
+    }),
     columnHelperCommission.accessor('paymentStatus', {
         cell: (info) => {
             const payable = info.row.getValue('payable')
             const type = info.row.getValue('partnerType')
+            const id = info.row.getValue('id') as string
             if (!payable) {
                 return (
                     <PaymentValidation
                         className="min-w-full"
-                        id={info.getValue()}
+                        id={id}
                         label={'Payé'}
                         disabled
                     />
@@ -140,7 +146,7 @@ export const columnsCommissionTable = (
                     return (
                         <ConfirmPayment
                             className="min-w-full"
-                            id={info.getValue()}
+                            id={id}
                             label={'Confirmer'}
                             disabled={[
                                 PaymentStatusEnum.IN_VALID,
@@ -152,7 +158,7 @@ export const columnsCommissionTable = (
                     return (
                         <PaymentValidation
                             className="min-w-full"
-                            id={info.getValue()}
+                            id={id}
                             label={'Payé'}
                             disabled={[
                                 PaymentStatusEnum.VALID_BY_FOODEALS,

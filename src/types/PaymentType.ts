@@ -133,10 +133,10 @@ export const defaultValuesPaymentFilter = {
 }
 
 export enum PaymentMethod {
-    CASH = 'cash',
-    CARD_BANK = 'card_bank',
-    TRANSFER = 'transfer',
-    CHECK = 'check',
+    CASH = 'CASH',
+    CARD_BANK = 'CARD',
+    TRANSFER = 'BANKTRANSFER',
+    CHECK = 'CHEQUE',
 }
 
 export const paymentSchemas = {
