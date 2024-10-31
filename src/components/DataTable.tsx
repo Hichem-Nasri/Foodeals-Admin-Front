@@ -68,7 +68,9 @@ export const DataTable: FC<DataTableProps<any>> = ({
                 {isLoading ? (
                     <>
                         {elements.map((element, index) => (
-                            <CardSkeleton />
+                            <Fragment key={title + index}>
+                                <CardSkeleton />
+                            </Fragment>
                         ))}
                     </>
                 ) : (
@@ -129,75 +131,82 @@ export const DataTable: FC<DataTableProps<any>> = ({
                     <div className="w-full overflow-auto rounded-[14px]">
                         <Table className="rounded-[14px] bg-white py-2">
                             <TableHeader>
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map(
-                                            (header) =>
-                                                !hideColumns?.includes(
-                                                    header.id
-                                                ) && (
-                                                    <TableHead
-                                                        key={header.id}
-                                                        onClick={header.column.getToggleSortingHandler()}
-                                                        className={cn(
-                                                            'cursor-pointer min-w-40',
-                                                            header.column.id ===
-                                                                'createdAt' ||
+                                {table
+                                    .getHeaderGroups()
+                                    .map((headerGroup, index) => (
+                                        <TableRow key={headerGroup.id + index}>
+                                            {headerGroup.headers.map(
+                                                (header) =>
+                                                    !hideColumns?.includes(
+                                                        header.id
+                                                    ) && (
+                                                        <TableHead
+                                                            key={header.id}
+                                                            onClick={header.column.getToggleSortingHandler()}
+                                                            className={cn(
+                                                                'cursor-pointer min-w-40',
                                                                 header.column
                                                                     .id ===
-                                                                    'date'
-                                                                ? 'min-w-48'
-                                                                : header.column
-                                                                      .id ===
-                                                                  'logo'
-                                                                ? 'min-w-28'
-                                                                : header.id ===
-                                                                      'id' ||
-                                                                  header.id ===
-                                                                      'organizationId'
-                                                                ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
-                                                                : '',
-                                                            header.column.id ===
-                                                                'email' ||
-                                                                header.column
-                                                                    .id ===
-                                                                    'phone'
-                                                                ? 'min-w-60'
-                                                                : ''
-                                                        )}
-                                                    >
-                                                        <div className="flex justify-between items-center w-full">
-                                                            {header.isPlaceholder
-                                                                ? null
-                                                                : flexRender(
-                                                                      header
+                                                                    'createdAt' ||
+                                                                    header
+                                                                        .column
+                                                                        .id ===
+                                                                        'date'
+                                                                    ? 'min-w-48'
+                                                                    : header
                                                                           .column
-                                                                          .columnDef
-                                                                          .header,
-                                                                      header.getContext()
-                                                                  )}
-                                                            {(header.id !==
-                                                                'id' &&
-                                                                header.id !==
-                                                                    'organizationId' &&
-                                                                {
-                                                                    asc: (
-                                                                        <ChevronUp />
-                                                                    ),
-                                                                    desc: (
-                                                                        <ChevronDown />
-                                                                    ),
-                                                                }[
-                                                                    header.column.getIsSorted() as string
-                                                                ]) ?? (
-                                                                <ChevronsUpDown />
+                                                                          .id ===
+                                                                      'logo'
+                                                                    ? 'min-w-28'
+                                                                    : header.id ===
+                                                                          'id' ||
+                                                                      header.id ===
+                                                                          'organizationId'
+                                                                    ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
+                                                                    : '',
+                                                                header.column
+                                                                    .id ===
+                                                                    'email' ||
+                                                                    header
+                                                                        .column
+                                                                        .id ===
+                                                                        'phone'
+                                                                    ? 'min-w-60'
+                                                                    : ''
                                                             )}
-                                                        </div>
-                                                    </TableHead>
-                                                )
-                                        )}
-                                    </TableRow>
-                                ))}
+                                                        >
+                                                            <div className="flex justify-between items-center w-full">
+                                                                {header.isPlaceholder
+                                                                    ? null
+                                                                    : flexRender(
+                                                                          header
+                                                                              .column
+                                                                              .columnDef
+                                                                              .header,
+                                                                          header.getContext()
+                                                                      )}
+                                                                {(header.id !==
+                                                                    'id' &&
+                                                                    header.id !==
+                                                                        'organizationId' &&
+                                                                    {
+                                                                        asc: (
+                                                                            <ChevronUp />
+                                                                        ),
+                                                                        desc: (
+                                                                            <ChevronDown />
+                                                                        ),
+                                                                    }[
+                                                                        header.column.getIsSorted() as string
+                                                                    ]) ?? (
+                                                                    <ChevronsUpDown />
+                                                                )}
+                                                            </div>
+                                                        </TableHead>
+                                                    )
+                                            )}
+                                        </TableRow>
+                                    ))}
                             </TableHeader>
                             <TableBody>
                                 {table.getRowModel().rows.map((row, index) => (
