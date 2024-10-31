@@ -11,6 +11,7 @@ import { Eye } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { ConfirmPayment } from '../../ConfirmPayment'
 import { PaymentValidation } from '../../PaymentValidation'
+import { PriceType } from '@/types/GlobalType'
 
 const columnHelperCommission = createColumnHelper<PaymentCommission>()
 
@@ -141,7 +142,15 @@ export const columnsCommissionTable = (
                 const status = info.row.getValue(
                     'paymentStatus'
                 ) as PaymentStatusEnum
-                const paid = info.row.getValue('toPay') == 0
+                const paid =
+                    (info.row.getValue('toPay') as PriceType).amount == 0
+                console.log(
+                    'status',
+                    [
+                        PaymentStatusEnum.IN_VALID,
+                        PaymentStatusEnum.VALID_BY_BOTH,
+                    ].includes(status as PaymentStatusEnum)
+                )
                 if (paid) {
                     return (
                         <ConfirmPayment
@@ -228,15 +237,15 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
             currency: 'USD',
         },
         toPay: {
-            amount: 3600,
-            currency: 'USD',
-        },
-        toReceive: {
             amount: 0,
             currency: 'USD',
         },
+        toReceive: {
+            amount: 3600,
+            currency: 'USD',
+        },
         payable: true,
-        paymentStatus: PaymentStatusEnum.IN_VALID,
+        paymentStatus: PaymentStatusEnum.VALID_BY_PARTNER,
         commissionPayedBySubEntities: false,
         date: '2021-09-01',
         entityId: '4',

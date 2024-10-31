@@ -18,6 +18,7 @@ import { CustomButton } from '../custom/CustomButton'
 import {
     ConfirmPaymentType,
     defaultValuesConfirmPayment,
+    PaymentMethod,
 } from '@/types/PaymentType'
 import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
@@ -28,6 +29,11 @@ import { Select } from '../custom/Select'
 import { Input } from '../custom/Input'
 import { getConfirmationInfo } from '@/lib/api/fetchConfirmationInfo'
 import Image from 'next/image'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { ConfirmCommission } from '@/lib/api/payment/ConfirmCommission'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/GlobalType'
+import { Payment } from '.'
 
 interface ConfirmPaymentProps {
     id: string
@@ -54,25 +60,45 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
 }) => {
     const [confirmationDetails, setConfirmationDetails] =
         useState<ConfirmPaymentType>(defaultValuesConfirmPayment)
+    const [fetched, setFetched] = useState(false)
 
+    const Notif = useNotification()
+    const { mutate } = useMutation({
+        mutationKey: ['paymentConfirmation', id],
+        mutationFn: async () => {
+            const res = await ConfirmCommission(id)
+            if (res.status === 200) {
+                Notif.notify(
+                    NotificationType.SUCCESS,
+                    'Confirmation de paiement effectuée'
+                )
+                return res.data
+            }
+            Notif.notify(
+                NotificationType.ERROR,
+                'Erreur lors de la confirmation de paiement'
+            )
+        },
+    })
     const onSubmit = () => {
-        // TODO: Confirm Receipt API {data.id}
+        mutate()
     }
-
     useEffect(() => {
-        const fetchDate = async () => {
-            const res = (await getConfirmationInfo(id)) as ConfirmPaymentType
-            setConfirmationDetails(res)
+        const fetchConfirmation = async () => {
+            console.log('fetchConfirmation')
+            const data = await getConfirmationInfo(id)
+            if (data) setConfirmationDetails(data)
         }
-        // fetchDate()
-    }, [confirmationDetails, id])
+        if (!fetched) fetchConfirmation()
+        setFetched(true)
+    }, [])
 
     // INFO: the PartnerOptions is an array of stores as objects with the following structure: { id: string, name: string, avatar: string }
     const adaptOptions = PartnerOptions.map((option) => ({
         key: option.id,
         label: option.name,
     }))
-
+    const fullName = `${confirmationDetails?.emitter.firstName} ${confirmationDetails?.emitter.lastName}`
     return (
         <Dialog>
             <DialogTrigger disabled={disabled} asChild>
@@ -111,7 +137,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                             onChange={() => {}}
                             options={adaptOptions}
                             label="Type"
-                            value={confirmationDetails?.store.id}
+                            value={confirmationDetails?.partner.id}
                             transform={(value) => {
                                 const option = PartnerOptions.find(
                                     (option) => option.name === value
@@ -131,13 +157,21 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                         />
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                             <Label
-                                label="Date de récupération"
+                                label={
+                                    'Date de' +
+                                    ([
+                                        PaymentMethod.CARD_BANK,
+                                        PaymentMethod.TRANSFER,
+                                    ].includes(confirmationDetails.type)
+                                        ? 'paiement'
+                                        : 'récupération')
+                                }
                                 className="text-xs font-semibold text-lynch-950"
                             />
                             <DatePicker
                                 disabled
                                 onChange={() => {}}
-                                value={confirmationDetails.dateOfReception}
+                                value={new Date(confirmationDetails.date)}
                             />
                         </div>
                     </div>
@@ -147,18 +181,18 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                             onChange={() => {}}
                             options={[
                                 {
-                                    key: confirmationDetails.transmitter,
-                                    label: confirmationDetails.transmitter,
+                                    key: fullName,
+                                    label: fullName,
                                 },
                             ]}
                             label="Nom émetteur"
-                            value={confirmationDetails.transmitter}
+                            value={fullName}
                         />
                         <Input
                             disabled
                             name="amount"
                             onChange={() => {}}
-                            value={confirmationDetails.amount}
+                            value={confirmationDetails.price.amount}
                             label="Amount"
                         />
                     </div>
@@ -169,7 +203,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                                 className="text-xs font-semibold text-lynch-950"
                             />
                             <span
-                                key={confirmationDetails.document.fileUrl}
+                                key={confirmationDetails.documentPath}
                                 className="flex items-center gap-5 rounded-[24px] bg-lynch-50 p-4 w-full"
                             >
                                 <Image
@@ -177,19 +211,18 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                                     height={48}
                                     alt="Word"
                                     src={
-                                        confirmationDetails.document.fileName.includes(
+                                        confirmationDetails.documentPath?.includes(
                                             'pdf'
                                         )
-                                            ? '/word-icon.png'
-                                            : '/pdf-icon.png'
+                                            ? '/pdf-icon.png'
+                                            : '/word-icon.png'
                                     }
                                 />
                                 <Label
-                                    label={
-                                        confirmationDetails.document.fileName
-                                    }
+                                    label={confirmationDetails.documentPath!}
                                     className="text-lynch-500 text-base font-normal"
                                 />
+                                document
                             </span>
                         </div>
                     </div>
