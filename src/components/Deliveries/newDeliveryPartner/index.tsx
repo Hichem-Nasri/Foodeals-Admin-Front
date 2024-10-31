@@ -29,6 +29,7 @@ import {
 } from '@/types/partenairUtils'
 import { useSearchParams } from 'next/navigation'
 import validateContract from '@/lib/api/partner/validateContract'
+import { createPartner } from '@/lib/api/partner/createpartner'
 
 interface NewDeliveryProps {
     partnerDetails: DeliveryPartnerType
@@ -83,7 +84,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             setReadOnly(false)
         }
     }, [searchParams])
-    const deliveryPartner = useForm<z.infer<typeof DeliveryPartnerSchema>>({
+    const DeliveryPartner = useForm<z.infer<typeof DeliveryPartnerSchema>>({
         resolver: zodResolver(DeliveryPartnerSchema),
         mode: 'onBlur',
         defaultValues: {
@@ -105,40 +106,17 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const mutation = useMutation({
         mutationKey: ['delivery-partner'],
         mutationFn: async (data: { id: string; data: PartnerPOST }) => {
-            console.log(
-                'logo and cover: ',
-                deliveryPartnerData.logo,
-                deliveryPartnerData.cover
-            )
-            const formData = new FormData()
-            // remover status from data
-            const { status, ...rest } = data.data
-            const blob = new Blob([JSON.stringify(rest)], {
-                type: 'application/json',
+            const response = await createPartner(data.id, data.data, {
+                logo: deliveryPartnerData.logo,
+                cover: deliveryPartnerData.cover,
             })
-            console.log(data.data)
-            formData.append('dto', blob)
-            formData.append('logo', deliveryPartnerData.logo!)
-            formData.append('cover', deliveryPartnerData.cover!)
-            const url = deliveryId
-                ? `http://localhost:8080/api/v1/organizations/partners/edit/${deliveryId}`
-                : 'http://localhost:8080/api/v1/organizations/partners/create'
-            const method = deliveryId ? 'put' : 'post'
-            const response = await api[method](url, formData).catch((err) => {
-                console.log(err)
-                notif.notify(NotificationType.ERROR, 'Failed to save partner')
-                throw new Error('Failed to save partner')
-            })
-
             if (![200, 201].includes(response.status)) {
                 notif.notify(NotificationType.ERROR, 'Failed to save partner')
                 throw new Error('Failed to save partner')
             }
             notif.notify(
                 NotificationType.SUCCESS,
-                `The ${
-                    method == 'put' ? 'Change' : 'Form'
-                } has been saved successfully`
+                `The Deliver Partner has been saved successfully`
             )
             return response.data
         },
@@ -153,8 +131,6 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const onSubmitPartnerInfo = (
         data: z.infer<typeof DeliveryPartnerSchema>
     ) => {
-        console.log('partnerInfo: ', data)
-
         if (data.logo && data.cover) {
             setDeliveryPartnerData((prev: DeliveryPartnerType) => {
                 return {
@@ -257,37 +233,20 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         }
         console.log('Save data')
         console.log(
-            deliveryPartner.getValues(),
+            DeliveryPartner.getValues(),
             DeliveryPartnerSolution.getValues()
         )
 
-        // Check for validation errors in both forms
-        const isValidPartner =
-            Object.keys(deliveryPartner.formState.errors).length === 0
-        const isValidSolution =
-            Object.keys(DeliveryPartnerSolution.formState.errors).length === 0
-
-        console.log('isValid: ', isValidPartner, isValidSolution)
-        console.log('Partner errors: ', deliveryPartner.formState.errors)
-        console.log(
-            'Solution errors: ',
-            DeliveryPartnerSolution.formState.errors
-        )
-        console.log(
-            deliveryPartner.formState.isValid,
+        if (
+            DeliveryPartner.formState.isValid &&
             DeliveryPartnerSolution.formState.isValid
-        )
-
-        if (isValidPartner && isValidSolution) {
-            onSubmitPartnerInfo(deliveryPartner.getValues())
-            onSubmitEngagement(DeliveryPartnerSolution.getValues())
+        ) {
+            DeliveryPartner.handleSubmit(onSubmitPartnerInfo)()
+            DeliveryPartnerSolution.handleSubmit(onSubmitEngagement)()
             setSaved(true)
         } else {
-            // Optionally, you can show a notification or a message to the user here
-            notif.notify(
-                NotificationType.ERROR,
-                'Please fill in all required fields.'
-            )
+            DeliveryPartner.trigger()
+            DeliveryPartnerSolution.trigger()
         }
     }
     useEffect(() => {
@@ -312,7 +271,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             <div className="flex flex-col gap-[1.875rem] h-full w-full">
                 <FormDeliveryPartner
                     onSubmit={onSubmitPartnerInfo}
-                    form={deliveryPartner}
+                    form={DeliveryPartner}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     disabled={readOnly}

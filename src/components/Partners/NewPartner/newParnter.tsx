@@ -36,6 +36,7 @@ import {
 } from '@/types/partners'
 import { useSearchParams } from 'next/navigation'
 import { set } from 'date-fns'
+import { createPartner } from '@/lib/api/partner/createpartner'
 
 interface NewPartnerProps {
     partner?: PartnerDataType
@@ -91,46 +92,21 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         mode: 'onBlur',
         defaultValues: partnerDetails || defaultPartnerFeaturesData,
     })
-
     // Mutation for saving partner data
     const mutation = useMutation({
         mutationKey: ['partner'],
         mutationFn: async (data: { id: string; data: PartnerPOST }) => {
-            console.log(
-                'logo and cover: ',
-                partnerDetails.logo,
-                partnerDetails.cover
-            )
-            const formData = new FormData()
-            // remover status from data
-            const { status, ...rest } = data.data
-            const blob = new Blob([JSON.stringify(rest)], {
-                type: 'application/json',
+            const response = await createPartner(partnerId, data.data, {
+                logo: partnerDetails.logo,
+                cover: partnerDetails.cover,
             })
-            console.log(JSON.stringify(rest))
-            formData.append('dto', blob)
-            // formData.append('logo', partnerDetails.logo as Blob)
-            // formData.append('cover', partnerDetails.cover as Blob)
-            const url = partnerId
-                ? `http://localhost:8080/api/v1/organizations/partners/edit/${partnerId}`
-                : 'http://localhost:8080/api/v1/organizations/partners/create'
-            const method = partnerId ? 'put' : 'post'
-
-            const response = await api[method](url, formData).catch((err) => {
-                console.error(err)
-                notif.notify(NotificationType.ERROR, 'Failed to save partner')
-                throw new Error('Failed to save partner')
-            })
-
             if (![200, 201].includes(response.status)) {
                 notif.notify(NotificationType.ERROR, 'Failed to save partner')
                 throw new Error('Failed to save partner')
             }
             notif.notify(
                 NotificationType.SUCCESS,
-                `The ${
-                    method == 'put' ? 'Change' : 'Form'
-                } has been saved successfully`
+                "Partner's data has been saved successfully"
             )
             return response.data
         },
@@ -350,6 +326,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
+                isPending={mutation.isPending}
                 status={partnerDetails.status || PartnerStatusType.DRAFT}
                 primaryButtonDisabled={partnerId === '' || readOnly}
                 secondaryButtonDisabled={readOnly}

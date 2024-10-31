@@ -2,10 +2,6 @@
 
 import { FC, useEffect, useState } from 'react'
 
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -26,13 +22,11 @@ import {
 import { FiltersDeliveries } from './FilterDeliveries'
 import { DeliveryCard } from './DeliveryCard'
 import { useNotification } from '@/context/NotifContext'
-import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { NotificationType } from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDeliveryPartners } from '@/lib/api/delivery/fetchDeliveryParnters'
 import { API_PARTNERS } from '@/lib/api_url'
 import api from '@/api/Auth'
-import { exportAllPartnerGET } from '@/types/partenairUtils'
 interface DeliveriesProps {
     deliveries: DeliveryType[]
 }
