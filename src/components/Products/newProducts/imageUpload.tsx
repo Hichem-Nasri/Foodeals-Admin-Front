@@ -1,5 +1,6 @@
 'use client'
 import { PictureInPicture, X } from 'lucide-react'
+import Image from 'next/image'
 import { useState, useRef } from 'react'
 
 export function ImageUpload() {
@@ -47,10 +48,12 @@ export function ImageUpload() {
             />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
                 {image ? (
-                    <img
+                    <Image
                         src={URL.createObjectURL(image)}
                         alt="Uploaded Image"
                         className="w-full h-full object-cover"
+                        width={200}
+                        height={200}
                     />
                 ) : (
                     <div className="flex justify-center items-center space-x-2 text-lynch-400">

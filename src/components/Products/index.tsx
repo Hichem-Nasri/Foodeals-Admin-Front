@@ -22,7 +22,7 @@ import React, { FC, Fragment } from 'react'
 
 interface ProductProps {}
 
-function Product() {
+const Product: FC<ProductProps> = () => {
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
     const router = useRouter()

@@ -35,6 +35,7 @@ interface TopBarProps {
     onSubmit: () => void
     id: string
     hideStatus?: boolean
+    isPending?: boolean
 }
 
 const Whatsapp = () => (
@@ -64,6 +65,7 @@ export const TopBar: FC<TopBarProps> = ({
     onSubmit,
     id,
     hideStatus = false,
+    isPending,
 }) => {
     const [isDownloading, setIsDownloading] = useState(false)
     const notif = useNotification()
@@ -144,17 +146,19 @@ export const TopBar: FC<TopBarProps> = ({
                 {status !== PartnerStatusType.VALID ? (
                     <CustomButton
                         onClick={onSaveData}
-                        disabled={secondaryButtonDisabled}
+                        disabled={secondaryButtonDisabled || isPending}
                         size="sm"
                         type="submit"
                         className="bg-white text-primary border-[1.5px] border-primary hover:text-white hover:bg-primary/60"
                         label="Enregistrer"
                         IconRight={Save}
                         variant="outline"
+                        isPending={isPending}
                     />
                 ) : (
                     <CustomButton
                         onClick={() => {
+                            if (isPending) return
                             setIsDownloading(false)
                             onSaveData(true)
                         }}
@@ -169,12 +173,13 @@ export const TopBar: FC<TopBarProps> = ({
                 )}
                 {status !== PartnerStatusType.VALID && !isDownloading ? (
                     <CustomButton
-                        disabled={primaryButtonDisabled}
+                        disabled={primaryButtonDisabled || isPending}
                         onClick={handleGenerateContract}
                         size="sm"
                         label="Générer le contrat"
                         className="disabled:bg-lynch-300"
                         IconRight={FileBadge}
+                        isPending={isPending}
                     />
                 ) : status === PartnerStatusType.VALID ? (
                     <DropdownMenu>

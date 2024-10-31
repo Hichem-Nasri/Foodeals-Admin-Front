@@ -6,6 +6,17 @@ import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { Archive, Eye, Pen } from 'lucide-react'
+import { z } from 'zod'
+
+export const ProductSchema = z.object({
+    avatar: z.string().optional(),
+    title: z.string().min(3).max(255),
+    marque: z.string().min(3).max(255),
+    description: z.string().min(3).max(255),
+    categories: z.string().min(3).max(255),
+    subCategories: z.string().min(3).max(255),
+    codeBar: z.string().min(3).max(255),
+})
 
 type AvatarType = {
     name: string

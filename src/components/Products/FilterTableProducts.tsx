@@ -7,95 +7,21 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog'
 import { CustomButton } from '../custom/CustomButton'
-import { ListFilter, Mail, PhoneCall, X, Check } from 'lucide-react'
-import { MultiSelectOptionsType } from '../MultiSelect'
+import { ListFilter, X, Check } from 'lucide-react'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMediaQuery } from 'react-responsive'
-import { cn } from '@/lib/utils'
-import { IconStatus, StringStatus, StyleStatus } from '@/types/utils'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { DateFilter } from '../utils/DateFilters'
 import { FilterSelect } from '../utils/FilterSelect'
-import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
-import { FilterData, emptyFilterData } from '@/types/CrmUtils'
-import { CrmType, CustomFilterType, ProfileType } from '@/types/Global-Type'
 import { ProductType } from '@/types/products'
+import { CrmType } from '@/types/CrmType'
 
 interface FilterTableProductsProps {
     data: ProductType[]
     table: import('@tanstack/table-core').Table<CrmType>
     columnFilters: ColumnFiltersState
     setColumnFilters: (value: ColumnFiltersState) => void
-}
-
-const getDataFilter = (data: ProductType[]) => {
-    const filterTable: any = {
-        partenaire: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        key: item.product.name,
-                        label: item.product.name,
-                        avatarPath: item.product.avatar,
-                    }
-                })
-            )
-        ),
-        category: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        label: item.category,
-                        key: item.category,
-                    }
-                })
-            )
-        ),
-        product: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        label: item.product.name,
-                        key: item.product.name,
-                        avatarPath: item.product.avatar,
-                    }
-                })
-            )
-        ),
-        brand: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        label: item.brand,
-                        key: item.brand,
-                    }
-                })
-            )
-        ),
-        subCategory: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        label: item.subCategory,
-                        key: item.subCategory,
-                    }
-                })
-            )
-        ),
-        poweredby: Array.from(
-            new Set(
-                data.map((item) => {
-                    return {
-                        label: item.poweredby.name,
-                        key: item.poweredby.name,
-                        avatarPath: item.poweredby.avatar,
-                    }
-                })
-            )
-        ),
-    }
-    return filterTable
 }
 
 export const FilterTableProducts: FC<FilterTableProductsProps> = ({
@@ -105,7 +31,7 @@ export const FilterTableProducts: FC<FilterTableProductsProps> = ({
     setColumnFilters,
 }) => {
     const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
-    const [filterTable, setFilterTable] = useState<any>(getDataFilter(data))
+    const [filterTable, setFilterTable] = useState<any>(null)
     console.log('data: ', filterTable)
 
     const [filterData, setFilterData] = useState<any>({
@@ -145,7 +71,7 @@ export const FilterTableProducts: FC<FilterTableProductsProps> = ({
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400">
                     Filtrer par
                 </DialogTitle>
-                <div className="flex flex-col gap-y-2 gap-x-4">
+                {/* <div className="flex flex-col gap-y-2 gap-x-4">
                     <DateFilter
                         date={filterData.date}
                         setDate={(date) =>
@@ -163,7 +89,7 @@ export const FilterTableProducts: FC<FilterTableProductsProps> = ({
                             }
                             options={filterTable.partenaire}
                             label="Raison sociale"
-                            // emptyAvatar="/avatar/emptyUser.png"
+                            emptyAvatar="/avatar/emptyUser.png"
                             // normalTransform={true}
                         />
                         <FilterSelect
@@ -297,8 +223,7 @@ export const FilterTableProducts: FC<FilterTableProductsProps> = ({
                             }}
                         />
                     </div> */}
-                </div>
-
+                hello world
                 <DialogDescription className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <DialogClose className="lg:w-fit w-full">
                         <CustomButton

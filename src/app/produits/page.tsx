@@ -1,8 +1,10 @@
 import { Layout } from '@/components/Layout/Layout'
-import React from 'react'
-import Product from './Product'
+import React, { FC } from 'react'
+import Product from '../../components/Products'
 
-function ProductPage() {
+interface ProductPageProps {}
+
+const ProductPage: FC<ProductPageProps> = () => {
     return (
         <Layout>
             <Product />

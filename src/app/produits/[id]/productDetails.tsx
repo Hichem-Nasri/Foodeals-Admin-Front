@@ -7,14 +7,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
-import {
-    Archive,
-    ArrowLeft,
-    CheckCheck,
-    CheckCircle,
-    Pencil,
-    SaveIcon,
-} from 'lucide-react'
+import { Archive, ArrowLeft, Pencil } from 'lucide-react'
 import router from 'next/router'
 import { Input } from '@/components/custom/Input'
 import React, { useState } from 'react'
