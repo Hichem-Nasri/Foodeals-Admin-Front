@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { PartnerSolutionType } from './partners'
 import { PaymentStatusEnum } from './paymentUtils'
-import { PartnerInfoDto } from './GlobalType'
+import { ContactType, PartnerInfoDto, PriceType } from './GlobalType'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
@@ -10,35 +10,31 @@ export enum PaymentStatusType {
 }
 
 export interface ConfirmPaymentType {
-    id: string
-    store: {
-        id: string
-        avatar: string
-        name: string
-    }
-    dateOfReception: Date
-    amount: number
-    transmitter: string
-    document: {
-        fileName: string
-        fileUrl: string
-    }
+    type: PaymentMethod
+    partner: PartnerInfoDto
+    emitter: ContactType['name']
+    price: PriceType
+    documentPath: string | null
+    date: string
 }
 
-export const defaultValuesConfirmPayment = {
-    id: '1',
-    store: {
-        id: '1',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        name: 'Nom du magasin',
+export const defaultValuesConfirmPayment: ConfirmPaymentType = {
+    type: PaymentMethod.CARD_BANK,
+    partner: {
+        id: '',
+        name: '',
+        avatarPath: '',
     },
-    dateOfReception: new Date(),
-    amount: 25000,
-    transmitter: 'Amine Ben',
-    document: {
-        fileName: 'Justificatif de la commission.word',
-        fileUrl: '',
+    emitter: {
+        firstName: '',
+        lastName: '',
     },
+    price: {
+        amount: 0,
+        currency: 'MAD',
+    },
+    documentPath: 'example.pdf',
+    date: new Date().toISOString(),
 }
 
 export interface PaymentDeliveriesType {
