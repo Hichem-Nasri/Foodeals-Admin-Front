@@ -158,7 +158,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                             <Label
                                 label={
-                                    'Date de' +
+                                    'Date de ' +
                                     ([
                                         PaymentMethod.CARD_BANK,
                                         PaymentMethod.TRANSFER,

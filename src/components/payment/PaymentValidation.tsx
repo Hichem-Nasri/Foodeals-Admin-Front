@@ -288,17 +288,19 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                 </div>
                                 <div className="flex flex-col gap-6">
                                     {paymentMethod === PaymentMethod.CASH && (
-                                        <div className="flex lg:flex-row flex-col items-center gap-4">
-                                            <AmountAndCurrency
+                                        <div className="flex flex-col items-center gap-4">
+                                            <InputFieldForm
+                                                label={'Amount'}
+                                                name={'amount'}
                                                 control={control}
-                                                currencies={currencies}
-                                                setCurrencies={setCurrencies}
+                                                placeholder="Enter amount"
+                                                type="number"
                                             />
                                             <FormField
                                                 control={control}
                                                 name={'date' as any}
                                                 render={({ field }) => (
-                                                    <div className="flex flex-col items-start gap-3  w-full lg:w-1/2 text-lynch-400">
+                                                    <div className="flex flex-col items-start gap-3  w-full text-lynch-400">
                                                         <Label
                                                             label="Date de récupération"
                                                             className="text-sm font-semibold text-lynch-950"
@@ -324,20 +326,24 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
 
                                     {paymentMethod ===
                                         PaymentMethod.CARD_BANK && (
-                                        <AmountAndCurrency
+                                        <InputFieldForm
+                                            label={'Amount'}
+                                            name={'amount'}
                                             control={control}
-                                            currencies={currencies}
-                                            setCurrencies={setCurrencies}
+                                            placeholder="Enter amount"
+                                            type="number"
                                         />
                                     )}
 
                                     {paymentMethod ===
                                         PaymentMethod.TRANSFER && (
                                         <div className="flex flex-col gap-4">
-                                            <AmountAndCurrency
+                                            <InputFieldForm
+                                                label={'Amount'}
+                                                name={'amount'}
                                                 control={control}
-                                                currencies={currencies}
-                                                setCurrencies={setCurrencies}
+                                                placeholder="Enter amount"
+                                                type="number"
                                             />
                                             <FormField
                                                 control={control}

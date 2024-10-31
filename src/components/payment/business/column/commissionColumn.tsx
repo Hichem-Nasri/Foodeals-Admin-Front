@@ -144,13 +144,7 @@ export const columnsCommissionTable = (
                 ) as PaymentStatusEnum
                 const paid =
                     (info.row.getValue('toPay') as PriceType).amount == 0
-                console.log(
-                    'status',
-                    [
-                        PaymentStatusEnum.IN_VALID,
-                        PaymentStatusEnum.VALID_BY_BOTH,
-                    ].includes(status as PaymentStatusEnum)
-                )
+
                 if (paid) {
                     return (
                         <ConfirmPayment
@@ -169,10 +163,10 @@ export const columnsCommissionTable = (
                             className="min-w-full"
                             id={id}
                             label={'Payé'}
-                            disabled={[
-                                PaymentStatusEnum.VALID_BY_FOODEALS,
-                                PaymentStatusEnum.VALID_BY_BOTH,
-                            ].includes(status as PaymentStatusEnum)}
+                            disabled={
+                                PaymentStatusEnum.IN_VALID !=
+                                (status as PaymentStatusEnum)
+                            }
                         />
                     )
                 }
@@ -257,7 +251,7 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
         entityId: '5',
         organizationId: '5',
         date: '2021-09-01',
-        partnerType: PartnerType.NORMAL_PARTNER,
+        partnerType: PartnerType.PARTNER_SB,
         partnerInfoDto: {
             id: '12312',
             name: 'Partner 5',
@@ -280,7 +274,7 @@ export const defaultDataCommissionTable: PaymentCommission[] = [
             currency: 'USD',
         },
         payable: true,
-        paymentStatus: PaymentStatusEnum.VALID_BY_PARTNER,
+        paymentStatus: PaymentStatusEnum.IN_VALID,
         commissionPayedBySubEntities: false,
     },
     {

@@ -81,14 +81,14 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 const data = response.data.commissions
                 setTotalPages(data.totalPages)
                 setTotalElements(data.totalElements)
-                setCommission(data.content)
+                // setCommission(data.content)
                 // setOptions(options)
                 return response.data
             } catch (error) {
-                notify.notify(
-                    NotificationType.ERROR,
-                    'Erreur lors de la récupération des données'
-                )
+                // notify.notify(
+                //     NotificationType.ERROR,
+                //     'Erreur lors de la récupération des données'
+                // )
                 throw new Error('Error fetching commissions')
             }
         },
@@ -142,7 +142,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 <div className="flex justify-center items-center space-x-4">
                     <ColumnVisibilityModal
                         table={tableCommission}
-                        hiddens={['payable', 'entityId']}
+                        hiddens={['payable', 'entityId', 'id']}
                     />
                     <SwitchValidation />
                 </div>
@@ -161,7 +161,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 transform={(data) => (
                     <PaymentCommissionCard commission={data} path="partner" />
                 )}
-                hideColumns={['payable', 'entityId']}
+                hideColumns={['payable', 'entityId', 'id']}
                 isLoading={isLoading}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
