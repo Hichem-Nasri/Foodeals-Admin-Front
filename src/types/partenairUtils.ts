@@ -8,7 +8,7 @@ import {
     PartnerStatusType,
     PartnerType,
     SubAccountPartners,
-} from './partners'
+} from './partnersType'
 import { defaultPartnerData, PartnerDataType } from './PartnerSchema'
 
 export interface PartnerGET {
@@ -283,6 +283,8 @@ export interface PartnerPOST {
     coveredZonesDtos: CityRegion[]
     deliveryPartnerContract: deliveryPartnerContract[]
     status: string
+    logo?: File | null
+    cover?: File | null
 }
 
 export interface deliveryPartnerContract {

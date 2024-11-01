@@ -1,7 +1,7 @@
 'use client'
 import api from '@/api/Auth'
 import { Layout } from '@/components/Layout/Layout'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useRouter } from 'next/navigation'
 import React, { Fragment } from 'react'

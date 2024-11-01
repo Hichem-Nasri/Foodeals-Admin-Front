@@ -17,7 +17,7 @@ import { z } from 'zod'
 import { FormSubscriptionGeneral } from './FormSubscriptionGeneral'
 import { FormSubscriptionPersonalized } from './FormSubscriptionPersonalized'
 import { UploadFile } from './UploadFile'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerStatusType } from '@/types/partnersType'
 import Image from 'next/image'
 
 interface FormSubscriptionProps {

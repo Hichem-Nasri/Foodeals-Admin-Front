@@ -3,11 +3,12 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { FilterAndCreatePartnerCollaborators } from '@/components/Partners/collaborators/FilterAndCreatePartnerCollaborators'
 import { PartnerCollaboratesCard } from '@/components/Partners/collaborators/PartnerCollaboratorsCard'
+import { columnsSubAccountTable } from '@/components/Partners/column/subentitiesColumn'
 import { HeaderSubAccount } from '@/components/Partners/subAccount/HeaderSubAccount'
 import { useNotification } from '@/context/NotifContext'
 import fetchSubPartner from '@/lib/api/partner/fetchSubPartner'
 import { NotificationType } from '@/types/GlobalType'
-import { columnsSubAccountTable, SubAccountPartners } from '@/types/partners'
+import { SubAccountPartners } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'
 import {
     ColumnFiltersState,

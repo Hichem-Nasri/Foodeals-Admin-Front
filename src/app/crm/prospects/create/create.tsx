@@ -15,7 +15,7 @@ import {
     CrmObjectType,
     EventType,
 } from '@/types/CrmType'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Archive, Router } from 'lucide-react'
 import React, { FC, useContext, useEffect, useState } from 'react'

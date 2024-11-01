@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { CustomButton } from '../custom/CustomButton'
 import { Check, ListFilter, X } from 'lucide-react'
-import { PartnerSolutionType, PartnerType } from '@/types/partners'
+import { PartnerSolutionType, PartnerType } from '@/types/partnersType'
 import { Label } from '../Label'
 import { UseFormReturn } from 'react-hook-form'
 import { Checkbox } from '../ui/checkbox'

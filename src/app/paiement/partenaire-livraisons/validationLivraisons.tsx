@@ -1,19 +1,15 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
+import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
+import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
+import { columnsPaymentDeliveriesTable } from '@/components/payment/business/column/paymentDeliveriesColumn'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
 import { FilterPayment } from '@/components/payment/FilterPayment'
-import { PaymentCardDetails } from '@/components/payment/PaymentCardDetails'
 import SwitchPayment from '@/components/payment/switchPayment'
-import {
-    columnsPaymentDeliveriesTable,
-    columnsPaymentsTable,
-    PaymentFilterSchema,
-    PaymentType,
-    PaymentDeliveriesType,
-} from '@/types/PaymentType'
+import { PaymentFilterSchema, PaymentDeliveriesType } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -35,6 +31,26 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ payments }) => {
     const [data, _setData] = useState(() => [...payments])
     const router = useRouter()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
+        return [
+            ...defaultDataCommissionTable.map(
+                (partner) =>
+                    ({
+                        key: partner.organizationId,
+                        label: partner.partnerInfoDto.name,
+                    } as MultiSelectOptionsType)
+            ),
+            {
+                key: 'all',
+                label: 'Tous les partenaires',
+                avatar: '/all-partners.svg',
+            },
+        ]
+    })
+    const [dateAndPartner, setDateAndPartner] = useState({
+        date: new Date(),
+        partner: 'all',
+    })
 
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
     const totalCommission = 12222
@@ -54,7 +70,20 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ payments }) => {
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment onSubmit={onSubmit} />
+                <FilterPayment
+                    date={dateAndPartner.date}
+                    setData={(date) =>
+                        setDateAndPartner({ ...dateAndPartner, date })
+                    }
+                    partener={dateAndPartner.partner}
+                    setPartener={(partner) =>
+                        setDateAndPartner({
+                            ...dateAndPartner,
+                            partner: partner,
+                        })
+                    }
+                    options={options}
+                />
                 <CardTotalValue
                     Icon={CalendarClock}
                     title="Echéance"

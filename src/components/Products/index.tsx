@@ -1,11 +1,7 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
-import { FilterAndCreatePartners } from '@/components/Partners/FilterAndCreatePartners'
-import { PartnerCard } from '@/components/Partners/PartnerCard'
 import FilterProducts from '@/components/Products/FilterProducts'
-import PaginationData from '@/components/utils/PaginationData'
-import { columnsSubAccountTable } from '@/types/partners'
 import { columnsProducts, dataProducts } from '@/types/products'
 import {
     ColumnFiltersState,
@@ -15,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { table } from 'console'
 import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { FC, Fragment } from 'react'

@@ -12,7 +12,7 @@ import {
     Share,
 } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import {
     Drawer,
     DrawerContent,

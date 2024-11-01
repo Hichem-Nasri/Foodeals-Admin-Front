@@ -34,7 +34,6 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                     size="sm"
                     variant="outline"
                     label="Archive"
-                    className="flex items-center gap-3 rounded-[12px] border border-lynch-200 text-lynch-500 font-medium text-sm px-5 py-3 hover:text-black hover:bg-neutral-100 h-fit"
                     IconRight={Archive}
                 />
             </div>

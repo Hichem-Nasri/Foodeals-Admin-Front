@@ -5,7 +5,7 @@ import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { AppRoutes } from '@/lib/routes'
 import { CrmType } from '@/types/CrmType'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import {
     capitalize,
     IconStatus,

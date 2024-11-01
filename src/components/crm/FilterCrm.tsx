@@ -59,7 +59,6 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     size="sm"
                     variant="outline"
                     label={leadKo ? 'Lead Ko' : 'Prospects'}
-                    className="text-lynch-500"
                     onClick={handleArchive}
                     IconRight={leadKo ? Archive : ArrowRight}
                 />

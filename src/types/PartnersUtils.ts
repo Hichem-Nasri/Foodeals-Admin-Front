@@ -1,5 +1,5 @@
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
-import { PartnerSolutionType, PartnerType } from './partners'
+import { PartnerSolutionType, PartnerType } from './partnersType'
 import { LucideProps } from 'lucide-react'
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
 

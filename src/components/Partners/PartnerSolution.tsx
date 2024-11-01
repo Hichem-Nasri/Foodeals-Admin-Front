@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import {
     HandCoins,
     HeartHandshake,

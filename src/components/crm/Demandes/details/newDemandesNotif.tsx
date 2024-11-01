@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { TopBarDemandes } from './TobBarDemandes'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import NewNotificatoin from './newNotification'
 import {
     defaultNotificationData,

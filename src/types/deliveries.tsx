@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table'
-import { PartnerSolutionType } from './partners'
+import { PartnerSolutionType } from './partnersType'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { EmailBadge } from '@/components/Partners/EmailBadge'

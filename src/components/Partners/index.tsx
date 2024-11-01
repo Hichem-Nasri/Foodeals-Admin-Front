@@ -1,5 +1,5 @@
 'use client'
-import { columnsPartnersTable, PartnerType } from '@/types/partners'
+import { PartnerType } from '@/types/partnersType'
 import React, { FC, useEffect, useState } from 'react'
 import { FilterAndCreatePartners } from './FilterAndCreatePartners'
 
@@ -22,6 +22,7 @@ import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
+import { columnsPartnersTable } from './column/partnerColumn'
 
 interface PartnersProps {
     params?: {
@@ -102,7 +103,6 @@ export const Partners: FC<PartnersProps> = ({}) => {
             refetch()
         }
     }, [archive])
-    if (isLoading) return <div>Loading...</div>
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
@@ -120,6 +120,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 transform={(value) => (
                     <PartnerCard partner={value} key={value.id} />
                 )}
+                isLoading={isLoading}
             />
             {archive && partners.length === 0 ? (
                 <div className="flex flex-col items-center gap-4">

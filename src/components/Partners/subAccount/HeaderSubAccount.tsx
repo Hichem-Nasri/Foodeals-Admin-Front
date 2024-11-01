@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { ColumnVisibilityModal } from '../ColumnVisibilityModal'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilterSubAccount } from './FilterSubAccount'
-import { SubAccountPartners } from '@/types/partners'
+import { SubAccountPartners } from '@/types/partnersType'
 
 interface HeaderSubAccountProps {
     collaborators: SubAccountPartners[]

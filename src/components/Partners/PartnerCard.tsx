@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { PartnerCompanyType, PartnerType } from '@/types/partners'
+import { PartnerCompanyType, PartnerType } from '@/types/partnersType'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Label } from '../Label'
 import {

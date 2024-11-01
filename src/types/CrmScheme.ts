@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { CrmInformationSchemaType, CrmObjectType } from './CrmType'
-import CrmDemandes from '@/app/crm/demandes/crmDemandes'
+import CrmDemandes from '@/components/crm/Demandes/crmDemandes'
 import { CrmType } from './CrmType'
 import { capitalize } from './utils'
 import { getSolutions } from '@/lib/utils'

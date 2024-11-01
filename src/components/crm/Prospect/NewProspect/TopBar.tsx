@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Copy, FileBadge, Rocket, Save, SendIcon, Share } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerStatusType } from '@/types/partnersType'
 import {
     Drawer,
     DrawerContent,

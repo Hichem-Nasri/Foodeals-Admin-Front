@@ -1,6 +1,6 @@
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerStatus } from '@/components/Partners/PartnerStatus'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerStatusType } from '@/types/partnersType'
 import { Save, Send } from 'lucide-react'
 import React, { FC } from 'react'
 

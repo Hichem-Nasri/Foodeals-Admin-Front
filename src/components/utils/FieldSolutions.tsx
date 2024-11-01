@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { MultiSelectField } from '../custom/MultiSelectField'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { PartnerSolution } from '../Partners/PartnerSolution'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { Control } from 'react-hook-form'
 import { cn } from '@/lib/utils'
 

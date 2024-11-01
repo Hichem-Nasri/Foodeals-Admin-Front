@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerStatus } from '../PartnerStatus'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerStatusType } from '@/types/partnersType'
 import {
     DropdownMenu,
     DropdownMenuContent,

@@ -1,4 +1,4 @@
-import { PartnerSolutionType } from './partners'
+import { PartnerSolutionType } from './partnersType'
 
 export enum PartnerEntitiesType {
     PARTNER_SB = 'PARTNER_SB',

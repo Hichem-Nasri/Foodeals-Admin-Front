@@ -1,12 +1,19 @@
 import { z } from 'zod'
-import { PartnerSolutionType } from './partners'
 import { PaymentStatusEnum } from './paymentUtils'
 import { ContactType, PartnerInfoDto, PriceType } from './GlobalType'
+import { PartnerSolutionType } from './partnersType'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
     IN_PROGRESS = 'IN_PROGRESS',
     CANCELED = 'CANCELED',
+}
+
+export enum PaymentMethod {
+    CASH = 'CASH',
+    CARD_BANK = 'CARD',
+    TRANSFER = 'BANKTRANSFER',
+    CHECK = 'CHEQUE',
 }
 
 export interface ConfirmPaymentType {
@@ -126,13 +133,6 @@ export const PaymentFilterSchema = z.object({
 export const defaultValuesPaymentFilter = {
     date: undefined,
     partner: undefined,
-}
-
-export enum PaymentMethod {
-    CASH = 'CASH',
-    CARD_BANK = 'CARD',
-    TRANSFER = 'BANKTRANSFER',
-    CHECK = 'CHEQUE',
 }
 
 export const paymentSchemas = {

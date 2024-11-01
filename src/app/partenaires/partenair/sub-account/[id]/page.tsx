@@ -1,7 +1,7 @@
 import { Layout } from '@/components/Layout/Layout'
 // import { useParams } from 'next/navigation'
 import React from 'react'
-import SubAccount from './SubAccount'
+import SubAccount from '@/components/Partners/subAccount'
 
 const ParnterSubAccount = async ({
     params,

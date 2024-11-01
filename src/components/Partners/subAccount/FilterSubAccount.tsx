@@ -12,7 +12,7 @@ import {
     PartnerSolutionType,
     PartnerType,
     SubAccountPartners,
-} from '@/types/partners'
+} from '@/types/partnersType'
 import { DatePicker } from '@/components/DatePicker'
 import { Label } from '@/components/Label'
 import { MultiSelect } from '@/components/MultiSelect'

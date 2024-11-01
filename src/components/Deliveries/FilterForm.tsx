@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { CustomButton } from '../custom/CustomButton'
 import { Check, ListFilter, Mail, PhoneCall, X } from 'lucide-react'
-import { PartnerSolutionType, PartnerType } from '@/types/partners'
+import { PartnerSolutionType, PartnerType } from '@/types/partnersType'
 import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
 import { MultiSelect, MultiSelectOptionsType } from '../MultiSelect'

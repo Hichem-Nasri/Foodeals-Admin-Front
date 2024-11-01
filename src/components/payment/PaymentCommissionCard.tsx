@@ -20,7 +20,7 @@ import { PaymentValidation } from './PaymentValidation'
 import { Label } from '../Label'
 import { Arrow } from '@radix-ui/react-dropdown-menu'
 import { PartnerSolution } from '../Partners/PartnerSolution'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import {
     PartnerType,
     PaymentCommission,

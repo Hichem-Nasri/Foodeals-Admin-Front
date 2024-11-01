@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table'
-import { PartnerSolutionType } from './partners'
+import { PartnerSolutionType } from './partnersType'
 import { PaymentStatusType } from './PaymentType'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

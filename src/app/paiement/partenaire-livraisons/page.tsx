@@ -1,11 +1,8 @@
 import { Layout } from '@/components/Layout/Layout'
 import { Payment } from '@/components/payment'
 import { Operations } from '@/components/payment/PaymentDetails'
-import {
-    defaultDataPaymentDeliveriesTable,
-    defaultDataPaymentsTable,
-} from '@/types/PaymentType'
 import { PaymentDeliveries } from './validationLivraisons'
+import { defaultDataPaymentDeliveriesTable } from '@/components/payment/business/column/paymentDeliveriesColumn'
 
 interface PaymentPageProps {}
 

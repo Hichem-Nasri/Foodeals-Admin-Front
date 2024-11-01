@@ -1,4 +1,4 @@
-import { ContractStatus, PartnerStatusType } from '@/types/partners'
+import { ContractStatus, PartnerStatusType } from '@/types/partnersType'
 import { CheckCheck, FileMinus, LoaderCircle, X } from 'lucide-react'
 import { FC } from 'react'
 

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PartnerStatusType } from './partners'
+import { PartnerStatusType } from './partnersType'
 
 export const PartnerInformationSchema = z.object({
     logo: z
@@ -121,6 +121,19 @@ export const PartnerSubscriptionSchema = z.object({
             commissionCash: z.number().optional(),
             commissionCard: z.number().optional(),
         })
+        .refine(
+            (value) => {
+                return (
+                    value.marketPro?.selected ||
+                    value.dlcPro?.selected ||
+                    value.donate?.selected ||
+                    (value.solutionsId?.length ?? 0) > 0
+                )
+            },
+            {
+                message: 'Veuillez choisir au moins une solution',
+            }
+        )
         .optional(),
 })
 
@@ -209,13 +222,37 @@ export interface PartnerSubscriptionSchemaType {
         managerId: string
         commissionCash: number
         commissionCard: number
+        marketPro?: {
+            selected: boolean
+            duration: number
+            amount: number
+            expiration: number
+            managerId: string
+            commissionCash: number
+            commissionCard: number
+            name: string
+        }
+        dlcPro?: {
+            selected: boolean
+            duration: number
+            amount: number
+            expiration: number
+            name: string
+            commissionCash: number
+        }
     }
 }
 
 export const PartnerFeaturesSchema = z.object({
-    numberOfStores: z.number(),
-    maxNumberOfAccounts: z.number(),
-    minimumReduction: z.number(),
+    numberOfStores: z
+        .number()
+        .min(0, 'Le nombre de magasins doit être supérieur ou égal à 0'),
+    maxNumberOfAccounts: z
+        .number()
+        .min(0, 'Le nombre de compte doit être supérieur ou égal à 0'),
+    minimumReduction: z
+        .number()
+        .min(0, 'La réduction minimale doit être supérieure ou equal 0'),
     fileType: z.array(z.string()),
 })
 

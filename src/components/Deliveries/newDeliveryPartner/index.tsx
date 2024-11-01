@@ -17,7 +17,7 @@ import {
     emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
 import { FormSolution } from './FormSolution'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partners'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { useMutation } from '@tanstack/react-query'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'

@@ -1,5 +1,5 @@
 import { PartnerPOST, SolutionsContractDto } from '@/types/partenairUtils'
-import { PartnerCompanyType, PartnerSolutionType } from '@/types/partners'
+import { PartnerCompanyType, PartnerSolutionType } from '@/types/partnersType'
 import {
     PartnerDataType,
     PartnerInformationSchema,

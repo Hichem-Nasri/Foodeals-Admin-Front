@@ -2,7 +2,7 @@ import { FC, Fragment } from 'react'
 
 import { Label } from '@/components/Label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { PartnerCompanyType, PartnerSolutionType } from '@/types/partners'
+import { PartnerCompanyType, PartnerSolutionType } from '@/types/partnersType'
 import { PartnerSolution } from '../PartnerSolution'
 import { SelectField } from '@/components/custom/SelectField'
 import { InputFieldForm } from '@/components/custom/InputField'

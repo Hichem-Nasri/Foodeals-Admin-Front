@@ -69,11 +69,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
                                         field.onChange(+value)) ||
                                     field.onChange(value)
                                 }
-                                value={
-                                    type === 'number' && field.value === ''
-                                        ? undefined
-                                        : field.value
-                                }
+                                value={field.value}
                                 placeholder={placeholder}
                                 className={className}
                                 IconLeft={IconLeft}
@@ -82,7 +78,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
                                 onClickRight={onClickIconRight}
                             />
                         </div>
-                        <FormMessage />
+                        <FormMessage {...field} />
                     </FormItem>
                 )
             }}

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { createColumnHelper } from '@tanstack/react-table'
-import { PartnerSolutionType, PartnerStatusType } from './partners'
+import { PartnerSolutionType, PartnerStatusType } from './partnersType'
 import { PartnerStatus } from '@/components/Partners/PartnerStatus'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'

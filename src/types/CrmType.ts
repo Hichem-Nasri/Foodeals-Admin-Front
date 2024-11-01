@@ -1,5 +1,5 @@
 import { AddressType, ContactType, ProfileType } from './GlobalType'
-import { PartnerSolutionType } from './partners'
+import { PartnerSolutionType } from './partnersType'
 
 export type CrmType = {
     id: string

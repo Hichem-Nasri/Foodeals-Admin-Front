@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { TopBar } from '../NewProspect/TopBar'
-import { PartnerStatusType } from '@/types/partners'
+import { PartnerStatusType } from '@/types/partnersType'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'

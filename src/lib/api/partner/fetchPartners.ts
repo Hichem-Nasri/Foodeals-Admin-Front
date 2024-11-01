@@ -1,6 +1,6 @@
 import api from '@/api/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
-import { PartnerType } from '@/types/partners'
+import { PartnerType } from '@/types/partnersType'
 
 export async function fetchPartners(
     currentPage: number,

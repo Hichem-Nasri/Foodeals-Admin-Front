@@ -22,7 +22,7 @@ import {
     PartnerCompanyType,
     PartnerSolutionType,
     PartnerStatusType,
-} from '@/types/partners'
+} from '@/types/partnersType'
 import { ArchivePartner } from './ArchivePartner'
 import {
     checkAllForms,

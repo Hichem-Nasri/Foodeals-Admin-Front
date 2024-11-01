@@ -33,7 +33,7 @@ import {
     PartnerCompanyType,
     PartnerSolutionType,
     PartnerStatusType,
-} from '@/types/partners'
+} from '@/types/partnersType'
 import { useSearchParams } from 'next/navigation'
 import { set } from 'date-fns'
 import { createPartner } from '@/lib/api/partner/createpartner'

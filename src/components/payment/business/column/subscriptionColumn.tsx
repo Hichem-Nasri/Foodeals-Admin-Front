@@ -1,7 +1,7 @@
 import { AvatarAndName } from '@/components/AvatarAndName'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { AppRoutes } from '@/lib/routes'
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import {
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
