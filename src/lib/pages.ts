@@ -1,5 +1,6 @@
 import {
     BarChartBig,
+    Blocks,
     Box,
     Contact,
     CreditCard,
@@ -10,6 +11,7 @@ import {
     HeartHandshake,
     Hotel,
     LucideProps,
+    Newspaper,
     Salad,
     Settings,
     SquareUser,
@@ -113,9 +115,27 @@ export const pagesData: PageData[] = [
         icon: Headset,
     },
     {
-        label: 'Site Web',
+        label: 'Sete Web',
         href: AppRoutes.website,
         icon: Globe,
+        subPage: true,
+        ListSubPage: [
+            {
+                label: 'Blog',
+                href: AppRoutes.blog,
+                icon: Blocks,
+            },
+            {
+                label: 'Presse',
+                href: AppRoutes.presse,
+                icon: Newspaper,
+            },
+            {
+                label: 'Support',
+                href: AppRoutes.support,
+                icon: Headset,
+            },
+        ],
     },
     {
         label: 'Paramètre',

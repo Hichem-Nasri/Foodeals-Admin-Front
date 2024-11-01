@@ -1,7 +1,3 @@
-import CrmDemandes from '@/app/crm/demandes/crmDemandes'
-import Product from '@/app/produits/Product'
-import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
-
 export const AppRoutes = {
     home: '/',
     payment: '/paiement',
@@ -43,9 +39,16 @@ export const AppRoutes = {
     settings: '/settings',
     humanResources: '/ressources-humaines',
     website: '/site-web',
+    blog: '/site-web/blog',
+    presse: '/site-web/presse',
+    support: '/site-web/support',
+    supportDetails: '/site-web/support/:id',
     parameter: '/parametre',
 }
 
 export const appApi = {
     partnerDetails: '/partner/{partnerId}',
+    paymentReceived: '/v1/payments/form-data/{paymentId}?type=COMMISSION',
+    productDetails: '/product/{productId}',
+    productList: '/v1/products',
 }
