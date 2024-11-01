@@ -1,132 +1,85 @@
 'use client'
-import { AvatarProfile } from '@/components/AvatarProfile'
-import { CustomButton } from '@/components/custom/CustomButton'
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@/components/ui/accordion'
-import { useRouter } from 'next/navigation'
-import { Input } from '@/components/custom/Input'
-import React, { useState } from 'react'
-import { ProductSchema } from '@/types/products'
+import React, { FC, useState } from 'react'
+import { ProductSchema, ProductSchemaType } from '@/types/products'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form } from '@/components/ui/form'
-import { AvatarField } from '@/components/custom/AvatarField'
-import { InputFieldForm } from '@/components/custom/InputField'
 import TopBar from '@/components/Products/TopBar'
+import FormProduct from './FormProduct'
+import { demoData } from '@/lib/api/product/fetchProduct'
+import { CustomButton } from '@/components/custom/CustomButton'
+import { Archive, CheckCheck } from 'lucide-react'
 
-const CreateProduct = () => {
-    const [product, setProduct] = useState({
-        avatar: '',
-        title: '',
-        marque: '',
-        description: '',
-        categories: '',
-        subCategories: '',
-        codeBar: '',
-    })
+interface CreateProductProps {
+    data: {
+        product: any
+        isLoading: boolean
+        error: any
+    }
+}
+
+const CreateProduct: FC<CreateProductProps> = ({ data }) => {
+    const [product, setProduct] = useState<ProductSchemaType>(
+        () => data.product
+    )
+    const [edit, setEdit] = useState(product ? false : true)
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         mode: 'onBlur',
-        defaultValues: product,
+        defaultValues: { ...product },
     })
-
+    console.log('product', product)
     const onSubmit = (data: z.infer<typeof ProductSchema>) => {
         console.log(data)
     }
-    const { handleSubmit, control } = form
+    const { handleSubmit } = form
 
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <TopBar onSubmit={handleSubmit(onSubmit)} />
-            <Accordion
-                type="single"
-                collapsible
-                className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
-                defaultValue="Product"
-            >
-                <AccordionItem
-                    value="Product"
-                    className="text-lynch-400 text-[1.375rem] font-normal"
-                >
-                    <AccordionTrigger className="font-normal text-[1.375rem] py-0">
-                        Information du produit
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-7">
-                        <Form {...form}>
-                            <form
-                                onSubmit={form.handleSubmit(onSubmit)}
-                                className="flex flex-col justify-center items-center gap-[1.875rem]"
-                            >
-                                <div className="flex w-fit gap-5 lg:pb-0 pb-14">
-                                    <AvatarField
-                                        disabled={false}
-                                        name="avatar"
-                                        form={form}
-                                        alt={'upload image'}
-                                        label="Photo de produit"
-                                        className="!rounded-full size-[130px] flex justify-center items-center"
-                                        classNameAvatar="!rounded-full size-[130px]"
-                                    />
-                                </div>
-                                <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={'Saisir le titre'}
-                                        name={'title'}
-                                        disabled={false}
-                                        label="Titre"
-                                    />
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={'Saisir la marque'}
-                                        name={'marque'}
-                                        disabled={false}
-                                        label="Marque"
-                                    />
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={'Saisir la description'}
-                                        name={'description'}
-                                        disabled={false}
-                                        label="Description"
-                                    />
-                                </div>
-                                <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={'Saisir les categories'}
-                                        name={'categories'}
-                                        disabled={false}
-                                        label="Catégories"
-                                    />
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={
-                                            'Saisir les sous categories'
-                                        }
-                                        name={'subCategories'}
-                                        disabled={false}
-                                        label="Sous Catégories"
-                                    />
-                                    <InputFieldForm
-                                        control={control}
-                                        placeholder={'Saisir le code bar'}
-                                        name={'codeBar'}
-                                        disabled={false}
-                                        label="Code Bar"
-                                    />
-                                </div>
-                            </form>
-                        </Form>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-        </div>
+        <>
+            <div className="flex flex-col  w-full fixed bg-lynch-50 lg:bg-transparent lg:relative top-0 h-full left-0 right-0 overflow-auto gap-4">
+                <TopBar
+                    onSubmit={handleSubmit(onSubmit)}
+                    edit={edit}
+                    setEdit={setEdit}
+                />
+                <FormProduct
+                    form={form}
+                    data={data}
+                    onSubmit={onSubmit}
+                    disabled={edit}
+                />
+                {!edit && (
+                    <div className="flex justify-end p-2 bg-white w-full rounded-[18px] items-center">
+                        <CustomButton
+                            label="Archive"
+                            size="sm"
+                            onClick={() => console.log('Archive')}
+                            className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50 transition-all delay-75 duration-100 text-center"
+                            IconRight={Archive}
+                        />
+                    </div>
+                )}
+                <div className="flex lg:hidden rounded-t-lg bg-white p-3 fixed bottom-0 w-full">
+                    {!edit ? (
+                        <CustomButton
+                            label="Archive"
+                            size="sm"
+                            onClick={() => console.log('Archive')}
+                            className="bg-coral-50 text-coral-500 border border-coral-500 hover:bg-coral-500 hover:text-coral-50 transition-all delay-75 duration-100 text-center w-full"
+                            IconRight={Archive}
+                        />
+                    ) : (
+                        <CustomButton
+                            label="CONFIRMER"
+                            size="sm"
+                            onClick={handleSubmit(onSubmit)}
+                            className=" bg-primary text-white w-full"
+                            IconRight={CheckCheck}
+                        />
+                    )}
+                </div>
+            </div>
+        </>
     )
 }
 

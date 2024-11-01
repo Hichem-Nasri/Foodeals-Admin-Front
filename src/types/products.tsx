@@ -7,6 +7,8 @@ import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { Archive, Eye, Pen } from 'lucide-react'
 import { z } from 'zod'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { AppRoutes } from '@/lib/routes'
 
 export const ProductSchema = z.object({
     avatar: z.string().optional(),
@@ -17,6 +19,8 @@ export const ProductSchema = z.object({
     subCategories: z.string().min(3).max(255),
     codeBar: z.string().min(3).max(255),
 })
+
+export type ProductSchemaType = z.infer<typeof ProductSchema>
 
 type AvatarType = {
     name: string
@@ -40,7 +44,7 @@ export type ProductType = {
 
 const columnHelperProducts = createColumnHelper<ProductType>()
 
-export const columnsProducts = [
+export const columnsProducts = (router: AppRouterInstance) => [
     columnHelperProducts.accessor('ref', {
         cell: (info) => <div>{info.getValue()}</div>,
         header: 'Réf',
@@ -122,12 +126,26 @@ export const columnsProducts = [
                         {
                             label: 'Voir',
                             icon: Eye,
-                            actions: () => {},
+                            actions: () => {
+                                router.push(
+                                    AppRoutes.newProduct.replace(
+                                        ':id',
+                                        info.getValue()
+                                    )
+                                )
+                            },
                         },
                         {
                             label: 'Modifier',
                             icon: Pen,
-                            actions: () => {},
+                            actions: () => {
+                                router.push(
+                                    AppRoutes.newProduct.replace(
+                                        ':id',
+                                        info.getValue()
+                                    ) + '?mode=edit'
+                                )
+                            },
                         },
                         {
                             label: 'Archiver',
