@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { LucideProps } from 'lucide-react'
+import { Loader, LucideProps } from 'lucide-react'
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
 
 interface CustomButtonProps {
@@ -23,18 +23,26 @@ interface CustomButtonProps {
         | 'ghost'
         | 'link'
     title?: string
+    isPending?: boolean
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
     label,
     IconLeft,
     IconRight,
+    isPending,
     ...rest
 }): JSX.Element => {
     return (
         <Button {...rest}>
             {IconLeft && <IconLeft className="mr-2 icon shrink-0" />}
-            {label}
+            {isPending ? (
+                <div>
+                    <Loader className="mr-2 icon shrink-0 animate-spin" />
+                </div>
+            ) : (
+                <>{label}</>
+            )}
             {IconRight && <IconRight className="ml-2 icon shrink-0" />}
         </Button>
     )
