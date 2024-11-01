@@ -128,7 +128,10 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterSelect
                             label="Ville"
-                            options={options}
+                            options={[
+                                { key: 'ville1', label: 'Ville 1' },
+                                { key: 'ville2', label: 'Ville 2' },
+                            ]}
                             item={filterData.city}
                             setItem={(city) => {
                                 setFilterData({ ...filterData, city })

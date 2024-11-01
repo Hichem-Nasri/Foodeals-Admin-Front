@@ -10,7 +10,7 @@ import { Percent } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { PartnerSubscriptionSchema } from '@/types/PartnerSchema'
 import { z } from 'zod'
-import { FormField } from '@/components/ui/form'
+import { FormField, FormMessage } from '@/components/ui/form'
 
 interface FormSubscriptionGeneralProps {
     form: UseFormReturn<z.infer<typeof PartnerSubscriptionSchema>>
@@ -58,6 +58,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                                     className="px-4 py-[0.4rem] my-3"
                                     size={20}
                                 />
+                                <FormMessage />
                             </div>
                         )}
                     />
@@ -233,6 +234,14 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     disabled={!donate?.selected || disabled}
                 />
             </div>
+            {form.formState.isSubmitted &&
+                !marketPro?.selected &&
+                !dlcPro?.selected &&
+                !donate?.selected && (
+                    <div className="text-red-500">
+                        Please select at least one solution.
+                    </div>
+                )}
         </Fragment>
     )
 }

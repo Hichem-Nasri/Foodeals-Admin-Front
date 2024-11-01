@@ -56,7 +56,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <Link href={AppRoutes.newPartner}>
+                <Link href={AppRoutes.newPartner.replace(':id', 'new')}>
                     <CustomButton
                         size="sm"
                         label="Ajouter un partenaire"

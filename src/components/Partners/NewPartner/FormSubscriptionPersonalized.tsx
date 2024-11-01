@@ -25,10 +25,12 @@ export const FormSubscriptionPersonalized: FC<
     return (
         <Fragment>
             <div className="flex items-center justify-between">
-                <Label
-                    label="Nos solution"
-                    className="text-primary text-sm font-medium"
-                />
+                <div className="flex flex-col justify-center items-start">
+                    <Label
+                        label="Nos solution"
+                        className="text-primary text-sm font-medium"
+                    />
+                </div>
                 <FormField
                     control={form.control}
                     name="solutions.solutionsId"
@@ -125,6 +127,13 @@ export const FormSubscriptionPersonalized: FC<
                     )}
                 />
             </div>
+            {form.formState.isSubmitted &&
+                solutions?.solutionsId &&
+                solutions.solutionsId.length === 0 && (
+                    <div className="text-red-500">
+                        Please select at least one solution.
+                    </div>
+                )}
             <div className="flex items-start gap-3">
                 <SelectField
                     control={form.control}

@@ -7,7 +7,7 @@ import { ArchivePartner } from './ArchivePartner'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { countryCodes } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api/Auth'
@@ -37,6 +37,8 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { set } from 'date-fns'
 import { createPartner } from '@/lib/api/partner/createpartner'
+import { Save } from 'lucide-react'
+import { SaveInfoData, SaveSubscriptionData } from './helperSubmit'
 
 interface NewPartnerProps {
     partner?: PartnerDataType
@@ -49,7 +51,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         partner!
     )
     const [partnerId, setPartnerId] = useState(
-        id == '%3Aid' || id.includes('?convertir') ? '' : id
+        id == 'new' || id.includes('?convertir') ? '' : id
     )
     const [saved, setSaved] = useState(false)
     const [partnerData, setPartnerData] =
@@ -84,13 +86,13 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     >({
         resolver: zodResolver(PartnerSubscriptionSchema),
         mode: 'onBlur',
-        defaultValues: partnerDetails || defaultPartnerSubscriptionData,
+        defaultValues: partnerDetails,
     })
 
     const partnerFeatures = useForm<z.infer<typeof PartnerFeaturesSchema>>({
         resolver: zodResolver(PartnerFeaturesSchema),
         mode: 'onBlur',
-        defaultValues: partnerDetails || defaultPartnerFeaturesData,
+        defaultValues: partnerDetails,
     })
     // Mutation for saving partner data
     const mutation = useMutation({
@@ -111,20 +113,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             return response.data
         },
         onSuccess: (data) => {
-            if (id.includes('?convertir')) {
-                const uid = id.split('?')[0]
-                const res = api
-                    .post(
-                        `http://localhost:8080/api/v1/crm/prospects/status/${uid}`,
-                        {
-                            status: 'VALID',
-                        }
-                    )
-                    .then((res) => res.data)
-                    .catch((e) => {
-                        console.log(e)
-                    })
-            }
             setPartnerId(data.id)
         },
         onError: (err) => {
@@ -136,118 +124,13 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const handlePartnerInfoSubmit = (
         data: z.infer<typeof PartnerInformationSchema>
     ) => {
-        if (data.logo) {
-            setPartnerDetails((prev) => ({
-                ...prev,
-                logo: data.logo as File,
-            }))
-        }
-        if (data.cover) {
-            setPartnerDetails((prev) => ({
-                ...prev,
-                cover: data.cover as File,
-            }))
-        }
-        console.log(data.companyType)
-        setPartnerData((prev) => ({
-            ...prev,
-            features: data.partnerType,
-            entityName: data.companyName,
-            commercialNumber: data.commercialRegisterNumber.toString(),
-            contactDto: {
-                name: {
-                    firstName: data.responsible.split(' ')[0],
-                    lastName: data.responsible.split(' ').slice(1).join(' '),
-                },
-                email: data.email,
-                phone: data.phone,
-            },
-            entityAddressDto: {
-                country: data.country,
-                city: data.city,
-                region: data.region,
-                address: data.address,
-                iframe: data.mapLocation,
-            },
-            managerId: +data.managerId,
-            activities: data.companyType,
-        }))
+        SaveInfoData(data, setPartnerData, setPartnerDetails)
     }
 
     const handleSubscriptionSubmit = (
         data: z.infer<typeof PartnerSubscriptionSchema>
     ) => {
-        const commonData = {
-            entityType: data.accountType,
-            entityBankInformationDto: {
-                beneficiaryName: data.beneficiary,
-                bankName: data.bank,
-                rib: data.rib,
-            },
-        }
-
-        const setSolutionsData = (solutions: any[], isGeneral: boolean) => {
-            const selectedSolutions = solutions
-                .map((s) => s?.name)
-                .filter((s) => s !== null && s !== undefined)
-
-            const solutionsContractDto: SolutionsContractDto[] = solutions.map(
-                (s): SolutionsContractDto => ({
-                    solution: s?.name!,
-                    contractSubscriptionDto: {
-                        duration: +s?.duration!,
-                        annualPayment: +s?.amount!,
-                        numberOfDueDates: +s?.expiration!,
-                    },
-                    contractCommissionDto: {
-                        withCard: s?.commissionCard || 0,
-                        withCash: s?.commissionCash || 0,
-                    },
-                })
-            )
-
-            setPartnerData((prev) => ({
-                ...prev,
-                ...commonData,
-                oneSubscription: isGeneral,
-                solutions: selectedSolutions,
-                solutionsContractDto,
-
-                commissionPayedBySubEntities: isGeneral
-                    ? data.marketPro?.selected
-                        ? data.marketPro?.managerId ===
-                          PartnerCompanyType.NORMAL
-                        : false
-                    : selectedSolutions.includes('pro_market')
-                    ? data.solutions?.managerId === PartnerCompanyType.NORMAL
-                    : false,
-            }))
-        }
-
-        if (data.subscriptionType === 'general') {
-            const solutions = [data.dlcPro, data.marketPro, data.donate].filter(
-                (s) => s && s.selected
-            )
-            setSolutionsData(solutions, false)
-        } else {
-            const newSolution = data.solutions?.solutionsId
-                .map((s) => {
-                    switch (s) {
-                        case PartnerSolutionType.MARKET_PRO:
-                            return 'pro_market'
-                        case PartnerSolutionType.DLC_PRO:
-                            return 'pro_dlc'
-                        case PartnerSolutionType.DONATE_PRO:
-                            return 'pro_donate'
-                        default:
-                            return null
-                    }
-                })
-                .filter((s) => s !== null && s !== undefined)
-
-            console.log('new solution: ', newSolution)
-            setSolutionsData(newSolution!, true)
-        }
+        SaveSubscriptionData(data, setPartnerData)
     }
 
     const handleFeaturesSubmit = (
@@ -272,27 +155,26 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             }))
             return
         }
-        console.log('hello')
-        const partnerInfoResult = await partnerInformation.trigger()
-        const partnerSubscriptionResult = await partnerSubscription.trigger()
-        const partnerFeaturesResult = await partnerFeatures.trigger()
-
-        console.log('partnerId: ', partnerId)
+        // check if the user already have an id and the contract is not uploaded
         if (partnerId !== '' && !contractUpload) {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
         }
 
         if (
-            partnerInfoResult &&
-            partnerSubscriptionResult &&
-            partnerFeaturesResult
+            partnerInformation.formState.isValid &&
+            partnerSubscription.formState.isValid &&
+            partnerFeatures.formState.isValid
         ) {
             handlePartnerInfoSubmit(partnerInformation.getValues())
             handleSubscriptionSubmit(partnerSubscription.getValues())
             handleFeaturesSubmit(partnerFeatures.getValues())
             console.log('saved')
             setSaved(true)
+        } else {
+            partnerInformation.trigger()
+            partnerSubscription.trigger()
+            partnerFeatures.trigger()
         }
     }
 
