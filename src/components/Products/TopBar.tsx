@@ -62,9 +62,12 @@ const TopBar: FC<TopBarProps> = ({ onSubmit, edit, setEdit }) => {
             <div className="lg:hidden flex justify-between gap-5 items-center border-b-2 w-full border-primary p-6 bg-white">
                 <button
                     className="text-lynch-400"
-                    onClick={() => router.back()}
+                    onClick={() => {
+                        console.log('clicked!!')
+                        router.push('/produits')
+                    }}
                 >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={24} />
                 </button>
                 <h1 className="text-lynch-950">Ajouter un produit</h1>
             </div>
