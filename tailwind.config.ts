@@ -125,6 +125,16 @@ const config: Config = {
                         transform: 'translateY(0)',
                     },
                 },
+                'fade-down': {
+                    from: {
+                        opacity: '0',
+                        transform: 'translateY(-20px)',
+                    },
+                    to: {
+                        opacity: '1',
+                        transform: 'translateY(0)',
+                    },
+                },
             },
             animation: {
                 'accordion-down': 'accordion-down 0.2s ease-out',
@@ -136,6 +146,7 @@ const config: Config = {
                     'notification-slide-left 0.5s ease-out',
                 'notification-slide-down':
                     'notification-slide-down 0.5s ease-out',
+                'fade-down': 'fade-down 0.5s ease-out',
             },
         },
     },

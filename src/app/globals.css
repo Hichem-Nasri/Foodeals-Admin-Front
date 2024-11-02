@@ -52,6 +52,14 @@ html {
     background-color: #f1f1f1; /* Light gray background */
 }
 
+/* .rdp-vhidden {
+    @apply hidden;
+} */
+.rdp {
+    @apply min-w-60;
+    @apply flex justify-between items-center;
+}
+
 .alert {
     opacity: 0;
     transform: translateY(10px);
@@ -65,4 +73,20 @@ html {
 
 .progress-bar {
     transition: width 0.1s ease; /* Smooth transition for width changes */
+}
+
+@keyframes scan-line {
+    0% {
+        transform: translateY(-5rem);
+    }
+    50% {
+        transform: translateY(5rem);
+    }
+    100% {
+        transform: translateY(-5rem);
+    }
+}
+
+.animate-scan-line {
+    animation: scan-line 3s linear infinite;
 }
