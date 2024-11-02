@@ -24,7 +24,7 @@ export const AppRoutes = {
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',
     products: '/produits',
-    newProduct: '/produits/create',
+    newProduct: '/produits/new',
     ProductDetails: '/produits/:id',
     delivery: '/livraisons',
     newDelivery: '/livraisons/partenaire-livraison/:id',

@@ -128,7 +128,7 @@ export const columnsProducts = (router: AppRouterInstance) => [
                             icon: Eye,
                             actions: () => {
                                 router.push(
-                                    AppRoutes.newProduct.replace(
+                                    AppRoutes.ProductDetails.replace(
                                         ':id',
                                         info.getValue()
                                     )
@@ -140,7 +140,7 @@ export const columnsProducts = (router: AppRouterInstance) => [
                             icon: Pen,
                             actions: () => {
                                 router.push(
-                                    AppRoutes.newProduct.replace(
+                                    AppRoutes.ProductDetails.replace(
                                         ':id',
                                         info.getValue()
                                     ) + '?mode=edit'

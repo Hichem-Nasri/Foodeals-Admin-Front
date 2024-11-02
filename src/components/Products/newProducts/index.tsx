@@ -47,6 +47,7 @@ const CreateProduct: FC<CreateProductProps> = ({ data }) => {
                     data={data}
                     onSubmit={onSubmit}
                     disabled={edit}
+                    edit={edit}
                 />
                 {!edit && (
                     <div className="flex justify-end p-2 bg-white w-full rounded-[18px] items-center">
