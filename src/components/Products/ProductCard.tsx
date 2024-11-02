@@ -11,7 +11,7 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {
     return (
-        <div className="flex flex-col gap-3 bg-white p-3 h-28 rounded-[20px] min-w-[400px]">
+        <div className="flex flex-col gap-3 bg-white p-6  h-auto rounded-[20px] max-w-[400px] min-w-full">
             <div className="flex justify-between items-center h-full w-full">
                 <div className="flex flex-col justify-center gap-[3px] w-full">
                     <div className="justify-self-start flex justify-start items-start space-x-1 ">
