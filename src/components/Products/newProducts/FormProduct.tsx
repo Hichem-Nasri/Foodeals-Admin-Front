@@ -7,7 +7,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
-import { ProductSchema } from '@/types/products'
+import { ProductSchema, ProductSchemaType, ProductType } from '@/types/products'
 import React, { FC } from 'react'
 import { Form } from '@/components/ui/form'
 import { UseFormReturn } from 'react-hook-form'
@@ -23,6 +23,7 @@ interface FormProductProps {
     }
     onSubmit: (data: z.infer<typeof ProductSchema>) => void
     disabled?: boolean
+    edit: boolean
 }
 
 const FormProduct: FC<FormProductProps> = ({
@@ -30,6 +31,7 @@ const FormProduct: FC<FormProductProps> = ({
     data,
     onSubmit,
     disabled = false,
+    edit,
 }) => {
     return (
         <>
@@ -53,6 +55,8 @@ const FormProduct: FC<FormProductProps> = ({
                                 onSubmit={onSubmit}
                                 isLoaded={data.isLoading}
                                 disabled={disabled}
+                                product={data.product}
+                                edit={edit}
                             />
                         </AccordionContent>
                     </AccordionItem>
@@ -64,6 +68,8 @@ const FormProduct: FC<FormProductProps> = ({
                     onSubmit={onSubmit}
                     isLoaded={data.isLoading}
                     disabled={disabled}
+                    edit={edit}
+                    product={data.product}
                 />
             </div>
         </>
@@ -75,6 +81,8 @@ interface NewFormProduct {
     onSubmit: (data: z.infer<typeof ProductSchema>) => void
     isLoaded: boolean
     disabled?: boolean
+    edit: boolean
+    product: ProductSchemaType
 }
 
 export const NewFormProduct: FC<NewFormProduct> = ({
@@ -82,6 +90,8 @@ export const NewFormProduct: FC<NewFormProduct> = ({
     onSubmit,
     isLoaded,
     disabled = false,
+    edit,
+    product,
 }) => {
     return (
         <Form {...form}>
@@ -89,8 +99,12 @@ export const NewFormProduct: FC<NewFormProduct> = ({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col justify-center items-center gap-[1.875rem] w-full"
             >
-                <div className="flex justify-between lg:justify-center items-center w-full gap-5 lg:pb-0 ">
-                    <div className="flex justify-start lg:justify-center items-center space-x-2">
+                <div
+                    className={`flex lg:justify-center items-center w-full gap-5 lg:pb-0 ${
+                        product ? 'justify-between' : 'justify-center'
+                    }`}
+                >
+                    <div className="flex lg:justify-center items-center space-x-2">
                         <AvatarField
                             name="avatar"
                             form={form}
@@ -101,7 +115,7 @@ export const NewFormProduct: FC<NewFormProduct> = ({
                             isLoaded={isLoaded}
                             disabled={disabled}
                         />
-                        {
+                        {product && (
                             <div className="lg:hidden flex flex-col space-y-3 items-start justify-center text-wrap">
                                 <h1 className="text-md text-lynch-950">
                                     {form.getValues('title')}
@@ -110,11 +124,13 @@ export const NewFormProduct: FC<NewFormProduct> = ({
                                     {form.getValues('categories')}
                                 </h3>
                             </div>
-                        }
+                        )}
                     </div>
-                    <Button className=" flex lg:hidden bg-white text-lynch-400 rounded-full size-14">
-                        <PencilLine size={20} />
-                    </Button>
+                    {product && (
+                        <Button className=" flex lg:hidden bg-white text-lynch-400 rounded-full size-14">
+                            <PencilLine size={20} />
+                        </Button>
+                    )}
                 </div>
                 <h1 className="flex text-xl font-medium text-lynch-400 lg:hidden">
                     Information du produit

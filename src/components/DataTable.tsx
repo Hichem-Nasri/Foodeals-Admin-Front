@@ -64,7 +64,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
     }, [isLoading]) // Only run this effect when isLoading changes
     return (
         <>
-            <div className="lg:hidden grid gap-[0.625rem] border-0  m-auto">
+            <div className="lg:hidden grid gap-[0.625rem] border-0  m-auto w-full">
                 {isLoading ? (
                     <>
                         {elements.map((element, index) => (
