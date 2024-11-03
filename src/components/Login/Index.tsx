@@ -49,7 +49,7 @@ export const Login: React.FC = () => {
             {loading ? (
                 <SplashScreen finishLoading={finishLoading} />
             ) : (
-                <div className="w-full min-h-screen flex lg:flex-row flex-col-reverse justify-center items-center">
+                <div className="w-full min-h-screen flex lg:flex-row flex-col-reverse justify-between items-center">
                     <div className="w-full lg:w-1/2 h-auto lg:min-h-screen flex flex-col justify-center items-center bg-[url('/background-auth-partners.svg')] p-4 lg:p-0">
                         <div className="h-auto flex flex-col justify-center lg:justify-between items-center gap-4 lg:gap-7">
                             <Image
@@ -59,13 +59,10 @@ export const Login: React.FC = () => {
                                 width={200}
                                 height={200}
                             />
-                            <Image
-                                src={'/auth-partners.svg'}
-                                alt="Partner Auth Image"
-                                width={500}
-                                height={500}
-                                className="block lg:hidden w-80"
-                            />
+                            <div className="w-80 block lg:hidden ">
+                                <Lottie options={defaultOptions} width="100%" />
+                            </div>
+
                             <h1 className="text-xl text-lynch-400 font-base">
                                 Administration
                             </h1>
@@ -77,13 +74,10 @@ export const Login: React.FC = () => {
                             showPassword={showPassword}
                         />
                     </div>
-                    <div className="w-full lg:w-1/2 min-h-full lg:min-h-screen hidden lg:flex flex-col justify-center items-center bg-transparent lg:bg-mountain-400    rounded-none lg:rounded-l-3xl ">
-                        <Image
-                            src={'/auth-partners.svg'}
-                            alt="Partner Auth Image"
-                            width={500}
-                            height={500}
-                        />
+                    <div className="lg:flex hidden  min-h-screen justify-center items-center bg-primary rounded-l-[48px] p-8 w-1/2">
+                        <div className="w-[38.75rem] h-[25.625rem]">
+                            <Lottie options={defaultOptions} width="100%" />
+                        </div>
                     </div>
                 </div>
             )}
