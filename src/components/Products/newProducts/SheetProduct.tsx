@@ -16,7 +16,7 @@ import {
     Table,
     useReactTable,
 } from '@tanstack/react-table'
-import { CheckCheck, FileSpreadsheet, X } from 'lucide-react'
+import { CheckCheck, FileDown, FileSpreadsheet, X } from 'lucide-react'
 import { FC, Fragment, useEffect, useState } from 'react'
 import readXlsxFile from 'read-excel-file'
 import {
@@ -58,16 +58,6 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
         setError(null)
         setOpen((prev) => !prev)
     }
-    useEffect(() => {
-        return () => {
-            // Reset state when the dialog is closed
-            setFile(null)
-            setLoading(false)
-            setData([])
-            setCompletedFiles(0)
-            setError(null)
-        }
-    }, [])
 
     const handleConfirm = () => {
         console.log(data)
@@ -79,17 +69,17 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
         console.log(file)
         setLoading(true)
         try {
-            const promises = file.map((f) => readXlsxFile(f))
-            const results = await Promise.all(promises)
-            const data: SheetProductType[] = results.flatMap((rows) => {
-                return rows
+            for (const f of file) {
+                const rows = await readXlsxFile(f)
+                const fileData: SheetProductType[] = rows
                     .map((row) => {
                         if (
                             ['nom', 'name'].includes(
                                 row[0].toString().toLowerCase()
                             )
-                        )
+                        ) {
                             return null
+                        }
                         return {
                             name: row[0].toString(),
                             codebar: row[1].toString(),
@@ -99,9 +89,9 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
                         }
                     })
                     .filter((row) => row !== null) as SheetProductType[]
-            })
-            setData(data)
-            setCompletedFiles(file.length)
+                setData((prevData) => [...prevData, ...fileData])
+                setCompletedFiles((prev) => prev + 1)
+            }
         } catch (error) {
             setError('Erreur lors de la lecture du fichier')
         } finally {
@@ -112,7 +102,7 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent
-                className="min-w-[860px] px-4 max-h-[calc(100vh-200px)] overflow-auto"
+                className="min-w-[860px] max-w-full px-4 max-h-[calc(100vh-200px)] overflow-auto"
                 showContent={false}
             >
                 <DialogTitle className="text-lynch-500 flex justify-between items-center  text-wrap text-lg font-light">
@@ -133,6 +123,9 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
                         <UploadFile
                             placeholder="Charger le fichier"
                             onChange={(file) => setFile(file)}
+                            Icon={FileDown}
+                            multiSelect
+                            extensions=".xlsx, .xls"
                         />
                         {file && (
                             <div className="justify-end flex space-x-4 w-full">
