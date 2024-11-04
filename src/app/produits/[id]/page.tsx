@@ -13,7 +13,11 @@ interface CreateProductPageProps {
 }
 
 const CreateProductPage: FC<CreateProductPageProps> = ({ params }) => {
-    const { data, isLoading, error } = getProduct(params.id)
+    const { data, isLoading, error } = {
+        data: demoData,
+        isLoading: false,
+        error: null,
+    } // GetProduct(params.id)
     console.log('data', data)
 
     return (
@@ -29,21 +33,21 @@ const CreateProductPage: FC<CreateProductPageProps> = ({ params }) => {
     )
 }
 
-const getProduct = (id: string) => {
-    if (!id || id === 'new') {
-        return { data: null, isLoading: false, error: null }
-    }
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['product', id],
-        queryFn: async () => {
-            const response = await fetchProduct(id)
-            if (response.status === 200) {
-                return response.data
-            }
-            return null
-        },
-    })
-    return { data: demoData, isLoading, error } // TODO: replace demoData with data
-}
+// const GetProduct = (id: string) => {
+//     if (!id || id === 'new') {
+//         return { data: null, isLoading: false, error: null }
+//     }
+//     const { data, isLoading, error } = useQuery({
+//         queryKey: ['product', id],
+//         queryFn: async () => {
+//             const response = await fetchProduct(id)
+//             if (response.status === 200) {
+//                 return response.data
+//             }
+//             return null
+//         },
+//     })
+//     return { data: demoData, isLoading, error } // TODO: replace demoData with data
+// }
 
 export default CreateProductPage

@@ -121,13 +121,7 @@ export interface partnerSubscriptionType {
 
 export const PaymentFilterSchema = z.object({
     date: z.date().optional(),
-    partner: z
-        .object({
-            id: z.string(),
-            name: z.string(),
-            avatar: z.string(),
-        })
-        .optional(),
+    partner: z.string().optional(),
 })
 
 export const defaultValuesPaymentFilter = {

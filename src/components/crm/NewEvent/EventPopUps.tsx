@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { TopBar } from '../NewProspect/TopBar'
 import { PartnerStatusType } from '@/types/partnersType'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -15,6 +14,7 @@ import api from '@/api/Auth'
 import { createArchive } from '@/lib/api/crm/prospect/createEvents'
 import { NotificationType } from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
+import { TopBar } from '../Prospect/NewProspect/TopBar'
 
 export const EventPopUps = ({
     setOpen,

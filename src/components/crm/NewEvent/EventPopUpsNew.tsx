@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect } from 'react'
-import { TopBar } from '../NewProspect/TopBar'
 import { PartnerStatusType } from '@/types/partnersType'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -13,6 +12,7 @@ import { useMutation } from '@tanstack/react-query'
 import { NotificationType } from '@/types/GlobalType'
 import { createArchive } from '@/lib/api/crm/prospect/createEvents'
 import { useNotification } from '@/context/NotifContext'
+import { TopBar } from '../Prospect/NewProspect/TopBar'
 
 export const EventPopUpsNew = ({
     id,

@@ -7,13 +7,9 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog'
 import { CustomButton } from '../custom/CustomButton'
-import { Check, ListFilter, Mail, PhoneCall, X } from 'lucide-react'
-import { PartnerSolutionType, PartnerType } from '@/types/partnersType'
-import { DatePicker } from '../DatePicker'
+import { Check, ListFilter, X } from 'lucide-react'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { Label } from '../Label'
-import { MultiSelect, MultiSelectOptionsType } from '../MultiSelect'
-import { Input } from '../custom/Input'
-import { Select } from '../custom/Select'
 import { Checkbox } from '../ui/checkbox'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { PartnerSolution } from '../Partners/PartnerSolution'
@@ -22,12 +18,7 @@ import { FilterInput } from '../utils/FilterInput'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterSelect } from '../utils/FilterSelect'
 import { DeliveryType } from '@/types/deliveries'
-import {
-    CheckedType,
-    DeliveryFilterType,
-    extractOptions,
-    OptionsType,
-} from '@/types/DeliveriesUtils'
+import { CheckedType, DeliveryFilterType } from '@/types/DeliveriesUtils'
 
 interface FormFilterProps {
     data: DeliveryType[]
@@ -35,7 +26,6 @@ interface FormFilterProps {
 }
 
 export const FormFilter: FC<FormFilterProps> = ({ data, setColumnFilters }) => {
-    const options: OptionsType = extractOptions(data)
     const [filterData, setFilterData] = useState<DeliveryFilterType>({
         createdAt: [],
         companyName: [],
@@ -88,7 +78,7 @@ export const FormFilter: FC<FormFilterProps> = ({ data, setColumnFilters }) => {
                             normalTransform
                             length={2}
                             label="Raison sociale"
-                            options={options.partner}
+                            options={[]}
                             emptyAvatar="/avatar/emptyPartner.png"
                             item={filterData.companyName}
                             setItem={(companyName) => {
@@ -99,7 +89,7 @@ export const FormFilter: FC<FormFilterProps> = ({ data, setColumnFilters }) => {
                             normalTransform
                             length={2}
                             label="Manager"
-                            options={options.responsible}
+                            options={[]}
                             emptyAvatar="/avatar/emptyPartner.png"
                             item={filterData.manager}
                             setItem={(manager) => {
@@ -128,7 +118,7 @@ export const FormFilter: FC<FormFilterProps> = ({ data, setColumnFilters }) => {
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterSelect
                             label="Ville"
-                            options={options.city}
+                            options={[]}
                             item={filterData.city}
                             setItem={(city) => {
                                 setFilterData({ ...filterData, city })

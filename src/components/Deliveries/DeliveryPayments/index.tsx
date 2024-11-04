@@ -12,7 +12,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
-import { FilterPayment } from '@/components/payment/FilterPayment'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CustomButton } from '@/components/custom/CustomButton'
@@ -75,20 +74,6 @@ export const DeliveryPayments: FC<DeliveryPaymentsProps> = ({ payments }) => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
-                    date={dateAndPartner.date}
-                    setData={(date) =>
-                        setDateAndPartner({ ...dateAndPartner, date })
-                    }
-                    partener={dateAndPartner.partner}
-                    setPartener={(partner) =>
-                        setDateAndPartner({
-                            ...dateAndPartner,
-                            partner: partner,
-                        })
-                    }
-                    options={options}
-                />
                 <CardTotalValue
                     Icon={CalendarClock}
                     title="Echéance"

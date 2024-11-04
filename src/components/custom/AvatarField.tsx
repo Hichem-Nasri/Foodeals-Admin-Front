@@ -12,6 +12,7 @@ interface AvatarFieldProps {
     className?: string
     classNameAvatar?: string
     disabled?: boolean
+    isLoaded?: boolean
 }
 
 export const AvatarField: FC<AvatarFieldProps> = ({
@@ -22,6 +23,7 @@ export const AvatarField: FC<AvatarFieldProps> = ({
     label,
     className,
     disabled = false,
+    isLoaded = false,
 }) => {
     const { control } = form
     return (
@@ -37,6 +39,7 @@ export const AvatarField: FC<AvatarFieldProps> = ({
                         className={classNameAvatar}
                         label={label}
                         disabled={disabled}
+                        isLoaded={isLoaded}
                     />
                     {/* <FormMessage /> */}
                 </div>

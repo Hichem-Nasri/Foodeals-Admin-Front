@@ -9,21 +9,13 @@ import {
 import { CustomButton } from '../custom/CustomButton'
 import { Check, ListFilter, X } from 'lucide-react'
 import { PartnerSolutionType, PartnerType } from '@/types/partnersType'
-import { Label } from '../Label'
-import { UseFormReturn } from 'react-hook-form'
-import { Checkbox } from '../ui/checkbox'
 import { PartnerSolution } from './PartnerSolution'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { FilterMultiSelect } from '../utils/FilterMultiSelect'
 import { FilterInput } from '../utils/FilterInput'
 import { FilterSelect } from '../utils/FilterSelect'
 import { DateFilter } from '../utils/DateFilters'
-import {
-    CheckedType,
-    extractOptions,
-    OptionsType,
-    PartnerFilerType,
-} from '@/types/PartnersUtils'
+import { PartnerFilerType } from '@/types/PartnersUtils'
 import { MultiSelectOptionsType } from '../MultiSelect'
 
 interface FilterTablePartnerProps {

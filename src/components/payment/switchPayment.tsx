@@ -27,7 +27,7 @@ function SwitchPayment() {
         }
     }
     return (
-        <div className="flex lg:justify-start justify-center items-center">
+        <div className="hidden lg:flex lg:justify-start justify-center items-center">
             <SwitchToggle
                 options={options}
                 selectedType={switchToggle}

@@ -5,9 +5,11 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { FilterPayment } from '@/components/payment/FilterPayment'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
-import { partnerCommissionMonthType } from '@/types/PaymentType'
+import {
+    partnerCommissionMonthType,
+    PaymentFilterSchema,
+} from '@/types/PaymentType'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -16,7 +18,14 @@ import {
     getSortedRowModel,
     getPaginationRowModel,
 } from '@tanstack/react-table'
-import { Coins, Percent, ArrowRight, RotateCw, CheckCheck } from 'lucide-react'
+import {
+    Coins,
+    Percent,
+    ArrowRight,
+    RotateCw,
+    CheckCheck,
+    X,
+} from 'lucide-react'
 import { PaymentValidation } from '@/components/payment/PaymentValidation'
 import SwitchPayment from '@/components/payment/switchPayment'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
@@ -32,6 +41,12 @@ import {
     defaultDataCommissionMonthTable,
 } from '@/components/payment/business/column/commissionMonthColumn'
 import CommissionSubStoreCard from '@/components/payment/CommissionSubStoreCard'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
+import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
+import MobileHeader from '@/components/utils/MobileHeader'
 
 const CommissionMonth = () => {
     const { id } = useParams()
@@ -63,11 +78,23 @@ const CommissionMonth = () => {
     const [totalCommission, setTotalCommission] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
-    const [dateAndPartner, setDateAndPartner] = useState({
+    const router = useRouter()
+
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
         date: new Date(),
         partner: 'all',
     })
-    const router = useRouter()
+    const form = useForm({
+        resolver: zodResolver(PaymentFilterSchema),
+        defaultValues: dateAndPartner,
+        mode: 'onBlur',
+    })
+    const [open, setOpen] = useState(false)
+    const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
+        console.log(data)
+    }
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['commissionMonth', id],
@@ -77,7 +104,7 @@ const CommissionMonth = () => {
                     currentPage,
                     pageSize,
                     id as string,
-                    dateAndPartner.date
+                    dateAndPartner.date!
                 )
                 let totalCommission = 0,
                     totalSales = 0
@@ -102,7 +129,7 @@ const CommissionMonth = () => {
             }
         },
     })
-
+    const { handleSubmit } = form
     const tableCommission = useReactTable({
         data: defaultDataCommissionMonthTable,
         columns: columnsCommissionMonthTable(router),
@@ -118,77 +145,71 @@ const CommissionMonth = () => {
     }
 
     return (
-        <div className="flex flex-col gap-3 w-full">
-            <SwitchPayment />
-            <div className="hidden lg:flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
-                    date={dateAndPartner.date}
-                    setData={(date) =>
-                        setDateAndPartner({ ...dateAndPartner, date })
-                    }
-                    partener={dateAndPartner.partner}
-                    setPartener={(partner) =>
-                        setDateAndPartner({
-                            ...dateAndPartner,
-                            partner: partner,
-                        })
-                    }
-                    options={options}
-                />
-                <CardTotalValue
-                    Icon={Coins}
-                    title="Total des ventes"
-                    value={totalCommission}
-                    className="text-mountain-400 bg-mountain-400"
-                />
-                <CardTotalValue
-                    Icon={Percent}
-                    title="Total des commissions"
-                    value={totalSales}
-                    className="bg-amethyst-500 text-amethyst-500"
-                />
-            </div>
-            <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
-                <div className="flex justify-center items-center space-x-4">
-                    <ColumnVisibilityModal table={tableCommission} />
-                    <SwitchValidation />
+        <Fragment>
+            <div className="flex flex-col gap-3 w-full">
+                <SwitchPayment />
+                <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
+                    <div className="hidden lg:flex">
+                        <FilterTablePayment
+                            form={form}
+                            onSubmit={onSubmit}
+                            setOpen={setOpen}
+                        />
+                    </div>
+                    <CardTotalValue
+                        Icon={Coins}
+                        title="Total des ventes"
+                        value={totalCommission}
+                        className="text-mountain-400 bg-mountain-400"
+                    />
+                    <CardTotalValue
+                        Icon={Percent}
+                        title="Total des commissions"
+                        value={totalSales}
+                        className="bg-amethyst-500 text-amethyst-500"
+                    />
                 </div>
-                <div className="flex justify-center items-center space-x-4">
+                <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
+                    <div className="flex justify-center items-center space-x-4">
+                        <ColumnVisibilityModal table={tableCommission} />
+                        <SwitchValidation />
+                    </div>
+                    <div className="flex justify-center items-center space-x-4">
+                        <PaymentValidation
+                            id={id as string}
+                            label="Confirmer tout"
+                            className="rounded-[12px] h-12"
+                            IconRight={CheckCheck}
+                        />
+                        <CustomButton
+                            label={'3025'}
+                            IconLeft={ArrowRight}
+                            disabled
+                            variant="outline"
+                            className="disabled:border-lynch-400 disabled:opacity-100 h-12 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 "
+                        />
+                    </div>
+                </div>
+                <DataTable
+                    table={tableCommission}
+                    data={defaultDataCommissionMonthTable}
+                    title="Tableau de validation des commission"
+                    transform={(data) => (
+                        <CommissionSubStoreCard commission={data} />
+                    )}
+                    isLoading={isLoading}
+                />
+                <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                     <PaymentValidation
                         id={id as string}
                         label="Confirmer tout"
                         className="rounded-[12px] h-12"
                         IconRight={CheckCheck}
-                    />
-
-                    <CustomButton
-                        label={'3025'}
-                        IconLeft={ArrowRight}
-                        disabled
-                        variant="outline"
-                        className="disabled:border-lynch-400 disabled:opacity-100 h-12 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 "
+                        isMobile={true}
                     />
                 </div>
             </div>
-            <DataTable
-                table={tableCommission}
-                data={defaultDataCommissionMonthTable}
-                title="Tableau de validation des commission"
-                transform={(data) => (
-                    <CommissionSubStoreCard commission={data} />
-                )}
-                isLoading={isLoading}
-            />
-            <div className="lg:hidden flex flex-col items-center gap-4 my-3">
-                <PaymentValidation
-                    id={id as string}
-                    label="Confirmer tout"
-                    className="rounded-[12px] h-12"
-                    IconRight={CheckCheck}
-                    isMobile={true}
-                />
-            </div>
-        </div>
+        </Fragment>
     )
 }
 export default CommissionMonth

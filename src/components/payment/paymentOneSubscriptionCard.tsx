@@ -54,7 +54,7 @@ const PaymentOnesSubscriptionCard = ({
         },
     ]
     return (
-        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
+        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] min-w-full">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
@@ -78,7 +78,7 @@ const PaymentOnesSubscriptionCard = ({
                     </div>
                 </div>
                 <button
-                    className="bg-lynch-500 size-11 rounded-full text-white hover:bg-lynch-300"
+                    className="bg-lynch-300 size-11 rounded-full text-white "
                     onClick={() => {
                         router.push(
                             AppRoutes.PBSubscriptionDetails.replace(

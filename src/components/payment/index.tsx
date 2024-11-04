@@ -1,7 +1,7 @@
 'use client'
 import { PaymentFilterSchema, PaymentType } from '@/types/PaymentType'
 import { FC, useState } from 'react'
-import { FilterPayment } from './FilterPayment'
+import { FormFilterPayment } from './FormFilterPayment'
 import { z } from 'zod'
 import { CardTotalValue } from './CardTotalValue'
 import { ArrowRight, CalendarClock, RotateCw } from 'lucide-react'
@@ -22,15 +22,24 @@ import SwitchPayment from './switchPayment'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { defaultDataCommissionTable } from './business/column/commissionColumn'
 import { columnsPaymentsTable } from './business/column/paymentColumn'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FilterTablePayment } from './FilterTablePayment'
 
 interface PaymentProps {
     payments: PaymentType[]
 }
 
-export const Payment: FC<PaymentProps> = ({ payments }) => {
+const Payment: FC<PaymentProps> = ({ payments }) => {
     const [data, _setData] = useState(() => [...payments])
     const router = useRouter()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
+        date: new Date(),
+        partner: 'all',
+    })
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
         return [
             ...defaultDataCommissionTable.map(
@@ -47,11 +56,11 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
             },
         ]
     })
-    const [dateAndPartner, setDateAndPartner] = useState({
-        date: new Date(),
-        partner: 'all',
+    const form = useForm({
+        resolver: zodResolver(PaymentFilterSchema),
+        defaultValues: dateAndPartner,
+        mode: 'onBlur',
     })
-
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
     const totalCommission = payments.reduce(
         (acc, payment) => acc + payment.totalCommission,
@@ -73,19 +82,11 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
-                    date={dateAndPartner.date}
-                    setData={(date) =>
-                        setDateAndPartner({ ...dateAndPartner, date })
-                    }
-                    partener={dateAndPartner.partner}
-                    setPartener={(partner) =>
-                        setDateAndPartner({
-                            ...dateAndPartner,
-                            partner: partner,
-                        })
-                    }
+                {/* <F  ilterTablePayment form={form} onSubmit={onSubmit} /> */}
+                <FormFilterPayment
                     options={options}
+                    form={form}
+                    onSubmit={onSubmit}
                 />
                 <CardTotalValue
                     Icon={CalendarClock}
@@ -128,3 +129,5 @@ export const Payment: FC<PaymentProps> = ({ payments }) => {
         </div>
     )
 }
+
+export default Payment

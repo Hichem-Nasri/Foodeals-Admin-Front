@@ -26,19 +26,13 @@ import {
     ForwardRefExoticComponent,
     Fragment,
     RefAttributes,
+    useContext,
     useState,
 } from 'react'
 import { CustomButton } from '../custom/CustomButton'
 import { Label } from '../Label'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '../ui/accordion'
-import { AppRoutes } from '@/lib/routes'
 
 interface HeaderProps {
     formTitle?: string

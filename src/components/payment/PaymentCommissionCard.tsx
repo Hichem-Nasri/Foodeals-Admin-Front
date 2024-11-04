@@ -55,6 +55,7 @@ const PaymentCommissionCard = ({
             (!payed &&
                 commission.paymentStatus == PaymentStatusEnum.VALID_BY_PARTNER))
     console.log('showValidation', showValidation, commission.payable)
+    console.log('commission', commission)
     const router = useRouter()
     const dataArray = [
         {
@@ -70,25 +71,27 @@ const PaymentCommissionCard = ({
             className: '',
         },
         {
-            label: 'T. VENTES: ' + commission.totalAmount,
+            label: 'T. VENTES: ' + commission.totalAmount.amount,
             icon: Coins,
         },
         {
-            label: 'COMMISSIOM FD: ' + commission.foodealsCommission,
+            label: 'COMMISSIOM FD: ' + commission.foodealsCommission.amount,
             icon: CirclePercent,
         },
         {
             label:
                 label +
                 ': ' +
-                (commission.toPay ? commission.toPay : commission.toReceive),
+                (commission.toPay.amount
+                    ? commission.toPay.amount
+                    : commission.toReceive.amount),
             icon: icon,
             className: className,
         },
     ]
     const name = commission.partnerInfoDto.name
     return (
-        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
+        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] max-w-[500px] min-w-min">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
@@ -114,7 +117,7 @@ const PaymentCommissionCard = ({
                     </div>
                 </div>
                 <button
-                    className="bg-lynch-500 size-11 rounded-full text-white hover:bg-lynch-300"
+                    className="bg-lynch-300 size-11 rounded-full text-white "
                     onClick={() => {
                         if (path == 'partner')
                             router.push(
@@ -137,7 +140,7 @@ const PaymentCommissionCard = ({
                 </button>
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />
-            <div className="flex flex-wrap gap-[0.375rem]">
+            <div className="flex flex-wrap gap-[0.375rem] ">
                 {dataArray.map((data) => (
                     <div
                         key={data.label}
@@ -149,7 +152,10 @@ const PaymentCommissionCard = ({
                         <data.icon size={18} key={data.label} />
                         <Label
                             label={data.label.toString()}
-                            className={cn('text-lynch-500', data?.className)}
+                            className={cn(
+                                'text-lynch-500 font-semibold',
+                                data?.className
+                            )}
                         />
                     </div>
                 ))}

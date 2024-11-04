@@ -22,7 +22,6 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { FilterPayment } from '@/components/payment/FilterPayment'
 import { SubscriptionCard } from '@/components/payment/PaymentDetails/SubscriptionCard'
 import { useRouter } from 'next/navigation'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
@@ -109,7 +108,7 @@ export const Operations = ({}: OperationsProps) => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
+                {/* <FilterPayment
                     date={dateAndPartner.date}
                     setData={(date) =>
                         setDateAndPartner({ ...dateAndPartner, date })
@@ -122,7 +121,7 @@ export const Operations = ({}: OperationsProps) => {
                         })
                     }
                     options={options}
-                />
+                /> */}
                 <CardTotalValue
                     Icon={Coins}
                     title="Total des ventes"

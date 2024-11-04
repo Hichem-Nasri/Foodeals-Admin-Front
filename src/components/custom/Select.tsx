@@ -70,7 +70,7 @@ export const Select: FC<SelectProps> = ({
                 }}
             >
                 <SelectTrigger
-                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-50 ${
+                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-30 ${
                         options?.find((option) => option.key === value)?.label
                             ? 'border-textGray'
                             : ''

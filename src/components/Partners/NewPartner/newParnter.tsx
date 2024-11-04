@@ -177,8 +177,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             partnerFeatures.trigger()
         }
     }
-
-    // Handler for submitting the contract
     const handleSubmit = async () => {
         if (!contractUpload) {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')

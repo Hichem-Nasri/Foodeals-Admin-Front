@@ -35,7 +35,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 }): JSX.Element => {
     return (
         <Button {...rest}>
-            {IconLeft && <IconLeft className="mr-2 icon shrink-0" />}
+            {IconLeft && <IconLeft className=" mr-2 icon shrink-0" />}
             {isPending ? (
                 <div>
                     <Loader className="mr-2 icon shrink-0 animate-spin" />
@@ -43,7 +43,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             ) : (
                 <>{label}</>
             )}
-            {IconRight && <IconRight className="ml-2 icon shrink-0" />}
+            {IconRight && <IconRight className=" ml-2 icon shrink-0" />}
         </Button>
     )
 }

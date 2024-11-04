@@ -56,7 +56,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                                     (pathname === page.href &&
                                                         page.href ===
                                                             AppRoutes.home)
-                                                    ? 'bg-primary/90 text-white'
+                                                    ? ' text-white'
                                                     : ' group-hover:text-white'
                                             )}
                                         >

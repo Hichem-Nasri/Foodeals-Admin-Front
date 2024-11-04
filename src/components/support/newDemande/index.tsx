@@ -9,6 +9,8 @@ import { z } from 'zod'
 import { SupportSchema } from '@/types/support'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormDemandeSupport } from './formDemandeSupport'
+import LayoutMobile from '@/components/LayoutMobile'
+import { useRouter } from 'next/navigation'
 
 interface DemandeSupportProps {
     id: string
@@ -30,8 +32,9 @@ const DemandeSupport: FC<DemandeSupportProps> = ({ id }) => {
     const onSubmit = async (data: z.infer<typeof SupportSchema>) => {
         console.log(data)
     }
-    return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+    const router = useRouter()
+    const MyTopBar: () => React.ReactNode = () => {
+        return (
             <TopBar
                 status={PartnerStatusType.DRAFT}
                 onSaveData={handleSubmit(onSaveData)}
@@ -39,24 +42,32 @@ const DemandeSupport: FC<DemandeSupportProps> = ({ id }) => {
                 disableFirst={form.formState.isValid && form.formState.isDirty}
                 disableSeond={!form.formState.isSubmitted}
             />
+        )
+    }
+    return (
+        <LayoutMobile
+            title="Details de Notifaction"
+            fixedComponent={<MyTopBar />}
+            backButton={() => router.back()}
+        >
             <FormDemandeSupport
                 form={form}
                 onSubmit={onSubmit}
                 disabled={false}
             />
-        </div>
+        </LayoutMobile>
     )
 }
 
 export default DemandeSupport
 
-const useDemandeSupport = (id: string) => {
-    if (!id) return { data: null, isLoading: false }
-    const { data, isLoading } = useQuery({
-        queryKey: ['support', id],
-        queryFn: async () => {
-            // const response = await api.get(API_SUPPORT + '/' + id)
-            // return response.data
-        },
-    })
-}
+// const useDemandeSupport = (id: string) => {
+//     if (!id) return { data: null, isLoading: false }
+//     const { data, isLoading } = useQuery({
+//         queryKey: ['support', id],
+//         queryFn: async () => {
+//             // const response = await api.get(API_SUPPORT + '/' + id)
+//             // return response.data
+//         },
+//     })
+// }

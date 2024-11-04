@@ -1,11 +1,19 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { ArrowRight, FileBadge, Percent, RotateCw } from 'lucide-react'
+import {
+    ArrowRight,
+    CheckCheck,
+    FileBadge,
+    Percent,
+    RotateCw,
+    X,
+} from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
 import {
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
     defaultDataSubscriptionOnesTable,
+    PaymentFilterSchema,
 } from '@/types/PaymentType'
 import {
     ColumnFiltersState,
@@ -18,7 +26,6 @@ import {
 import { useEffect, useState } from 'react'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { FilterPayment } from '@/components/payment/FilterPayment'
 import { useRouter } from 'next/navigation'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
 import SwitchPayment from '@/components/payment/switchPayment'
@@ -34,6 +41,12 @@ import {
     columnsSubscriptionTable,
     defaultDataSubscriptionTable,
 } from '@/components/payment/business/column/subscriptionColumn'
+import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import MobileHeader from '@/components/utils/MobileHeader'
+import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 
 interface OperationsProps {}
 
@@ -57,10 +70,6 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
-    const [dateAndPartner, setDateAndPartner] = useState({
-        date: new Date(),
-        partner: 'all',
-    })
     const router = useRouter()
 
     const { data, isLoading, error } = useQuery({
@@ -100,6 +109,24 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    const [open, setOpen] = useState(false)
+
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
+        date: new Date(),
+        partner: 'all',
+    })
+    const form = useForm({
+        resolver: zodResolver(PaymentFilterSchema),
+        defaultValues: dateAndPartner,
+        mode: 'onBlur',
+    })
+    const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
+        console.log(data)
+    }
+
+    const { handleSubmit } = form
 
     const tableSubscription = useReactTable({
         data: subscriptionData,
@@ -127,90 +154,118 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     }, [subscriptionID])
 
     return (
-        <div className="flex flex-col gap-3 w-full">
-            <SwitchPayment />
-            <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
-                    date={dateAndPartner.date}
-                    setData={(date) =>
-                        setDateAndPartner({ ...dateAndPartner, date })
-                    }
-                    partener={dateAndPartner.partner}
-                    setPartener={(partner) =>
-                        setDateAndPartner({
-                            ...dateAndPartner,
-                            partner: partner,
-                        })
-                    }
-                    options={options}
-                />
-                <CardTotalValue
-                    Icon={FileBadge}
-                    title="Total des Subscriptions"
-                    value={totalIN_PROGRESS}
-                    className="text-mountain-400 bg-mountain-400"
-                />
-                <CardTotalValue
-                    Icon={Percent}
-                    title="Total des écheances"
-                    value={totalSales}
-                    className="bg-amethyst-500 text-amethyst-500"
-                />
-            </div>
-            <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
-                <div className="flex justify-center items-center space-x-4">
-                    <ColumnVisibilityModal table={tableSubscription} />
-                    <SwitchValidation />
-                </div>
-                <CustomButton
-                    label={'3025'}
-                    IconLeft={ArrowRight}
-                    disabled
-                    variant="outline"
-                    className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
-                />
-            </div>
-            {subscriptionID ? (
-                <>
-                    <DataTable
-                        table={tableOperations}
-                        data={partnerSubscripton}
-                        title="Tableau de validation des Subscription"
-                        transform={(data) => (
-                            <PaymentOnesSubscriptionCard
-                                subscription={data}
-                                store={store}
+        <>
+            {!open ? (
+                <div className="flex flex-col gap-3 w-full">
+                    <SwitchPayment />
+                    <div className="flex justify-center items-center lg:hidden">
+                        <SwitchValidation />
+                    </div>
+                    <div className="flex lg:flex-row flex-col items-center gap-3 w-full px-3 lg:px-0">
+                        <FilterTablePayment
+                            form={form}
+                            onSubmit={onSubmit}
+                            setOpen={setOpen}
+                            header="Tableau de validation des abonnements"
+                        />
+                        <CardTotalValue
+                            Icon={FileBadge}
+                            title="Total des Subscriptions"
+                            value={totalIN_PROGRESS}
+                            className="text-mountain-400 bg-mountain-400"
+                        />
+                        <CardTotalValue
+                            Icon={Percent}
+                            title="Total des écheances"
+                            value={totalSales}
+                            className="bg-amethyst-500 text-amethyst-500"
+                        />
+                    </div>
+                    <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
+                        <div className="flex justify-center items-center space-x-4">
+                            <ColumnVisibilityModal table={tableSubscription} />
+                            <SwitchValidation />
+                        </div>
+                        <CustomButton
+                            label={'3025'}
+                            IconLeft={ArrowRight}
+                            disabled
+                            variant="outline"
+                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
+                        />
+                    </div>
+                    {subscriptionID ? (
+                        <>
+                            <DataTable
+                                table={tableOperations}
+                                data={partnerSubscripton}
+                                title="Tableau de validation des Subscription"
+                                transform={(data) => (
+                                    <PaymentOnesSubscriptionCard
+                                        subscription={data}
+                                        store={store}
+                                    />
+                                )}
+                                partnerData={{
+                                    name: store.name,
+                                    avatar: store.avatarPath,
+                                    city: '',
+                                }}
                             />
-                        )}
-                        partnerData={{
-                            name: store.name,
-                            avatar: store.avatarPath,
-                            city: '',
-                        }}
-                    />
-                </>
-            ) : (
-                <DataTable
-                    table={tableSubscription}
-                    data={subscriptionData}
-                    title="Tableau de validation des Subscription"
-                    transform={(data) => (
-                        <PaymentSubscriptionCard
-                            subscription={data}
-                            setSubscriptionId={setSubscriptionId}
+                        </>
+                    ) : (
+                        <DataTable
+                            table={tableSubscription}
+                            data={subscriptionData}
+                            title="Tableau de validation des Subscription"
+                            transform={(data) => (
+                                <PaymentSubscriptionCard
+                                    subscription={data}
+                                    setSubscriptionId={setSubscriptionId}
+                                />
+                            )}
                         />
                     )}
-                />
+                </div>
+            ) : (
+                <div
+                    className={` flex   flex-col justify-between  w-full min-w-full gap-[1.875rem] min-h-screen top-0 left-0 right-0 fixed bg-white overflow-auto`}
+                    spellCheck
+                >
+                    <div className="flex justify-between items-center flex-col h-full">
+                        <MobileHeader
+                            title="Filtrer"
+                            onClick={() => setOpen((prev) => !prev)}
+                        />
+                        <FormFilterPayment
+                            options={[]}
+                            form={form}
+                            onSubmit={onSubmit}
+                        />
+                    </div>
+                    <div className="flex justify-between w-full rounded-[18px] lg:bg-white p-4 space-x-4">
+                        <CustomButton
+                            size="sm"
+                            variant="outline"
+                            label="Annuler"
+                            className="w-full"
+                            IconRight={X}
+                            onClick={() => setOpen((prev) => !prev)}
+                        />
+                        <CustomButton
+                            type="submit"
+                            size="sm"
+                            label="Filtrer"
+                            className="w-full"
+                            IconRight={CheckCheck}
+                            onClick={() => {
+                                handleSubmit(onSubmit)
+                                setOpen((prev) => !prev)
+                            }}
+                        />
+                    </div>
+                </div>
             )}
-            <div className="lg:hidden flex flex-col items-center gap-4 my-3">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
-                />
-            </div>
-        </div>
+        </>
     )
 }

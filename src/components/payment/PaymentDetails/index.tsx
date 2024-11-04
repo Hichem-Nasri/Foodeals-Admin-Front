@@ -1,6 +1,5 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { FilterPayment } from '../FilterPayment'
 import { CardTotalValue } from '../CardTotalValue'
 import { CheckCheck, LoaderCircle, RotateCw } from 'lucide-react'
 import { DataTable } from '@/components/DataTable'
@@ -85,7 +84,7 @@ export const Operations = ({}: OperationsProps) => {
     return (
         <div className="flex flex-col gap-3 w-full">
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
+                {/* <FilterPayment
                     date={dateAndPartner.date}
                     setData={(date) =>
                         setDateAndPartner({ ...dateAndPartner, date })
@@ -98,7 +97,7 @@ export const Operations = ({}: OperationsProps) => {
                         })
                     }
                     options={options}
-                />
+                /> */}
                 <div className="flex lg:hidden items-center gap-2.5 bg-white p-3 rounded-[14px]">
                     <CustomButton
                         label="Opération du mois"

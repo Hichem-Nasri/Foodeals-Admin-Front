@@ -1,7 +1,5 @@
 'use client'
-import { FormCrmInfo } from '@/components/crm/NewProspect/FromProspectInfo'
 import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
-import { TopBar } from '@/components/crm/NewProspect/TopBar'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { countryCodes } from '@/lib/utils'
 import {
@@ -31,6 +29,8 @@ import { NotificationType } from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
 import { AppRoutes } from '@/lib/routes'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
+import { TopBar } from '@/components/crm/Prospect/NewProspect/TopBar'
+import { FormCrmInfo } from '@/components/crm/Prospect/NewProspect/FromProspectInfo'
 
 interface CreateProps {}
 

@@ -7,9 +7,10 @@ import { defaultDataCommissionTable } from '@/components/payment/business/column
 import { columnsPaymentDeliveriesTable } from '@/components/payment/business/column/paymentDeliveriesColumn'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
-import { FilterPayment } from '@/components/payment/FilterPayment'
+import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import SwitchPayment from '@/components/payment/switchPayment'
 import { PaymentFilterSchema, PaymentDeliveriesType } from '@/types/PaymentType'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -21,6 +22,7 @@ import {
 import { CalendarClock, ArrowRight, RotateCw, CheckCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { FC, Fragment, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 interface PaymentProps {
@@ -47,12 +49,24 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ payments }) => {
             },
         ]
     })
-    const [dateAndPartner, setDateAndPartner] = useState({
+    const [open, setOpen] = useState(false)
+
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
         date: new Date(),
         partner: 'all',
     })
+    const form = useForm({
+        resolver: zodResolver(PaymentFilterSchema),
+        defaultValues: dateAndPartner,
+        mode: 'onBlur',
+    })
+    const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
+        console.log(data)
+    }
 
-    const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {}
+    const { handleSubmit } = form
     const totalCommission = 12222
     const total = 9948652
 
@@ -70,19 +84,11 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ payments }) => {
         <div className="flex flex-col gap-3 w-full">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <FilterPayment
-                    date={dateAndPartner.date}
-                    setData={(date) =>
-                        setDateAndPartner({ ...dateAndPartner, date })
-                    }
-                    partener={dateAndPartner.partner}
-                    setPartener={(partner) =>
-                        setDateAndPartner({
-                            ...dateAndPartner,
-                            partner: partner,
-                        })
-                    }
-                    options={options}
+                <FilterTablePayment
+                    form={form}
+                    onSubmit={onSubmit}
+                    setOpen={setOpen}
+                    header="Tableau de validation des Subscription"
                 />
                 <CardTotalValue
                     Icon={CalendarClock}

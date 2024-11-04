@@ -33,7 +33,6 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { ConfirmCommission } from '@/lib/api/payment/ConfirmCommission'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
-import { Payment } from '.'
 
 interface ConfirmPaymentProps {
     id: string
@@ -230,17 +229,17 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                         <DialogClose asChild>
                             <CustomButton
                                 type="button"
-                                label="Annuler"
+                                label="ANNULER"
                                 variant="outline"
-                                className="lg:w-fit w-full lg:order-[0] order-3 h-fit py-3 px-5 text-lynch-400"
+                                className="lg:w-fit w-full rounded-[12px] lg:order-[0] order-3 h-fit py-3 px-5 text-lynch-400"
                                 IconRight={X}
                             />
                         </DialogClose>
                         <CustomButton
-                            label="Valider"
+                            label="CONFIRMER"
                             type="button"
                             onClick={onSubmit}
-                            className="lg:w-fit w-full h-fit py-3 px-5"
+                            className="lg:w-fit w-full rounded-[12px] h-fit py-3 px-5"
                             IconRight={CheckCircle}
                         />
                     </div>

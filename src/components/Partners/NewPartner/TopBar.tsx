@@ -142,7 +142,7 @@ export const TopBar: FC<TopBarProps> = ({
                     <PartnerStatus status={status} />
                 </div>
             )}
-            <div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
+            <div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 z-40 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
                 {status !== PartnerStatusType.VALID ? (
                     <CustomButton
                         onClick={onSaveData}

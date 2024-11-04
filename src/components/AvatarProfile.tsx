@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { ImagePlus, ImageUp } from 'lucide-react'
+import { Skeleton } from './ui/skeleton'
 
 interface AvatarProfileProps {
     iUrl: string
@@ -13,6 +14,7 @@ interface AvatarProfileProps {
     className?: string
     disabled?: boolean
     onChange?: (file: File | null) => void // Change to accept a File
+    isLoaded?: boolean
 }
 
 export const AvatarProfile: React.FC<AvatarProfileProps> = ({
@@ -22,6 +24,7 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
     className,
     disabled,
     onChange,
+    isLoaded = false,
 }) => {
     const [src, setSrc] = useState(iUrl)
 
@@ -52,28 +55,39 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                     className
                 )}
             >
-                <Input
-                    type="file"
-                    disabled={disabled}
-                    className="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer"
-                    onChange={handleFileChange} // Update to use the new function
-                />
-                {src ? (
-                    <>
-                        <AvatarImage
-                            src={src || '/emptyImage.svg'}
-                            className={`object-cover ${
-                                !src && 'w-[20%] m-auto'
-                            }`}
-                        />
-                        <AvatarFallback>
-                            {alt && alt[0].toUpperCase()}
-                        </AvatarFallback>
-                    </>
+                {isLoaded ? (
+                    <Skeleton className="w-full h-full rounded-[24px]" />
                 ) : (
-                    <div className=" rounded-[24px] text-lynch-200 w-full h-full flex justify-center items-center bg-lynch-50">
-                        <ImageUp className="w-full" size={56} />
-                    </div>
+                    <>
+                        <Input
+                            type="file"
+                            disabled={disabled}
+                            className="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer"
+                            onChange={handleFileChange} // Update to use the new function
+                        />
+                        {src ? (
+                            <>
+                                <AvatarImage
+                                    src={src || '/emptyImage.svg'}
+                                    className={`object-cover ${
+                                        !src && 'w-[20%] m-auto'
+                                    }`}
+                                />
+                                <AvatarFallback>
+                                    {alt && alt[0].toUpperCase()}
+                                </AvatarFallback>
+                            </>
+                        ) : (
+                            <div
+                                className={cn(
+                                    ' rounded-[24px] text-lynch-200 w-full h-full flex justify-center items-center bg-lynch-50',
+                                    className
+                                )}
+                            >
+                                <ImageUp className="w-full" size={56} />
+                            </div>
+                        )}
+                    </>
                 )}
             </Avatar>
         </div>

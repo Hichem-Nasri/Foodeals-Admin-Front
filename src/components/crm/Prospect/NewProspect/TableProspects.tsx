@@ -16,13 +16,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import DetailsEventCard from '../NewEvent/DetailsEventCard'
-import { EventPopUps } from '../NewEvent/EventPopUps'
 import Link from 'next/link'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilePlus } from 'lucide-react'
 import { EventType } from '@/types/CrmType'
-import { columnsProspectTable } from '../Prospect/column/EventColumn'
+import DetailsEventCard from '../../NewEvent/DetailsEventCard'
+import { columnsProspectTable } from '../column/EventColumn'
 
 type TableProspectsProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>

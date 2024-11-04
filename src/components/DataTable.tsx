@@ -44,27 +44,11 @@ export const DataTable: FC<DataTableProps<any>> = ({
 }) => {
     const router = useRouter()
     const [count, setCount] = useState(1)
-    const [elements, setElements] = useState<number[]>([1]) // Array to hold the elements
+    const [elements, setElements] = useState<number[]>([1, 2, 3]) // Array to hold the elements
 
-    useEffect(() => {
-        if (!isLoading) return
-
-        // Start the interval to increment count
-        const interval = setInterval(() => {
-            setCount((prev) => {
-                const newCount = prev + 1
-                // Update elements array
-                setElements((prevElements) => [...prevElements, newCount])
-                return newCount
-            })
-        }, 1000)
-
-        // Cleanup interval on component unmount or when loading ends
-        return () => clearInterval(interval)
-    }, [isLoading]) // Only run this effect when isLoading changes
     return (
         <>
-            <div className="lg:hidden grid gap-[0.625rem] border-0  m-auto w-full">
+            <div className="lg:hidden grid gap-[0.625rem] border-0  m-auto w-full px-3">
                 {isLoading ? (
                     <>
                         {elements.map((element, index) => (

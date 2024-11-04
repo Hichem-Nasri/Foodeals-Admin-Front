@@ -65,7 +65,8 @@ const Support = () => {
                             height={300}
                         />
                         <h6 className="font-light">
-                            "Aucun message n'est encore disponible."
+                            &quot;Aucun message n&apos;est encore
+                            disponible.&quot;
                         </h6>
                         <CustomButton
                             size="sm"

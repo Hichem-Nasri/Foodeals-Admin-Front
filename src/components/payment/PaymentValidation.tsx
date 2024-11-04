@@ -40,6 +40,7 @@ import AmountAndCurrency from './AmountAndCurrency'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useNotification } from '@/context/NotifContext'
+import MobileHeader from '../utils/MobileHeader'
 
 interface PaymentValidationProps {
     id: string
@@ -261,71 +262,40 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                     />
                 )}
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-5 rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem] max-h-[95vh] overflow-auto">
-                <DialogTitle className="text-[1.375rem] font-normal text-lynch-400">
+            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-4 lg:rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem] min-h-screen lg:min-h-fit lg:max-h-[95vh] overflow-auto flex  flex-col rounded-none">
+                <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Commission à payer
                 </DialogTitle>
-                <div className="flex flex-col gap-3 ">
-                    <Form {...form}>
-                        <form
-                            onSubmit={handleSubmit(onSubmit)}
-                            className="flex flex-col gap-3"
-                        >
-                            <div className="flex flex-col gap-6">
-                                <div className="flex flex-col lg:flex-row gap-4">
-                                    <div className="w-full">
-                                        <Select
-                                            label="Type"
-                                            value={paymentMethod}
-                                            onChange={(value) =>
-                                                handlePaymentChange(
-                                                    value as PaymentMethod
-                                                )
-                                            }
-                                            options={options}
-                                        />
-                                    </div>
+                <div className=" font-normal text-lynch-400 lg:hidden w-full">
+                    <MobileHeader
+                        title="Commission à payer"
+                        onClick={() => {}}
+                        buttonType="dialog"
+                    />
+                </div>
+                <Form {...form}>
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="flex flex-col gap-3 justify-between w-full p-4 min-h-full flex-1"
+                    >
+                        <div className="flex flex-col gap-6">
+                            <div className="flex flex-col lg:flex-row gap-4">
+                                <div className="w-full">
+                                    <Select
+                                        label="Type"
+                                        value={paymentMethod}
+                                        onChange={(value) =>
+                                            handlePaymentChange(
+                                                value as PaymentMethod
+                                            )
+                                        }
+                                        options={options}
+                                    />
                                 </div>
-                                <div className="flex flex-col gap-6">
-                                    {paymentMethod === PaymentMethod.CASH && (
-                                        <div className="flex flex-col items-center gap-4">
-                                            <InputFieldForm
-                                                label={'Amount'}
-                                                name={'amount'}
-                                                control={control}
-                                                placeholder="Enter amount"
-                                                type="number"
-                                            />
-                                            <FormField
-                                                control={control}
-                                                name={'date' as any}
-                                                render={({ field }) => (
-                                                    <div className="flex flex-col items-start gap-3  w-full text-lynch-400">
-                                                        <Label
-                                                            label="Date de récupération"
-                                                            className="text-sm font-semibold text-lynch-950"
-                                                        />
-                                                        <DatePicker
-                                                            onChange={(
-                                                                value
-                                                            ) => {
-                                                                field.onChange(
-                                                                    value.toISOString()
-                                                                )
-                                                            }}
-                                                            value={field.value}
-                                                        />
-                                                        <FormMessage
-                                                            {...field}
-                                                        />
-                                                    </div>
-                                                )}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {paymentMethod ===
-                                        PaymentMethod.CARD_BANK && (
+                            </div>
+                            <div className="flex flex-col gap-6">
+                                {paymentMethod === PaymentMethod.CASH && (
+                                    <div className="flex flex-col items-center gap-4">
                                         <InputFieldForm
                                             label={'Amount'}
                                             name={'amount'}
@@ -333,38 +303,132 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                             placeholder="Enter amount"
                                             type="number"
                                         />
-                                    )}
+                                        <FormField
+                                            control={control}
+                                            name={'date' as any}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col items-start gap-3  w-full text-lynch-400">
+                                                    <Label
+                                                        label="Date de récupération"
+                                                        className="text-sm font-semibold text-lynch-950"
+                                                    />
+                                                    <DatePicker
+                                                        onChange={(value) => {
+                                                            field.onChange(
+                                                                value.toISOString()
+                                                            )
+                                                        }}
+                                                        value={field.value}
+                                                    />
+                                                    <FormMessage {...field} />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                )}
 
-                                    {paymentMethod ===
-                                        PaymentMethod.TRANSFER && (
-                                        <div className="flex flex-col gap-4">
+                                {paymentMethod === PaymentMethod.CARD_BANK && (
+                                    <InputFieldForm
+                                        label={'Amount'}
+                                        name={'amount'}
+                                        control={control}
+                                        placeholder="Enter amount"
+                                        type="number"
+                                    />
+                                )}
+
+                                {paymentMethod === PaymentMethod.TRANSFER && (
+                                    <div className="flex flex-col gap-4">
+                                        <InputFieldForm
+                                            label={'Amount'}
+                                            name={'amount'}
+                                            control={control}
+                                            placeholder="Enter amount"
+                                            type="number"
+                                        />
+                                        <FormField
+                                            control={control}
+                                            name={'document' as any}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                                                    <Label
+                                                        label="Document de virement"
+                                                        className="text-sm font-semibold text-lynch-950"
+                                                    />
+                                                    <UploadFile
+                                                        onChange={(value) => {
+                                                            if (value) {
+                                                                field.onChange(
+                                                                    value[0]
+                                                                        .name
+                                                                )
+                                                            }
+                                                        }}
+                                                        value={field.value}
+                                                    />
+                                                    <FormMessage {...field} />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                )}
+
+                                {paymentMethod === PaymentMethod.CHECK && (
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col lg:flex-row gap-4">
                                             <InputFieldForm
-                                                label={'Amount'}
-                                                name={'amount'}
+                                                label="Montant a payer"
+                                                name="amount"
                                                 control={control}
                                                 placeholder="Enter amount"
                                                 type="number"
                                             />
+                                            <InputFieldForm
+                                                label="Check Number"
+                                                name="checkNumber"
+                                                control={control}
+                                                placeholder="Enter check number"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col lg:flex-row gap-4">
                                             <FormField
                                                 control={control}
-                                                name={'document' as any}
+                                                name={'dateOfWrite' as any}
                                                 render={({ field }) => (
                                                     <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                                                         <Label
-                                                            label="Document de virement"
+                                                            label="Date échéance"
                                                             className="text-sm font-semibold text-lynch-950"
                                                         />
-                                                        <UploadFile
-                                                            onChange={(
-                                                                value
-                                                            ) => {
-                                                                if (value) {
-                                                                    field.onChange(
-                                                                        value[0]
-                                                                            .name
-                                                                    )
-                                                                }
-                                                            }}
+                                                        <DatePicker
+                                                            onChange={(value) =>
+                                                                field.onChange(
+                                                                    value.toISOString()
+                                                                )
+                                                            }
+                                                            value={field.value}
+                                                        />
+                                                        <FormMessage
+                                                            {...field}
+                                                        />
+                                                    </div>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={control}
+                                                name={'dateOfGet' as any}
+                                                render={({ field }) => (
+                                                    <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                                                        <Label
+                                                            label="Date de récupération"
+                                                            className="text-sm font-semibold text-lynch-950"
+                                                        />
+                                                        <DatePicker
+                                                            onChange={(value) =>
+                                                                field.onChange(
+                                                                    value.toISOString()
+                                                                )
+                                                            }
                                                             value={field.value}
                                                         />
                                                         <FormMessage
@@ -374,150 +438,70 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                                 )}
                                             />
                                         </div>
-                                    )}
-
-                                    {paymentMethod === PaymentMethod.CHECK && (
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex flex-col lg:flex-row gap-4">
-                                                <InputFieldForm
-                                                    label="Montant a payer"
-                                                    name="amount"
-                                                    control={control}
-                                                    placeholder="Enter amount"
-                                                    type="number"
-                                                />
-                                                <InputFieldForm
-                                                    label="Check Number"
-                                                    name="checkNumber"
-                                                    control={control}
-                                                    placeholder="Enter check number"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col lg:flex-row gap-4">
-                                                <FormField
-                                                    control={control}
-                                                    name={'dateOfWrite' as any}
-                                                    render={({ field }) => (
-                                                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                                                            <Label
-                                                                label="Date échéance"
-                                                                className="text-sm font-semibold text-lynch-950"
-                                                            />
-                                                            <DatePicker
-                                                                onChange={(
-                                                                    value
-                                                                ) =>
-                                                                    field.onChange(
-                                                                        value.toISOString()
-                                                                    )
-                                                                }
-                                                                value={
-                                                                    field.value
-                                                                }
-                                                            />
-                                                            <FormMessage
-                                                                {...field}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={control}
-                                                    name={'dateOfGet' as any}
-                                                    render={({ field }) => (
-                                                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                                                            <Label
-                                                                label="Date de récupération"
-                                                                className="text-sm font-semibold text-lynch-950"
-                                                            />
-                                                            <DatePicker
-                                                                onChange={(
-                                                                    value
-                                                                ) =>
-                                                                    field.onChange(
-                                                                        value.toISOString()
-                                                                    )
-                                                                }
-                                                                value={
-                                                                    field.value
-                                                                }
-                                                            />
-                                                            <FormMessage
-                                                                {...field}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                />
-                                            </div>
-                                            <div className="flex flex-col lg:flex-row gap-4">
-                                                <InputFieldForm
-                                                    label="Bank Company"
-                                                    name="bankCompany"
-                                                    control={control}
-                                                    placeholder="Enter bank company"
-                                                />
-                                                <InputFieldForm
-                                                    label="Issuer Name"
-                                                    name="issuerName"
-                                                    control={control}
-                                                    placeholder="Enter issuer name"
-                                                />
-                                            </div>
-                                            <FormField
+                                        <div className="flex flex-col lg:flex-row gap-4">
+                                            <InputFieldForm
+                                                label="Bank Company"
+                                                name="bankCompany"
                                                 control={control}
-                                                name={'document' as any}
-                                                render={({ field }) => (
-                                                    <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                                                        <Label
-                                                            label="Document de virement"
-                                                            className="text-sm font-semibold text-lynch-950"
-                                                        />
-                                                        <UploadFile
-                                                            onChange={(
-                                                                value
-                                                            ) => {
-                                                                if (value) {
-                                                                    field.onChange(
-                                                                        value[0]
-                                                                            .name
-                                                                    )
-                                                                }
-                                                            }}
-                                                            value={field.value}
-                                                        />
-                                                        <FormMessage
-                                                            {...field}
-                                                        />
-                                                    </div>
-                                                )}
+                                                placeholder="Enter bank company"
+                                            />
+                                            <InputFieldForm
+                                                label="Issuer Name"
+                                                name="issuerName"
+                                                control={control}
+                                                placeholder="Enter issuer name"
                                             />
                                         </div>
-                                    )}
-                                </div>
+                                        <FormField
+                                            control={control}
+                                            name={'document' as any}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                                                    <Label
+                                                        label="Document de virement"
+                                                        className="text-sm font-semibold text-lynch-950"
+                                                    />
+                                                    <UploadFile
+                                                        onChange={(value) => {
+                                                            if (value) {
+                                                                field.onChange(
+                                                                    value[0]
+                                                                        .name
+                                                                )
+                                                            }
+                                                        }}
+                                                        value={field.value}
+                                                    />
+                                                    <FormMessage {...field} />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                )}
                             </div>
-                            <div className="flex lg:flex-row flex-col items-center lg:justify-end gap-3 mt-2">
-                                <DialogClose asChild>
-                                    <CustomButton
-                                        type="button"
-                                        label="Annuler"
-                                        variant="outline"
-                                        className="lg:w-fit w-full lg:order-[0] order-3 h-fit py-3 px-5 text-lynch-400"
-                                        IconRight={X}
-                                    />
-                                </DialogClose>
+                        </div>
+                        <div className="flex flex-row items-end lg:justify-end gap-3 mt-2">
+                            <DialogClose asChild>
                                 <CustomButton
-                                    label="Valider"
-                                    type="submit"
-                                    onClick={() => {
-                                        console.log('submit')
-                                    }}
-                                    className="lg:w-fit w-full h-fit py-3 px-5"
-                                    IconRight={CheckCircle}
+                                    type="button"
+                                    label="FERMER"
+                                    variant="outline"
+                                    className="lg:w-fit rounded-[12px] w-full lg:order-[0] order-3 h-full py-3 px-5 text-lynch-400  min-w-32"
+                                    IconRight={X}
                                 />
-                            </div>
-                        </form>
-                    </Form>
-                </div>
+                            </DialogClose>
+                            <CustomButton
+                                label="PAYE"
+                                type="submit"
+                                onClick={() => {
+                                    console.log('submit')
+                                }}
+                                className="lg:w-fit rounded-[12px] w-full h-full py-3 px-5 min-w-32"
+                                IconRight={CheckCircle}
+                            />
+                        </div>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )

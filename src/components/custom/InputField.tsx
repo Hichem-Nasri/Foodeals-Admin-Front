@@ -23,6 +23,7 @@ interface InputFieldProps {
     iconLeftColor?: string
     onClickIconRight?: () => void
     classNameParent?: string
+    isLoaded?: boolean
 }
 
 export const InputFieldForm: FC<InputFieldProps> = ({
@@ -37,6 +38,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
     type,
     iconLeftColor,
     classNameParent,
+    isLoaded = false,
     onClickIconRight = () => {},
 }) => {
     return (
@@ -76,6 +78,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
                                 IconRight={IconRight}
                                 iconLeftColor={iconLeftColor}
                                 onClickRight={onClickIconRight}
+                                isLoaded={isLoaded}
                             />
                         </div>
                         <FormMessage {...field} />

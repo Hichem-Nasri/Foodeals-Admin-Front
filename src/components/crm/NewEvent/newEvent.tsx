@@ -6,10 +6,10 @@ import {
 } from '@/components/ui/accordion'
 import Image from 'next/image'
 import React, { FC, useEffect } from 'react'
-import { TableProspects } from '../NewProspect/TableProspects'
 import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { EventType } from '@/types/CrmType'
+import { TableProspects } from '../Prospect/NewProspect/TableProspects'
 
 interface EventProps {
     Event: EventType[]

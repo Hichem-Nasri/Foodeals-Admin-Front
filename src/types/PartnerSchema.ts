@@ -121,19 +121,6 @@ export const PartnerSubscriptionSchema = z.object({
             commissionCash: z.number().optional(),
             commissionCard: z.number().optional(),
         })
-        .refine(
-            (value) => {
-                return (
-                    value.marketPro?.selected ||
-                    value.dlcPro?.selected ||
-                    value.donate?.selected ||
-                    (value.solutionsId?.length ?? 0) > 0
-                )
-            },
-            {
-                message: 'Veuillez choisir au moins une solution',
-            }
-        )
         .optional(),
 })
 
