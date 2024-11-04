@@ -36,12 +36,12 @@ export const Navigation: FC<NavigationProps> = () => {
                             >
                                 <AccordionTrigger
                                     className={cn(
-                                        'w-full justify-normal bg-transparent text-lynch-500  rounded-[6px] peer hover:bg-primary/90 hover:text-white h-auto py-0',
+                                        'w-full justify-normal bg-transparent text-lynch-500  rounded-[6px] peer hover:bg-primary/90 hover:text-white h-auto py-0  group ', // if hover the child will be hover
                                         (pathname.includes(page.href) &&
                                             page.href != AppRoutes.home) ||
                                             (pathname === page.href &&
                                                 page.href === AppRoutes.home)
-                                            ? 'bg-primary text-white'
+                                            ? 'bg-primary/90 text-white'
                                             : ''
                                     )}
                                 >
@@ -49,15 +49,15 @@ export const Navigation: FC<NavigationProps> = () => {
                                         <div
                                             onClick={() => {}}
                                             className={cn(
-                                                'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] hover:bg-transparent cursor-pointer inline-flex items-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none  disabled:pointer-events-none disabled:opacity-50 p-4 py-5',
+                                                'child w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] hover:bg-transparent cursor-pointer inline-flex items-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none  disabled:pointer-events-none peer-hover:text-white disabled:opacity-50 p-4 py-5',
                                                 (pathname.includes(page.href) &&
                                                     page.href !=
                                                         AppRoutes.home) ||
                                                     (pathname === page.href &&
                                                         page.href ===
                                                             AppRoutes.home)
-                                                    ? 'bg-primary text-white'
-                                                    : ''
+                                                    ? 'bg-primary/90 text-white'
+                                                    : ' group-hover:text-white'
                                             )}
                                         >
                                             {

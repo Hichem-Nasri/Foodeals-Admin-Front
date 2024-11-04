@@ -54,12 +54,12 @@ export const pagesData: PageData[] = [
                 href: AppRoutes.deliveryPayment,
                 icon: Box,
             },
-            {
-                label: 'Produits',
-                href: '#',
-                icon: Salad,
-            },
         ],
+    },
+    {
+        label: 'Produits',
+        href: AppRoutes.products,
+        icon: Salad,
     },
     {
         label: 'Statistique',
@@ -70,11 +70,6 @@ export const pagesData: PageData[] = [
         label: 'Partenaires',
         href: AppRoutes.partners,
         icon: Store,
-    },
-    {
-        label: 'Produits',
-        href: AppRoutes.products,
-        icon: Salad,
     },
     {
         label: 'Livraison',
