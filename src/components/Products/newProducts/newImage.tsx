@@ -20,7 +20,7 @@ export const NewImageProduct = ({
         <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent
-                    className="min-w-[700px] h-[400px] px-4 flex flex-col justify-center "
+                    className="min-w-[700px] h-[500px] px-4 flex flex-col justify-center "
                     showContent={false}
                 >
                     <DialogTitle className="text-lynch-500 flex justify-between items-center  text-wrap text-base font-normal">

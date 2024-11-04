@@ -1,3 +1,4 @@
+import { transform } from 'next/dist/build/swc'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -67,6 +68,38 @@ const config: Config = {
                 sm: 'calc(var(--radius) - 4px)',
             },
             keyframes: {
+                scanDown: {
+                    '0%': {
+                        transform: 'translateY(-100%)',
+                        background:
+                            'linear-gradient(to bottom, transparent, green)',
+                    },
+                    '100%': {
+                        transform: 'translateY(200%)',
+                        background:
+                            'linear-gradient(to bottom, transparent, green)',
+                    },
+                },
+                scanUp: {
+                    '0%': {
+                        transform: 'translateY(200%)',
+                        background:
+                            'linear-gradient(to top, green, transparent)',
+                    },
+                    '100%': {
+                        transform: 'translateY(-100%)',
+                        background:
+                            'linear-gradient(to top, green, transparent)',
+                    },
+                },
+                'scan-up-down': {
+                    '0%, 100%': {
+                        transform: 'translateY(-50%)',
+                    },
+                    '50%': {
+                        transform: 'translateY(50%)',
+                    },
+                },
                 'dialog-right': {
                     '0%': {
                         transform: 'translateX(100%)',
@@ -147,6 +180,10 @@ const config: Config = {
                 'notification-slide-down':
                     'notification-slide-down 0.5s ease-out',
                 'fade-down': 'fade-down 0.5s ease-out',
+                scanDown: 'scanDown 2s linear forwards infinite',
+                scanUp: 'scanUp 2s linear forwards infinite',
+                scan: 'scanDown 2s linear forwards, scanUp 2s linear 2s forwards',
+                'scan-up-down': 'scan-up-down 2s linear infinite',
             },
         },
     },
