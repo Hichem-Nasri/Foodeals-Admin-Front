@@ -1,4 +1,5 @@
 import {
+    deadlineType,
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
     PaymentStatusType,
@@ -33,24 +34,24 @@ import { CustomButton } from '@/components/custom/CustomButton'
 const OperationSubscriptionCard = ({
     subscription,
 }: {
-    subscription: ValidationSubscriptionType
+    subscription: deadlineType
 }) => {
     const router = useRouter()
     const dataArray = [
         {
-            label: subscription.ref,
+            label: subscription.id.slice(0, 4) + subscription.id.slice(-4),
             icon: Frame,
         },
         {
-            label: 'D. écheance: ' + subscription.deadline.toDateString(),
+            label: 'D. écheance: ' + subscription.date,
             icon: CalendarMinus,
             className: '',
         },
         {
-            label: 'P. d’échéance: ' + subscription.price,
+            label: 'P. d’échéance: ' + subscription.amount.amount,
             icon: CirclePercent,
             className:
-                subscription.validation === PaymentStatusType.PAID
+                subscription.deadlineStatus === 'CONFIRMED_BY_FOODEALS'
                     ? ''
                     : 'bg-coral-100 text-coral-500',
         },
