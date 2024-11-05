@@ -25,7 +25,7 @@ interface DataTableProps<T> {
     hideColumns?: string[]
     partnerData?: {
         name: string
-        avatar: string
+        avatar: string | null
         city: string
     }
     hidden?: boolean
@@ -82,7 +82,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
                             </h1>
                             <div className="flex items-center gap-3">
                                 <Avatar>
-                                    <AvatarImage src={partnerData.avatar} />
+                                    <AvatarImage src={partnerData.avatar!} />
                                     <AvatarFallback>
                                         {partnerData.name}
                                     </AvatarFallback>
@@ -93,7 +93,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                         className="text-base font-normal"
                                     />
                                     <Label
-                                        label={partnerData.city}
+                                        label={partnerData.city!}
                                         className="text-primary text-xs font-semibold"
                                     />
                                 </div>

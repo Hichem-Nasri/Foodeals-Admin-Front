@@ -1,7 +1,12 @@
 import { z } from 'zod'
 import { PaymentStatusEnum } from './paymentUtils'
-import { ContactType, PartnerInfoDto, PriceType } from './GlobalType'
-import { PartnerSolutionType } from './partnersType'
+import {
+    ContactType,
+    PartnerEntitiesType,
+    PartnerInfoDto,
+    PriceType,
+} from './GlobalType'
+import { PartnerSolutionType, PartnerType } from './partnersType'
 
 export enum PaymentStatusType {
     PAID = 'PAID',
@@ -14,6 +19,13 @@ export enum PaymentMethod {
     CARD_BANK = 'CARD',
     TRANSFER = 'BANKTRANSFER',
     CHECK = 'CHEQUE',
+}
+
+export enum SubscriptionStatusType {
+    VALID = 'VALID',
+    CANCELED = 'CANCELED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    NOT_STARTED = 'NOT_STARTED',
 }
 
 export interface ConfirmPaymentType {
@@ -106,17 +118,12 @@ export type partnerCommissionMonthType = {
     paymentStatus: PaymentStatusEnum
 }
 export interface partnerSubscriptionType {
-    id: string
-    ref: string
-    type: string
-    date: string
-    magasin: {
-        id: string
-        name: string
-        avatar: string
-    }
-    totalEcheance: number
-    solution: string[]
+    reference: string
+    partner: PartnerInfoDto
+    type: PartnerEntitiesType
+    total: PriceType
+    solution: PartnerSolutionType[]
+    payable: boolean
 }
 
 export const PaymentFilterSchema = z.object({
@@ -181,42 +188,112 @@ export interface FormData {
 }
 
 export type partnerSubscriptonOnesType = {
+    reference: string
+    total: PriceType
+    deadlines: deadlineType[]
+    solution: PartnerSolutionType[]
+}
+export type deadlineType = {
     id: string
-    ref: string
-    createdAt: string
-    nbrEcheance: number
-    prixEcheance: number
-    totalEcheance: number
-    solution: PartnerSolutionType
+    date: string
+    deadlineStatus:
+        | 'CONFIRMED_BY_FOODEALS'
+        | 'IN_VALID'
+        | 'CONFIRMED_BY_PARTNER'
+    amount: PriceType
+    payable: boolean
 }
 
 export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
     {
-        id: '1',
-        ref: '1',
-        createdAt: '2021-10-10',
-        nbrEcheance: 3,
-        prixEcheance: 5000,
-        totalEcheance: 15000,
-        solution: PartnerSolutionType.MARKET_PRO,
+        reference: '123456789',
+        total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        deadlines: [
+            {
+                id: '1',
+                date: '2021-06-01',
+                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: true,
+            },
+            {
+                id: '2',
+                date: '2021-07-01',
+                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: false,
+            },
+        ],
+        solution: [PartnerSolutionType.DLC_PRO],
     },
     {
-        id: '2',
-        ref: '2',
-        createdAt: '2021-10-10',
-        nbrEcheance: 3,
-        prixEcheance: 5000,
-        totalEcheance: 15000,
-        solution: PartnerSolutionType.DONATE_PRO,
+        reference: '123456789',
+        total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        deadlines: [
+            {
+                id: '1',
+                date: '2021-06-01',
+                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: true,
+            },
+            {
+                id: '2',
+                date: '2021-07-01',
+                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: false,
+            },
+        ],
+        solution: [PartnerSolutionType.DLC_PRO],
     },
     {
-        id: '3',
-        ref: '3',
-        createdAt: '2021-10-10',
-        nbrEcheance: 3,
-        prixEcheance: 5000,
-        totalEcheance: 15000,
-        solution: PartnerSolutionType.DLC_PRO,
+        reference: '123456789',
+        total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        deadlines: [
+            {
+                id: '1',
+                date: '2021-06-01',
+                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: true,
+            },
+            {
+                id: '2',
+                date: '2021-07-01',
+                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: false,
+            },
+        ],
+        solution: [PartnerSolutionType.DLC_PRO],
     },
 ]
 

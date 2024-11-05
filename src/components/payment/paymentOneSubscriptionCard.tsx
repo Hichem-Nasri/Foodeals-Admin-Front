@@ -28,50 +28,62 @@ import { AppRoutes } from '@/lib/routes'
 
 const PaymentOnesSubscriptionCard = ({
     subscription,
-    store,
+    partner,
+    setSubscriptionId,
 }: {
     subscription: partnerSubscriptonOnesType
-    store: PartnerInfoDto
+    partner: PartnerInfoDto
+    setSubscriptionId: (id: string) => void
 }) => {
-    const router = useRouter()
     const dataArray = [
         {
-            label: subscription.ref,
+            label:
+                subscription.reference.slice(0, 4) +
+                subscription.reference.slice(-4),
             icon: Frame,
         },
         {
-            label: 'Nbr d’écheance: ' + subscription.nbrEcheance,
+            label: 'Nbr d’écheance: ' + subscription.deadlines.length,
             icon: Minus,
             className: '',
         },
         {
-            label: 'T. d’échéance: ' + subscription.totalEcheance,
+            label:
+                'T. d’échéance: ' +
+                subscription.total.amount +
+                subscription.total.currency,
             icon: HandCoins,
         },
         {
-            label: 'P. d’échéance: ' + subscription.prixEcheance,
+            label:
+                'P. d’échéance: ' +
+                subscription.deadlines[0]?.amount.amount +
+                subscription.deadlines[0]?.amount.currency,
             icon: CirclePercent,
         },
     ]
+    const date = subscription.deadlines.find(
+        (val) => val.deadlineStatus == 'IN_VALID'
+    )?.date
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] min-w-full">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage src={store.avatarPath} />
+                        <AvatarImage src={partner.avatarPath} />
                         <AvatarFallback>
-                            {store.name && store.name[0].toUpperCase()}
+                            {partner.name && partner.name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={store.name}
+                            label={partner.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={subscription.createdAt}
+                                label={date!}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
@@ -80,12 +92,7 @@ const PaymentOnesSubscriptionCard = ({
                 <button
                     className="bg-lynch-300 size-11 rounded-full text-white "
                     onClick={() => {
-                        router.push(
-                            AppRoutes.PBSubscriptionDetails.replace(
-                                ':id',
-                                subscription.id
-                            )
-                        )
+                        setSubscriptionId(subscription.reference)
                     }}
                 >
                     <ArrowRight size={18} className="m-auto w-full" />
@@ -110,9 +117,9 @@ const PaymentOnesSubscriptionCard = ({
                 ))}
             </div>
             <div className="flex flex-wrap justify-normal">
-                <PartnerSolution
-                    solution={subscription.solution as PartnerSolutionType}
-                />
+                {subscription.solution.map((solution) => (
+                    <PartnerSolution solution={solution} key={solution} />
+                ))}
             </div>
         </div>
     )

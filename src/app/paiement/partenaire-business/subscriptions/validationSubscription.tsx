@@ -47,6 +47,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import MobileHeader from '@/components/utils/MobileHeader'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
+import { PartnerType } from '@/types/paymentUtils'
+import { Staatliches } from 'next/font/google'
 
 interface OperationsProps {}
 
@@ -54,42 +56,37 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [subscriptionData, setSubscriptionData] = useState<
         partnerSubscriptionType[]
     >(defaultDataSubscriptionTable)
-    const [partnerSubscripton, setParnterSubscription] = useState<
-        partnerSubscriptonOnesType[]
-    >(defaultDataSubscriptionOnesTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [subscriptionID, setSubscriptionId] = useState('')
-    const [store, setStore] = useState<PartnerInfoDto>({
-        id: '',
-        name: '',
-        avatarPath: '',
-    })
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [totalIN_PROGRESS, setTotalIN_PROGRESS] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+    const [total, setTotal] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
-    const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const router = useRouter()
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
+        date: new Date(),
+        partner: 'all',
+    })
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['subscription'],
         queryFn: async () => {
             try {
-                const response = await fetchSubscription(currentPage, pageSize)
-                let totalIN_PROGRESS = 0,
-                    totalSales = 0
-                response.data.forEach((partner) => {
-                    if (partner.payable) {
-                        // totalCommission +=
-                        //     partner.commissionCard || partner.cashCommission
-                        // totalSales += partner.cashAmount || partner.cardAmount
-                    }
-                })
-                setTotalIN_PROGRESS(totalIN_PROGRESS)
-                setTotalSales(totalSales)
-                // setCommissionMonth(response.data)
-                // setOptions(options)
+                const response = await fetchSubscription(
+                    currentPage,
+                    pageSize,
+                    dateAndPartner.date!,
+                    dateAndPartner.partner!
+                )
+                const { statistics, list } = response.data
+                setTotal(statistics.total?.amount)
+                setTotalSales(statistics.deadlines?.amount)
+                setTotalPages(list.totalPages)
+                setSubscriptionData(list.content)
                 return response.data
             } catch (error) {
                 notify.notify(
@@ -100,23 +97,9 @@ export const ValidationSubscription = ({}: OperationsProps) => {
             }
         },
     })
-    const tableOperations = useReactTable({
-        data: partnerSubscripton,
-        columns: columnsSubscriptionOnesTable(router),
-        getCoreRowModel: getCoreRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-    })
+
     const [open, setOpen] = useState(false)
 
-    const [dateAndPartner, setDateAndPartner] = useState<
-        z.infer<typeof PaymentFilterSchema>
-    >({
-        date: new Date(),
-        partner: 'all',
-    })
     const form = useForm({
         resolver: zodResolver(PaymentFilterSchema),
         defaultValues: dateAndPartner,
@@ -130,28 +113,13 @@ export const ValidationSubscription = ({}: OperationsProps) => {
 
     const tableSubscription = useReactTable({
         data: subscriptionData,
-        columns: columnsSubscriptionTable(router, setSubscriptionId),
+        columns: columnsSubscriptionTable(router),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-    useEffect(() => {
-        if (subscriptionID) {
-            console.log('subscriptionID', subscriptionID)
-            const store = subscriptionData.find(
-                (data) => data.id === subscriptionID
-            )?.magasin
-            setStore({
-                id: store?.id!,
-                name: store?.name!,
-                avatarPath: store?.avatar!,
-            })
-            // const partnerSub =
-        }
-    }, [subscriptionID])
 
     return (
         <>
@@ -170,8 +138,8 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                         />
                         <CardTotalValue
                             Icon={FileBadge}
-                            title="Total des Subscriptions"
-                            value={totalIN_PROGRESS}
+                            title="Total des abonnements"
+                            value={total}
                             className="text-mountain-400 bg-mountain-400"
                         />
                         <CardTotalValue
@@ -194,38 +162,18 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
                         />
                     </div>
-                    {subscriptionID ? (
-                        <>
-                            <DataTable
-                                table={tableOperations}
-                                data={partnerSubscripton}
-                                title="Tableau de validation des Subscription"
-                                transform={(data) => (
-                                    <PaymentOnesSubscriptionCard
-                                        subscription={data}
-                                        store={store}
-                                    />
-                                )}
-                                partnerData={{
-                                    name: store.name,
-                                    avatar: store.avatarPath,
-                                    city: '',
-                                }}
+                    <DataTable
+                        table={tableSubscription}
+                        data={subscriptionData}
+                        title="Tableau de validation des Subscription"
+                        transform={(data) => (
+                            <PaymentSubscriptionCard
+                                subscription={data}
+                                setSubscriptionId={setSubscriptionId}
                             />
-                        </>
-                    ) : (
-                        <DataTable
-                            table={tableSubscription}
-                            data={subscriptionData}
-                            title="Tableau de validation des Subscription"
-                            transform={(data) => (
-                                <PaymentSubscriptionCard
-                                    subscription={data}
-                                    setSubscriptionId={setSubscriptionId}
-                                />
-                            )}
-                        />
-                    )}
+                        )}
+                        isLoading={isLoading}
+                    />
                 </div>
             ) : (
                 <div
