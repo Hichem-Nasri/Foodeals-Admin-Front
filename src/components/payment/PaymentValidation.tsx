@@ -254,7 +254,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                         label={label}
                         variant="outline"
                         className={cn(
-                            'flex lg:hidden min-w-[400px] h-fit py-3 px-7 rounded-[18px] text-white bg-primary border-primary ml-1',
+                            'flex lg:hidden w-full h-fit py-3 px-7 rounded-[18px] text-white bg-primary border-primary ml-1',
                             className
                         )}
                         disabled={disabled}
@@ -276,7 +276,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                 <Form {...form}>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
-                        className="flex flex-col gap-3 justify-between w-full p-4 min-h-full flex-1"
+                        className="flex flex-col gap-3 justify-between w-full p-4 min-h-full flex-1 overflow-auto h-full"
                     >
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col lg:flex-row gap-4">
@@ -295,7 +295,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                             </div>
                             <div className="flex flex-col gap-6">
                                 {paymentMethod === PaymentMethod.CASH && (
-                                    <div className="flex flex-col items-center gap-4">
+                                    <div className="flex items-center gap-4">
                                         <InputFieldForm
                                             label={'Amount'}
                                             name={'amount'}

@@ -122,13 +122,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     return (
         <Fragment>
             {!open ? (
-                <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-col gap-3 w-full lg:px-0 px-3">
                     <SwitchPayment />
                     <div className="flex justify-center items-center lg:hidden">
                         <SwitchValidation />
                     </div>
 
-                    <div className="flex lg:flex-row flex-col items-center gap-3 w-full ">
+                    <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
                         <FilterTablePayment
                             form={form}
                             onSubmit={onSubmit}
