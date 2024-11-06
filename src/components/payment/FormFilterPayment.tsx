@@ -18,6 +18,7 @@ interface FormFilterPaymentProps {
     form: UseFormReturn<z.infer<typeof PaymentFilterSchema>>
     onSubmit: (data: z.infer<typeof PaymentFilterSchema>) => void
     onBlurMode?: 'onBlur' | 'onChange'
+    dateForm?: string
 }
 
 export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
@@ -25,6 +26,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
     form,
     onSubmit,
     onBlurMode = 'onBlur',
+    dateForm = 'MM/yyyy',
 }) => {
     const { handleSubmit, control } = form
     return (
@@ -41,7 +43,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                                     className="text-sm font-semibold text-lynch-950"
                                 />
                                 <DatePicker
-                                    myFormat="MM/yyyy"
+                                    myFormat={dateForm}
                                     onChange={(value) => {
                                         field.onChange(value)
                                         if (onBlurMode === 'onChange') {

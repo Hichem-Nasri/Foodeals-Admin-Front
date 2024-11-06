@@ -118,6 +118,7 @@ export type partnerCommissionMonthType = {
     paymentStatus: PaymentStatusEnum
 }
 export interface partnerSubscriptionType {
+    id: string
     reference: string
     partner: PartnerInfoDto
     type: PartnerEntitiesType
@@ -188,13 +189,17 @@ export interface FormData {
 }
 
 export type partnerSubscriptonOnesType = {
+    id: string
     reference: string
     total: PriceType
+    date: string
+    amount: PriceType
     deadlines: deadlineType[]
     solution: PartnerSolutionType[]
 }
 export type deadlineType = {
     id: string
+    ref: string
     date: string
     deadlineStatus:
         | 'CONFIRMED_BY_FOODEALS'
@@ -206,14 +211,21 @@ export type deadlineType = {
 
 export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
     {
+        id: '1',
         reference: '123456789',
         total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        date: '2021-06-01',
+        amount: {
             amount: 1000,
             currency: 'MAD',
         },
         deadlines: [
             {
                 id: '1',
+                ref: '123456789',
                 date: '2021-06-01',
                 deadlineStatus: 'CONFIRMED_BY_FOODEALS',
                 amount: {
@@ -224,6 +236,45 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
             },
             {
                 id: '2',
+                ref: '123456789',
+                date: '2021-07-01',
+                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: true,
+            },
+        ],
+        solution: [PartnerSolutionType.DLC_PRO],
+    },
+    {
+        id: '2',
+        reference: '123456789',
+        total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        date: '2021-06-01',
+        amount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        deadlines: [
+            {
+                id: '1',
+                ref: '123456789',
+                date: '2021-06-01',
+                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                amount: {
+                    amount: 1000,
+                    currency: 'MAD',
+                },
+                payable: true,
+            },
+            {
+                id: '2',
+                ref: '123456789',
                 date: '2021-07-01',
                 deadlineStatus: 'CONFIRMED_BY_PARTNER',
                 amount: {
@@ -236,14 +287,21 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
         solution: [PartnerSolutionType.DLC_PRO],
     },
     {
+        id: '3',
         reference: '123456789',
         total: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        date: '2021-06-01',
+        amount: {
             amount: 1000,
             currency: 'MAD',
         },
         deadlines: [
             {
                 id: '1',
+                ref: '123456789',
                 date: '2021-06-01',
                 deadlineStatus: 'CONFIRMED_BY_FOODEALS',
                 amount: {
@@ -254,36 +312,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
             },
             {
                 id: '2',
-                date: '2021-07-01',
-                deadlineStatus: 'CONFIRMED_BY_PARTNER',
-                amount: {
-                    amount: 1000,
-                    currency: 'MAD',
-                },
-                payable: false,
-            },
-        ],
-        solution: [PartnerSolutionType.DLC_PRO],
-    },
-    {
-        reference: '123456789',
-        total: {
-            amount: 1000,
-            currency: 'MAD',
-        },
-        deadlines: [
-            {
-                id: '1',
-                date: '2021-06-01',
-                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
-                amount: {
-                    amount: 1000,
-                    currency: 'MAD',
-                },
-                payable: true,
-            },
-            {
-                id: '2',
+                ref: '123456789',
                 date: '2021-07-01',
                 deadlineStatus: 'CONFIRMED_BY_PARTNER',
                 amount: {

@@ -135,6 +135,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             onSubmit={onSubmit}
                             setOpen={setOpen}
                             header="Tableau de validation des abonnements"
+                            dateForm="yyyy"
                         />
                         <CardTotalValue
                             Icon={FileBadge}

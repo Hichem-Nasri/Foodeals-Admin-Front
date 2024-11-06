@@ -17,6 +17,8 @@ import { Label } from '../Label'
 import { Arrow } from '@radix-ui/react-dropdown-menu'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partnersType'
+import { PartnerEntitiesType } from '@/types/GlobalType'
+import { sub } from 'date-fns'
 
 const PaymentSubscriptionCard = ({
     subscription,
@@ -27,38 +29,42 @@ const PaymentSubscriptionCard = ({
 }) => {
     const dataArray = [
         {
-            label: subscription.ref,
+            label: subscription.reference,
             icon: Frame,
         },
         {
-            label: subscription.type,
+            label:
+                subscription.type === PartnerEntitiesType.SUB_ENTITY
+                    ? 'Sous Compte'
+                    : 'Principal',
             icon: Building,
             className: '',
         },
         {
-            label: 'T. ventes : ' + subscription.totalEcheance,
+            label: 'T. ventes : ' + subscription.total.amount,
             icon: HandCoins,
         },
     ]
+    const name = subscription.partner.name
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] min-w-full">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage src={subscription.magasin.avatar} />
+                        <AvatarImage src={subscription.partner.avatarPath} />
                         <AvatarFallback>
-                            {subscription.magasin.name[0].toUpperCase()}
+                            {name && name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={subscription.magasin.name}
+                            label={name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={subscription.date}
+                                label={new Date().toDateString()}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
@@ -66,7 +72,7 @@ const PaymentSubscriptionCard = ({
                 </div>
                 <button
                     className="bg-lynch-300 size-11 rounded-full text-white hover:bg-lynch-300"
-                    onClick={() => setSubscriptionId(subscription.id)}
+                    onClick={() => setSubscriptionId(subscription.reference)}
                 >
                     <ArrowRight size={18} className="m-auto w-full" />
                 </button>

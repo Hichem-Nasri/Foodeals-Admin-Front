@@ -1,40 +1,19 @@
-import {
-    deadlineType,
-    partnerSubscriptionType,
-    partnerSubscriptonOnesType,
-    PaymentStatusType,
-    ValidationSubscriptionType,
-} from '@/types/PaymentType'
+import { deadlineType } from '@/types/PaymentType'
 import React from 'react'
 import { cn } from '@/lib/utils'
 // import { Label } from '@radix-ui/react-dropdown-menu';
-import {
-    ArrowRight,
-    Building,
-    CalendarClock,
-    CalendarMinus,
-    CirclePercent,
-    Frame,
-    HandCoins,
-    Minus,
-} from 'lucide-react'
-import { Arrow } from '@radix-ui/react-dropdown-menu'
-import { PartnerSolutionType } from '@/types/partnersType'
-import { PartnerInfoDto } from '@/types/GlobalType'
+import { CalendarMinus, CirclePercent, Frame } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { AppRoutes } from '@/lib/routes'
-import { OperationCard } from './OperationCard'
 import { Label } from '@/components/Label'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { ConfirmPayment } from '../ConfirmPayment'
-import { PaymentValidation } from '../PaymentValidation'
-import { CustomButton } from '@/components/custom/CustomButton'
+import { PartnerInfoDto } from '@/types/GlobalType'
 
 const OperationSubscriptionCard = ({
     subscription,
+    partner,
 }: {
     subscription: deadlineType
+    partner: PartnerInfoDto
 }) => {
     const router = useRouter()
     const dataArray = [
@@ -51,11 +30,12 @@ const OperationSubscriptionCard = ({
             label: 'P. d’échéance: ' + subscription.amount.amount,
             icon: CirclePercent,
             className:
-                subscription.deadlineStatus === 'CONFIRMED_BY_FOODEALS'
+                subscription.deadlineStatus == 'CONFIRMED_BY_FOODEALS'
                     ? ''
                     : 'bg-coral-100 text-coral-500',
         },
     ]
+    console.log('subscription', subscription.payable)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex flex-wrap gap-[0.375rem]">
@@ -75,15 +55,28 @@ const OperationSubscriptionCard = ({
                     </div>
                 ))}
             </div>
-            <div className="flex flex-wrap justify-normal w-full">
-                <ConfirmPayment
-                    IconRight={ArrowRight}
-                    label="A RECEVOIR"
-                    className="w-full bg-mountain-400 text-white hover:text-mountain-400 hover:bg-white"
-                    isMobile={true}
-                    id={subscription.id}
-                />
-            </div>
+            {subscription.payable &&
+                subscription.deadlineStatus != 'CONFIRMED_BY_FOODEALS' && (
+                    <div className="flex flex-wrap justify-normal w-full">
+                        <ConfirmPayment
+                            id={subscription.id}
+                            disabled={
+                                !(
+                                    subscription.deadlineStatus ==
+                                    'CONFIRMED_BY_PARTNER'
+                                )
+                            }
+                            label={
+                                subscription.deadlineStatus ==
+                                'CONFIRMED_BY_PARTNER'
+                                    ? 'A Recevoir'.toUpperCase()
+                                    : 'Reçu'.toUpperCase()
+                            }
+                            className="w-full bg-primary text-white rounded-[18px] p-5 h-16 hover:bg-primary/90 hover:text-white"
+                            isMobile={true}
+                        />
+                    </div>
+                )}
         </div>
     )
 }

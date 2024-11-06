@@ -17,6 +17,7 @@ interface FilterTablePaymentProps {
     onSubmit: (data: z.infer<typeof PaymentFilterSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     header?: string
+    dateForm?: string
 }
 
 export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
@@ -24,6 +25,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
     onSubmit,
     setOpen,
     header,
+    dateForm,
 }) => {
     // dialog that take all the page and show the filter form with buttons in bottom of the page
     return (
@@ -33,7 +35,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
                     {header ? header : 'Tableau de validation des commission'}
                 </span>
                 <div
-                    className="hover:text-black hover:bg-neutral-100 bg-white text-lynch-500 rounded-full p-2 size-12 cursor-pointer flex items-center justify-center"
+                    className="hover:text-black hover:bg-neutral-100 bg-white text-lynch-500 rounded-full p-2 size-12 cursor-pointer flex items-center justify-center w-fit"
                     onClick={() => setOpen((prev) => !prev)}
                 >
                     <ListFilter />
@@ -46,6 +48,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
                     form={form}
                     onSubmit={onSubmit}
                     onBlurMode="onChange"
+                    dateForm={dateForm}
                 />
             </div>
         </div>

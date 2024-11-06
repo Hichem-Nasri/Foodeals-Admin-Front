@@ -1,4 +1,5 @@
 import {
+    deadlineType,
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
     PaymentStatusType,
@@ -29,11 +30,11 @@ import { AppRoutes } from '@/lib/routes'
 const PaymentOnesSubscriptionCard = ({
     subscription,
     partner,
-    setSubscriptionId,
+    setPartnerDeadlines,
 }: {
     subscription: partnerSubscriptonOnesType
     partner: PartnerInfoDto
-    setSubscriptionId: (id: string) => void
+    setPartnerDeadlines: (deadlines: deadlineType[]) => void
 }) => {
     const dataArray = [
         {
@@ -62,15 +63,15 @@ const PaymentOnesSubscriptionCard = ({
             icon: CirclePercent,
         },
     ]
-    const date = subscription.deadlines.find(
-        (val) => val.deadlineStatus == 'IN_VALID'
-    )?.date
+    const date =
+        subscription.deadlines.find((val) => val.deadlineStatus == 'IN_VALID')
+            ?.date || subscription.deadlines[0]?.date
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] min-w-full">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage src={partner.avatarPath} />
+                        <AvatarImage src={partner.avatarPath!} />
                         <AvatarFallback>
                             {partner.name && partner.name[0].toUpperCase()}
                         </AvatarFallback>
@@ -92,7 +93,15 @@ const PaymentOnesSubscriptionCard = ({
                 <button
                     className="bg-lynch-300 size-11 rounded-full text-white "
                     onClick={() => {
-                        setSubscriptionId(subscription.reference)
+                        const deadlines = subscription.deadlines.sort(
+                            (a, b) => {
+                                return (
+                                    new Date(b.date).getTime() -
+                                    new Date(a.date).getTime()
+                                )
+                            }
+                        )
+                        setPartnerDeadlines(deadlines)
                     }}
                 >
                     <ArrowRight size={18} className="m-auto w-full" />

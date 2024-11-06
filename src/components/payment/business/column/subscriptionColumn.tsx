@@ -15,6 +15,7 @@ import { Eye } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { ConfirmPayment } from '../../ConfirmPayment'
 import { PartnerEntitiesType } from '@/types/GlobalType'
+import { formatDate } from '@/lib/utils'
 
 //* Subscription General
 
@@ -66,7 +67,7 @@ export const columnsSubscriptionTable = (router: AppRouterInstance) => [
         header: 'Solution',
         footer: (info) => info.column.id,
     }),
-    columnHelperSubscription.accessor('reference', {
+    columnHelperSubscription.accessor('id', {
         cell: (info) => (
             <button
                 type="button"
@@ -79,7 +80,7 @@ export const columnsSubscriptionTable = (router: AppRouterInstance) => [
                     router.push(
                         AppRoutes.PBSubscriptionDetails.replace(
                             ':id',
-                            info.getValue()
+                            info.row.getValue('reference')!
                         )
                     )
                 }
@@ -102,33 +103,35 @@ const columnHelperSubscriptionOnes =
     createColumnHelper<partnerSubscriptonOnesType>()
 
 export const columnsSubscriptionOnesTable = (
-    setSubscriptionId: (id: string) => void
+    setPartnerDeadlines: (deadlines: deadlineType[]) => void
 ) => [
     columnHelperSubscriptionOnes.accessor('reference', {
         cell: (info) => info.getValue(),
         header: 'Réf',
         footer: (info) => info.column.id,
     }),
-    columnHelperSubscriptionOnes.accessor('deadlines', {
+    columnHelperSubscriptionOnes.accessor('date', {
         cell: (info) => {
-            const date = info.getValue().find((val) => {
-                return val.deadlineStatus == 'IN_VALID'
-            })
-            return date?.date
+            const date = formatDate(new Date(info.getValue()))
+            return (
+                date.split(' ')[1] +
+                ' ' +
+                date.split(' ')[0] +
+                ' ' +
+                date.split(' ')[2]
+            )
         },
-        header: 'Date',
+        header: 'Date d’échéance',
         footer: (info) => info.column.id,
     }),
     columnHelperSubscriptionOnes.accessor('deadlines', {
         cell: (info) => info.getValue().length,
-        header: 'Nbr Echeance',
+        header: 'Nbr d’écheance',
         footer: (info) => info.column.id,
     }),
-    columnHelperSubscriptionOnes.accessor('deadlines', {
+    columnHelperSubscriptionOnes.accessor('amount', {
         cell: (info) => {
-            const amount = info.getValue().length
-                ? info.getValue()[0].amount
-                : 0
+            const amount = info.getValue().amount
             return (
                 amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' MAD'
             )
@@ -158,12 +161,23 @@ export const columnsSubscriptionOnesTable = (
         header: 'Solution',
         footer: (info) => info.column.id,
     }),
-    columnHelperSubscriptionOnes.accessor('reference', {
+    columnHelperSubscriptionOnes.accessor('id', {
         cell: (info) => (
             <div
                 title="Voir"
                 onClick={() => {
-                    setSubscriptionId(info.getValue())
+                    const deadlines = info.row.getValue(
+                        'deadlines'
+                    ) as deadlineType[]
+                    if (info.row.getValue('deadlines'))
+                        setPartnerDeadlines(
+                            deadlines.sort((a, b) => {
+                                return (
+                                    new Date(b.date).getTime() -
+                                    new Date(a.date).getTime()
+                                )
+                            })
+                        )
                 }}
                 className="flex items-center justify-center"
             >
@@ -176,6 +190,7 @@ export const columnsSubscriptionOnesTable = (
             </div>
         ),
         header: 'Activité',
+        footer: (info) => info.column.id,
     }),
 ]
 
@@ -183,22 +198,41 @@ export const columnsSubscriptionOnesTable = (
 const columnValidationSubscriptionHelper = createColumnHelper<deadlineType>()
 
 export const columnsValidationTable = [
-    columnValidationSubscriptionHelper.accessor('id', {
-        cell: (info) => info.getValue().slice(0, 4) + info.getValue().slice(-4),
+    columnValidationSubscriptionHelper.accessor('ref', {
+        cell: (info) => info.getValue().slice(0, 3) + info.getValue().slice(-3),
         header: 'Réf',
         footer: (info) => info.column.id,
     }),
     columnValidationSubscriptionHelper.accessor('date', {
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+            const date = formatDate(new Date(info.getValue()), 'long')
+            return (
+                date.split(' ')[1] +
+                ' ' +
+                date.split(' ')[0] +
+                ' ' +
+                date.split(' ')[2]
+            )
+        },
         header: 'Date d’échéance',
         footer: (info) => info.column.id,
     }),
     columnValidationSubscriptionHelper.accessor('amount', {
-        cell: (info) =>
-            info
-                .getValue()
-                .amount.toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' MAD',
+        cell: (info) => {
+            const type = info.row.getValue('deadlineStatus') as string
+            return (
+                <div
+                    className={`${
+                        type == 'CONFIRMED_BY_PARTNER' && 'text-coral-500'
+                    }`}
+                >
+                    {info
+                        .getValue()
+                        .amount.toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' MAD'}
+                </div>
+            )
+        },
         header: 'Prix d’échéance',
         footer: (info) => info.column.id,
     }),
@@ -210,23 +244,25 @@ export const columnsValidationTable = [
     columnValidationSubscriptionHelper.accessor('deadlineStatus', {
         cell: (info) => {
             const id = info.row.getValue('id') as string
-            const payable = info.row.getValue('payable')
+            const payable = info.row.getValue('payable')! as boolean
             const status = info.getValue()
+            console.log('status', status)
             return (
                 <ConfirmPayment
                     id={id}
-                    disabled={!payable || status != 'CONFIRMED_BY_FOODEALS'}
+                    disabled={payable && !(status == 'CONFIRMED_BY_PARTNER')}
                     label={
-                        status == 'CONFIRMED_BY_FOODEALS'
-                            ? 'Reçu'.toUpperCase()
-                            : 'A Recevoir'
+                        status == 'CONFIRMED_BY_PARTNER'
+                            ? 'A Recevoir'.toUpperCase()
+                            : 'Reçu'.toUpperCase()
                     }
+                    className="w-full"
                 />
             )
         },
         header: 'Validation',
         footer: (info) => info.column.id,
-        maxSize: 1,
+        size: 20,
     }),
 ]
 
@@ -235,6 +271,7 @@ export const columnsValidationTable = [
 export const defaultDataValidationTable: deadlineType[] = [
     {
         id: '1',
+        ref: '231234',
         date: '2021-06-01',
         deadlineStatus: 'CONFIRMED_BY_FOODEALS',
         amount: {
@@ -245,18 +282,20 @@ export const defaultDataValidationTable: deadlineType[] = [
     },
     {
         id: '2',
+        ref: '234324234',
         date: '2021-07-01',
         deadlineStatus: 'CONFIRMED_BY_PARTNER',
         amount: {
             amount: 1000,
             currency: 'MAD',
         },
-        payable: false,
+        payable: true,
     },
 ]
 
 export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
     {
+        id: '1',
         reference: '123456789',
         type: PartnerEntitiesType.SUB_ENTITY,
         partner: {
@@ -272,6 +311,7 @@ export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
         payable: true,
     },
     {
+        id: '2',
         reference: '123456789',
         type: PartnerEntitiesType.SUB_ENTITY,
         partner: {
@@ -287,6 +327,7 @@ export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
         payable: false,
     },
     {
+        id: '3',
         reference: '123456789',
         type: PartnerEntitiesType.PARTNER_SB,
         partner: {
