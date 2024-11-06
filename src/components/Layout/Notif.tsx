@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Terminal, CheckCircle, XCircle, X, Info } from 'lucide-react'
+import { CheckCircle, XCircle, X, Info } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { NotificationType } from '@/types/GlobalType'
 
@@ -11,71 +11,21 @@ interface NotificationProps {
 
 function Notif({ type, message }: NotificationProps) {
     const [show, setShow] = useState(true)
-    const [progress, setProgress] = useState(100)
-    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
-    const [hideTimerId, setHideTimerId] = useState<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
-        const totalDuration = 5000 // 5 seconds
-        const intervalDuration = 100 // 0.1 seconds
-        const decrementAmount = (100 / totalDuration) * intervalDuration
-
-        const id = setInterval(() => {
-            setProgress((prev) => {
-                if (prev <= 0) {
-                    clearInterval(id)
-                    setShow(false)
-                    return 0
-                }
-                return prev - decrementAmount
-            })
-        }, intervalDuration)
-
-        setIntervalId(id)
-
         const timer = setTimeout(() => {
             setShow(false)
-            clearInterval(id)
-        }, totalDuration)
-
-        setHideTimerId(timer)
+        }, 5000)
 
         return () => {
             clearTimeout(timer)
-            clearInterval(id)
         }
     }, [])
 
     if (!message) return null
+
     const handleClose = () => {
         setShow(false)
-        if (intervalId) clearInterval(intervalId)
-        if (hideTimerId) clearTimeout(hideTimerId)
-    }
-
-    const handleMouseEnter = () => {
-        if (intervalId) clearInterval(intervalId)
-        if (hideTimerId) clearTimeout(hideTimerId)
-    }
-
-    const handleMouseLeave = () => {
-        if (progress > 0) {
-            const id = setInterval(() => {
-                setProgress((prev) => {
-                    if (prev <= 0) {
-                        setShow(false)
-                        clearInterval(id)
-                        return 0
-                    }
-                    return prev - 100 / (5000 / 100) // Resume decrementing
-                })
-            }, 100)
-            setIntervalId(id)
-        }
-        const timer = setTimeout(() => {
-            setShow(false)
-        }, 5000)
-        setHideTimerId(timer)
     }
 
     if (!show) return null
@@ -87,27 +37,25 @@ function Notif({ type, message }: NotificationProps) {
                 zIndex: 999,
             }}
         >
-            <Alert
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={`transition-opacity duration-500 min-w-60 relative text-white p-0 ${
+            <div
+                className={`transition-opacity flex justify-between rounded-[20px] h-[72px] lg:h-fit items-center gap-2.5 duration-500 border-[2px] text-sm font-semibold relative  p-6 lg:p-4   ${
                     show ? 'opacity-100' : 'opacity-0'
                 } ${
                     type === NotificationType.SUCCESS &&
-                    ' bg-mountain-400 border-mountain-50'
+                    ' bg-mountain-100 border-mountain-500 text-mountain-500'
                 }
                 ${
                     type === NotificationType.ERROR &&
-                    ' bg-coral-500 border-coral-50'
+                    ' bg-coral-50 border-coral-500 text-coral-500'
                 }
                 ${
                     type === NotificationType.INFO &&
-                    ' bg-lynch-500 border-lynch-50'
+                    ' bg-lynch-50 border-lynch-500 text-lynch-500'
                 }
                 `}
             >
-                <AlertTitle className="flex justify-start items-center space-x-2 px-4 pt-4 ">
-                    <div className="rounded-full animate-bounce">
+                <div className="flex justify-start items-center space-x-2 animate-ping">
+                    <div className="rounded-full ">
                         {type === NotificationType.SUCCESS && (
                             <CheckCircle className="size-6 " />
                         )}
@@ -118,29 +66,12 @@ function Notif({ type, message }: NotificationProps) {
                             <Info className="size-6" />
                         )}
                     </div>
-                    <div className="text-sm font-semibold">
-                        {type === NotificationType.SUCCESS && 'Success!'}
-                        {type === NotificationType.ERROR && 'Error!'}
-                        {type === NotificationType.INFO && ' Info!'}
-                    </div>
-                </AlertTitle>
-                <AlertDescription className="px-4 py-2 text-xs">
-                    {message}
-                </AlertDescription>
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-lynch-50/20">
-                    <div
-                        className="progress-bar h-1 bg-white rounded-xl"
-                        style={{ width: `${progress}%` }}
-                    />
                 </div>
-                <button
-                    type="button"
-                    onClick={handleClose}
-                    className="top-1 right-1 absolute"
-                >
+                <h4 className="">{message}</h4>
+                <button type="button" onClick={handleClose} className="">
                     <X />
                 </button>
-            </Alert>
+            </div>
         </div>
     )
 }
