@@ -91,7 +91,7 @@ const PaymentCommissionCard = ({
     ]
     const name = commission.partnerInfoDto.name
     return (
-        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] max-w-[500px] min-w-min">
+        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] items-start h-fit w-full">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
@@ -161,13 +161,13 @@ const PaymentCommissionCard = ({
                 ))}
             </div>
             {showValidation && (
-                <div className="flex flex-wrap justify-normal">
+                <div className="flex flex-wrap justify-normal w-full">
                     {payed ? (
                         <PaymentValidation
                             IconRight={CheckCheck}
                             label="Payé"
                             className="w-full bg-mountain-400 text-white hover:text-mountain-400 hover:bg-white"
-                            isMobile={true}
+                            isMobile
                             id={commission.id}
                         />
                     ) : (
@@ -175,7 +175,7 @@ const PaymentCommissionCard = ({
                             IconRight={CheckCheck}
                             label="Confirmer"
                             className="w-full bg-mountain-400 text-white hover:text-mountain-400 hover:bg-white"
-                            isMobile={true}
+                            isMobile
                             id={commission.id}
                         />
                     )}

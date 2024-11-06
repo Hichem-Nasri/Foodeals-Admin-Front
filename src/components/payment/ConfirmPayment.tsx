@@ -33,6 +33,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { ConfirmCommission } from '@/lib/api/payment/ConfirmCommission'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
+import MobileHeader from '../utils/MobileHeader'
 
 interface ConfirmPaymentProps {
     id: string
@@ -98,6 +99,10 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
         label: option.name,
     }))
     const fullName = `${confirmationDetails?.emitter.firstName} ${confirmationDetails?.emitter.lastName}`
+    const openDocument = () => {
+        window.open(confirmationDetails.documentPath!, '_blank')
+    }
+
     return (
         <Dialog>
             <DialogTrigger disabled={disabled} asChild>
@@ -125,11 +130,16 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                     />
                 )}
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-5 rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem]">
-                <DialogTitle className="text-[1.375rem] font-normal text-lynch-400">
+            <DialogContent className="[&>.Icon]:hidden lg:p-5 lg:rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem] p-0 top-0 translate-y-0 left-[50%] lg:top-[50%] lg:translate-y-[-50%]  overflow-auto max-h-screen rounded-none">
+                <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Commission a recevoir
                 </DialogTitle>
-                <div className="flex flex-col gap-3">
+                <MobileHeader
+                    title="Commission a recevoir"
+                    onClick={() => {}}
+                    buttonType="dialog"
+                />
+                <div className="flex flex-col gap-3 overflow-y-auto max-h-[100vh] h-full lg:p-0 px-5 py-2 ">
                     <div className="flex lg:flex-row flex-col items-center gap-4">
                         <Select
                             disabled
@@ -195,15 +205,18 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                             label="Amount"
                         />
                     </div>
-                    <div className="flex lg:flex-row flex-col items-center gap-4">
+                    <div className="flex lg:flex-row flex-col items-center gap-4 lg:mb-0 mb-[140px]">
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                             <Label
                                 label="Document de virement"
                                 className="text-xs font-semibold text-lynch-950"
                             />
-                            <span
+                            <button
+                                type="button"
+                                title="open document"
                                 key={confirmationDetails.documentPath}
-                                className="flex items-center gap-5 rounded-[24px] bg-lynch-50 p-4 w-full"
+                                className="flex items-center gap-5 rounded-[24px] bg-lynch-50 p-4 w-full cursor-pointer"
+                                onClick={openDocument}
                             >
                                 <Image
                                     width={48}
@@ -221,11 +234,10 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                                     label={confirmationDetails.documentPath!}
                                     className="text-lynch-500 text-base font-normal"
                                 />
-                                document
-                            </span>
+                            </button>
                         </div>
                     </div>
-                    <div className="flex lg:flex-row flex-col items-center lg:justify-end gap-3 mt-2">
+                    <div className="flex absolute bottom-0 left-0 right-0 lg:relative items-center lg:justify-end gap-3 lg:mt-2 p-2 bg-white rounded-t-[12px] lg:bg-transparent">
                         <DialogClose asChild>
                             <CustomButton
                                 type="button"

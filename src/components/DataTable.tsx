@@ -30,6 +30,8 @@ interface DataTableProps<T> {
     }
     hidden?: boolean
     isLoading?: boolean
+    back?: boolean
+    onBack?: () => void
 }
 
 export const DataTable: FC<DataTableProps<any>> = ({
@@ -41,6 +43,8 @@ export const DataTable: FC<DataTableProps<any>> = ({
     partnerData = undefined,
     hidden,
     isLoading,
+    back = true,
+    onBack,
 }) => {
     const router = useRouter()
     const [count, setCount] = useState(1)
@@ -48,7 +52,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
 
     return (
         <>
-            <div className="lg:hidden grid gap-[0.625rem] border-0  m-auto w-full px-3">
+            <div className="lg:hidden grid gap-[0.625rem] border-0  w-full">
                 {isLoading ? (
                     <>
                         {elements.map((element, index) => (
@@ -58,13 +62,35 @@ export const DataTable: FC<DataTableProps<any>> = ({
                         ))}
                     </>
                 ) : (
-                    <>
-                        {data.map((value, index) => (
-                            <Fragment key={title + index}>
-                                {transform(value)}
-                            </Fragment>
-                        ))}
-                    </>
+                    <div className="flex flex-col items-start space-y-3 w-full">
+                        {partnerData && (
+                            <div className="flex justify-start items-center">
+                                <Avatar>
+                                    <AvatarImage src={partnerData.avatar!} />
+                                    <AvatarFallback>
+                                        {partnerData.name}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col gap-1">
+                                    <Label
+                                        label={partnerData.name}
+                                        className="text-base font-normal"
+                                    />
+                                    <Label
+                                        label={partnerData.city!}
+                                        className="text-primary text-xs font-semibold"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        <div className=" w-full rounded-lg space-y-3">
+                            {data.map((value, index) => (
+                                <Fragment key={title + index}>
+                                    {transform(value)}
+                                </Fragment>
+                            ))}
+                        </div>
+                    </div>
                 )}
             </div>
             {isLoading ? (
@@ -72,7 +98,7 @@ export const DataTable: FC<DataTableProps<any>> = ({
             ) : (
                 <div className="lg:grid hidden gap-[0.625rem]">
                     {partnerData && (
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between px-4">
                             <h1
                                 className={`${
                                     hidden && 'hidden'
@@ -97,13 +123,21 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                         className="text-primary text-xs font-semibold"
                                     />
                                 </div>
-                                <CustomButton
-                                    className="h-fit py-4 text-lynch-500 ml-1"
-                                    label="Retour"
-                                    IconLeft={ArrowLeft}
-                                    variant="outline"
-                                    onClick={() => router.back()}
-                                />
+                                {back && (
+                                    <CustomButton
+                                        className="h-fit py-4 text-lynch-500 ml-1"
+                                        label="Retour"
+                                        IconLeft={ArrowLeft}
+                                        variant="outline"
+                                        onClick={() => {
+                                            if (onBack) {
+                                                onBack()
+                                            } else {
+                                                router.back()
+                                            }
+                                        }}
+                                    />
+                                )}
                             </div>
                         </div>
                     )}
@@ -142,10 +176,12 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                                           .id ===
                                                                       'logo'
                                                                     ? 'min-w-28'
-                                                                    : header.id ===
-                                                                          'id' ||
-                                                                      header.id ===
-                                                                          'organizationId'
+                                                                    : [
+                                                                          'organizationId',
+                                                                          'id',
+                                                                      ].includes(
+                                                                          header.id
+                                                                      )
                                                                     ? 'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit'
                                                                     : '',
                                                                 header.column
@@ -169,10 +205,12 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                                               .header,
                                                                           header.getContext()
                                                                       )}
-                                                                {(header.id !==
-                                                                    'id' &&
-                                                                    header.id !==
-                                                                        'organizationId' &&
+                                                                {(![
+                                                                    'organizationId',
+                                                                    'id',
+                                                                ].includes(
+                                                                    header.id
+                                                                ) &&
                                                                     {
                                                                         asc: (
                                                                             <ChevronUp />
@@ -205,10 +243,12 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                                     key={cell.id}
                                                     className={cn(
                                                         'w-fit',
-                                                        cell.column.id ===
-                                                            'id' ||
-                                                            cell.column.id ==
-                                                                'organizationId'
+                                                        [
+                                                            'organizationId',
+                                                            'id',
+                                                        ].includes(
+                                                            cell.column.id
+                                                        )
                                                             ? 'sticky right-0 shadow-md bg-white min-w-none'
                                                             : ''
                                                     )}
