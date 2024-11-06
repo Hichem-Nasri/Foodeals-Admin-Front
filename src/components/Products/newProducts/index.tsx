@@ -50,7 +50,7 @@ const CreateProduct: FC<CreateProductProps> = ({ data }) => {
                     edit={edit}
                 />
                 {!edit && (
-                    <div className="flex justify-end p-2 bg-white w-full rounded-[18px] items-center">
+                    <div className="hidden lg:flex justify-end p-2 bg-white w-full rounded-[18px] items-center">
                         <CustomButton
                             label="Archive"
                             size="sm"

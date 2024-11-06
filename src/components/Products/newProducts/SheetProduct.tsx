@@ -102,7 +102,7 @@ export const SheetProduct: FC<SheetProductProps> = ({ open, setOpen }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent
-                className="min-w-[860px] max-w-full px-4 max-h-[calc(100vh-200px)] overflow-auto"
+                className="min-w-full m-1 lg:min-w-[860px] max-w-full px-4 max-h-[calc(100vh-200px)] overflow-auto"
                 showContent={false}
             >
                 <DialogTitle className="text-lynch-500 flex justify-between items-center  text-wrap text-lg font-light">

@@ -23,7 +23,6 @@ import {
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { Button } from '../ui/button'
-import DropDownList from './DropDownMobile'
 
 interface ProductProps {}
 
@@ -78,27 +77,6 @@ const Product: FC<ProductProps> = () => {
                 transform={(value) => <ProductCard product={value} />}
                 isLoading={isLoading}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 fixed right-2 bottom-2">
-                <DropDownList
-                    list={[
-                        {
-                            label: 'Ajouter un produit',
-                            href: '',
-                            icon: <Plus size={22} />,
-                        },
-                    ]}
-                    setSheet={() => {}}
-                    setImage={() => {}}
-                    isMobile
-                >
-                    <Button
-                        onClick={() => {}}
-                        className="size-14 rounded-full text-white bg-primary"
-                    >
-                        <Plus size={22} />
-                    </Button>
-                </DropDownList>
-            </div>
         </div>
     )
 }

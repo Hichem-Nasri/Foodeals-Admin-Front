@@ -96,7 +96,7 @@ export function ImageUpload() {
     return (
         <>
             <div
-                className="relative w-full h-full rounded-md outline-dashed outline-2 hover:outline outline-lynch-400 border-gray-300 overflow-hidden cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-lynch-50"
+                className="relative w-full h-full rounded-md outline-dashed outline-2 hover:outline outline-lynch-400 border-gray-300 overflow-hidden cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-lynch-50 hidden lg:flex flex-col"
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 onClick={handleClick}

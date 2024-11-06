@@ -27,6 +27,8 @@ import DropDownList from './DropDownList'
 import { NewImageProduct } from './newProducts/newImage'
 import { UploadFile } from '../Partners/NewPartner/UploadFile'
 import { SheetProduct } from './newProducts/SheetProduct'
+import { set } from 'date-fns'
+import DropDownListMobile from './DropDownMobile'
 
 interface FilterProductsProps {
     table: any
@@ -131,8 +133,33 @@ const FilterProducts: FC<FilterProductsProps> = ({
                     IconLeft={ArrowRight}
                 />
             </div>
-            <NewImageProduct open={open} setOpen={setOpen} />
-            <SheetProduct open={image} setOpen={setImage} />
+            <div className="lg:hidden flex flex-col items-center gap-4 fixed right-2 bottom-2">
+                <DropDownListMobile
+                    list={[
+                        {
+                            label: 'Ajouter un produit',
+                            href: '',
+                            icon: <Plus size={22} />,
+                        },
+                    ]}
+                    setSheet={() => {
+                        setOpen(true)
+                    }}
+                    setImage={() => {
+                        setImage(true)
+                    }}
+                    isMobile
+                >
+                    <Button
+                        onClick={() => {}}
+                        className="size-14 rounded-full text-white bg-primary"
+                    >
+                        <Plus size={22} />
+                    </Button>
+                </DropDownListMobile>
+            </div>
+            <NewImageProduct open={image} setOpen={setImage} />
+            <SheetProduct open={open} setOpen={setOpen} />
         </div>
     )
 }
