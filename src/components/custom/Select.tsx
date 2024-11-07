@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
 import {
     Select as SelectShadCn,
     SelectContent,
@@ -11,7 +11,7 @@ import { AvatarAndName } from '../AvatarAndName'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { Input } from './Input'
-import { Search, SearchCheck } from 'lucide-react'
+import { LucideProps, Search, SearchCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SelectProps {
@@ -27,6 +27,12 @@ interface SelectProps {
     inputRef?: React.RefObject<HTMLInputElement>
     className?: string
     classNameParent?: string
+    LeftIcon?: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >
+    RightIcon?: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >
 }
 
 export const Select: FC<SelectProps> = ({
@@ -42,6 +48,8 @@ export const Select: FC<SelectProps> = ({
     className,
     inputRef,
     classNameParent,
+    LeftIcon,
+    RightIcon,
 }) => {
     const avatar = options?.find(
         (option) => option.key.toString() === value
@@ -70,12 +78,19 @@ export const Select: FC<SelectProps> = ({
                 }}
             >
                 <SelectTrigger
-                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-30 ${
+                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-30 w-full ${
                         options?.find((option) => option.key === value)?.label
                             ? 'border-textGray'
                             : ''
-                    } `}
+                    } ${(LeftIcon || RightIcon) && '[&>.icon]:hidden'} `}
                 >
+                    {LeftIcon && (
+                        <LeftIcon
+                            size={20}
+                            className="text-lynch-400 ml-[0
+                            5rem]"
+                        />
+                    )}
                     {!value ? (
                         <span className="text-base text-start font-normal line-clamp-1">
                             {placeholder}
@@ -115,6 +130,9 @@ export const Select: FC<SelectProps> = ({
                                 value
                             )}
                         </div>
+                    )}
+                    {RightIcon && (
+                        <RightIcon size={20} className="text-lynch-400" />
                     )}
                 </SelectTrigger>
                 <SelectContent className="absolute z-50">
