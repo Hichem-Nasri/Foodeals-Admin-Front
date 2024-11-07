@@ -107,15 +107,13 @@ export interface partnerCommissionType {
 export type partnerCommissionMonthType = {
     id: string
     ref: string
-    amount: number
-    cashAmount: number
-    cardAmount: number
-    cashCommission: number
-    commissionCard: number
+    amount: PriceType
+    cashAmount: PriceType
+    cardAmount: PriceType
+    cashCommission: PriceType
+    commissionCard: PriceType
     quantity: number
     product: Omit<PartnerInfoDto, 'id'>
-    payable: boolean
-    paymentStatus: PaymentStatusEnum
 }
 export interface partnerSubscriptionType {
     id: string
@@ -128,7 +126,7 @@ export interface partnerSubscriptionType {
 }
 
 export const PaymentFilterSchema = z.object({
-    date: z.date().optional(),
+    date: z.string().optional(),
     partner: z.string().optional(),
 })
 
@@ -197,14 +195,18 @@ export type partnerSubscriptonOnesType = {
     deadlines: deadlineType[]
     solution: PartnerSolutionType[]
 }
+
+export enum DeadlineStatus {
+    PAYED_BY_PARTNER = 'PAYED_BY_PARTNER',
+    CONFIRMED_BY_FOODEALS = 'CONFIRMED_BY_FOODEALS',
+    IN_VALID = 'IN_VALID',
+}
+
 export type deadlineType = {
     id: string
     ref: string
     date: string
-    deadlineStatus:
-        | 'CONFIRMED_BY_FOODEALS'
-        | 'IN_VALID'
-        | 'CONFIRMED_BY_PARTNER'
+    deadlineStatus: DeadlineStatus
     amount: PriceType
     payable: boolean
 }
@@ -227,7 +229,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '1',
                 ref: '123456789',
                 date: '2021-06-01',
-                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                deadlineStatus: DeadlineStatus.CONFIRMED_BY_FOODEALS,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',
@@ -238,7 +240,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '2',
                 ref: '123456789',
                 date: '2021-07-01',
-                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                deadlineStatus: DeadlineStatus.PAYED_BY_PARTNER,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',
@@ -265,7 +267,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '1',
                 ref: '123456789',
                 date: '2021-06-01',
-                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                deadlineStatus: DeadlineStatus.IN_VALID,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',
@@ -276,7 +278,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '2',
                 ref: '123456789',
                 date: '2021-07-01',
-                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                deadlineStatus: DeadlineStatus.PAYED_BY_PARTNER,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',
@@ -303,7 +305,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '1',
                 ref: '123456789',
                 date: '2021-06-01',
-                deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+                deadlineStatus: DeadlineStatus.IN_VALID,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',
@@ -314,7 +316,7 @@ export const defaultDataSubscriptionOnesTable: partnerSubscriptonOnesType[] = [
                 id: '2',
                 ref: '123456789',
                 date: '2021-07-01',
-                deadlineStatus: 'CONFIRMED_BY_PARTNER',
+                deadlineStatus: DeadlineStatus.PAYED_BY_PARTNER,
                 amount: {
                     amount: 1000,
                     currency: 'MAD',

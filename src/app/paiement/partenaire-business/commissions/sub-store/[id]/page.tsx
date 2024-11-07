@@ -1,11 +1,17 @@
 import { Layout } from '@/components/Layout/Layout'
-import React from 'react'
+import React, { FC } from 'react'
 import CommissionMonth from './commissionMonth'
 
-const CommissionMonthPage = () => {
+interface CommissionMonthProps {
+    params: {
+        id: string
+    }
+}
+
+const CommissionMonthPage: FC<CommissionMonthProps> = ({ params }) => {
     return (
         <Layout>
-            <CommissionMonth />
+            <CommissionMonth id={params.id} />
         </Layout>
     )
 }

@@ -37,7 +37,7 @@ const Payment: FC<PaymentProps> = ({ payments }) => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date(),
+        date: new Date().toISOString(),
         partner: 'all',
     })
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {

@@ -70,7 +70,12 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date(),
+        date: new Date()
+            .toISOString()
+            .slice(0, 10)
+            .split('-')
+            .slice(0, 2)
+            .join('-'),
         partner: 'all',
     })
 
@@ -111,6 +116,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
         console.log(data)
+        // handle filter by refetching date with the new filter
     }
 
     const { handleSubmit } = form

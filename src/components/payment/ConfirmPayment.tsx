@@ -122,7 +122,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
                         label={label}
                         variant="outline"
                         className={cn(
-                            'flex lg:hidden h-fit py-3 px-7 rounded-[18px] text-primary border-primary ml-1',
+                            'flex lg:hidden h-fit py-4 px-7 w-full rounded-[18px] text-primary border-primary ml-1',
                             className
                         )}
                         disabled={disabled}

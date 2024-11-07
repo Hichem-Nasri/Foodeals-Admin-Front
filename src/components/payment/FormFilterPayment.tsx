@@ -12,6 +12,7 @@ import { Label } from '../Label'
 import { PartnerOptions } from '@/lib/utils'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { SelectField } from '../custom/SelectField'
+import SelectDate from '../utils/SelectDate'
 
 interface FormFilterPaymentProps {
     options: MultiSelectOptionsType[]
@@ -35,25 +36,20 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                 <div className="flex lg:flex-row flex-grow flex-col items-end gap-3 p-4 bg-white rounded-[14px] w-full">
                     <FormField
                         control={control}
-                        name={'date' as any}
+                        name={'date'}
                         render={({ field }) => (
-                            <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                                <Label
-                                    label="Etat mensuel en cours"
-                                    className="text-sm font-semibold text-lynch-950"
-                                />
-                                <DatePicker
-                                    myFormat={dateForm}
-                                    onChange={(value) => {
-                                        field.onChange(value)
-                                        if (onBlurMode === 'onChange') {
-                                            handleSubmit(onSubmit)()
-                                        }
-                                    }}
-                                    value={field.value}
-                                />
-                                <FormMessage {...field} />
-                            </div>
+                            <SelectDate
+                                onChange={(value) => {
+                                    field.onChange(value)
+                                    if (onBlurMode === 'onChange') {
+                                        handleSubmit(onSubmit)()
+                                    }
+                                }}
+                                label="Etat mensuel en cours"
+                                format={dateForm}
+                                placeholder="Selectionner une date"
+                                value={field.value!}
+                            />
                         )}
                     />
                     <SelectField

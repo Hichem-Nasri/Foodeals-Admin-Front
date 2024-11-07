@@ -49,23 +49,23 @@ const CommissionSubStoreCard = ({
         },
         {
             label:
-                commission.cardAmount > 0
-                    ? 'V.CARTE: ' + commission.cardAmount
-                    : 'V.ESPECE: ' + commission.cashAmount,
-            icon: commission.cardAmount > 0 ? CreditCard : Coins,
+                commission.cardAmount.amount > 0
+                    ? 'V.CARTE: ' + commission.cardAmount.amount
+                    : 'V.ESPECE: ' + commission.cashAmount.amount,
+            icon: commission.cardAmount.amount > 0 ? CreditCard : Coins,
         },
         {
             label:
-                commission.commissionCard > 0
-                    ? 'C.CARTE: ' + commission.commissionCard
-                    : 'C.ESPECE: ' + commission.cashCommission,
-            icon: commission.commissionCard > 0 ? CreditCard : Coins,
+                commission.commissionCard.amount > 0
+                    ? 'C.CARTE: ' + commission.commissionCard.amount
+                    : 'C.ESPECE: ' + commission.cashCommission.amount,
+            icon: commission.commissionCard.amount > 0 ? CreditCard : Coins,
             className: '',
         },
     ]
     const name = commission.product.name
     return (
-        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] max-w-[400px] items-center justify-center">
+        <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] w-full items-center justify-center">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">

@@ -5,11 +5,11 @@ import { PaymentCommission } from '@/types/paymentUtils'
 export async function fetchSubscription(
     currentPage: number,
     pageSize: number,
-    date: Date,
+    date: string,
     partner: string
 ): Promise<{ status: number; data: any }> {
     try {
-        const year = date.getFullYear()
+        const year = new Date(date).getFullYear()
         const url =
             `${API_SUBSCRIPTIONS}/${year}?page=${currentPage}&size=${pageSize}` +
             (partner !== 'all' ? `&partner=${partner}` : '')

@@ -3,6 +3,7 @@ import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { AppRoutes } from '@/lib/routes'
 import { PartnerSolutionType } from '@/types/partnersType'
 import {
+    DeadlineStatus,
     deadlineType,
     partnerSubscriptionType,
     partnerSubscriptonOnesType,
@@ -223,7 +224,8 @@ export const columnsValidationTable = [
             return (
                 <div
                     className={`${
-                        type == 'CONFIRMED_BY_PARTNER' && 'text-coral-500'
+                        type == DeadlineStatus.CONFIRMED_BY_FOODEALS &&
+                        'text-coral-500'
                     }`}
                 >
                     {info
@@ -250,9 +252,12 @@ export const columnsValidationTable = [
             return (
                 <ConfirmPayment
                     id={id}
-                    disabled={payable && !(status == 'CONFIRMED_BY_PARTNER')}
+                    disabled={
+                        payable &&
+                        !(status == DeadlineStatus.CONFIRMED_BY_FOODEALS)
+                    }
                     label={
-                        status == 'CONFIRMED_BY_PARTNER'
+                        status == DeadlineStatus.CONFIRMED_BY_FOODEALS
                             ? 'A Recevoir'.toUpperCase()
                             : 'Reçu'.toUpperCase()
                     }
@@ -273,7 +278,7 @@ export const defaultDataValidationTable: deadlineType[] = [
         id: '1',
         ref: '231234',
         date: '2021-06-01',
-        deadlineStatus: 'CONFIRMED_BY_FOODEALS',
+        deadlineStatus: DeadlineStatus.PAYED_BY_PARTNER,
         amount: {
             amount: 1000,
             currency: 'MAD',
@@ -284,7 +289,7 @@ export const defaultDataValidationTable: deadlineType[] = [
         id: '2',
         ref: '234324234',
         date: '2021-07-01',
-        deadlineStatus: 'CONFIRMED_BY_PARTNER',
+        deadlineStatus: DeadlineStatus.CONFIRMED_BY_FOODEALS,
         amount: {
             amount: 1000,
             currency: 'MAD',

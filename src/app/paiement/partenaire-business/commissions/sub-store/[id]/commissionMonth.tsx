@@ -1,5 +1,5 @@
 'use client'
-import React, { Fragment, useState } from 'react'
+import React, { FC, Fragment, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
@@ -47,34 +47,24 @@ import { z } from 'zod'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import MobileHeader from '@/components/utils/MobileHeader'
+import { getFilterDate } from '@/lib/utils'
+import ConfirmationAll, {
+    DetailsPayment,
+} from '../../../../../../components/payment/PaymentDetails/ConfirmationAll'
+import PaginationData from '@/components/utils/PaginationData'
 
-const CommissionMonth = () => {
-    const { id } = useParams()
-    const fetchCommissionMonth = async () => {
-        // fetch CommissionMonth by id
-    }
+interface CommissionMonthProps {
+    id: string
+}
+
+const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     const [commissionMonth, setCommissionMonth] = useState<
         partnerCommissionMonthType[]
     >(defaultDataCommissionMonthTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() => {
-        return [
-            ...defaultDataCommissionTable.map(
-                (partner) =>
-                    ({
-                        key: partner.organizationId,
-                        label: partner.partnerInfoDto.name,
-                    } as MultiSelectOptionsType)
-            ),
-            {
-                key: 'all',
-                label: 'Tous les partenaires',
-                avatar: '/all-partners.svg',
-            },
-        ]
-    })
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
     const [totalCommission, setTotalCommission] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
@@ -83,7 +73,7 @@ const CommissionMonth = () => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date(),
+        date: getFilterDate(new Date()),
         partner: 'all',
     })
     const form = useForm({
@@ -96,7 +86,7 @@ const CommissionMonth = () => {
         console.log(data)
     }
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['commissionMonth', id],
         queryFn: async () => {
             try {
@@ -106,19 +96,20 @@ const CommissionMonth = () => {
                     id as string,
                     dateAndPartner.date!
                 )
-                let totalCommission = 0,
-                    totalSales = 0
-                response.data.forEach((partner) => {
-                    if (partner.payable) {
-                        totalCommission +=
-                            partner.commissionCard || partner.cashCommission
-                        totalSales += partner.cashAmount || partner.cardAmount
-                    }
+                if (response.status === 500) {
+                    throw new Error('Error fetching commissions')
+                }
+                const { partner, statistics, operations } = response.data
+
+                setTotalCommission(statistics?.total.amount)
+                setTotalSales(statistics?.totalCommission.amount)
+                setTotalPages(operations.totalPages)
+                setCommissionMonth(operations.content)
+                setDateAndPartner((prev) => {
+                    return { ...prev, partner: partner.name }
                 })
-                setTotalCommission(totalCommission)
-                setTotalSales(totalSales)
-                setCommissionMonth(response.data)
                 // setOptions(options)
+                console.log('response', response.data)
                 return response.data
             } catch (error) {
                 notify.notify(
@@ -128,6 +119,7 @@ const CommissionMonth = () => {
                 throw new Error('Error fetching commissions')
             }
         },
+        refetchOnWindowFocus: false,
     })
     const { handleSubmit } = form
     const tableCommission = useReactTable({
@@ -143,13 +135,13 @@ const CommissionMonth = () => {
     const handleConfirmAll = () => {
         // handle confirm all
     }
-
+    console.log('data', data)
     return (
         <Fragment>
-            <div className="flex flex-col gap-3 w-full">
+            <div className="flex flex-col gap-3 w-full px-3 lg:px-0">
                 <SwitchPayment />
-                <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                    <div className="hidden lg:flex">
+                <div className="flex lg:flex-row flex-col-reverse items-center gap-3 w-full">
+                    <div className="hidden lg:flex w-1/2">
                         <FilterTablePayment
                             form={form}
                             onSubmit={onSubmit}
@@ -161,12 +153,14 @@ const CommissionMonth = () => {
                         title="Total des ventes"
                         value={totalCommission}
                         className="text-mountain-400 bg-mountain-400"
+                        isLoading={isLoading}
                     />
                     <CardTotalValue
                         Icon={Percent}
                         title="Total des commissions"
                         value={totalSales}
                         className="bg-amethyst-500 text-amethyst-500"
+                        isLoading={isLoading}
                     />
                 </div>
                 <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
@@ -175,11 +169,9 @@ const CommissionMonth = () => {
                         <SwitchValidation />
                     </div>
                     <div className="flex justify-center items-center space-x-4">
-                        <PaymentValidation
-                            id={id as string}
-                            label="Confirmer tout"
-                            className="rounded-[12px] h-12"
-                            IconRight={CheckCheck}
+                        <ConfirmationAll
+                            isLoading={isLoading}
+                            details={data?.details}
                         />
                         <CustomButton
                             label={'3025'}
@@ -199,12 +191,17 @@ const CommissionMonth = () => {
                     )}
                     isLoading={isLoading}
                 />
-                <div className="lg:hidden flex flex-col items-center gap-4 my-3">
-                    <PaymentValidation
-                        id={id as string}
-                        label="Confirmer tout"
-                        className="rounded-[12px] h-12"
-                        IconRight={CheckCheck}
+                <PaginationData
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    setCurrentPage={setCurrentPage}
+                    refetch={refetch}
+                />
+                <div className="lg:hidden flex flex-col items-center gap-4 my-3 w-full">
+                    <ConfirmationAll
+                        isLoading={isLoading}
+                        details={data?.details}
                         isMobile={true}
                     />
                 </div>
