@@ -1,4 +1,4 @@
-import { PartnerSolutionType } from '@/types/partners'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -7,10 +7,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk4MDgwNDIsImV4cCI6MTczMjQwMDA0Mn0.5oMMNpnpBvP5FuDA81h5zJFVKGFAbDdP2UGsGBmmvfPn5-ISJ6MCZkBJqJPVdVL_zQvn3i_S88pyntldVi7lIA'
+    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA5ODIzMDYsImV4cCI6MTczMzU3NDMwNn0.IP7vfnGin7YhIa1iqn6TGgc-jLsWp_AlbPQSGKXIiG1HqVBZjlsBfFXOXaqNEZb29Q7GTAp6Y3jcY6KQF7jD5A'
 
 export const headers = {
     Authorization: 'Bearer ' + accessToken,
+}
+
+export const getFilterDate = (date: Date) => {
+    return date.toISOString().slice(0, 10).split('-').slice(0, 2).join('-')
 }
 
 export const getSolutions = (solutions: string[]) => {
@@ -26,6 +30,18 @@ export const getSolutions = (solutions: string[]) => {
                 return PartnerSolutionType.NONE
         }
     })
+}
+
+export function formatDate(
+    date: Date,
+    typeMonth: '2-digit' | 'numeric' | 'long' | 'short' | 'narrow' = 'short'
+): string {
+    const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: typeMonth,
+        year: 'numeric',
+    }
+    return date.toLocaleDateString('en-US', options).replace(',', '')
 }
 
 export const countryCodes = [

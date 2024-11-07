@@ -46,6 +46,19 @@ export const AppRoutes = {
     parameter: '/parametre',
 }
 
+type MobilePagesType = {
+    href: string
+    label: string
+}
+
+export const mobileLayout: MobilePagesType[] = [
+    { href: 'partenaires/partenair/', label: 'Create Partner' },
+    {
+        href: '/paiement/partenaire-business/commissions/sub-store/',
+        label: 'operations de mois',
+    },
+]
+
 export const appApi = {
     partnerDetails: '/partner/{partnerId}',
     paymentReceived: '/v1/payments/form-data/{paymentId}?type=COMMISSION',
