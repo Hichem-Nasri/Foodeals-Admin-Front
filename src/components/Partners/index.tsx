@@ -23,6 +23,7 @@ import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
 import { columnsPartnersTable } from './column/partnerColumn'
+import PaginationData from '../utils/PaginationData'
 
 interface PartnersProps {
     params?: {
@@ -122,14 +123,13 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 )}
                 isLoading={isLoading}
             />
-            {archive && partners.length === 0 ? (
-                <div className="flex flex-col items-center gap-4">
-                    <h2 className="text-lg font-semibold text-lynch-950">
-                        Aucun partenaire archivé
-                    </h2>
-                </div>
-            ) : null}
-            {/* <PaginationData /> */}
+            <PaginationData
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                refetch={refetch}
+            />
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton
                     size="sm"

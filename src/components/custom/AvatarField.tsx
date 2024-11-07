@@ -31,7 +31,12 @@ export const AvatarField: FC<AvatarFieldProps> = ({
             control={control}
             name={name}
             render={({ field }) => (
-                <div className={cn('flex flex-col items-start', className)}>
+                <div
+                    className={cn(
+                        'flex flex-col items-start w-fit h-fit',
+                        className
+                    )}
+                >
                     <AvatarProfile
                         onChange={(file) => field.onChange(file)} // Pass the file to the form state
                         iUrl={field.value}
@@ -41,7 +46,7 @@ export const AvatarField: FC<AvatarFieldProps> = ({
                         disabled={disabled}
                         isLoaded={isLoaded}
                     />
-                    {/* <FormMessage /> */}
+                    <FormMessage />
                 </div>
             )}
         />

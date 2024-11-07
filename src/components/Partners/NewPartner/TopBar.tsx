@@ -136,7 +136,7 @@ export const TopBar: FC<TopBarProps> = ({
     }
 
     return (
-        <div className="flex lg:relative fixed bottom-0 left-0 z-30 justify-between w-full rounded-[18px] lg:bg-white">
+        <div className="flex lg:relative fixed bottom-0 left-0 z-50 justify-between w-full rounded-t-[18px] lg:rounded-[18px] bg-white">
             {!hideStatus && status && (
                 <div className="lg:flex items-center hidden gap-3 p-[1.125rem]">
                     <PartnerStatus status={status} />

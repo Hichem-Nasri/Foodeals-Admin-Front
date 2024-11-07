@@ -2,18 +2,8 @@ import { z } from 'zod'
 import { PartnerStatusType } from './partnersType'
 
 export const PartnerInformationSchema = z.object({
-    logo: z
-        .instanceof(File)
-        .refine((file) => file.size > 0, {
-            message: 'Veuillez ajouter une image de logo',
-        })
-        .optional(),
-    cover: z
-        .instanceof(File)
-        .refine((file) => file.size > 0, {
-            message: 'Veuillez ajouter une image de couverture',
-        })
-        .optional(),
+    logo: z.instanceof(File).optional(),
+    cover: z.instanceof(File).optional(),
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
     responsible: z.string().min(3),

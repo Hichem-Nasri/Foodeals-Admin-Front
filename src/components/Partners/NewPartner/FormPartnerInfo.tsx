@@ -71,16 +71,16 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                 <AccordionContent className="pt-7">
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="flex flex-col gap-[1.875rem]">
-                                <div className="flex relative gap-5 lg:pb-0 pb-14">
+                            <div className="flex flex-col gap-[1.875rem] h-auto">
+                                <div className="flex relative gap-5 lg:pb-0 pb-14 h-auto ">
                                     <AvatarField
                                         disabled={disabled}
                                         form={form}
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
-                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10"
-                                        classNameAvatar="rounded-full"
+                                        className="lg:static lg:translate-x-0 absolute bottom-0 left-1/2 -translate-x-1/2 z-10"
+                                        classNameAvatar="rounded-full lg:rounded-[24px]"
                                     />
                                     <AvatarField
                                         disabled={disabled}
