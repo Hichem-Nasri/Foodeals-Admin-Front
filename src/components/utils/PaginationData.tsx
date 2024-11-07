@@ -9,8 +9,6 @@ import {
     PaginationNext,
     PaginationEllipsis,
 } from '../ui/pagination'
-import { useQuery } from '@tanstack/react-query'
-import api from '@/api/Auth'
 import { cn } from '@/lib/utils'
 
 interface PaginationDataProps {

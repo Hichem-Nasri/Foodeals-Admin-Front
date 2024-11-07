@@ -43,6 +43,7 @@ import { z } from 'zod'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import MobileHeader from '@/components/utils/MobileHeader'
+import PaginationData from '@/components/utils/PaginationData'
 
 interface OperationsProps {}
 
@@ -61,7 +62,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     const notify = useNotification()
     const router = useRouter()
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['commissions'],
         queryFn: async () => {
             try {
@@ -77,13 +78,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 const data = response.data.commissions
                 setTotalPages(data.totalPages)
                 setTotalElements(data.totalElements)
-                setCommission(data.content)
+                // setCommission(data.content)
                 return response.data
             } catch (error) {
-                // notify.notify(
-                //     NotificationType.ERROR,
-                //     'Erreur lors de la récupération des données'
-                // )
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des données'
+                )
                 throw new Error('Error fetching commissions')
             }
         },
@@ -91,7 +92,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date(),
+        // date MM/yyyy
+        date: new Date()
+            .toISOString()
+            .slice(0, 10)
+            .split('-')
+            .slice(0, 2)
+            .join('-'),
         partner: 'all',
     })
     const form = useForm({
@@ -174,6 +181,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                         )}
                         hideColumns={['payable', 'entityId', 'id']}
                         isLoading={isLoading}
+                    />
+                    <PaginationData
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                        pageSize={pageSize}
+                        refetch={refetch}
                     />
                     <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                         <CustomButton
