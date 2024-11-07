@@ -22,7 +22,7 @@ const CardSkeleton = () => {
         },
     ]
     return (
-        <div className="lg:hidden flex flex-col gap-3 bg-white p-3 rounded-[20px] max-w-[400px] items-center justify-center animate-fade-down">
+        <div className="lg:hidden flex flex-col gap-3 bg-white p-3 rounded-[20px] w-full items-center justify-center animate-fade-down">
             <div className="w-full flex justify-between items-start">
                 <div className="flex gap-[0.375rem]">
                     <Skeleton className="size-20 rounded-full" />
