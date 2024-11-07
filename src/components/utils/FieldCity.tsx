@@ -37,7 +37,7 @@ const FieldCity: FC<FieldCityProps> = ({
             name={name}
             label={label}
             options={cities}
-            placeholder={placeholder}
+            placeholder={country ? placeholder : "Sélectionner le pays d'abord"}
             disabled={disabled}
             onChange={(value) => {
                 const id = cities.find((values) => values.key === value)?.id

@@ -39,7 +39,7 @@ const FieldRegion: FC<FieldRegionProps> = ({
             name={name}
             label={label}
             options={regions}
-            placeholder={placeholder}
+            placeholder={city ? placeholder : country ? "Sélectionner la ville d'abord" : "Sélectionner le pays d'abord"}
             disabled={disabled}
             onChange={(value) => {
                 const id = regions.find((values) => values.key === value)?.id
