@@ -49,6 +49,7 @@ import MobileHeader from '@/components/utils/MobileHeader'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import { PartnerType } from '@/types/paymentUtils'
 import { Staatliches } from 'next/font/google'
+import PaginationData from '@/components/utils/PaginationData'
 
 interface OperationsProps {}
 
@@ -62,6 +63,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
     const [total, setTotal] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
     const notify = useNotification()
     const router = useRouter()
@@ -72,7 +74,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         partner: 'all',
     })
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['subscription'],
         queryFn: async () => {
             try {
@@ -83,9 +85,11 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                     dateAndPartner.partner!
                 )
                 const { statistics, list } = response.data
+                console.log('response', response.data)
                 setTotal(statistics.total?.amount)
                 setTotalSales(statistics.deadlines?.amount)
                 setTotalPages(list.totalPages)
+                setTotalElements(list.totalElements)
                 setSubscriptionData(list.content)
                 return response.data
             } catch (error) {
@@ -156,11 +160,11 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={'3025'}
+                            label={totalElements + ''}
                             IconLeft={ArrowRight}
                             disabled
                             variant="outline"
-                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
+                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-2 px-3 h-fit"
                         />
                     </div>
                     <DataTable
@@ -174,6 +178,13 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             />
                         )}
                         isLoading={isLoading}
+                    />
+                    <PaginationData
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                        pageSize={pageSize}
+                        refetch={refetch}
                     />
                 </div>
             ) : (

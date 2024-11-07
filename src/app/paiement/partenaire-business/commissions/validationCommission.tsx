@@ -77,8 +77,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 const data = response.data.commissions
                 setTotalPages(data.totalPages)
                 setTotalElements(data.totalElements)
-                // setCommission(data.content)
-                // setOptions(options)
+                setCommission(data.content)
                 return response.data
             } catch (error) {
                 // notify.notify(

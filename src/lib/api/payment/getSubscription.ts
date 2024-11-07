@@ -11,8 +11,9 @@ export async function fetchSubscription(
     try {
         const year = date.getFullYear()
         const url =
-            `${API_SUBSCRIPTIONS}/${year}/?page=${currentPage}&size=${pageSize}` +
+            `${API_SUBSCRIPTIONS}/${year}?page=${currentPage}&size=${pageSize}` +
             (partner !== 'all' ? `&partner=${partner}` : '')
+        console.log('url', url)
         const response = await api.get(url).catch((error) => {
             throw error
         })
@@ -34,7 +35,7 @@ export async function fetchSubscriptionEntity(
 ) {
     try {
         const year = date.getFullYear()
-        const url = `${API_SUBSCRIPTIONS}/${year}/${partner}/?page=${currentPage}&size=${pageSize}&sort=createdAt,desc`
+        const url = `${API_SUBSCRIPTIONS}/${year}/${partner}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc`
         const response = await api.get(url).catch((error) => {
             throw error
         })

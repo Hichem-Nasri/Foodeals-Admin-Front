@@ -40,6 +40,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import MobileHeader from '@/components/utils/MobileHeader'
+import PaginationData from '@/components/utils/PaginationData'
 
 const SubStoreCommission = () => {
     const { id } = useParams()
@@ -73,7 +74,7 @@ const SubStoreCommission = () => {
         console.log(data)
     }
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['commissions', id, currentPage, pageSize],
         queryFn: async () => {
             try {
@@ -172,6 +173,13 @@ const SubStoreCommission = () => {
                             />
                         )}
                         isLoading={isLoading}
+                    />
+                    <PaginationData
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                        pageSize={pageSize}
+                        refetch={refetch}
                     />
                     <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                         <CustomButton

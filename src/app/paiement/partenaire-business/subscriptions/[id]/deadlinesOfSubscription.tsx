@@ -11,6 +11,7 @@ import { SwitchValidation } from '@/components/payment/payment-validations/Switc
 import OperationSubscriptionCard from '@/components/payment/PaymentDetails/OperationSubscriptionCard'
 import PaymentOnesSubscriptionCard from '@/components/payment/paymentOneSubscriptionCard'
 import SwitchPayment from '@/components/payment/switchPayment'
+import PaginationData from '@/components/utils/PaginationData'
 import { useNotification } from '@/context/NotifContext'
 import { fetchSubscriptionEntity } from '@/lib/api/payment/getSubscription'
 import { NotificationType, PartnerInfoDto } from '@/types/GlobalType'
@@ -19,7 +20,7 @@ import {
     defaultDataSubscriptionOnesTable,
     partnerSubscriptonOnesType,
 } from '@/types/PaymentType'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
     ColumnFiltersState,
     useReactTable,
@@ -53,7 +54,7 @@ function DeadlinesOfSubscription() {
     const params = useParams()
     const id = params.id
     console.log('id', id)
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['subscription'],
         queryFn: async () => {
             try {
@@ -67,18 +68,20 @@ function DeadlinesOfSubscription() {
                     throw new Error('Error fetching subscriptions')
                 }
                 const { partner, list } = response.data
-                // setPartner(partner)
+                setPartner(partner)
                 setTotalPages(list.totalPages)
-                // setPartnerSubscripton(list.content)
+                setPartnerSubscripton(list.content)
                 return response.data
             } catch (error) {
+                console.log('error', error)
                 notify.notify(
                     NotificationType.ERROR,
-                    'Erreur lors de la récupération des données'
+                    "Erreur lors de la récupération des données de l'abonnement"
                 )
-                console.log('error', error)
             }
         },
+        initialData: null, // Add initialData property here
+        placeholderData: keepPreviousData,
     })
     const onSubmit = () => {}
     const tableOperations = useReactTable({
@@ -138,27 +141,38 @@ function DeadlinesOfSubscription() {
                     onBack={() => {
                         setPartnerDeadlines([])
                     }}
+                    isLoading={isLoading}
                 />
             ) : (
-                <DataTable
-                    table={tableOperations}
-                    data={partnerSubscripton}
-                    title="Tableau de validation des écheances"
-                    transform={(data) => (
-                        <PaymentOnesSubscriptionCard
-                            subscription={data}
-                            partner={partner!}
-                            setPartnerDeadlines={setPartnerDeadlines}
-                        />
-                    )}
-                    partnerData={{
-                        name: partner?.name!,
-                        avatar: partner?.avatarPath!,
-                        city: partner?.name.split(' ').slice(-1)[0]!,
-                    }}
-                    hideColumns={['payable']}
-                    back={false}
-                />
+                <>
+                    <DataTable
+                        table={tableOperations}
+                        data={partnerSubscripton}
+                        title="Tableau de validation des écheances"
+                        transform={(data) => (
+                            <PaymentOnesSubscriptionCard
+                                subscription={data}
+                                partner={partner!}
+                                setPartnerDeadlines={setPartnerDeadlines}
+                            />
+                        )}
+                        partnerData={{
+                            name: partner?.name!,
+                            avatar: partner?.avatarPath!,
+                            city: partner?.name.split(' ').slice(-1)[0]!,
+                        }}
+                        hideColumns={['payable']}
+                        back={false}
+                        isLoading={isLoading}
+                    />
+                    <PaginationData
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        totalPages={totalPages}
+                        pageSize={pageSize}
+                        refetch={refetch}
+                    />
+                </>
             )}
             <div className="lg:hidden flex flex-col items-center gap-4 my-3">
                 <CustomButton
