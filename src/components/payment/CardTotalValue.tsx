@@ -25,7 +25,7 @@ export const CardTotalValue: FC<CardTotalValueProps> = ({
 }) => {
     const total = !currency ? `${value} MAD` : `${value}`
     return (
-        <div className="flex flex-col gap-1 p-4 bg-white rounded-[14px] h-full w-full lg:min-w-72 lg:w-auto">
+        <div className="flex flex-col flex-1 gap-1 p-4 bg-white rounded-[14px] h-full w-full lg:min-w-72 lg:w-auto">
             <div className="flex items-center gap-3">
                 <span
                     className={cn('bg-primary p-2.5 rounded-full', className)}

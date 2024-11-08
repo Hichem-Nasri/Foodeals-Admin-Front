@@ -17,11 +17,11 @@ export const SwitchValidation = () => {
         router.push(`/paiement/partenaire-business/${type}`)
     }
     return (
-        <div className="flex justify-center items-center flex-flex-wrap  lg:inline-flex lg:space-x-3 space-x-0 p-3 lg:bg-transparent h-fit bg-white rounded-[14px] w-fit max-w-fit ">
+        <div className="flex justify-center items-center flex-flex-wrap  lg:inline-flex lg:space-x-3 space-x-0 p-0 lg:p-2 lg:bg-transparent h-fit bg-white rounded-[14px] w-fit max-w-fit ">
             <CustomButton
                 label="Validation des commissions"
                 className={cn(
-                    'bg-transparent  lg:h-12 rounded-none lg:rounded-[12px] text-lynch-400 border-lynch-200 lg:border-2 lg:hover:bg-lynch-400/80 hover:bg-transparent lg:hover:text-white text-start lg:text-center transition-all whitespace-normal [&>.icon]:hidden lg:[&>.icon]:flex lg:text-sm lg:font-normal  font-[21.94px] text-[18px]',
+                    'bg-transparent  lg:h-12 rounded-none lg:rounded-[12px] text-lynch-400 border-lynch-200 lg:border-2 lg:hover:bg-lynch-400/80 hover:bg-transparent lg:hover:text-white text-center transition-all whitespace-normal [&>.icon]:hidden lg:[&>.icon]:flex lg:text-sm lg:font-normal  font-[21.94px] text-[18px]',
                     typeValidation === 'commissions' &&
                         'text-primary border-primary lg:hover:bg-primary'
                 )}
@@ -32,7 +32,7 @@ export const SwitchValidation = () => {
             <CustomButton
                 label="Validation des abonnements"
                 className={cn(
-                    'bg-transparent  lg:h-12 rounded-none lg:rounded-[12px] text-lynch-400 border-lynch-200 lg:border-2 hover:bg-transparent lg:hover:bg-lynch-400/80 lg:hover:text-white text-start lg:text-center transition-all whitespace-normal [&>.icon]:hidden lg:[&>.icon]:flex lg:text-sm lg:font-normal font-[21.94px] text-[18px]',
+                    'bg-transparent  lg:h-12 rounded-none lg:rounded-[12px] text-lynch-400 border-lynch-200 lg:border-2 hover:bg-transparent lg:hover:bg-lynch-400/80 lg:hover:text-white text-center transition-all whitespace-normal [&>.icon]:hidden lg:[&>.icon]:flex lg:text-sm lg:font-normal font-[21.94px] text-[18px]',
                     typeValidation === 'subscriptions' &&
                         'text-primary border-primary lg:hover:bg-primary'
                 )}

@@ -52,7 +52,7 @@ const SelectDate = ({
     )
 
     return (
-        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+        <div className="flex flex-col w-full items-start text-sm font-semibold">
             <Label
                 label={label}
                 htmlFor={label}

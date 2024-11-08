@@ -44,7 +44,7 @@ export const SelectField: FC<SelectFieldProps> = ({
                 return (
                     <div
                         className={cn(
-                            'flex flex-col w-full text-sm font-semibold',
+                            'flex flex-col w-full items-start text-sm font-semibold',
                             className
                         )}
                     >

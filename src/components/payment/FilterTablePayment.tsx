@@ -29,13 +29,13 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
 }) => {
     // dialog that take all the page and show the filter form with buttons in bottom of the page
     return (
-        <div className="w-full ">
+        <div className="w-full lg:w-1/2">
             <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between w-full">
                 <span className="text-lg text-lynch-950">
                     {header ? header : 'Tableau de validation des commission'}
                 </span>
                 <div
-                    className="hover:text-black hover:bg-neutral-100 bg-white text-lynch-500 rounded-full p-2 size-12 cursor-pointer flex items-center justify-center w-fit"
+                    className="hover:text-black hover:bg-neutral-100 bg-white text-lynch-500 rounded-full p-3  cursor-pointer flex items-center justify-center w-fit"
                     onClick={() => setOpen((prev) => !prev)}
                 >
                     <ListFilter />

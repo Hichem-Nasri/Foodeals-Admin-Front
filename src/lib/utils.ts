@@ -43,36 +43,77 @@ export function formatDate(
     }
     return date.toLocaleDateString('en-US', options).replace(',', '')
 }
+// Define the type for country codes
+interface CountryCode {
+    value: string
+    name: string
+    flag: string
+}
 
-export const countryCodes = [
-    { value: '+212', flag: '🇲🇦' },
-    { value: '+1', flag: '🇺🇸' },
-    { value: '+86', flag: '🇨🇳' },
-    { value: '+91', flag: '🇮🇳' },
-    { value: '+81', flag: '🇯🇵' },
-    { value: '+82', flag: '🇰🇷' },
-    { value: '+7', flag: '🇷🇺' },
-    { value: '+55', flag: '🇧🇷' },
-    { value: '+49', flag: '🇩🇪' },
-    { value: '+33', flag: '🇫🇷' },
-    { value: '+44', flag: '🇬🇧' },
-    { value: '+61', flag: '🇦🇺' },
-    { value: '+52', flag: '🇲🇽' },
-    { value: '+39', flag: '🇮🇹' },
-    { value: '+34', flag: '🇪🇸' },
-    { value: '+234', flag: '🇳🇬' },
-    { value: '+20', flag: '🇪🇬' },
-    { value: '+27', flag: '🇿🇦' },
-    { value: '+62', flag: '🇮🇩' },
-    { value: '+84', flag: '🇻🇳' },
-    { value: '+31', flag: '🇳🇱' },
-    { value: '+32', flag: '🇧🇪' },
-    { value: '+41', flag: '🇨🇭' },
-    { value: '+213', flag: '🇩🇿' },
-    { value: '+221', flag: '🇸🇳' },
-    { value: '+216', flag: '🇹🇳' },
-    { value: '+225', flag: '🇨🇮' },
-].sort((a, b) => a.value.localeCompare(b.value))
+// Define the array with country codes, names, and a placeholder for flags
+export const countryCodes: CountryCode[] = [
+    { value: '+212', name: 'Morocco', flag: '' },
+    { value: '+1', name: 'United States', flag: '' },
+    { value: '+86', name: 'China', flag: '' },
+    { value: '+91', name: 'India', flag: '' },
+    { value: '+81', name: 'Japan', flag: '' },
+    { value: '+82', name: 'South Korea', flag: '' },
+    { value: '+7', name: 'Russia', flag: '' },
+    { value: '+55', name: 'Brazil', flag: '' },
+    { value: '+49', name: 'Germany', flag: '' },
+    { value: '+33', name: 'France', flag: '' },
+    { value: '+44', name: 'United Kingdom', flag: '' },
+    { value: '+61', name: 'Australia', flag: '' },
+    { value: '+52', name: 'Mexico', flag: '' },
+    { value: '+39', name: 'Italy', flag: '' },
+    { value: '+34', name: 'Spain', flag: '' },
+    { value: '+234', name: 'Nigeria', flag: '' },
+    { value: '+20', name: 'Egypt', flag: '' },
+    { value: '+27', name: 'South Africa', flag: '' },
+    { value: '+62', name: 'Indonesia', flag: '' },
+    { value: '+84', name: 'Vietnam', flag: '' },
+    { value: '+31', name: 'Netherlands', flag: '' },
+    { value: '+32', name: 'Belgium', flag: '' },
+    { value: '+41', name: 'Switzerland', flag: '' },
+    { value: '+213', name: 'Algeria', flag: '' },
+    { value: '+221', name: 'Senegal', flag: '' },
+    { value: '+216', name: 'Tunisia', flag: '' },
+    { value: '+225', name: 'Ivory Coast', flag: '' },
+]
+
+// Function to fetch flags and country names from REST Countries API
+async function fetchCountryData() {
+    const response = await fetch('https://restcountries.com/v3.1/all')
+    const countries = await response.json()
+
+    // Map country codes to their respective flags and names
+    const countryCodeMap: { [key: string]: { name: string; flag: string } } = {}
+    countries.forEach((country: any) => {
+        const callingCode =
+            country.idd?.root +
+            (country.idd?.suffixes ? country.idd.suffixes[0] : '')
+        if (callingCode) {
+            countryCodeMap[callingCode] = {
+                name: country.name.common,
+                flag: country.flags?.png,
+            }
+        }
+    })
+
+    // Update the countryCodes array with the fetched names and flag URLs
+    countryCodes.forEach((country) => {
+        const countryData = countryCodeMap[country.value] // Remove '+' for matching
+        if (countryData) {
+            country.name = countryData.name
+            country.flag = countryData.flag
+        }
+    })
+}
+
+// Call the function to fetch and update country data
+fetchCountryData().then(() => {
+    // console.log(countryCodes)
+})
 
 export const PartnerOptions = [
     { id: '0', name: 'All', avatar: 'https://via.placeholder.com/120' },

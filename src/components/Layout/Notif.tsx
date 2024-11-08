@@ -54,7 +54,7 @@ function Notif({ type, message }: NotificationProps) {
                 }
                 `}
             >
-                <div className="flex justify-start items-center space-x-2 animate-ping">
+                <div className="flex justify-start items-center space-x-2 animate-pulse">
                     <div className="rounded-full ">
                         {type === NotificationType.SUCCESS && (
                             <CheckCircle className="size-6 " />
