@@ -34,9 +34,51 @@ export const associationInformationSchema = z.object({
     mapLocation: z.string().min(3, 'coller iframe'),
 })
 
+export const SchemaFilter = z.object({
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
+    company: z
+        .array(
+            z.object({
+                label: z.string().optional(),
+                key: z.string().optional(),
+                avatar: z.string().optional(),
+            })
+        )
+        .optional(),
+    collaborators: z
+        .array(
+            z.object({
+                label: z.string().optional(),
+                key: z.string().optional(),
+                avatar: z.string().optional(),
+            })
+        )
+        .optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    city: z.string().optional(),
+    companyType: z.string().optional(),
+    solution: z
+        .array(z.enum(['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']))
+        .optional(),
+})
+
+export const defaultSchemaFilter = {
+    startDate: undefined,
+    endDate: undefined,
+    company: [],
+    collaborators: [],
+    email: '',
+    phone: '',
+    city: '',
+    companyType: '',
+    solution: [],
+}
+
 export const defaultAssociationInformationData = {
-    logo: 'https://via.placeholder.com/120',
-    cover: 'https://via.placeholder.com/740x223',
+    logo: '',
+    cover: '',
     companyName: '',
     companyType: [],
     responsible: '',

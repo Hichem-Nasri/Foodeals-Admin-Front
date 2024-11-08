@@ -24,28 +24,28 @@ export const PartnerSolution: FC<PartnerSolutionProps> = ({
         className: string
         Icon: FC<any>
     } = {
-        name: 'Pas de Solution',
+        name: 'Pas de Solution'.toUpperCase(),
         className: 'bg-lynch-100 text-lynch-500',
         Icon: Smartphone,
     }
     switch (solution) {
         case PartnerSolutionType.MARKET_PRO:
             solutionColor = {
-                name: 'Market Pro',
+                name: 'Market PRO',
                 className: 'bg-mountain-100 text-mountain-500',
                 Icon: ShoppingBag,
             }
             break
         case PartnerSolutionType.DONATE_PRO:
             solutionColor = {
-                name: 'Donate Pro',
+                name: 'DONATE',
                 className: 'bg-scooter-100 text-scooter-500',
                 Icon: HandCoins,
             }
             break
         case PartnerSolutionType.DLC_PRO:
             solutionColor = {
-                name: 'DLC Pro',
+                name: 'DLC PRO',
                 className: 'bg-tulip-100 text-tulip-500',
                 Icon: HeartHandshake,
             }

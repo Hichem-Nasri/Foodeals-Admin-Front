@@ -19,6 +19,8 @@ import { useRouter } from 'next/navigation'
 import { AssociationType } from '@/types/association'
 import { PaymentStatus } from '../payment/PaymentStatus'
 import { PartnerSolution } from '../Partners/PartnerSolution'
+import { PaymentStatusType } from '@/types/PaymentType'
+import { PartnerSolutionType } from '@/types/partnersType'
 
 interface AssociationCardProps {
     association?: AssociationType
@@ -30,11 +32,11 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
 
     const dataArray = [
         {
-            label: `Association : ${association.association}`,
+            label: `Association : ${association.associations}`,
             icon: HeartHandshake,
         },
         {
-            label: `siège : ${association.seats}`,
+            label: `siège : ${association.users}`,
             icon: Store,
         },
         {
@@ -42,11 +44,11 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             icon: HeartHandshake,
         },
         {
-            label: `récupération : ${association.recovery}`,
+            label: `récupération : ${association.recovered}`,
             icon: HeartHandshake,
         },
         {
-            label: `collaborateurs : ${association.collaborators}`,
+            label: `collaborateurs : ${association.subEntities}`,
             icon: HandCoins,
         },
     ]
@@ -70,14 +72,17 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             <div className="flex justify-between gap-[0.375rem]">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage className="" src={association.logo} />
+                        <AvatarImage
+                            className=""
+                            src={association.partner.avatarPath}
+                        />
                         <AvatarFallback>
-                            {association.companyName[0].toUpperCase()}
+                            {association.partner.name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={association.companyName}
+                            label={association.partner.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -87,23 +92,25 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={association.createdAt.toLocaleDateString()}
+                                label={association.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                    <PaymentStatus status={association.status} />
+                    <PaymentStatus
+                        status={association.status as PaymentStatusType}
+                    />
                     <div className="flex items-center gap-[0.375rem]">
-                        <Link href={`tel:${association.phone}`}>
+                        <Link href={`tel:${association.responsible.phone}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={PhoneCall}
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                             />
                         </Link>
-                        <Link href={`mailto:${association.email}`}>
+                        <Link href={`mailto:${association.responsible.email}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={Mail}
@@ -136,8 +143,11 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />
             <div className="flex items-start gap-3">
-                {association.solution.map((solution) => (
-                    <PartnerSolution key={solution} solution={solution} />
+                {association.solutions.map((solution) => (
+                    <PartnerSolution
+                        key={solution}
+                        solution={solution as PartnerSolutionType}
+                    />
                 ))}
             </div>
         </div>

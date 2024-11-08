@@ -21,7 +21,7 @@ export const PaymentStatus: FC<PaymentStatusProps> = ({ status }) => {
                   text: 'En attente',
               }
             : {
-                  style: 'text-red-400 bg-red-100',
+                  style: 'text-coral-500 bg-coral-100',
                   icon: <X strokeWidth="3px" size={14} />,
                   text: 'Annulé',
               }

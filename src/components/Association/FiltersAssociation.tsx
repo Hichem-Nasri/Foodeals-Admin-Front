@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Archive, ArrowRight, HeartHandshake } from 'lucide-react'
+import { Archive, ArrowLeft, ArrowRight, HeartHandshake } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
@@ -11,12 +11,16 @@ interface FiltersAssociationProps {
     data: any[]
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<any>
+    archive: boolean
+    handleArchive: () => void
 }
 
 export const FiltersAssociation: FC<FiltersAssociationProps> = ({
     data,
     form,
     table,
+    archive,
+    handleArchive,
 }) => {
     const router = useRouter()
     return (
@@ -33,8 +37,9 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label="Archive"
-                    IconRight={Archive}
+                    label={archive ? 'Archive' : 'Associations'}
+                    IconRight={archive ? Archive : ArrowLeft}
+                    onClick={handleArchive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
