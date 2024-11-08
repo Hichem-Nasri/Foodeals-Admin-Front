@@ -2,16 +2,8 @@ import { z } from 'zod'
 import { PartnerSolutionType } from './partnersType'
 
 export const associationInformationSchema = z.object({
-    logo: z
-        .string()
-        .refine((value) => !value.includes('https://via.placeholder.com/120'), {
-            message: 'Veuillez ajouter une image de logo',
-        }),
-    cover: z
-        .string()
-        .refine((value) => !value.includes('https://via.placeholder.com/120'), {
-            message: 'Veuillez ajouter une image de couverture',
-        }),
+    logo: z.union([z.instanceof(File), z.string()]).optional(),
+    cover: z.union([z.instanceof(File), z.string()]).optional(),
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
     responsible: z.string().min(3),
@@ -99,7 +91,6 @@ export const engagementSchema = z.object({
         .number()
         .min(1, 'le nombre de sieges doit etre superieur a 0'),
     solutions: z.array(z.string()).min(1, 'selectionner au moins une solution'),
-    documents: z.array(z.string()).min(1, 'selectionner au moins un document'),
 })
 
 export const defaultEngagementData = {
@@ -109,8 +100,8 @@ export const defaultEngagementData = {
 }
 
 export interface AssociationInformationSchemaType {
-    logo: string
-    cover: string
+    logo: string | File
+    cover: string | File
     companyName: string
     companyType: string[]
     responsible: string

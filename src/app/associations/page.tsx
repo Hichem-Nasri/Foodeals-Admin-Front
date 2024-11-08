@@ -1,6 +1,5 @@
 import { Associations } from '@/components/Association'
 import { Layout } from '@/components/Layout/Layout'
-import { associationsData } from '@/types/association'
 
 interface AssociationPageProps {}
 

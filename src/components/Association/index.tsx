@@ -16,7 +16,7 @@ import { CustomButton } from '../custom/CustomButton'
 import { HeartHandshake, RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
-import { AssociationType, columnsAssociationsTable } from '@/types/association'
+import { AssociationType } from '@/types/association'
 import { FiltersAssociation } from './FiltersAssociation'
 import { AssociationCard } from './AssociationCard'
 import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
@@ -27,6 +27,7 @@ import { PartnerType } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'
 import PaginationData from '../utils/PaginationData'
 import { AppRoutes } from '@/lib/routes'
+import { columnsAssociationsTable } from './column/associationColumn'
 
 interface AssociationsProps {}
 
@@ -36,8 +37,8 @@ export interface TableRowType {
 }
 
 export const Associations: FC<AssociationsProps> = ({}) => {
-    const [associations, setAssociations] = useState<AssociationType[]>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [associations, setAssociations] = useState<AssociationType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)

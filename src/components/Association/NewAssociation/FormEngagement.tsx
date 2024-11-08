@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import {
     Accordion,
@@ -12,7 +12,7 @@ import { UseFormReturn } from 'react-hook-form'
 import { Form, FormField } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/Label'
-import { LayoutList } from 'lucide-react'
+import { Files, LayoutList } from 'lucide-react'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { useRouter } from 'next/navigation'
@@ -25,12 +25,16 @@ interface FormEngagementProps {
     form: UseFormReturn<z.infer<typeof engagementSchema>>
     onSubmit: (data: z.infer<typeof engagementSchema>) => void
     disabled?: boolean
+    documents: File[]
+    setDocument: React.Dispatch<React.SetStateAction<File[]>>
 }
 
 export const FormEngagement: FC<FormEngagementProps> = ({
     form,
     onSubmit,
-    disabled,
+    disabled = false,
+    documents,
+    setDocument,
 }) => {
     const { handleSubmit } = form
     const router = useRouter()
@@ -56,16 +60,15 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                         <Form {...form}>
                             <div className="flex flex-col justify-end gap-[1.875rem]">
                                 <div className="flex lg:flex-row flex-col lg:items-center gap-3">
-                                    <div className="lg:w-1/4">
-                                        <InputFieldForm
-                                            label="Nombre de Sieges"
-                                            name="numberOfSieges"
-                                            control={form.control}
-                                            placeholder="Saisir le nombre des Sieges"
-                                            type="number"
-                                            disabled={disabled}
-                                        />
-                                    </div>
+                                    <InputFieldForm
+                                        label="Nombre de Sieges"
+                                        name="numberOfSieges"
+                                        control={form.control}
+                                        placeholder="Saisir le nombre des Sieges"
+                                        type="number"
+                                        disabled={disabled}
+                                        classNameParent="lg:w-1/4"
+                                    />
                                     <CustomButton
                                         className="h-fit py-4 mt-auto"
                                         label="Voir la liste"
@@ -95,6 +98,9 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                                                 checked={field.value.includes(
                                                                     PartnerSolutionType.DONATE_PRO
                                                                 )}
+                                                                disabled={
+                                                                    disabled
+                                                                }
                                                                 onClick={() =>
                                                                     field.onChange(
                                                                         field.value.includes(
@@ -133,6 +139,9 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                                                 checked={field.value.includes(
                                                                     PartnerSolutionType.DLC_PRO
                                                                 )}
+                                                                disabled={
+                                                                    disabled
+                                                                }
                                                                 onClick={() =>
                                                                     field.onChange(
                                                                         field.value.includes(
@@ -168,22 +177,16 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                         </div>
                                     </div>
                                 </div>
-                                <FormField
-                                    control={form.control}
-                                    name={'document' as any}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
-                                            <Label
-                                                label="Ajouter les documents"
-                                                className="text-xs font-semibold text-lynch-950"
-                                            />
-                                            <UploadFile
-                                                onChange={field.onChange}
-                                                value={field.value}
-                                            />
-                                        </div>
-                                    )}
-                                />
+                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                                    <Label
+                                        label="Ajouter les documents"
+                                        className="text-xs font-semibold text-lynch-950"
+                                    />
+                                    <UploadFile
+                                        onChange={(files) => setDocument(files)}
+                                        value={documents}
+                                    />
+                                </div>
                             </div>
                         </Form>
                     </form>

@@ -13,6 +13,7 @@ interface FiltersAssociationProps {
     table: import('@tanstack/table-core').Table<any>
     archive: boolean
     handleArchive: () => void
+    siege?: boolean
 }
 
 export const FiltersAssociation: FC<FiltersAssociationProps> = ({
@@ -21,13 +22,14 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
     table,
     archive,
     handleArchive,
+    siege = false,
 }) => {
     const router = useRouter()
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
-                    Liste des collaborateurs
+                    Liste des {siege ? 'sièges' : 'associations'}
                 </h2>
                 <FormFilter />
             </div>
@@ -42,9 +44,10 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                     onClick={handleArchive}
                 />
             </div>
-            <div className="lg:flex hidden gap-3 p-2">
+            <div className={` lg:flex hidden gap-3 p-2`}>
                 <CustomButton
                     size="sm"
+                    className={`${siege ? 'hidden' : 'flex'}`}
                     label="Ajouter une association"
                     IconRight={HeartHandshake}
                     onClick={() =>
@@ -55,7 +58,9 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 />
                 <CustomButton
                     size="sm"
-                    className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
+                    variant="outline"
+                    className="disabled:border-lynch-400 disabled:text-lynch-500"
+                    disabled
                     label={'1666'}
                     IconLeft={ArrowRight}
                 />
