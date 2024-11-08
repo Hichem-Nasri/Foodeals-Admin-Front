@@ -104,11 +104,6 @@ export default function Crm() {
         setLeadKo((prev: boolean) => !prev)
         refetch()
     }
-    useEffect(() => {
-        if (totalPages !== 0) {
-            refetch()
-        }
-    }, [currentPage, pageSize])
     if (error) return <div>Error: {error.message}</div>
 
     return (
@@ -156,6 +151,7 @@ export default function Crm() {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageSize={pageSize}
+                refetch={refetch}
             />
         </div>
     )
