@@ -1,112 +1,126 @@
-"use client"
+'use client'
 
-import { FC, useState } from "react"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { FC, useState } from 'react'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-import { RotateCw, Store } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { columnsSiegesTable, SiegesType } from "@/types/association"
-import { CustomButton } from "@/components/custom/CustomButton"
-import { DataTable } from "@/components/DataTable"
-import { FiltersAssociation } from "../FiltersAssociation"
-import { SiegeCard } from "./SiegeCard"
+    ColumnFiltersState,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+} from '@tanstack/react-table'
+import { RotateCw, Store } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { SiegesType } from '@/types/association'
+import { CustomButton } from '@/components/custom/CustomButton'
+import { DataTable } from '@/components/DataTable'
+import { FiltersAssociation } from '../FiltersAssociation'
+import { SiegeCard } from './SiegeCard'
+import { SchemaFilter } from '@/types/associationSchema'
+import { columnsSiegesTable, siegesData } from '../column/siegeColumn'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/GlobalType'
+import { useQuery } from '@tanstack/react-query'
+import { arch } from 'os'
+import PaginationData from '@/components/utils/PaginationData'
+import { fetchSieages } from '@/lib/api/association/getSieages'
 
 interface SiegesProps {
-  sieges: SiegesType[]
+    id: string
 }
 
 export interface TableRowType {
-  key: string
-  label: string
+    key: string
+    label: string
 }
 
-export const Sieges: FC<SiegesProps> = ({ sieges }) => {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const router = useRouter()
-  const schema = z.object({
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
-    company: z
-      .array(
-        z.object({
-          label: z.string().optional(),
-          key: z.string().optional(),
-          avatar: z.string().optional(),
-        })
-      )
-      .optional(),
-    collaborators: z
-      .array(
-        z.object({
-          label: z.string().optional(),
-          key: z.string().optional(),
-          avatar: z.string().optional(),
-        })
-      )
-      .optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    city: z.string().optional(),
-    companyType: z.string().optional(),
-    solution: z.array(z.enum(["MARKET_PRO", "DLC_PRO", "DONATE_PRO"])).optional(),
-  })
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    mode: "onBlur",
-    defaultValues: {
-      startDate: undefined,
-      endDate: undefined,
-      company: [],
-      collaborators: [],
-      email: "",
-      phone: "",
-      city: "",
-      companyType: "",
-      solution: [],
-    },
-  })
+export const Sieges: FC<SiegesProps> = ({ id }) => {
+    const [sieges, setSieges] = useState<SiegesType[]>(siegesData)
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
+    const [archive, setArchive] = useState(true)
+    const notify = useNotification()
+    const router = useRouter()
+    const { error, isLoading, refetch } = useQuery({
+        queryKey: ['partners', currentPage, pageSize],
+        queryFn: async () => {
+            try {
+                const data = await fetchSieages(id, currentPage, pageSize)
+                if (data.status === 500)
+                    throw new Error('Error fetching partners')
+                setTotalPages(data.data.totalPages)
+                // setSieges(data.data?.content)
+                return data.data
+            } catch (error) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                console.log(error)
+                setSieges([])
+            }
+        },
+    })
 
-  const [data, _setData] = useState(() => [...sieges])
+    // handleArchive function
+    const handleArchive = () => {
+        // fetching Archived associations
+        setArchive((prev) => !prev)
+    }
 
-  const table = useReactTable({
-    data,
-    columns: columnsSiegesTable(router),
-    getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  })
+    const form = useForm<z.infer<typeof SchemaFilter>>({
+        resolver: zodResolver(SchemaFilter),
+        mode: 'onBlur',
+        defaultValues: {
+            startDate: undefined,
+            endDate: undefined,
+            company: [],
+            collaborators: [],
+            email: '',
+            phone: '',
+            city: '',
+            companyType: '',
+            solution: [],
+        },
+    })
 
-  return (
-    <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
-      <FiltersAssociation table={table} form={form} data={sieges} />
-      <DataTable
-        data={data}
-        table={table}
-        title="Liste des sièges"
-        transform={(value) => <SiegeCard sieges={value} />}
-      />
-      <div className="lg:hidden flex flex-col items-center gap-4 ">
-        <CustomButton
-          size="sm"
-          label="Voir plus"
-          className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-          variant="outline"
-          IconRight={RotateCw}
-        />
-        <CustomButton label="Ajouter un partenaire" className="w-full" IconRight={Store} />
-      </div>
-    </div>
-  )
+    const table = useReactTable({
+        data: sieges,
+        columns: columnsSiegesTable(router),
+        getCoreRowModel: getCoreRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+    })
+
+    return (
+        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
+            <FiltersAssociation
+                table={table}
+                form={form}
+                data={sieges}
+                archive={archive}
+                handleArchive={handleArchive}
+                siege
+            />
+            <DataTable
+                data={sieges}
+                table={table}
+                title="Liste des sièges"
+                transform={(value) => <SiegeCard sieges={value} />}
+                isLoading={isLoading}
+            />
+            <PaginationData
+                pageSize={pageSize}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+                refetch={refetch}
+            />
+        </div>
+    )
 }

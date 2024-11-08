@@ -50,7 +50,7 @@ import MobileHeader from '@/components/utils/MobileHeader'
 import { getFilterDate } from '@/lib/utils'
 import ConfirmationAll, {
     DetailsPayment,
-} from '../../../../../../components/payment/PaymentDetails/ConfirmationAll'
+} from '@/components/payment/PaymentDetails/ConfirmationAll'
 import PaginationData from '@/components/utils/PaginationData'
 
 interface CommissionMonthProps {

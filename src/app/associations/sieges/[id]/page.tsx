@@ -1,14 +1,17 @@
-import { Associations } from "@/components/Association";
-import { Sieges } from "@/components/Association/Sieges";
-import { Layout } from "@/components/Layout/Layout";
-import { siegesData } from "@/types/association";
+import { Associations } from '@/components/Association'
+import { Sieges } from '@/components/Association/Sieges'
+import { Layout } from '@/components/Layout/Layout'
 
-interface SiegesPageProps {}
+interface SiegesPageProps {
+    params: {
+        id: string
+    }
+}
 
-export default async function SiegesPage({}: SiegesPageProps) {
-	return (
-		<Layout>
-      <Sieges sieges={siegesData} />
-		</Layout>
-	)
+export default async function SiegesPage({ params }: SiegesPageProps) {
+    return (
+        <Layout>
+            <Sieges id={params.id} />
+        </Layout>
+    )
 }

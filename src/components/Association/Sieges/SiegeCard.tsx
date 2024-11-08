@@ -30,11 +30,11 @@ export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
 
     const dataArray = [
         {
-            label: `récupération : ${sieges.recovery}`,
+            label: `récupération : ${sieges.recovered}`,
             icon: HeartHandshake,
         },
         {
-            label: `collaborateurs : ${sieges.collaborators}`,
+            label: `collaborateurs : ${sieges.users}`,
             icon: HandCoins,
         },
     ]
@@ -60,15 +60,15 @@ export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
                     <Avatar className="size-[2.875rem] shrink-0">
                         <AvatarImage
                             className=""
-                            src={sieges.responsible.avatar}
+                            src={sieges.responsibleInfoDto.avatarPath}
                         />
                         <AvatarFallback>
-                            {sieges.responsible.name[0].toUpperCase()}
+                            {sieges.responsibleInfoDto.name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={sieges.responsible.name}
+                            label={sieges.responsibleInfoDto.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -86,14 +86,16 @@ export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-[0.375rem]">
-                        <Link href={`tel:${sieges.phone}`}>
+                        <Link href={`tel:${sieges.responsibleInfoDto.phone}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={PhoneCall}
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                             />
                         </Link>
-                        <Link href={`mailto:${sieges.email}`}>
+                        <Link
+                            href={`mailto:${sieges.responsibleInfoDto.email}`}
+                        >
                             <CustomButton
                                 label=""
                                 IconLeft={Mail}
