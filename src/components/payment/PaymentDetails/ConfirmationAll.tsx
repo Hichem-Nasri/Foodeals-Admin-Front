@@ -9,7 +9,7 @@ export type DetailsPayment = {
     id: string
     payable: boolean
     status: PaymentStatusEnum
-    direction: 'PARTNER_TO_FOODEALS' | 'FOODEALS_TO_PARTNER'
+    direction: 'PARTNER_TO_FOODEALS' | 'FOODEALS_TO_PARTENER'
 }
 
 const ConfirmationAll = ({
