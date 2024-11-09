@@ -13,8 +13,8 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 const columnSiegesTableHelper = createColumnHelper<SiegesType>()
 
 export const columnsSiegesTable = (router: AppRouterInstance) => [
-    columnSiegesTableHelper.accessor('createAt', {
-        cell: (info) => info.getValue().toLocaleDateString(),
+    columnSiegesTableHelper.accessor('createdAt', {
+        cell: (info) => info.getValue(),
         header: 'Date de création',
         footer: (info) => info.column.id,
     }),
@@ -138,7 +138,7 @@ export const columnsSiegesTable = (router: AppRouterInstance) => [
 export const siegesData: SiegesType[] = [
     {
         id: '1',
-        createAt: new Date(),
+        createdAt: new Date().toDateString(),
         partnerInfoDto: {
             id: '1',
             name: 'Association 1',
@@ -158,7 +158,7 @@ export const siegesData: SiegesType[] = [
     },
     {
         id: '2',
-        createAt: new Date(),
+        createdAt: new Date().toDateString(),
         partnerInfoDto: {
             id: '2',
             name: 'Association 2',

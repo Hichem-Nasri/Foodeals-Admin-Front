@@ -89,9 +89,18 @@ export const exportAssociationPost: (
     }
 }
 
+export interface CollaboratorAssociationsType {
+    id: string
+    createdAt: string
+    roleName: string
+    city: string
+    region: string
+    userInfoDto: ContactType & { avatarPath: string }
+}
+
 export interface SiegesType {
     id: string
-    createAt: Date
+    createdAt: string
     partnerInfoDto: PartnerInfoDto
     responsibleInfoDto: Omit<ContactType, 'name'> & {
         name: string

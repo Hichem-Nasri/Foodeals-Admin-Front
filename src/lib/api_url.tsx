@@ -13,6 +13,7 @@ const API_REGIONS = 'http://localhost:8080/api/v1/regions'
 const API_ASSOCIATIONS =
     'http://localhost:8080/api/v1/organizations/associations'
 const API_SIEGES = 'http://localhost:8080/v1/sub-entities/associations'
+const API_ASSOCIATIONS_USERS = 'http://localhost:8080/v1/users/associations'
 
 export {
     API_PROSPECTS,
@@ -26,4 +27,5 @@ export {
     API_SUBSCRIPTIONS,
     API_ASSOCIATIONS,
     API_SIEGES,
+    API_ASSOCIATIONS_USERS,
 }

@@ -58,7 +58,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
     // create/update association
     const { mutate, isPending } = useMutation({
         mutationKey: ['associations'],
-        mutationFn: async (payload: AssociationPostType) => {
+        mutationFn: async () => {
             try {
                 const res = await createAssociation(associationId, payload)
                 if (res.status === 500)
@@ -166,9 +166,9 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
     }
     useEffect(() => {
         if (save) {
-            mutate(payload)
+            mutate()
         }
-    }, [save])
+    }, [save, payload])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">

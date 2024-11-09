@@ -23,17 +23,21 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
         header: 'Date de création',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('partner.avatarPath', {
-        cell: (info) => (
-            <Avatar>
-                <AvatarImage src={info.getValue()} />
-                <AvatarFallback>
-                    {info.getValue() && info.getValue()[0].toUpperCase()}
-                </AvatarFallback>
-            </Avatar>
-        ),
+    columnHelper.accessor('partner', {
+        cell: (info) => {
+            const { avatarPath, name } = info.getValue()
+            return (
+                <Avatar className="size-[2.875rem] shrink-0 justify-center items-center flex bg-lynch-100 rounded-full">
+                    <AvatarImage src={avatarPath} />
+                    <AvatarFallback>
+                        {name && name[0].toUpperCase()}
+                    </AvatarFallback>
+                </Avatar>
+            )
+        },
         header: 'Logo',
         footer: (info) => info.column.id,
+        size: 10,
     }),
     columnHelper.accessor('partner', {
         cell: (info) => info.getValue().name,
@@ -47,14 +51,14 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
                 ' ' +
                 capitalize(info.getValue().name.lastName)
             return (
-                <div className="flex items-center gap-1">
-                    <Avatar>
+                <div className="flex items-center space-x-2">
+                    <Avatar className="size-[2.875rem] shrink-0 justify-center items-center flex bg-lynch-100 rounded-full">
                         <AvatarImage src={info.getValue().avatarPath} />
                         <AvatarFallback>
                             {fullName[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    {fullName}
+                    <span>{fullName}</span>
                 </div>
             )
         },
