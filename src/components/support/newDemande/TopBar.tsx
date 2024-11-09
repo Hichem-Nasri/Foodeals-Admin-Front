@@ -21,7 +21,7 @@ const TopBar: FC<TopBarProps> = ({
 }) => {
     return (
         <>
-            <div className="flex  justify-center space-x-4 lg:space-x-0 lg:justify-between w-full rounded-[18px] lg:bg-white p-2 items-center">
+            <div className="flex justify-center space-x-4 lg:space-x-0 lg:justify-between w-full lg:rounded-[18px] fixed bottom-0 left-0 right-0 lg:relative rounded-t-[18px] bg-white p-2 items-center z-50">
                 <div className="hidden lg:flex">
                     <PartnerStatus status={status} />
                 </div>

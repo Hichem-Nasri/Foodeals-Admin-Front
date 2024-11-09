@@ -57,6 +57,7 @@ export const mobileLayout: MobilePagesType[] = [
         href: '/paiement/partenaire-business/commissions/sub-store/',
         label: 'operations de mois',
     },
+    { href: '/site-web/support/', label: 'Détail du notification' },
 ]
 
 export const appApi = {

@@ -55,6 +55,7 @@ import { Label } from '@/components/Label'
 import { SupportSchema } from '@/types/support'
 import { Textarea } from '@/components/ui/textarea'
 import { UploadFile } from '@/components/Partners/NewPartner/UploadFile'
+import DialogImage from '@/components/DialogImage'
 
 interface FormDemandeSupportProps {
     form: UseFormReturn<z.infer<typeof SupportSchema>>
@@ -73,17 +74,17 @@ export const FormDemandeSupport: FC<FormDemandeSupportProps> = ({
                 <Accordion
                     type="single"
                     collapsible
-                    className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
+                    className="bg-white lg:p-5 px-4 py-6 rounded-[14px] min-w-full"
                     defaultValue="partnerInfo"
                 >
                     <AccordionItem
                         value="partnerInfo"
-                        className="text-lynch-400 text-[1.375rem] font-normal"
+                        className="text-lynch-400 text-[1.375rem] font-normal min-w-full"
                     >
                         <AccordionTrigger className="font-normal text-[1.375rem] py-0">
                             Nouvelle demande
                         </AccordionTrigger>
-                        <AccordionContent className="pt-7">
+                        <AccordionContent className="pt-7 w-full">
                             <FormDemande
                                 form={form}
                                 onSubmit={onSubmit}
@@ -93,7 +94,7 @@ export const FormDemandeSupport: FC<FormDemandeSupportProps> = ({
                     </AccordionItem>
                 </Accordion>
             </div>
-            <div className="flex lg:hidden justify-center items-start p-4 gap-4 min-w-full">
+            <div className="flex lg:hidden justify-center items-start p-4 gap-4 min-w-full mb-20">
                 <FormDemande
                     form={form}
                     onSubmit={onSubmit}
@@ -115,11 +116,12 @@ const FormDemande: FC<FormDemandeProps> = ({ form, onSubmit, disabled }) => {
     return (
         <Form {...form}>
             <form
+                title="Nouvelle demande"
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col w-full justify-center items-center gap-[1.875rem]  h-full bg-white lg:bg-transparent lg:rounded-none rounded-[30px] py-[25px] px-4 lg:mb-0 mb-20"
             >
                 <div className="flex flex-col gap-[1.875rem] w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:pb-0 pb-14">
+                    <div className="lg:grid flex flex-col  lg:grid-cols-3 gap-5 lg:pb-0 pb-14">
                         <SelectField
                             disabled={disabled}
                             control={control}
@@ -181,32 +183,22 @@ const FormDemande: FC<FormDemandeProps> = ({ form, onSubmit, disabled }) => {
                                 }}
                             />
                         </div>
-                        <div className="flex lg:flex-row flex-col items-start gap-3">
+                        <div className="flex lg:flex-row flex-col items-start gap-3 w-full">
                             <FormField
                                 control={control}
                                 name="attachment"
                                 render={({ field }) => {
                                     return (
-                                        <>
-                                            <div className="flex flex-col items-start space-y-2 w-full">
-                                                <Label
-                                                    label="Pièce jointe"
-                                                    className="text-sm font-semibold"
-                                                />
-                                                <div className="lg:flex hidden">
-                                                    <UploadFile
-                                                        {...field}
-                                                        value={field.value!}
-                                                        onChange={(files) =>
-                                                            field.onChange(
-                                                                files
-                                                            )
-                                                        }
-                                                        placeholder="Ajouter une pièce jointe"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </>
+                                        <div className="flex flex-col items-start space-y-2 w-full">
+                                            <Label
+                                                label="Pièce jointe"
+                                                className="text-sm font-semibold"
+                                            />
+                                            <DialogImage
+                                                files={field.value || []}
+                                                onChange={field.onChange}
+                                            />
+                                        </div>
                                     )
                                 }}
                             />

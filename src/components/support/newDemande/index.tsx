@@ -45,17 +45,20 @@ const DemandeSupport: FC<DemandeSupportProps> = ({ id }) => {
         )
     }
     return (
-        <LayoutMobile
-            title="Details de Notifaction"
-            fixedComponent={<MyTopBar />}
-            backButton={() => router.back()}
-        >
+        <div className="flex flex-col-reverse lg:flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+            <TopBar
+                status={PartnerStatusType.DRAFT}
+                onSaveData={handleSubmit(onSaveData)}
+                onSubmit={handleSubmit(onSubmit)}
+                disableFirst={form.formState.isValid && form.formState.isDirty}
+                disableSeond={!form.formState.isSubmitted}
+            />
             <FormDemandeSupport
                 form={form}
                 onSubmit={onSubmit}
                 disabled={false}
             />
-        </LayoutMobile>
+        </div>
     )
 }
 

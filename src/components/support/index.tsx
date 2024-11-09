@@ -74,7 +74,12 @@ const Support = () => {
                             label="Nouveau Message"
                             IconRight={MessageCircleMore}
                             onClick={() =>
-                                router.push(AppRoutes.supportDetails)
+                                router.push(
+                                    AppRoutes.supportDetails.replace(
+                                        ':id',
+                                        'new'
+                                    )
+                                )
                             }
                         />
                     </div>
