@@ -12,7 +12,7 @@ const buttonVariants = cva(
                 default:
                     'bg-primary text-neutral-50 hover:bg-primary/90 disabled:bg-lynch-300',
                 destructive:
-                    'bg-red-50 border-[1.5px] border-red-500 text-red-500 hover:bg-red-500/40',
+                    'border-lynch-200 opacity-100 disabled:h-12 disabled:rounded-[12px] disabled:text-lynch-400 text-lynch-400 font-semibold disabled:opacity-100 text-lg disabled:border-lynch-200 py-3 px-5 disabled:py-3 disabled:p-0 disabled:px-5 bg-transparent border-[1px] gap-2',
                 outline:
                     'border border-lynch-300 text-lynch-500 bg-transparent hover:bg-neutral-100 hover:text-black disabled:border-lynch-300 disabled:text-lynch-300 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:bg-neutral-800 dark:hover:text-neutral-50',
                 secondary:
