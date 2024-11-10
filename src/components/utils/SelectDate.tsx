@@ -21,12 +21,12 @@ const getOptionsDate: (
         }))
     return years.flatMap((year) => {
         const months = []
-        for (let i = 1; i <= 12; i++) {
+        for (let i = 12; i >= 1; i--) {
             months.push(i)
         }
         return months.map((month) => ({
-            key: `${month}/${year}`,
-            label: `${month}/${year}`,
+            key: `${month.toString().padStart(2, '0')}/${year}`,
+            label: `${month.toString().padStart(2, '0')}/${year}`,
         }))
     })
 }
@@ -47,6 +47,7 @@ const SelectDate = ({
     value: string
 }) => {
     // const options: MultiSelectOptionsType[] = []
+    console.log('value is: ', value)
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(
         getOptionsDate(format as 'MM/YYYY' | 'YYYY')
     )
