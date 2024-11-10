@@ -6,7 +6,7 @@ export async function fetchProspect(
     currentPage: number,
     pageSize: number,
     archived?: boolean
-): Promise<{ status: number; totalPage: number; data: CrmType[] }> {
+): Promise<{ status: number; data: any }> {
     try {
         const url =
             `${API_PROSPECTS}?page=${currentPage - 1}&size=${pageSize}` +
@@ -18,11 +18,10 @@ export async function fetchProspect(
         // console.log('response', response)
         return {
             status: response.status,
-            totalPage: response.data.totalPages,
-            data: response.data.content,
+            data: response.data,
         }
     } catch (error) {
         console.error('Error fetching partners:', error)
-        return { status: 500, totalPage: 0, data: [] }
+        return { status: 500, data: null }
     }
 }
