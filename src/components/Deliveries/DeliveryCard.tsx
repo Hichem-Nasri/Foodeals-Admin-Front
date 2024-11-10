@@ -18,6 +18,7 @@ import { PartnerSolution } from '../Partners/PartnerSolution'
 import { CustomButton } from '../custom/CustomButton'
 import { ActionsMenu, ActionType } from '../custom/ActionsMenu'
 import { useRouter } from 'next/navigation'
+import { PartnerSolutionType } from '@/types/partnersType'
 
 interface DeliveryCardProps {
     delivery: DeliveryType
@@ -29,7 +30,7 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
     const router = useRouter()
     const dataArray = [
         {
-            label: delivery.commands,
+            label: delivery.numberOfDeliveryPeople,
             icon: Users,
         },
         {
@@ -67,38 +68,38 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
             <div className="flex justify-between gap-[0.375rem] cursor-pointer">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage src={delivery.partner.avatar} />
+                        <AvatarImage src={delivery.partnerInfoDto.avatarPath} />
                         <AvatarFallback>
-                            {delivery.partner.name[0].toUpperCase()}
+                            {delivery.partnerInfoDto.name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={delivery.partner.name}
+                            label={delivery.partnerInfoDto.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
-                            label={delivery.city}
+                            label={delivery.distribution}
                             className="text-xs font-medium text-primary"
                         />
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={delivery.createdAt.toLocaleDateString()}
+                                label={delivery.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[0.375rem]">
-                    <Link href={`tel:${delivery.phone}`}>
+                    <Link href={`tel:${delivery.responsibleInfoDto.phone}`}>
                         <CustomButton
                             label=""
                             IconLeft={PhoneCall}
                             className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                         />
                     </Link>
-                    <Link href={`mailto:${delivery.email}`}>
+                    <Link href={`mailto:${delivery.responsibleInfoDto.email}`}>
                         <CustomButton
                             label=""
                             IconLeft={Mail}
@@ -130,8 +131,11 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />
             <div className="flex flex-wrap gap-[0.375rem]">
-                {delivery.solution.map((solution) => (
-                    <PartnerSolution key={solution} solution={solution} />
+                {delivery.solutions.map((solution) => (
+                    <PartnerSolution
+                        key={solution as PartnerSolutionType}
+                        solution={solution}
+                    />
                 ))}
             </div>
         </div>

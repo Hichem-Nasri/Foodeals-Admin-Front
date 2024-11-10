@@ -2,18 +2,8 @@ import { z } from 'zod'
 import { PartnerPOST } from './partenairUtils'
 
 export const DeliveryPartnerSchema = z.object({
-    logo: z
-        .instanceof(File)
-        .refine((file) => file.size > 0, {
-            message: 'Veuillez ajouter une image de logo',
-        })
-        .optional(), // Make logo optional
-    cover: z
-        .instanceof(File)
-        .refine((file) => file.size > 0, {
-            message: 'Veuillez ajouter une image de couverture',
-        })
-        .optional(),
+    logo: z.union([z.instanceof(File), z.string()]).optional(),
+    cover: z.union([z.instanceof(File), z.string()]).optional(),
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
     responsibleId: z.string().min(3),
@@ -33,8 +23,8 @@ export const DeliveryPartnerSchema = z.object({
 })
 
 export type DeliveryPartnerType = {
-    logo: File | null
-    cover: File | null
+    logo: File | string
+    cover: File | string
     companyName: string
     companyType: string[]
     responsibleId: string

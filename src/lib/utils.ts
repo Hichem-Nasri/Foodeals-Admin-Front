@@ -7,14 +7,34 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA5ODIzMDYsImV4cCI6MTczMzU3NDMwNn0.IP7vfnGin7YhIa1iqn6TGgc-jLsWp_AlbPQSGKXIiG1HqVBZjlsBfFXOXaqNEZb29Q7GTAp6Y3jcY6KQF7jD5A'
+    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzExNDY0MTEsImV4cCI6MTczMzczODQxMX0.0B-hr0756WLocuX0Tgg4XekcGc6TMtLaWk2njejj9LckR-zrfprxROEoFGrnC982COmyzTo1nGsWOuktEmNHVA'
 
 export const headers = {
     Authorization: 'Bearer ' + accessToken,
 }
 
 export const getFilterDate = (date: Date) => {
-    return date.toISOString().slice(0, 10).split('-').slice(0, 2).join('-')
+    return date
+        .toISOString()
+        .slice(0, 10)
+        .split('-')
+        .slice(0, 2)
+        .reverse()
+        .join('/')
+        .padStart(7, '0')
+}
+
+export function formatNumberWithSpaces(
+    num: number,
+    char: string = ' '
+): string {
+    // Convert number to string
+    const numStr = num.toString()
+
+    // Use regex to format the number
+    const formatted = numStr.replace(/\B(?=(\d{3})+(?!\d))/g, char)
+
+    return formatted
 }
 
 export const getSolutions = (solutions: string[]) => {

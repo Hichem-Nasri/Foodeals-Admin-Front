@@ -106,9 +106,10 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const mutation = useMutation({
         mutationKey: ['delivery-partner'],
         mutationFn: async (data: { id: string; data: PartnerPOST }) => {
+            console.log('data: ', JSON.stringify(data))
             const response = await createPartner(data.id, data.data, {
-                logo: deliveryPartnerData.logo,
-                cover: deliveryPartnerData.cover,
+                logo: deliveryPartnerData.logo! as File,
+                cover: deliveryPartnerData.cover! as File,
             })
             if (![200, 201].includes(response.status)) {
                 notif.notify(NotificationType.ERROR, 'Failed to save partner')
@@ -189,18 +190,13 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 }
             })
         }
-        const mySolution = data.solutions
-            .map((solution) => {
-                if (solution === 'DONATE_PRO') return 'pro_donate'
-                return 'pro_market'
-            })
-            .map((solution) => {
-                return {
-                    solution: solution,
-                    amount: data.deliveryCost,
-                    commission: data.commission,
-                }
-            })
+        const mySolution = data.solutions.map((solution) => {
+            return {
+                solution: solution,
+                amount: data.deliveryCost,
+                commission: data.commission,
+            }
+        })
         console.log('partnerSolution: ', mySolution)
         setData((prev) => ({
             ...prev,
@@ -255,7 +251,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             mutation.mutate({ id: deliveryId, data })
             console.log('save data')
         }
-    }, [saved])
+    }, [saved, data])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
@@ -267,6 +263,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 onSubmit={onSubmit}
                 status={status}
                 hideStatus={true}
+                isPending={mutation.isPending}
             />
             <div className="flex flex-col gap-[1.875rem] h-full w-full">
                 <FormDeliveryPartner

@@ -1,5 +1,11 @@
 import { FC } from 'react'
-import { Archive, ArrowRight, HeartHandshake, Truck } from 'lucide-react'
+import {
+    Archive,
+    ArrowLeft,
+    ArrowRight,
+    HeartHandshake,
+    Truck,
+} from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
@@ -7,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 import { FormFilter } from './FilterForm'
 import { DeliveryType } from '@/types/deliveries'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface FiltersDeliveriesProps {
     data: DeliveryType[]
@@ -14,6 +21,7 @@ interface FiltersDeliveriesProps {
     setColumnFilters: (val: any) => void
     setArchive: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
+    totalElements: number
 }
 
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
@@ -22,6 +30,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
     setColumnFilters,
     archive,
     setArchive,
+    totalElements,
 }) => {
     const router = useRouter()
     return (
@@ -39,7 +48,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     size="sm"
                     variant="outline"
                     label={archive ? 'Deliveries' : 'Archives'}
-                    IconRight={archive ? ArrowRight : Archive}
+                    IconRight={archive ? ArrowLeft : Archive}
                     onClick={() => setArchive((prev: boolean) => !prev)}
                 />
             </div>
@@ -53,11 +62,10 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     }
                 />
                 <CustomButton
-                    disabled
-                    size="sm"
-                    className="disabled:bg-white disabled:opacity-100 font-semibold text-lynch-400 border-[1.5px] border-lynch-400"
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>

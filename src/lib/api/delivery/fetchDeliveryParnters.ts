@@ -1,7 +1,6 @@
 import api from '@/api/Auth'
 import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
 import { getSolutions } from '@/lib/utils'
-import { DeliveryType, exportDeliveryData } from '@/types/deliveries'
 import {
     DeliveryPartnerType,
     emptyDeliveryPartner,
@@ -11,7 +10,7 @@ import { PartnerPOST } from '@/types/partenairUtils'
 export async function fetchDeliveryPartners(
     currentPage: number,
     pageSize: number
-): Promise<{ status: number; data: DeliveryType[] }> {
+): Promise<{ status: number; data: any }> {
     try {
         const response = await api
             .get(
@@ -22,11 +21,11 @@ export async function fetchDeliveryPartners(
             })
         return {
             status: response.status,
-            data: exportDeliveryData(response.data.content as DeliveryType[]),
+            data: response.data,
         }
     } catch (error) {
         console.error('Error fetching partners:', error)
-        return { status: 500, data: [] }
+        return { status: 500, data: null }
     }
 }
 
@@ -57,8 +56,8 @@ export const getDelivery = async (id: string) => {
                             return zone.city + '-' + region
                         })
                     }) || [],
-                logo: null,
-                cover: null,
+                logo: '',
+                cover: '',
                 companyName: data.entityName,
                 companyType: data.activities || [],
                 solutions: getSolutions(data.solutions),

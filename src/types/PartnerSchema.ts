@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { PartnerStatusType } from './partnersType'
+import { subscribe } from 'diagnostics_channel'
 
 export const PartnerInformationSchema = z.object({
     logo: z.instanceof(File).optional(),
@@ -67,6 +68,7 @@ export const PartnerSubscriptionSchema = z.object({
     beneficiary: z.string().min(3),
     rib: z.string().min(3),
     accountType: z.string().min(3),
+    subscribtionByEntity: z.boolean().default(false),
     marketPro: z
         .object({
             selected: z.boolean().default(false),
