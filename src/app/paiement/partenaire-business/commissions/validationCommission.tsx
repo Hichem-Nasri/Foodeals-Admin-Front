@@ -44,6 +44,7 @@ import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import MobileHeader from '@/components/utils/MobileHeader'
 import PaginationData from '@/components/utils/PaginationData'
+import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
 
 interface OperationsProps {}
 
@@ -93,12 +94,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         z.infer<typeof PaymentFilterSchema>
     >({
         // date MM/yyyy
-        date: new Date()
-            .toISOString()
-            .slice(0, 10)
-            .split('-')
-            .slice(0, 2)
-            .join('-'),
+        date: getFilterDate(new Date()),
         partner: 'all',
     })
     const form = useForm({
@@ -162,11 +158,10 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={totalElements + ''}
+                            label={formatNumberWithSpaces(totalElements)}
                             IconLeft={ArrowRight}
                             disabled
-                            variant="outline"
-                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
+                            variant="destructive"
                         />
                     </div>
                     <DataTable

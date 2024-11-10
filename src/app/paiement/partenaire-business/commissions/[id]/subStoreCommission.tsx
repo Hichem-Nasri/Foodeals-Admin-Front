@@ -41,6 +41,7 @@ import { z } from 'zod'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import MobileHeader from '@/components/utils/MobileHeader'
 import PaginationData from '@/components/utils/PaginationData'
+import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
 
 const SubStoreCommission = () => {
     const { id } = useParams()
@@ -62,7 +63,7 @@ const SubStoreCommission = () => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date(),
+        date: getFilterDate(new Date()),
         partner: 'all',
     })
     const form = useForm({
@@ -154,11 +155,10 @@ const SubStoreCommission = () => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={totalElements + ''}
+                            label={formatNumberWithSpaces(totalElements)}
                             IconLeft={ArrowRight}
                             disabled
-                            variant="outline"
-                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
+                            variant="destructive"
                         />
                     </div>
                     <DataTable

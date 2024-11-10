@@ -47,7 +47,7 @@ import { z } from 'zod'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import MobileHeader from '@/components/utils/MobileHeader'
-import { getFilterDate } from '@/lib/utils'
+import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
 import ConfirmationAll, {
     DetailsPayment,
 } from '@/components/payment/PaymentDetails/ConfirmationAll'
@@ -138,16 +138,14 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     console.log('data', data)
     return (
         <Fragment>
-            <div className="flex flex-col gap-3 w-full px-3 lg:px-0">
+            <div className="flex flex-col gap-3 w-full px-3 lg:px-0 mr-2">
                 <SwitchPayment />
                 <div className="flex lg:flex-row flex-col-reverse items-center gap-3 w-full">
-                    <div className="hidden lg:flex w-1/2">
-                        <FilterTablePayment
-                            form={form}
-                            onSubmit={onSubmit}
-                            setOpen={setOpen}
-                        />
-                    </div>
+                    <FilterTablePayment
+                        form={form}
+                        onSubmit={onSubmit}
+                        setOpen={setOpen}
+                    />
                     <CardTotalValue
                         Icon={Coins}
                         title="Total des ventes"
@@ -174,11 +172,10 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                             details={data?.details}
                         />
                         <CustomButton
-                            label={'3025'}
+                            label={formatNumberWithSpaces(3026)}
                             IconLeft={ArrowRight}
                             disabled
-                            variant="outline"
-                            className="disabled:border-lynch-400 disabled:opacity-100 h-12 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 "
+                            variant="destructive"
                         />
                     </div>
                 </div>
