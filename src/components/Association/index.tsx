@@ -1,5 +1,5 @@
 'use client'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query'
 import PaginationData from '../utils/PaginationData'
 import { AppRoutes } from '@/lib/routes'
 import { columnsAssociationsTable } from './column/associationColumn'
+import getArchivedPartners from '@/lib/api/partner/getArchiver'
 
 interface AssociationsProps {}
 
@@ -42,6 +43,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
     const [archive, setArchive] = useState(true)
     const notify = useNotification()
     const router = useRouter()
@@ -52,7 +54,8 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 const data = await fetchAssociations(currentPage, pageSize)
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalPages(data.data.totalPages)
+                setTotalElements(data.data?.totalElements)
+                setTotalPages(data.data?.totalPages)
                 setAssociations(data.data?.content)
                 return data.data
             } catch (error) {
@@ -85,6 +88,28 @@ export const Associations: FC<AssociationsProps> = ({}) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    useEffect(() => {
+        const fetchArchivedAssociations = async () => {
+            setCurrentPage(() => 0)
+            const res = await getArchivedPartners(
+                'ASSOCIATION',
+                currentPage,
+                pageSize
+            ) // TODO: change the current page and page size
+            if (res.status === 500) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+            }
+            setTotalElements(res.data.totalElements)
+            setTotalPages(res.data.totalPages)
+            setAssociations(res.data?.content)
+        }
+        if (archive) {
+            refetch()
+        } else {
+            fetchArchivedAssociations()
+        }
+    }, [archive])
+
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersAssociation
@@ -93,6 +118,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 data={associations}
                 archive={archive}
                 handleArchive={handleArchive}
+                totalElements={totalElements}
             />
             <DataTable
                 data={associations}

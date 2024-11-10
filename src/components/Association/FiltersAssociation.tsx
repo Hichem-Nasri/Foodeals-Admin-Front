@@ -6,6 +6,7 @@ import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
 import { FormFilter } from './FormFilter'
 import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface FiltersAssociationProps {
     data: any[]
@@ -14,6 +15,7 @@ interface FiltersAssociationProps {
     archive: boolean
     handleArchive: () => void
     siege?: boolean
+    totalElements: number
 }
 
 export const FiltersAssociation: FC<FiltersAssociationProps> = ({
@@ -23,6 +25,7 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
     archive,
     handleArchive,
     siege = false,
+    totalElements,
 }) => {
     const router = useRouter()
     return (
@@ -57,12 +60,10 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                     }
                 />
                 <CustomButton
-                    size="sm"
-                    variant="outline"
-                    className="disabled:border-lynch-400 disabled:text-lynch-500"
-                    disabled
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>
