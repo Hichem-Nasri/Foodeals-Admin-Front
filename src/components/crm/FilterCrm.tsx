@@ -9,6 +9,7 @@ import { AppRoutes } from '@/lib/routes'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { Button } from '../ui/button'
 import { CrmType } from '@/types/CrmType'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface FilterCrmProps {
     data: CrmType[]
@@ -17,6 +18,7 @@ interface FilterCrmProps {
     columnFilters: ColumnFiltersState
     handleArchive: () => void
     leadKo: boolean
+    totalElements: number
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
@@ -26,6 +28,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     columnFilters,
     handleArchive,
     leadKo,
+    totalElements,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -78,11 +81,10 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     />
                 </Link>
                 <CustomButton
-                    size="sm"
-                    disabled
-                    className="disabled:bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40  "
-                    label={table.getRowCount().toString()}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>
