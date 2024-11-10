@@ -29,16 +29,17 @@ const PaginationData: FC<PaginationDataProps> = ({
     refetch,
 }) => {
     const handlePageChange = (page: number) => {
-        if (page < 1 || page > totalPages) return
+        if (page < 0 || page >= totalPages) return
+        console.log('page', page)
         setCurrentPage(page)
     }
 
     const pages = []
-    if (currentPage > 1) pages.push(currentPage - 1)
+    if (currentPage > 0) pages.push(currentPage - 1)
     pages.push(currentPage)
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages - 1) {
         pages.push(currentPage + 1)
-        if (currentPage + 1 < totalPages) pages.push(currentPage + 2)
+        if (currentPage + 1 < totalPages - 1) pages.push(currentPage + 2)
     }
 
     useEffect(() => {
@@ -49,7 +50,7 @@ const PaginationData: FC<PaginationDataProps> = ({
         <div className={cn(`${totalPages < 2 && 'hidden'}`, className)}>
             <Pagination>
                 <PaginationContent>
-                    {currentPage > 1 && (
+                    {currentPage > 0 && (
                         <PaginationItem>
                             <PaginationPrevious
                                 className="cursor-pointer"
@@ -66,14 +67,14 @@ const PaginationData: FC<PaginationDataProps> = ({
                                 onClick={() => handlePageChange(page)}
                                 isActive={page === currentPage}
                             >
-                                {page}
+                                {page + 1}
                             </PaginationLink>
                         </PaginationItem>
                     ))}
-                    {currentPage < totalPages && (
+                    {currentPage < totalPages - 1 && (
                         <>
                             {' '}
-                            {currentPage + 2 < totalPages && (
+                            {currentPage + 2 < totalPages - 1 && (
                                 <PaginationItem>
                                     <PaginationEllipsis />
                                 </PaginationItem>
