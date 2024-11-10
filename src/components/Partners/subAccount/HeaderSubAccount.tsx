@@ -4,15 +4,18 @@ import { ColumnVisibilityModal } from '../ColumnVisibilityModal'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilterSubAccount } from './FilterSubAccount'
 import { SubAccountPartners } from '@/types/partnersType'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface HeaderSubAccountProps {
     collaborators: SubAccountPartners[]
     table: import('@tanstack/table-core').Table<SubAccountPartners>
+    totalElements: number
 }
 
 export const HeaderSubAccount: FC<HeaderSubAccountProps> = ({
     collaborators,
     table,
+    totalElements,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -28,10 +31,10 @@ export const HeaderSubAccount: FC<HeaderSubAccountProps> = ({
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <CustomButton
-                    size="sm"
-                    className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>

@@ -37,9 +37,10 @@ export default function Crm() {
         'partenaires' | 'associations'
     >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
     const [leadKo, setLeadKo] = useState(true)
 
     const Notif = useNotification()
@@ -58,12 +59,13 @@ export default function Crm() {
                     pageSize,
                     leadKo
                 )
-                if (response.status === 200) {
-                    setData(response.data)
-                    setTotalPages(response.totalPage)
-                    return response
+                if (response.status === 500) {
+                    throw new Error('Error while fetching data')
                 }
-                throw new Error('Error while fetching data')
+                setData(response.data.content)
+                setTotalElements(response.data.totalElements)
+                setTotalPages(response.data.totalPages)
+                return response
             } catch (error) {
                 Notif.notify(
                     NotificationType.ERROR,
@@ -105,7 +107,7 @@ export default function Crm() {
         refetch()
     }
     if (error) return <div>Error: {error.message}</div>
-
+    console.log('totalPages', totalPages)
     return (
         <div className="flex flex-col gap-3 w-full p-1">
             <SwitchProspects data={data} setData={setData} />
@@ -119,6 +121,7 @@ export default function Crm() {
                 setColumnFilters={setColumnFilters}
                 leadKo={leadKo}
                 handleArchive={handleArchive}
+                totalElements={totalElements}
             />
             {isLoading ? (
                 <DataTableSkeleton columnCount={5} rowCount={5} />

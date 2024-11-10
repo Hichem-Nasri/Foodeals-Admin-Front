@@ -44,6 +44,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
     const notify = useNotification()
     const router = useRouter()
     const { error, isLoading, refetch } = useQuery({
@@ -54,6 +55,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(data.data.totalPages)
+                setTotalElements(data.data.totalElements)
                 setPartners(data.data.content as PartnerType[])
                 return data.data
             } catch (error) {
@@ -112,6 +114,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 setColumnFilters={setColumnFilters}
                 setArchive={setArchive}
                 archive={archive}
+                totalElements={totalElements}
             />
 
             <DataTable

@@ -7,6 +7,7 @@ import { UseFormReturn } from 'react-hook-form'
 import { ColumnVisibilityModal } from './ColumnVisibilityModal'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface FilterAndCreatePartnersProps {
     partners: PartnerType[]
@@ -16,6 +17,7 @@ interface FilterAndCreatePartnersProps {
     >
     setArchive: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
+    totalElements: number
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
@@ -24,6 +26,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
     setColumnFilters,
     setArchive,
     archive,
+    totalElements,
 }) => {
     const handleArchive = () => {
         setArchive((prev) => !prev)
@@ -64,11 +67,10 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     />
                 </Link>
                 <CustomButton
-                    size="sm"
-                    disabled
-                    className="disabled:bg-white disabled:opacity-100 text-primary border-[1.5px] border-primary hover:bg-primary/40"
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>

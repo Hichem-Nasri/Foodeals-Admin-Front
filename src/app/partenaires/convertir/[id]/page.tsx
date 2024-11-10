@@ -1,6 +1,6 @@
 'use client'
 import { Layout } from '@/components/Layout/Layout'
-import { NewPartner } from '@/components/Partners/NewPartner/newParnter'
+import { NewPartner } from '@/components/Partners/NewPartner'
 import { fetchConvertirPartners } from '@/lib/api/partner/fetchConvertirPartners'
 import { defaultPartnerData, PartnerDataType } from '@/types/PartnerSchema'
 import { useQuery } from '@tanstack/react-query'

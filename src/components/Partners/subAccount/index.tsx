@@ -33,6 +33,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
         React.useState<ColumnFiltersState>([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
+    const [totalElements, setTotalElements] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const notify = useNotification()
     const router = useRouter()
@@ -44,6 +45,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                 if (res.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(res.data.totalPages)
+                setTotalElements(res.data.totalElements)
                 setSubAccount(res.data.content as SubAccountPartners[])
                 return res.data
             } catch (e) {
@@ -73,7 +75,11 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
     }
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4 scroll">
-            <HeaderSubAccount collaborators={subAccount} table={table} />
+            <HeaderSubAccount
+                collaborators={subAccount}
+                table={table}
+                totalElements={totalElements}
+            />
             <DataTable
                 title="Listes des sous comptes"
                 table={table}
