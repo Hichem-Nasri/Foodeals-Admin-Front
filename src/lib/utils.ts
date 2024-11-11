@@ -19,8 +19,7 @@ export const getFilterDate = (date: Date) => {
         .slice(0, 10)
         .split('-')
         .slice(0, 2)
-        .reverse()
-        .join('/')
+        .join('-')
         .padStart(7, '0')
 }
 
@@ -28,6 +27,9 @@ export function formatNumberWithSpaces(
     num: number,
     char: string = ' '
 ): string {
+    if (typeof num !== 'number') {
+        return ''
+    }
     // Convert number to string
     const numStr = num.toString()
 

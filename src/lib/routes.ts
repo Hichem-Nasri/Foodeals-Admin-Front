@@ -58,6 +58,9 @@ export const mobileLayout: MobilePagesType[] = [
         label: 'operations de mois',
     },
     { href: '/site-web/support/', label: 'Détail du notification' },
+    { href: '#filter', label: 'Filter' },
+    { href: 'crm/prospects/create', label: 'nouveau prospect' },
+    { href: 'crm/prospects/', label: 'prospect' },
 ]
 
 export const appApi = {

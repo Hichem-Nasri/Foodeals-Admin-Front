@@ -3,6 +3,7 @@ import { CrmInformationSchemaType, CrmObjectType } from './CrmType'
 import { CrmType } from './CrmType'
 import { capitalize } from './utils'
 import { getSolutions } from '@/lib/utils'
+import { start } from 'repl'
 
 export const CrmInformationSchema = z.object({
     companyName: z.string().min(3),
@@ -30,6 +31,34 @@ export const CrmObjectSchema = z.object({
         .string()
         .min(3, 'Le message doit contenir au moins 3 caractères'),
 })
+
+export const FilterCrmSchema = z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    companyName: z.array(z.string()).optional(),
+    category: z.array(z.string()).optional(),
+    phone: z.string().optional(),
+    creatorInfo: z.union([z.string(), z.number()]).optional(),
+    email: z.string().optional(),
+    country: z.string().optional(),
+    managerInfo: z.union([z.string(), z.number()]).optional(),
+    city: z.string().optional(),
+    status: z.array(z.string()).optional(),
+})
+
+export const emptyFilterCrmData = {
+    startDate: '',
+    endDate: '',
+    companyName: [],
+    category: [],
+    phone: '',
+    creatorInfo: '',
+    email: '',
+    country: '',
+    managerInfo: '',
+    city: '',
+    status: [],
+}
 
 export interface NotificationType {
     responsable: string

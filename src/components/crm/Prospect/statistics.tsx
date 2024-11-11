@@ -10,7 +10,7 @@ import {
     UserRoundX,
     UsersRound,
 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 interface StatisticsProps {
     activeLeads: number
@@ -21,12 +21,16 @@ interface StatisticsProps {
 
 const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects/statistics'
 
-const Statistics = () => {
+interface FcStatisticsProps {
+    type: string
+}
+
+const Statistics: FC<FcStatisticsProps> = ({ type }) => {
     const { data, isLoading, error } = useQuery({
         queryKey: ['statistics'],
         queryFn: async () => {
             try {
-                const response = await api.get(API_ENDPOINT)
+                const response = await api.get(API_ENDPOINT + '?type=' + type)
                 return response.data as StatisticsProps
             } catch (error) {
                 console.error(error)
@@ -34,7 +38,7 @@ const Statistics = () => {
         },
     })
     return (
-        <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
+        <div className="flex lg:flex-row flex-col items-center gap-3 w-full max-w-full">
             <CardTotalValue
                 isLoading={isLoading}
                 Icon={UserRoundCheck}

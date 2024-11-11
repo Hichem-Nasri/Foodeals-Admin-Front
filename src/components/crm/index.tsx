@@ -21,7 +21,6 @@ import { UserRoundPlus } from 'lucide-react'
 import PaginationData from '@/components/utils/PaginationData'
 import { NotificationType } from '@/types/GlobalType'
 import Statistics from '@/components/crm/Prospect/statistics'
-import { DataTableSkeleton } from '@/components/TableSkeleton'
 import SwitchProspects from '@/components/crm/Prospect/switchProspects'
 import { useNotification } from '@/context/NotifContext'
 import { fetchProspect } from '@/lib/api/crm/prospect/getProspects'
@@ -30,6 +29,11 @@ import {
     columnsCrmTable,
 } from '@/components/crm/Prospect/column/ProspectColumn'
 import { CrmType } from '@/types/CrmType'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { emptyFilterCrmData, FilterCrmSchema } from '@/types/CrmScheme'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PartnerStatusType } from '@/types/partnersType'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
@@ -42,11 +46,26 @@ export default function Crm() {
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
     const [leadKo, setLeadKo] = useState(true)
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof FilterCrmSchema>>(emptyFilterCrmData)
+    const [open, setOpen] = useState(false)
+    const router = useRouter()
+
+    const FilterForm = useForm<z.infer<typeof FilterCrmSchema>>({
+        resolver: zodResolver(FilterCrmSchema),
+        mode: 'onBlur',
+        defaultValues: emptyFilterCrmData,
+    })
+
+    const onSubmit = (data: z.infer<typeof FilterCrmSchema>) => {
+        console.log('Filter', data)
+        setFilterData(data)
+        setOpen(false)
+    }
 
     const Notif = useNotification()
     const {
         data: query,
-        isSuccess,
         isLoading,
         error,
         refetch,
@@ -57,7 +76,10 @@ export default function Crm() {
                 const response = await fetchProspect(
                     currentPage,
                     pageSize,
-                    leadKo
+                    filterData,
+                    switchTable === 'partenaires'
+                        ? 'PARTNER'
+                        : 'ASSOCIATION,FOOD_BANK'
                 )
                 if (response.status === 500) {
                     throw new Error('Error while fetching data')
@@ -74,9 +96,8 @@ export default function Crm() {
                 setData([])
                 console.error(error)
             }
-        }, // Todo: add keepData for paginantion
+        },
     })
-    const router = useRouter()
     const tableAssocciation = useReactTable({
         data,
         columns: columnCrmAssociations(router, setData),
@@ -89,7 +110,6 @@ export default function Crm() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
     const table = useReactTable({
         data,
         columns: columnsCrmTable(router, setData),
@@ -104,39 +124,56 @@ export default function Crm() {
     })
     const handleArchive = () => {
         setLeadKo((prev: boolean) => !prev)
+        setFilterData((prev) => {
+            return { ...prev, status: [PartnerStatusType.CANCELED] }
+        })
         refetch()
     }
+    useEffect(() => {
+        refetch()
+    }, [filterData])
     if (error) return <div>Error: {error.message}</div>
     console.log('totalPages', totalPages)
     return (
-        <div className="flex flex-col gap-3 w-full p-1">
+        <div className="flex flex-col gap-3 w-full pr-2">
             <SwitchProspects data={data} setData={setData} />
-            <Statistics />
+            <Statistics
+                type={
+                    switchTable == 'partenaires'
+                        ? 'PARTNER'
+                        : 'ASSOCIATION,FOOD_BANK'
+                }
+            />
             <FilterCrm
-                data={data}
+                FilterForm={FilterForm}
+                onSubmit={onSubmit}
                 table={
                     switchTable === 'partenaires' ? table : tableAssocciation
                 }
-                columnFilters={columnFilters}
-                setColumnFilters={setColumnFilters}
                 leadKo={leadKo}
                 handleArchive={handleArchive}
                 totalElements={totalElements}
+                open={open}
+                setOpen={setOpen}
             />
-            {isLoading ? (
-                <DataTableSkeleton columnCount={5} rowCount={5} />
-            ) : (
-                <DataTable
-                    table={
-                        switchTable === 'partenaires'
-                            ? table
-                            : tableAssocciation
-                    }
-                    data={data}
-                    title="Listes des prospects"
-                    transform={(data: any) => <CrmCardDetails crm={data} />}
-                />
-            )}
+
+            <DataTable
+                table={
+                    switchTable === 'partenaires' ? table : tableAssocciation
+                }
+                data={data}
+                title="Listes des prospects"
+                transform={(data: any) => <CrmCardDetails crm={data} />}
+                isLoading={isLoading}
+            />
+            <PaginationData
+                className="items-center"
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                refetch={refetch}
+            />
             <Link
                 href={AppRoutes.newProspect}
                 className="lg:hidden grid w-full"
@@ -148,14 +185,6 @@ export default function Crm() {
                     IconRight={UserRoundPlus}
                 />
             </Link>
-            <PaginationData
-                className="items-center"
-                setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                pageSize={pageSize}
-                refetch={refetch}
-            />
         </div>
     )
 }

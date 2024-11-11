@@ -14,7 +14,7 @@ import {
 
 interface DatePickerProps {
     id?: string
-    onChange?: (date: Date) => void
+    onChange?: (date: Date | undefined) => void
     value?: Date
     disabled?: boolean
     myFormat?: string
@@ -54,7 +54,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                     selected={date}
                     onSelect={(value) => {
                         setDate(value)
-                        if (value && onChange) onChange(value)
+                        if (onChange) onChange(value)
                     }}
                     className="rounded-md border h-fit"
                     id={id}

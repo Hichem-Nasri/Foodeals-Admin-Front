@@ -4,6 +4,7 @@ export enum PartnerEntitiesType {
     PARTNER_SB = 'PARTNER_SB',
     NORMAL_PARTNER = 'NORMAL_PARTNER',
     SUB_ENTITY = 'SUB_ENTITY',
+    DELIVERY_PARTNER = 'DELIVERY_PARTNER',
 }
 
 export type ProfileType = {

@@ -54,7 +54,8 @@ export const Select: FC<SelectProps> = ({
     const avatar = options?.find(
         (option) => option.key.toString() === value
     )?.avatar
-
+    console.log('help:', value)
+    console.log('help:', options)
     return (
         <div
             className={cn(

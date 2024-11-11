@@ -1,6 +1,12 @@
 'use client'
 import React, { FC, useState } from 'react'
-import { Archive, ArrowRight, Database, UserRoundPlus } from 'lucide-react'
+import {
+    Archive,
+    ArrowLeft,
+    ArrowRight,
+    Database,
+    UserRoundPlus,
+} from 'lucide-react'
 import { FilterTableProspects } from './FilterTableProspects'
 import { ColumnVisibilityModal } from '../Partners/ColumnVisibilityModal'
 import { CustomButton } from '../custom/CustomButton'
@@ -10,52 +16,59 @@ import { ColumnFiltersState } from '@tanstack/react-table'
 import { Button } from '../ui/button'
 import { CrmType } from '@/types/CrmType'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import { UseFormReturn } from 'react-hook-form'
+import { FilterCrmSchema } from '@/types/CrmScheme'
+import { z } from 'zod'
 
 interface FilterCrmProps {
-    data: CrmType[]
+    FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
+    onSubmit: (data: z.infer<typeof FilterCrmSchema>) => void
     table: import('@tanstack/table-core').Table<CrmType>
-    setColumnFilters: (value: ColumnFiltersState) => void
-    columnFilters: ColumnFiltersState
     handleArchive: () => void
     leadKo: boolean
     totalElements: number
+    open: boolean
+    setOpen: (open: boolean) => void
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
-    data,
+    FilterForm,
+    onSubmit,
     table,
-    setColumnFilters,
-    columnFilters,
     handleArchive,
     leadKo,
     totalElements,
+    open,
+    setOpen,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
-            <div className="flex lg:hidden items-center justify-start space-x-4 lg:space-x-0 w-full">
+            <div className="flex lg:hidden items-center justify-between px-2 space-x-4 lg:space-x-0 w-full">
                 <h2 className="font-medium text-[1.375rem] text-lynch-950 mx-4  ">
                     Liste des prospects
                 </h2>
-                <FilterTableProspects
-                    data={data}
-                    table={table}
-                    columnFilters={columnFilters}
-                    setColumnFilters={setColumnFilters}
-                />
-                <Button
-                    size="sm"
-                    className="text-lynch-500 rounded-full bg-white hover:bg-transparent hover:text-black w-14 h-14"
-                    onClick={handleArchive}
-                >
-                    <Archive size={26} />
-                </Button>
+                <div className="flex justify-center items-center space-x-4">
+                    <FilterTableProspects
+                        FilterForm={FilterForm}
+                        onSubmit={onSubmit}
+                        open={open}
+                        setOpen={setOpen}
+                    />
+                    <Button
+                        size="sm"
+                        className="text-lynch-500 rounded-full bg-white hover:bg-transparent hover:text-black w-14 h-14"
+                        onClick={handleArchive}
+                    >
+                        <Archive size={26} />
+                    </Button>
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTableProspects
-                    data={data}
-                    table={table}
-                    columnFilters={columnFilters}
-                    setColumnFilters={setColumnFilters}
+                    FilterForm={FilterForm}
+                    onSubmit={onSubmit}
+                    open={open}
+                    setOpen={setOpen}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
@@ -63,7 +76,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     variant="outline"
                     label={leadKo ? 'Lead Ko' : 'Prospects'}
                     onClick={handleArchive}
-                    IconRight={leadKo ? Archive : ArrowRight}
+                    IconRight={leadKo ? Archive : ArrowLeft}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2 px-4">
