@@ -4,7 +4,7 @@ import { MultiSelectOptionsType, MultiSelect } from '../MultiSelect'
 import { Label } from '../Label'
 import { Control } from 'react-hook-form'
 import { MultiSelectField } from '../custom/MultiSelectField'
-import { PartnerStatusType } from '@/types/partnersType'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 
 interface FilterMultiSelectProps {
     control: Control<any>
@@ -18,6 +18,36 @@ interface FilterMultiSelectProps {
     emptyAvatar?: string
 }
 
+const optionsStatus = [
+    {
+        label: 'EN COURS',
+        key: PartnerStatusType.IN_PROGRESS,
+    },
+    {
+        label: 'Valide',
+        key: PartnerStatusType.VALID,
+    },
+    {
+        label: 'Annuler',
+        key: PartnerStatusType.CANCELED,
+    },
+]
+
+const optionsSolutions = [
+    {
+        label: 'Market PRO',
+        key: PartnerSolutionType.MARKET_PRO,
+    },
+    {
+        label: 'Donate',
+        key: PartnerSolutionType.DONATE_PRO,
+    },
+    {
+        label: 'DLC PRO',
+        key: PartnerSolutionType.DLC_PRO,
+    },
+]
+
 export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
     control,
     name,
@@ -28,20 +58,9 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
 }) => {
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() =>
         name == 'status'
-            ? [
-                  {
-                      label: 'EN COURS',
-                      key: PartnerStatusType.IN_PROGRESS,
-                  },
-                  {
-                      label: 'Valide',
-                      key: PartnerStatusType.VALID,
-                  },
-                  {
-                      label: 'Annuler',
-                      key: PartnerStatusType.CANCELED,
-                  },
-              ]
+            ? optionsStatus
+            : name == 'solution'
+            ? optionsSolutions
             : []
     )
 

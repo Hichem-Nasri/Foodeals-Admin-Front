@@ -40,11 +40,14 @@ export interface TableRowType {
 export const Associations: FC<AssociationsProps> = ({}) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [associations, setAssociations] = useState<AssociationType[]>([])
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
     const [archive, setArchive] = useState(true)
+    const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
     const { error, isLoading, refetch } = useQuery({
@@ -77,6 +80,11 @@ export const Associations: FC<AssociationsProps> = ({}) => {
         mode: 'onBlur',
         defaultValues: defaultSchemaFilter,
     })
+
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+        console.log('Filters:', data)
+        setOpen(false)
+    }
 
     const table = useReactTable({
         data: associations,
@@ -113,9 +121,11 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersAssociation
+                open={open}
+                setOpen={setOpen}
                 table={table}
                 form={form}
-                data={associations}
+                onSubmit={onSubmit}
                 archive={archive}
                 handleArchive={handleArchive}
                 totalElements={totalElements}

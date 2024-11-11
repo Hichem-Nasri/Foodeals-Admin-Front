@@ -20,7 +20,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { FiltersAssociation } from '../FiltersAssociation'
 import { SiegeCard } from './SiegeCard'
-import { SchemaFilter } from '@/types/associationSchema'
+import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
 import { columnsSiegesTable, siegesData } from '../column/siegeColumn'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
@@ -41,6 +41,10 @@ export interface TableRowType {
 export const Sieges: FC<SiegesProps> = ({ id }) => {
     const [sieges, setSieges] = useState<SiegesType[]>(siegesData)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [open, setOpen] = useState(false)
+    const [totalElements, setTotalElements] = useState(0)
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
@@ -55,6 +59,7 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(data.data.totalPages)
+                setTotalElements(data.data.totalElements)
                 // setSieges(data.data?.content)
                 return data.data
             } catch (error) {
@@ -74,18 +79,13 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
     const form = useForm<z.infer<typeof SchemaFilter>>({
         resolver: zodResolver(SchemaFilter),
         mode: 'onBlur',
-        defaultValues: {
-            startDate: undefined,
-            endDate: undefined,
-            company: [],
-            collaborators: [],
-            email: '',
-            phone: '',
-            city: '',
-            companyType: '',
-            solution: [],
-        },
+        defaultValues: filterData,
     })
+
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+        setFilterData(data)
+        setOpen(false)
+    }
 
     const table = useReactTable({
         data: sieges,
@@ -102,9 +102,12 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
             <FiltersAssociation
                 table={table}
                 form={form}
-                data={sieges}
+                onSubmit={onSubmit}
                 archive={archive}
                 handleArchive={handleArchive}
+                open={open}
+                setOpen={setOpen}
+                totalElements={totalElements}
                 siege
             />
             <DataTable

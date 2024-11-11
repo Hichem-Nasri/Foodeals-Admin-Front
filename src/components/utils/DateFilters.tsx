@@ -6,7 +6,7 @@ import { FilterCrmSchema } from '@/types/CrmScheme'
 import { z } from 'zod'
 
 interface DateFilterProps {
-    form: UseFormReturn<z.infer<typeof FilterCrmSchema>>
+    form: UseFormReturn<any>
     disabled: boolean
 }
 

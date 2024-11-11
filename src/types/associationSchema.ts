@@ -27,39 +27,21 @@ export const associationInformationSchema = z.object({
 })
 
 export const SchemaFilter = z.object({
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
-    company: z
-        .array(
-            z.object({
-                label: z.string().optional(),
-                key: z.string().optional(),
-                avatar: z.string().optional(),
-            })
-        )
-        .optional(),
-    collaborators: z
-        .array(
-            z.object({
-                label: z.string().optional(),
-                key: z.string().optional(),
-                avatar: z.string().optional(),
-            })
-        )
-        .optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    companyName: z.array(z.string()).optional(),
+    collaborators: z.array(z.string()).optional(),
     email: z.string().optional(),
     phone: z.string().optional(),
     city: z.string().optional(),
     companyType: z.string().optional(),
-    solution: z
-        .array(z.enum(['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']))
-        .optional(),
+    solution: z.array(z.string()).optional(),
 })
 
 export const defaultSchemaFilter = {
     startDate: undefined,
     endDate: undefined,
-    company: [],
+    companyName: [],
     collaborators: [],
     email: '',
     phone: '',

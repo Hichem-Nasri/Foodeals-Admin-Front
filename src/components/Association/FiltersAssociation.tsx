@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { Archive, ArrowLeft, ArrowRight, HeartHandshake } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
@@ -7,25 +7,31 @@ import { FormFilter } from './FormFilter'
 import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import { SchemaFilter } from '@/types/associationSchema'
+import { z } from 'zod'
 
 interface FiltersAssociationProps {
-    data: any[]
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<any>
     archive: boolean
     handleArchive: () => void
     siege?: boolean
     totalElements: number
+    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
 }
 
 export const FiltersAssociation: FC<FiltersAssociationProps> = ({
-    data,
+    open,
+    setOpen,
     form,
     table,
     archive,
     handleArchive,
     siege = false,
     totalElements,
+    onSubmit,
 }) => {
     const router = useRouter()
     return (
@@ -34,10 +40,20 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des {siege ? 'sièges' : 'associations'}
                 </h2>
-                <FormFilter />
+                <FormFilter
+                    form={form}
+                    onSubmit={onSubmit}
+                    open={open}
+                    setOpen={setOpen}
+                />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FormFilter />
+                <FormFilter
+                    form={form}
+                    onSubmit={onSubmit}
+                    open={open}
+                    setOpen={setOpen}
+                />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"

@@ -3,7 +3,7 @@ import { DataTable } from '@/components/DataTable'
 import PaginationData from '@/components/utils/PaginationData'
 import { useNotification } from '@/context/NotifContext'
 import { CollaboratorAssociationsType } from '@/types/association'
-import { SchemaFilter } from '@/types/associationSchema'
+import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -42,6 +42,10 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [open, setOpen] = useState(false)
+    const [totalElements, setTotalElements] = useState(0)
     const [archive, setArchive] = useState(true)
     const notify = useNotification()
     const router = useRouter()
@@ -53,6 +57,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(data.data.totalPages)
+                setTotalElements(data.data.totalElements)
                 // setCollaborators(data.data?.content)
                 return data.data
             } catch (error) {
@@ -72,18 +77,13 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const form = useForm<z.infer<typeof SchemaFilter>>({
         resolver: zodResolver(SchemaFilter),
         mode: 'onBlur',
-        defaultValues: {
-            startDate: undefined,
-            endDate: undefined,
-            company: [],
-            collaborators: [],
-            email: '',
-            phone: '',
-            city: '',
-            companyType: '',
-            solution: [],
-        },
+        defaultValues: filterData,
     })
+
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+        setFilterData(data)
+        setOpen(false)
+    }
 
     const table = useReactTable({
         data: collaborators,
@@ -100,9 +100,12 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
             <FiltersAssociation
                 table={table}
                 form={form}
-                data={collaborators}
+                onSubmit={onSubmit}
                 archive={archive}
                 handleArchive={handleArchive}
+                open={open}
+                setOpen={setOpen}
+                totalElements={totalElements}
                 siege
             />
             <DataTable
