@@ -54,8 +54,6 @@ const PaymentCommissionCard = ({
         ((payed && commission.paymentStatus == PaymentStatusEnum.IN_VALID) ||
             (!payed &&
                 commission.paymentStatus == PaymentStatusEnum.VALID_BY_PARTNER))
-    console.log('showValidation', showValidation, commission.payable)
-    console.log('commission', commission)
     const router = useRouter()
     const dataArray = [
         {

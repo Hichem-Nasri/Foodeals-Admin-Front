@@ -18,6 +18,8 @@ interface FilterTablePaymentProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     header?: string
     dateForm?: string
+    type?: string
+    id?: string
 }
 
 export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
@@ -26,8 +28,11 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
     setOpen,
     header,
     dateForm,
+    type,
+    id,
 }) => {
     // dialog that take all the page and show the filter form with buttons in bottom of the page
+
     return (
         <div className=" hidden lg:flex w-full">
             <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between w-full">
@@ -42,13 +47,14 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
                 </div>
             </div>
 
-            <div className="hidden lg:flex w-full">
+            <div className="hidden lg:flex w-full ">
                 <FormFilterPayment
-                    options={[]}
                     form={form}
                     onSubmit={onSubmit}
                     onBlurMode="onChange"
                     dateForm={dateForm}
+                    type={type}
+                    id={id}
                 />
             </div>
         </div>

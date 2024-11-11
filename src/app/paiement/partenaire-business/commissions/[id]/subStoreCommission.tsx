@@ -132,6 +132,8 @@ const SubStoreCommission = () => {
                             form={form}
                             onSubmit={onSubmit}
                             setOpen={setOpen}
+                            type="organization"
+                            id={id as string}
                         />
                         <CardTotalValue
                             Icon={Coins}
@@ -201,11 +203,7 @@ const SubStoreCommission = () => {
                             title="Filtrer"
                             onClick={() => setOpen((prev) => !prev)}
                         />
-                        <FormFilterPayment
-                            options={[]}
-                            form={form}
-                            onSubmit={onSubmit}
-                        />
+                        <FormFilterPayment form={form} onSubmit={onSubmit} />
                     </div>
                     <div className="flex justify-between w-full rounded-[18px] lg:bg-white p-4 space-x-4">
                         <CustomButton

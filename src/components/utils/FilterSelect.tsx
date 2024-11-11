@@ -1,34 +1,38 @@
 'use client'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Label } from '../Label'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { Select } from '../custom/Select'
+import { SelectField } from '../custom/SelectField'
+import { Control } from 'react-hook-form'
 
 interface FilterSelectProps {
-    item: string
-    setItem: (item: string) => void
-    options: MultiSelectOptionsType[]
+    control: Control<any>
+    name: string
     label: string
     placeholder?: string
 }
 
 export const FilterSelect: FC<FilterSelectProps> = ({
-    item,
-    setItem,
-    options,
+    control,
+    name,
     label,
     placeholder,
 }) => {
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
+    useEffect(() => {
+        const fetchOptions = async () => {
+            // fetch options
+        }
+        fetchOptions()
+    }, [])
     return (
-        <div className="flex flex-col gap-2 w-full text-xs">
-            <Label label={label} htmlFor={label} className="text-xs" />
-            <Select
-                label=""
-                placeholder={placeholder || 'Sélectionner'}
-                onChange={setItem}
-                options={options}
-                value={item}
-            />
-        </div>
+        <SelectField
+            control={control}
+            name={name}
+            label={label}
+            placeholder={placeholder}
+            options={options}
+        />
     )
 }

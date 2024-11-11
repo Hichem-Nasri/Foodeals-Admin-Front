@@ -1,35 +1,33 @@
-import { PaymentFilterSchema, PaymentType } from '@/types/PaymentType'
+import { PaymentFilterSchema } from '@/types/PaymentType'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import React, { FC } from 'react'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
-import { Form, FormField, FormMessage } from '../ui/form'
-import { Select } from '../custom/Select'
-import { DatePicker } from '../DatePicker'
-import { AvatarProfile } from '../AvatarProfile'
-import { Label } from '../Label'
+import { Form, FormField } from '../ui/form'
 import { PartnerOptions } from '@/lib/utils'
 import { MultiSelectOptionsType } from '../MultiSelect'
-import { SelectField } from '../custom/SelectField'
 import SelectDate from '../utils/SelectDate'
+import SelectParnter from '@/components/utils/SelectPartners'
 
 interface FormFilterPaymentProps {
-    options: MultiSelectOptionsType[]
     form: UseFormReturn<z.infer<typeof PaymentFilterSchema>>
     onSubmit: (data: z.infer<typeof PaymentFilterSchema>) => void
     onBlurMode?: 'onBlur' | 'onChange'
     dateForm?: string
+    type?: string
+    id?: string
 }
 
 export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
-    options,
     form,
     onSubmit,
     onBlurMode = 'onBlur',
     dateForm = 'MM/yyyy',
+    type,
+    id,
 }) => {
     const { handleSubmit, control } = form
+    console.log('FormFilterPaymentProps')
     return (
         <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="w-full">
@@ -49,22 +47,17 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                                 format={dateForm}
                                 placeholder="Selectionner une date"
                                 value={field.value!}
+                                type={type}
+                                id={id}
                             />
                         )}
                     />
-                    <SelectField
+                    <SelectParnter
                         control={control}
                         name="partner"
-                        options={options}
-                        disabled={false}
                         label="Partenaire"
-                        onChange={(value) => {
-                            if (onBlurMode === 'onChange') {
-                                handleSubmit(onSubmit)()
-                            }
-                        }}
-                        placeholder="Selectionner un partenaire"
-                        className={'text-sm font-normal'}
+                        disabled={false}
+                        type={['PARTNER_SB', 'NORMAL_PARTNER']}
                     />
                 </div>
             </form>

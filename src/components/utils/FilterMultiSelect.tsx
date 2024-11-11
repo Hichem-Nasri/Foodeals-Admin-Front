@@ -1,12 +1,14 @@
 'use client'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { MultiSelectOptionsType, MultiSelect } from '../MultiSelect'
 import { Label } from '../Label'
+import { Control } from 'react-hook-form'
+import { MultiSelectField } from '../custom/MultiSelectField'
+import { PartnerStatusType } from '@/types/partnersType'
 
 interface FilterMultiSelectProps {
-    item: string[]
-    setItem: (item: string[]) => void
-    options: MultiSelectOptionsType[]
+    control: Control<any>
+    name: string
     label: string
     placeholder?: string
     transform?: (value: MultiSelectOptionsType[]) => JSX.Element[]
@@ -17,31 +19,48 @@ interface FilterMultiSelectProps {
 }
 
 export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
-    item,
-    setItem,
-    options,
+    control,
+    name,
     label,
     placeholder,
     transform,
     ...rest
 }) => {
-    const [selectedItem, setselectedItem] = useState(item)
-    const handleCountryChange = (item: string[]) => {
-        setselectedItem(item)
-        setItem(item)
-    }
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>(() =>
+        name == 'status'
+            ? [
+                  {
+                      label: 'EN COURS',
+                      key: PartnerStatusType.IN_PROGRESS,
+                  },
+                  {
+                      label: 'Valide',
+                      key: PartnerStatusType.VALID,
+                  },
+                  {
+                      label: 'Annuler',
+                      key: PartnerStatusType.CANCELED,
+                  },
+              ]
+            : []
+    )
+
+    useEffect(() => {
+        const fetchOptions = async () => {
+            // fetch options
+        }
+        fetchOptions()
+    }, [])
 
     return (
-        <div className="flex flex-col gap-3 w-full">
-            <Label label={label} htmlFor={label} className="text-xs" />
-            <MultiSelect
-                {...rest}
-                transform={transform}
-                placeholder={placeholder || 'Sélectionner'}
-                onSelect={handleCountryChange}
-                options={options}
-                selectedValues={selectedItem}
-            />
-        </div>
+        <MultiSelectField
+            options={options}
+            control={control}
+            name={name}
+            label={label}
+            placeholder={placeholder}
+            transform={transform}
+            {...rest}
+        />
     )
 }

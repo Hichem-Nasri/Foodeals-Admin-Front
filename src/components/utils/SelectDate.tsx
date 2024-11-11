@@ -5,6 +5,7 @@ import { fetchManager } from '@/lib/api/fetchManager'
 import { Label } from '../Label'
 import { Select } from '../custom/Select'
 import { CalendarClock } from 'lucide-react'
+import getDateAvailable, { getYearsAvailable } from '@/lib/api/getDate'
 
 const getOptionsDate: (
     format: 'MM/YYYY' | 'YYYY'
@@ -38,6 +39,8 @@ const SelectDate = ({
     format = 'MM/YYYY',
     placeholder,
     value,
+    type,
+    id,
 }: {
     onChange: (value: string) => void
     disabled?: boolean
@@ -45,12 +48,29 @@ const SelectDate = ({
     format?: string
     placeholder?: string
     value: string
+    type?: string
+    id?: string
 }) => {
     // const options: MultiSelectOptionsType[] = []
     console.log('value is: ', value)
-    const [options, setOptions] = useState<MultiSelectOptionsType[]>(
-        getOptionsDate(format as 'MM/YYYY' | 'YYYY')
-    )
+    const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
+    useEffect(() => {
+        const fetch = async () => {
+            let res
+            if (format == 'MM/YYYY') {
+                if (type == 'partner' || type == 'organization') {
+                    res = await getDateAvailable(type, id)
+                } else {
+                    res = await getDateAvailable('all')
+                }
+            } else {
+                res = await getYearsAvailable()
+            }
+            console.log('res is: ', res)
+            setOptions(res.map((date: string) => ({ key: date, label: date })))
+        }
+        fetch()
+    }, [])
 
     return (
         <div className="flex flex-col w-full items-start text-sm font-semibold">

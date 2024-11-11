@@ -145,6 +145,8 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                         form={form}
                         onSubmit={onSubmit}
                         setOpen={setOpen}
+                        type="partner"
+                        id={id}
                     />
                     <CardTotalValue
                         Icon={Coins}

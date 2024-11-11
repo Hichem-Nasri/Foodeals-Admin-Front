@@ -25,7 +25,7 @@ export const CardTotalValue: FC<CardTotalValueProps> = ({
 }) => {
     const total = !currency ? `${value} MAD` : `${value}`
     return (
-        <div className="flex flex-col flex-1 gap-1 p-4 bg-white rounded-[14px] h-full w-full lg:min-w-72 lg:w-auto">
+        <div className="flex flex-col flex-1 gap-1 p-4 bg-white rounded-[14px] h-full w-full lg:min-w-80 lg:w-full whitespace-nowrap">
             <div className="flex items-center gap-3">
                 <span
                     className={cn('bg-primary p-2.5 rounded-full', className)}
@@ -34,7 +34,7 @@ export const CardTotalValue: FC<CardTotalValueProps> = ({
                 </span>
                 <Label
                     label={title}
-                    className="text-lg font-medium text-lynch-950 whitespace-nowrap overflow-hidden"
+                    className="text-lg font-medium text-lynch-950 w-fit text-nowrap overflow-hidden"
                 />
             </div>
             {isLoading ? (
