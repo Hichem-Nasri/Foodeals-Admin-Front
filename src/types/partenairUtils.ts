@@ -192,6 +192,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         accountType: partner.entityType,
         managerId: partner.managerId + '',
         subscriptionType: partner.oneSubscription ? 'personalized' : 'general',
+        subscriptionPayedBySubEntities: partner.subscriptionPayedBySubEntities,
         marketPro: {
             selected: !!marketPro,
             duration: marketPro?.contractSubscriptionDto.duration || 0,
@@ -282,6 +283,7 @@ export interface PartnerPOST {
     solutionsContractDto: SolutionsContractDto[]
     coveredZonesDtos: CityRegion[]
     deliveryPartnerContract: deliveryPartnerContract[]
+    subscriptionPayedBySubEntities: boolean
     status: string
     logo?: File | null
     cover?: File | null
@@ -330,6 +332,7 @@ export const emptyPartnerPOST: PartnerPOST = {
     coveredZonesDtos: [],
     deliveryPartnerContract: [],
     status: PartnerStatusType.IN_PROGRESS,
+    subscriptionPayedBySubEntities: false,
 }
 
 export interface ContactDto {

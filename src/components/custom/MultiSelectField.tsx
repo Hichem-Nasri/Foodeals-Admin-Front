@@ -17,6 +17,7 @@ interface MultiSelectFieldProps {
     disabled?: boolean
     className?: string
     transform?: (value: MultiSelectOptionsType[]) => JSX.Element[]
+    emptyAvatar?: string
     len?: number
 }
 
@@ -30,6 +31,7 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     className,
     transform,
     len,
+    emptyAvatar,
 }) => {
     return (
         <FormField
@@ -51,6 +53,7 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                                 placeholder={placeholder}
                                 transform={transform}
                                 length={len}
+                                emptyAvatar={emptyAvatar}
                             />
                         </div>
                         <FormMessage />

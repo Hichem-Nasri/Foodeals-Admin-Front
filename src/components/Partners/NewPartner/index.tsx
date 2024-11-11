@@ -49,13 +49,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const notif = useNotification()
     const [readOnly, setReadOnly] = useState<boolean>(partnerId !== '')
     const searchParams = useSearchParams()
-
-    useEffect(() => {
-        const mode = searchParams.get('mode') // Access the mode from searchParams
-        if (mode === 'edit') {
-            setReadOnly(false)
-        }
-    }, [searchParams])
     // Form setups
 
     const partnerInformation = useForm<
@@ -95,10 +88,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                 notif.notify(NotificationType.ERROR, 'Failed to save partner')
                 throw new Error('Failed to save partner')
             }
-            notif.notify(
-                NotificationType.SUCCESS,
-                "Partner's data has been saved successfully"
-            )
             return response.data
         },
         onSuccess: (data) => {
@@ -191,11 +180,15 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     }
 
     useEffect(() => {
-        if (saved && checkAllForms(partnerData)) {
+        const mode = searchParams.get('mode') // Access the mode from searchParams
+        if (mode === 'edit' && readOnly) {
+            setReadOnly(false)
+        }
+        if (saved) {
             setSaved(false)
             mutate({ id: partnerId, data: partnerData })
         }
-    }, [partnerData, saved])
+    }, [partnerData, saved, searchParams])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">

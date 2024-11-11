@@ -8,25 +8,29 @@ import { ColumnVisibilityModal } from './ColumnVisibilityModal'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import { z } from 'zod'
+import { SchemaFilter } from '@/types/associationSchema'
 
 interface FilterAndCreatePartnersProps {
-    partners: PartnerType[]
     table: import('@tanstack/table-core').Table<PartnerType>
-    setColumnFilters: React.Dispatch<
-        React.SetStateAction<import('@tanstack/react-table').ColumnFiltersState>
-    >
     setArchive: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
     totalElements: number
+    form: UseFormReturn<z.infer<typeof SchemaFilter>>
+    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
-    partners,
     table,
-    setColumnFilters,
     setArchive,
     archive,
     totalElements,
+    form,
+    onSubmit,
+    open,
+    setOpen,
 }) => {
     const handleArchive = () => {
         setArchive((prev) => !prev)
@@ -39,14 +43,18 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     Liste des partenaires
                 </h2>
                 <FilterTablePartner
-                    partners={partners}
-                    setColumnFilters={setColumnFilters}
+                    form={form}
+                    onSubmit={onSubmit}
+                    setOpen={setOpen}
+                    open={open}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTablePartner
-                    partners={partners}
-                    setColumnFilters={setColumnFilters}
+                    form={form}
+                    onSubmit={onSubmit}
+                    setOpen={setOpen}
+                    open={open}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

@@ -98,15 +98,13 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             control={control}
                             name="companyName"
                             label="Raison sociale"
-                            emptyAvatar="/avatar/emptyUser.png"
-                            // normalTransform={true}
+                            emptyAvatar="/avatar/emptyPartner.png"
                         />
                         <FilterMultiSelect
                             control={control}
                             name="collaborators"
                             label="Collaborateurs"
-                            // normalTransform={true}
-                            emptyAvatar="/avatar/emptyPartner.png"
+                            emptyAvatar="/avatar/emptyUser.png"
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">

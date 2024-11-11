@@ -104,6 +104,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                         disabled={disabled}
                                     />
                                 </div>
+
                                 <div className="flex flex-col gap-[1.875rem]">
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <SelectField
@@ -154,6 +155,33 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             options={partnerType}
                                             className="lg:w-2/4"
                                             disabled={disabled}
+                                        />
+                                    </div>
+                                    <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
+                                        <Label
+                                            label="Subscription Paid par"
+                                            className="text-sm font-medium"
+                                        />
+                                        <RadioButton
+                                            control={form.control}
+                                            name="subscriptionPayedBySubEntities"
+                                            options={[
+                                                {
+                                                    key: 'mainEntities',
+                                                    label: 'Paid par le main partner',
+                                                },
+                                                {
+                                                    key: 'subEntities',
+                                                    label: 'Paid par les sub entities',
+                                                },
+                                            ]}
+                                            disabled={disabled}
+                                            onChange={(value) => {
+                                                form.setValue(
+                                                    'subscriptionPayedBySubEntities',
+                                                    value === 'subEntities'
+                                                )
+                                            }}
                                         />
                                     </div>
                                     <span className="w-fill h-[1px] bg-lynch-100" />

@@ -131,7 +131,11 @@ export const TopBar: FC<TopBarProps> = ({
             window.URL.revokeObjectURL(url)
             setIsDownloading(true)
         } catch (error) {
-            console.error('Error generating contract:', error)
+            notif.notify(
+                NotificationType.ERROR,
+                'Erreur lors de la génération du contrat'
+            )
+            console.log('Error generating contract:', error)
         }
     }
 

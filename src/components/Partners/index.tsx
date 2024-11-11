@@ -24,6 +24,10 @@ import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
 import { columnsPartnersTable } from './column/partnerColumn'
 import PaginationData from '../utils/PaginationData'
+import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 interface PartnersProps {
     params?: {
@@ -43,6 +47,9 @@ export const Partners: FC<PartnersProps> = ({}) => {
     const [partners, setPartners] = useState<PartnerType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [open, setOpen] = useState(false)
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
     const notify = useNotification()
@@ -51,7 +58,11 @@ export const Partners: FC<PartnersProps> = ({}) => {
         queryKey: ['partners', currentPage, pageSize],
         queryFn: async () => {
             try {
-                const data = await fetchPartners(currentPage, pageSize)
+                const data = await fetchPartners(
+                    currentPage,
+                    pageSize,
+                    filterData
+                )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(data.data.totalPages)
@@ -66,6 +77,17 @@ export const Partners: FC<PartnersProps> = ({}) => {
         },
     })
 
+    const form = useForm<z.infer<typeof SchemaFilter>>({
+        resolver: zodResolver(SchemaFilter),
+        mode: 'onBlur',
+        defaultValues: filterData,
+    })
+
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+        console.log('Filters:', data)
+        setOpen(false)
+    }
+
     const table = useReactTable({
         data: partners || [],
         columns: columnsPartnersTable(router),
@@ -78,6 +100,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    // Handle archive
     useEffect(() => {
         if (archive) {
             const fetchArchive = async () => {
@@ -109,9 +132,11 @@ export const Partners: FC<PartnersProps> = ({}) => {
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
+                form={form}
+                onSubmit={onSubmit}
+                setOpen={setOpen}
+                open={open}
                 table={table}
-                partners={partners!}
-                setColumnFilters={setColumnFilters}
                 setArchive={setArchive}
                 archive={archive}
                 totalElements={totalElements}

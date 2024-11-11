@@ -62,6 +62,7 @@ export const SaveSubscriptionData = (
             bankName: data.bank,
             rib: data.rib,
         },
+        subscriptionPayedBySubEntities: data.subscriptionPayedBySubEntities,
     }
 
     const setSolutionsData = (solutions: any[], isGeneral: boolean) => {
@@ -80,6 +81,8 @@ export const SaveSubscriptionData = (
                 contractCommissionDto: {
                     withCard: s?.commissionCard || 0,
                     withCash: s?.commissionCash || 0,
+                    deliveryAmount: 0.0,
+                    deliveryCommission: 0.0,
                 },
             })
         )

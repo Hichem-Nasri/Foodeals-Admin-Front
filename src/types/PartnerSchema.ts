@@ -69,6 +69,7 @@ export const PartnerSubscriptionSchema = z.object({
     rib: z.string().min(3),
     accountType: z.string().min(3),
     subscribtionByEntity: z.boolean().default(false),
+    subscriptionPayedBySubEntities: z.boolean().default(false),
     marketPro: z
         .object({
             selected: z.boolean().default(false),
@@ -123,6 +124,7 @@ export const defaultPartnerSubscriptionData = {
     beneficiary: '',
     rib: '',
     accountType: '',
+    subscriptionPayedBySubEntities: false,
     marketPro: {
         selected: false,
         duration: 0,
@@ -256,6 +258,7 @@ export interface PartnerDataType
     contractId: string
     status: PartnerStatusType
     id?: string
+    subscriptionPayedBySubEntities: boolean
 }
 
 export const defaultPartnerData: PartnerDataType = {
