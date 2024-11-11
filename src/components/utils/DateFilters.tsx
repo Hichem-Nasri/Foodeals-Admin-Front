@@ -1,41 +1,61 @@
-'use client'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
+import { UseFormReturn, Controller } from 'react-hook-form'
+import { FilterCrmSchema } from '@/types/CrmScheme'
+import { z } from 'zod'
 
 interface DateFilterProps {
-    date: string[]
-    setDate: (date: string[]) => void
+    form: UseFormReturn<z.infer<typeof FilterCrmSchema>>
+    disabled: boolean
 }
 
-export const DateFilter: FC<DateFilterProps> = ({ date, setDate }) => {
-    const [startDate, setStartDate] = useState(date[0] || '')
-    const [endDate, setEndDate] = useState(date[1] || '')
-
-    const handleDateChange = (date: string, type: 'start' | 'end') => {
-        if (type === 'start') {
-            setStartDate(date)
-            setDate([date, endDate])
-        } else {
-            setEndDate(date)
-            setDate([startDate, date])
-        }
-    }
+export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
+    const { control } = form
 
     return (
         <div className="flex flex-col gap-3 w-full">
             <Label label="Date de création (Début et fin)" htmlFor="start" />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                <DatePicker
-                    id="start"
-                    onChange={(newDate) =>
-                        handleDateChange(newDate.toLocaleDateString(), 'start')
-                    }
+                <Controller
+                    control={control}
+                    name="startDate"
+                    render={({ field }) => (
+                        <DatePicker
+                            onChange={(newDate) => {
+                                if (newDate) {
+                                    field.onChange(
+                                        newDate.toISOString().split('T')[0]
+                                    )
+                                } else {
+                                    field.onChange('')
+                                }
+                            }}
+                            value={
+                                !field.value ? undefined : new Date(field.value)
+                            }
+                        />
+                    )}
                 />
-                <DatePicker
-                    onChange={(newDate) =>
-                        handleDateChange(newDate.toLocaleDateString(), 'end')
-                    }
+                <Controller
+                    control={control}
+                    name="endDate"
+                    render={({ field }) => (
+                        <DatePicker
+                            onChange={(newDate) => {
+                                if (newDate) {
+                                    field.onChange(
+                                        newDate.toISOString().split('T')[0]
+                                    )
+                                } else {
+                                    field.onChange('')
+                                }
+                            }}
+                            value={
+                                !field.value ? undefined : new Date(field.value)
+                            }
+                        />
+                    )}
                 />
             </div>
         </div>

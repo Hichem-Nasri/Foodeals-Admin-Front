@@ -63,7 +63,7 @@ export async function fetchProspect(
     try {
         const filter = buildQueryString(FilterData, types)
         const url =
-            `${API_PROSPECTS}?page=${currentPage - 1}&size=${pageSize}` + filter
+            `${API_PROSPECTS}?page=${currentPage}&size=${pageSize}` + filter
         console.log('url', url)
         const response = await api.get(url).catch((error) => {
             throw error

@@ -37,7 +37,7 @@ import { PartnerStatusType } from '@/types/partnersType'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
-    const [switchTable, setSetSwitchTable] = useState<
+    const [switchTable, setSwitchTable] = useState<
         'partenaires' | 'associations'
     >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -131,12 +131,12 @@ export default function Crm() {
     }
     useEffect(() => {
         refetch()
-    }, [filterData])
+    }, [filterData, switchTable])
     if (error) return <div>Error: {error.message}</div>
     console.log('totalPages', totalPages)
     return (
         <div className="flex flex-col gap-3 w-full pr-2">
-            <SwitchProspects data={data} setData={setData} />
+            <SwitchProspects setSwitch={setSwitchTable} />
             <Statistics
                 type={
                     switchTable == 'partenaires'

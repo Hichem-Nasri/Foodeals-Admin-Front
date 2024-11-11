@@ -292,8 +292,8 @@ export const columnCrmAssociations = (
     router: AppRouterInstance,
     setData: any
 ) => [
-    ...columnsCrmTable(router, setData),
-    columnHelper.accessor('typeAssocciation', {
+    ...columnsCrmTable(router, setData).slice(0, 4),
+    columnHelper.accessor('type', {
         cell: (info) => {
             const value = info.getValue()
             // Check if the value is null or empty
@@ -303,4 +303,5 @@ export const columnCrmAssociations = (
         header: 'Type de compote',
         footer: (info) => info.column.id,
     }),
+    ...columnsCrmTable(router, setData).slice(4, 16),
 ]

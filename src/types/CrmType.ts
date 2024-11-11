@@ -13,7 +13,7 @@ export type CrmType = {
     status: string
     solutions: PartnerSolutionType[]
     event: EventType[]
-    typeAssocciation?: string
+    type?: string
 }
 
 export type EventType = {
