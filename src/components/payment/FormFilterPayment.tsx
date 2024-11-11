@@ -8,6 +8,7 @@ import { PartnerOptions } from '@/lib/utils'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import SelectDate from '../utils/SelectDate'
 import SelectParnter from '@/components/utils/SelectPartners'
+import { PartnerEntitiesType } from '@/types/GlobalType'
 
 interface FormFilterPaymentProps {
     form: UseFormReturn<z.infer<typeof PaymentFilterSchema>>
@@ -16,14 +17,16 @@ interface FormFilterPaymentProps {
     dateForm?: string
     type?: string
     id?: string
+    typePartner?: PartnerEntitiesType[]
 }
 
 export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
     form,
     onSubmit,
     onBlurMode = 'onBlur',
-    dateForm = 'MM/yyyy',
+    dateForm = 'MM/YYYY',
     type,
+    typePartner = ['PARTNER_SB', 'NORMAL_PARTNER', 'SUB_ENTITY'],
     id,
 }) => {
     const { handleSubmit, control } = form
@@ -57,7 +60,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                         name="partner"
                         label="Partenaire"
                         disabled={false}
-                        type={['PARTNER_SB', 'NORMAL_PARTNER']}
+                        type={typePartner}
                     />
                 </div>
             </form>

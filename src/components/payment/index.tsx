@@ -83,11 +83,7 @@ const Payment: FC<PaymentProps> = ({ payments }) => {
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
                 {/* <F  ilterTablePayment form={form} onSubmit={onSubmit} /> */}
-                <FormFilterPayment
-                    options={options}
-                    form={form}
-                    onSubmit={onSubmit}
-                />
+                <FormFilterPayment form={form} onSubmit={onSubmit} />
                 <CardTotalValue
                     Icon={CalendarClock}
                     title="Echéance"

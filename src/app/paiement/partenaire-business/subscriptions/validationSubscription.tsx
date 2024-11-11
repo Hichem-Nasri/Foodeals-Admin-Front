@@ -50,6 +50,7 @@ import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import { PartnerType } from '@/types/paymentUtils'
 import { Staatliches } from 'next/font/google'
 import PaginationData from '@/components/utils/PaginationData'
+import { formatNumberWithSpaces } from '@/lib/utils'
 
 interface OperationsProps {}
 
@@ -70,12 +71,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: new Date()
-            .toISOString()
-            .slice(0, 10)
-            .split('-')
-            .slice(0, 2)
-            .join('-'),
+        date: new Date().getFullYear().toString(),
         partner: 'all',
     })
 
@@ -134,7 +130,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     return (
         <>
             {!open ? (
-                <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-col gap-3 w-full pr-2">
                     <SwitchPayment />
                     <div className="flex justify-center items-center lg:hidden">
                         <SwitchValidation />
@@ -145,7 +141,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             onSubmit={onSubmit}
                             setOpen={setOpen}
                             header="Tableau de validation des abonnements"
-                            dateForm="yyyy"
+                            dateForm="YYYY  "
                         />
                         <CardTotalValue
                             Icon={FileBadge}
@@ -161,16 +157,15 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                         />
                     </div>
                     <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
-                        <div className="flex justify-center items-center space-x-4">
+                        <div className="flex justify-center items-center space-x-1.5">
                             <ColumnVisibilityModal table={tableSubscription} />
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={totalElements + ''}
+                            label={formatNumberWithSpaces(totalElements)}
                             IconLeft={ArrowRight}
                             disabled
-                            variant="outline"
-                            className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-2 px-3 h-fit"
+                            variant="destructive"
                         />
                     </div>
                     <DataTable
@@ -195,7 +190,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                 </div>
             ) : (
                 <div
-                    className={` flex   flex-col justify-between  w-full min-w-full gap-[1.875rem] min-h-screen top-0 left-0 right-0 fixed bg-white overflow-auto`}
+                    className={`flex flex-col justify-between w-full min-w-full gap-[1.875rem] min-h-screen top-0 left-0 right-0 fixed bg-white overflow-auto`}
                     spellCheck
                 >
                     <div className="flex justify-between items-center flex-col h-full">
@@ -204,9 +199,9 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             onClick={() => setOpen((prev) => !prev)}
                         />
                         <FormFilterPayment
-                            options={[]}
                             form={form}
                             onSubmit={onSubmit}
+                            dateForm="YYYY"
                         />
                     </div>
                     <div className="flex justify-between w-full rounded-[18px] lg:bg-white p-4 space-x-4">
