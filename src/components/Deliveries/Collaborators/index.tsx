@@ -22,16 +22,14 @@ import {
 import { useRouter } from 'next/navigation'
 import { DataTable } from '@/components/DataTable'
 import { FilterDeliveryCollaborators } from './FilterDeliveryCollaborators'
-import {
-    columnsDeliveryCollaboratorsTable,
-    DeliveryCollaboratorsType,
-} from '@/types/deliveries'
+import { DeliveryCollaboratorsType } from '@/types/deliveries'
 import { DeliveryCollaboratorCard } from './DeliveryCollaboratorCard'
 import { useNotification } from '@/context/NotifContext'
 import { getCollaboratorDelivery } from '@/lib/api/delivery/getCollaborator'
 import { NotificationType } from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import PaginationData from '@/components/utils/PaginationData'
+import { columnsDeliveryCollaboratorsTable } from '../column/collaboratorsColumn'
 
 interface DeliveryCollaboratorsProps {
     deliveryCollaborators: DeliveryCollaboratorsType[]

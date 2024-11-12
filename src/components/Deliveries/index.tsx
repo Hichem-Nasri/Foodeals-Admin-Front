@@ -27,6 +27,13 @@ import archivePatner from '@/lib/api/partner/archiverPartner'
 import getArchivedPartners from '@/lib/api/partner/getArchiver'
 import PaginationData from '../utils/PaginationData'
 import { columnsDeliveriesTable } from './column/deliveryColumn'
+import {
+    defaultFilter,
+    PartnerCollaboratorsFilerSchema,
+} from '@/types/collaborators'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 interface DeliveriesProps {}
 
 export interface TableRowType {
@@ -36,14 +43,17 @@ export interface TableRowType {
 
 export const Deliveries: FC<DeliveriesProps> = ({}) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [deliveries, setDeliveries] = useState<DeliveryType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
+    const [FilterData, setFilterData] =
+        useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
+    const [open, setOpen] = useState(false)
     const [totalElement, setTotalElements] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const notify = useNotification()
     const router = useRouter()
     const [archive, setArchive] = useState(false)
-    const [deliveries, setDeliveries] = useState<DeliveryType[]>([])
 
     const { error, isLoading, refetch } = useQuery({
         queryKey: ['partners', currentPage, pageSize],
@@ -64,6 +74,20 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
             }
         },
     })
+
+    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
+        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
+        mode: 'onBlur',
+        defaultValues: FilterData,
+    })
+
+    const onSubmit = (
+        data: z.infer<typeof PartnerCollaboratorsFilerSchema>
+    ) => {
+        setFilterData(data)
+        setOpen(false)
+        refetch()
+    }
 
     const table = useReactTable({
         data: deliveries,
@@ -113,12 +137,14 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersDeliveries
+                onSubmit={onSubmit}
                 table={table}
-                data={deliveries}
-                setColumnFilters={setColumnFilters}
+                form={form}
                 setArchive={setArchive}
                 archive={archive}
                 totalElements={totalElement}
+                open={open}
+                setOpen={setOpen}
             />
             <DataTable
                 data={deliveries}

@@ -5,13 +5,10 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { countryCodes } from '@/lib/utils'
-import { TopBar } from '@/components/Partners/NewPartner/TopBar'
 import {
-    CollaboratorDeliveryDataType,
     CollaboratorDeliveryScheduleSchema,
-    CollaboratorDeliverySchema,
-    defaultCollaboratorDeliveryData,
-    defaultCollaboratorDeliveryScheduleData,
+    CollaboratorDeliveryType,
+    CollaboratorDeliveryTypeSchema,
 } from '@/types/DeliverySchema'
 import { FormCollaboratorInfo } from './FormCollaboratorInfo'
 import { FormWorkSchedule } from './FormWorkSchedule'
@@ -20,39 +17,36 @@ import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface CollaboratorProps {
-    partnerDetails?: CollaboratorDeliveryDataType
+    partnerDetails: CollaboratorDeliveryType
 }
 
 export const Collaborator: React.FC<CollaboratorProps> = ({
     partnerDetails,
 }) => {
+    console.log('partnerDetails', partnerDetails)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const deliveryCollaborator = useForm<
-        z.infer<typeof CollaboratorDeliverySchema>
+        z.infer<typeof CollaboratorDeliveryTypeSchema>
     >({
-        resolver: zodResolver(CollaboratorDeliverySchema),
+        resolver: zodResolver(CollaboratorDeliveryTypeSchema),
         mode: 'onBlur',
-        defaultValues: {
-            ...(partnerDetails
-                ? partnerDetails
-                : defaultCollaboratorDeliveryData),
-        },
+        defaultValues: partnerDetails,
     })
 
-    const DeliveryPartnerSolution = useForm<
-        z.infer<typeof CollaboratorDeliveryScheduleSchema>
-    >({
-        resolver: zodResolver(CollaboratorDeliveryScheduleSchema),
-        mode: 'onBlur',
-        defaultValues: {
-            ...(partnerDetails
-                ? partnerDetails
-                : defaultCollaboratorDeliveryScheduleData),
-        },
-    })
+    // const DeliveryPartnerSolution = useForm<
+    //     z.infer<typeof CollaboratorDeliveryScheduleSchema>
+    // >({
+    //     resolver: zodResolver(CollaboratorDeliveryScheduleSchema),
+    //     mode: 'onBlur',
+    //     defaultValues: {
+    //         ...(partnerDetails
+    //             ? partnerDetails
+    //             : defaultCollaboratorDeliveryScheduleData),
+    //     },
+    // })
 
     const onSubmitPartnerInfo = (
-        data: z.infer<typeof CollaboratorDeliverySchema>
+        data: z.infer<typeof CollaboratorDeliveryTypeSchema>
     ) => {}
 
     const onSubmitEngagement = (
@@ -61,16 +55,17 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
 
     const onSubmit = () => {
         onSubmitPartnerInfo(deliveryCollaborator.getValues())
-        onSubmitEngagement(DeliveryPartnerSolution.getValues())
+        // onSubmitEngagement(DeliveryPartnerSolution.getValues())
     }
 
     const onSaveData = () => {
         console.log('Save data')
         console.log(
-            deliveryCollaborator.getValues(),
-            DeliveryPartnerSolution.getValues()
+            deliveryCollaborator.getValues()
+            // DeliveryPartnerSolution.getValues()
         )
     }
+    console.log(deliveryCollaborator.getValues())
     const router = useRouter()
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
@@ -99,9 +94,9 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
                     form={deliveryCollaborator}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
-                    disabled={!!partnerDetails}
+                    disabled={false}
                 />
-                <FormWorkSchedule form={DeliveryPartnerSolution} />
+                <FormWorkSchedule form={deliveryCollaborator} />
             </div>
         </div>
     )

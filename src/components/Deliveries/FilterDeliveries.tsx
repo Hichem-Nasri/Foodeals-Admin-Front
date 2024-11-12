@@ -14,23 +14,28 @@ import { AppRoutes } from '@/lib/routes'
 import { FormFilter } from './FilterForm'
 import { DeliveryType } from '@/types/deliveries'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import { FilterTablePartner } from '../Partners/FilterTablePartner'
 
 interface FiltersDeliveriesProps {
-    data: DeliveryType[]
     table: import('@tanstack/table-core').Table<any>
-    setColumnFilters: (val: any) => void
     setArchive: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
     totalElements: number
+    onSubmit: (data: any) => void
+    open: boolean
+    form: UseFormReturn<any>
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
-    data,
     table,
-    setColumnFilters,
     archive,
     setArchive,
     totalElements,
+    onSubmit,
+    form,
+    open,
+    setOpen,
 }) => {
     const router = useRouter()
     return (
@@ -39,10 +44,20 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des livraisons
                 </h2>
-                <FormFilter data={data} setColumnFilters={setColumnFilters} />
+                <FormFilter
+                    form={form}
+                    open={open}
+                    setOpen={setOpen}
+                    onSubmit={onSubmit}
+                />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FormFilter data={data} setColumnFilters={setColumnFilters} />
+                <FormFilter
+                    form={form}
+                    open={open}
+                    setOpen={setOpen}
+                    onSubmit={onSubmit}
+                />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"

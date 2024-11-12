@@ -21,13 +21,15 @@ import { PartnerSolution } from '../PartnerSolution'
 import { PartnerCollaborators } from '@/types/collaborators'
 
 interface FilterTablePartnerCollaboratorsProps {
-    partners?: PartnerCollaborators[]
     form?: UseFormReturn<any>
+    onSubmit?: (data: any) => void
+    open?: boolean
+    setOpen?: (value: boolean) => void
 }
 
 export const FilterTablePartnerCollaborators: FC<
     FilterTablePartnerCollaboratorsProps
-> = () => {
+> = ({ form, open, setOpen, onSubmit }) => {
     const options = [
         {
             label: 'Option 1',

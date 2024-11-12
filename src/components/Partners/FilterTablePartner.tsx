@@ -26,8 +26,8 @@ import MobileHeader from '../utils/MobileHeader'
 import { Form } from '../ui/form'
 
 interface FilterTablePartnerProps {
-    form: UseFormReturn<z.infer<typeof SchemaFilter>>
-    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+    form: UseFormReturn<any>
+    onSubmit: (data: any) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
 }
@@ -56,8 +56,8 @@ export const FilterTablePartner: FC<FilterTablePartnerProps> = ({
 }
 
 interface FormAssociationProps {
-    form: UseFormReturn<z.infer<typeof SchemaFilter>>
-    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+    form: UseFormReturn<any>
+    onSubmit: (data: any) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
