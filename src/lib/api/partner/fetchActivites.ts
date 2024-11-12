@@ -2,10 +2,10 @@ import api from '@/api/Auth'
 
 const API_URL = 'http://localhost:8080/Activities'
 
-export const fetchActivities = async () => {
+export const fetchActivities = async (type: string) => {
     try {
         const response = await api
-            .get(API_URL)
+            .get(API_URL + '?type=' + type)
             .then((res) => res.data)
             .catch((error) => {
                 throw new Error(error)

@@ -98,6 +98,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             name="companyType"
                                             label="Type"
                                             disabled={disabled!}
+                                            type="ASSOCIATION"
                                         />
                                         <InputFieldForm
                                             label="Responsable"

@@ -107,6 +107,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             name="companyType"
                                             label="Type"
                                             disabled={disabled!}
+                                            type="PARTNER"
                                         />
                                         <InputFieldForm
                                             control={control}
