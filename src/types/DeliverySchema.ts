@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PartnerPOST } from './partenairUtils'
+import { ContactDto, PartnerPOST } from './partenairUtils'
 
 export const DeliveryPartnerSchema = z.object({
     logo: z.union([z.instanceof(File), z.string()]).optional(),
@@ -128,18 +128,97 @@ export const CollaboratorDeliverySchema = z.object({
     partner: z.string().min(3, 'selectionner un partenaire'),
 })
 
-export const defaultCollaboratorDeliveryData = {
-    avatar: 'https://via.placeholder.com/150',
-    civility: '',
-    firstName: '',
-    lastName: '',
-    origin: '',
-    numberId: 0,
-    role: '',
-    phone: '',
+export const defaultCollaboratorDeliveryData: CollaboratorDeliveryType = {
+    id: '',
+    name: { firstName: '', lastName: '' },
+    avatarPath: '',
     email: '',
-    partner: '',
+    phone: '',
+    role: '',
+    organization: '',
+    status: '',
+    gender: '',
+    nationalId: '',
+    nationality: '',
+    workingHours: [
+        'Lundi',
+        'Mardi',
+        'Mercredi',
+        'Jeudi',
+        'Vendredi',
+        'Samedi',
+        'Dimanche',
+    ].map((day) => ({
+        dayOfWeek: day,
+        morningStart: '08h',
+        morningEnd: '12h',
+        afternoonStart: '14h',
+        afternoonEnd: '18h',
+    })),
 }
+export type CollaboratorDeliveryType = z.infer<
+    typeof CollaboratorDeliveryTypeSchema
+>
+
+export interface WorkingHour {
+    dayOfWeek: string
+    morningStart: string
+    morningEnd: string
+    afternoonStart: string
+    afternoonEnd: string
+}
+export const WorkingHourSchema = z.object({
+    dayOfWeek: z.string(),
+    morningStart: z.string(),
+    morningEnd: z.string(),
+    afternoonStart: z.string(),
+    afternoonEnd: z.string(),
+})
+
+export const ContactDtoSchema = z.object({
+    firstName: z.string().min(3),
+    lastName: z.string().min(3),
+})
+
+export const CollaboratorDeliveryTypeSchema = z.object({
+    id: z.string().optional(),
+    name: ContactDtoSchema,
+    avatarPath: z.string(),
+    email: z.string().email(),
+    phone: z.string(),
+    role: z.string(),
+    organization: z.string(),
+    status: z.string(),
+    gender: z.string(),
+    nationalId: z.string(),
+    nationality: z.string(),
+    workingHours: z.array(WorkingHourSchema),
+})
+
+export const ScheduleDayTypeSchema = z.object({
+    morning: z
+        .object({
+            start: z.string(),
+            end: z.string(),
+        })
+        .optional(),
+    afternoon: z
+        .object({
+            start: z.string(),
+            end: z.string(),
+        })
+        .optional(),
+})
+
+export const CollaboratorDeliveryScheduleTypeSchema = z.object({
+    monday: ScheduleDayTypeSchema.optional(),
+    tuesday: ScheduleDayTypeSchema.optional(),
+    wednesday: ScheduleDayTypeSchema.optional(),
+    thursday: ScheduleDayTypeSchema.optional(),
+    friday: ScheduleDayTypeSchema.optional(),
+    saturday: ScheduleDayTypeSchema.optional(),
+    sunday: ScheduleDayTypeSchema.optional(),
+})
 
 const ScheduleDayType = z.object({
     morning: z

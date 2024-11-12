@@ -174,6 +174,17 @@ export const PartnerCollaboratorsFilerSchema = z.object({
         .optional(),
 })
 
+export const defaultFilter: z.infer<typeof PartnerCollaboratorsFilerSchema> = {
+    startDate: undefined,
+    endDate: undefined,
+    company: [],
+    email: '',
+    phone: '',
+    city: '',
+    companyType: '',
+    solution: [],
+}
+
 const columnHelper = createColumnHelper<PartnerCollaborators>()
 
 interface ColumnsPartnerCollaboratorsTableProps {

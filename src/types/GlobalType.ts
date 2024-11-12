@@ -1,3 +1,4 @@
+import { ContactDto } from './partenairUtils'
 import { PartnerSolutionType } from './partnersType'
 
 export enum PartnerEntitiesType {
@@ -69,3 +70,5 @@ export type AddressType = {
     region: string
     iframe: string
 }
+
+export type userInfoDto = PartnerInfoDto & Pick<ContactDto, 'phone' | 'email'>

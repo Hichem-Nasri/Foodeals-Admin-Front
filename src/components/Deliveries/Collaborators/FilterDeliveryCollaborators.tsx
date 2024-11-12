@@ -1,46 +1,73 @@
-import { FC } from 'react'
-import { Archive, ArrowRight } from 'lucide-react'
+import React, { FC } from 'react'
+import { Archive, ArrowLeft, ArrowRight } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { FilterTablePartnerCollaborators } from '@/components/Partners/collaborators/FilterTablePartnerCollaborators'
 import { DeliveryCollaboratorsType } from '@/types/deliveries'
+import { formatNumberWithSpaces } from '@/lib/utils'
+import { FilterTablePartner } from '@/components/Partners/FilterTablePartner'
 
 interface FilterDeliveryCollaboratorsProps {
-    collaborators: DeliveryCollaboratorsType[]
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onSubmit: (data: any) => void
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<DeliveryCollaboratorsType>
+    setArchive: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
+    totalElements: number
 }
 
 export const FilterDeliveryCollaborators: FC<
     FilterDeliveryCollaboratorsProps
-> = ({ collaborators, form, table }) => {
+> = ({
+    form,
+    table,
+    totalElements,
+    archive,
+    setArchive,
+    open,
+    setOpen,
+    onSubmit,
+}) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des collaborateurs
                 </h2>
-                <FilterTablePartnerCollaborators />
+                <FilterTablePartner
+                    form={form}
+                    open={open}
+                    setOpen={setOpen}
+                    onSubmit={onSubmit}
+                />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FilterTablePartnerCollaborators />
+                <FilterTablePartner
+                    form={form}
+                    open={open}
+                    setOpen={setOpen}
+                    onSubmit={onSubmit}
+                />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
-                    onClick={() => {}}
+                    onClick={() => {
+                        setArchive((prev: boolean) => !prev)
+                    }}
                     size="sm"
-                    label="Archiver"
+                    label={archive ? 'Collaborateur' : 'Archiver'}
                     className="flex items-center gap-1 rounded-[12px] border border-lynch-200 text-lynch-500 font-medium text-sm px-5 py-3 hover:text-black hover:bg-neutral-100 bg-transparent"
-                    IconRight={Archive}
+                    IconRight={archive ? ArrowLeft : Archive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <CustomButton
-                    size="sm"
-                    className="disabled:bg-white font-semibold text-lynch-400 border-[1.5px] border-lynch-400 hover:bg-primary/40"
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
                     disabled
+                    variant="destructive"
                 />
             </div>
         </div>

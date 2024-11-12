@@ -13,8 +13,9 @@ import { PaymentStatusType } from './PaymentType'
 import { PaymentValidation } from '@/components/payment/PaymentValidation'
 import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
 import { PaymentStatus } from '@/components/payment/PaymentStatus'
-import { ContactType, PartnerInfoDto } from './GlobalType'
+import { ContactType, PartnerInfoDto, userInfoDto } from './GlobalType'
 import { capitalize } from './utils'
+import { ContactDto } from './partenairUtils'
 
 export interface DeliveryType {
     id: string
@@ -31,163 +32,33 @@ export interface DeliveryType {
 
 export interface DeliveryCollaboratorsType {
     id: string
-    date: Date
-    collaborator: {
-        name: string
-        avatar: string
-    }
+    createdAt: string
     role: string
-    disponibility: boolean
+    status: boolean
     city: string
-    zone: string
+    region: string
     commands: number
-    phone: string
-    email: string
+    userInfoDto: userInfoDto
     solutions: PartnerSolutionType[]
 }
-
-const columnDeliveryCollaboratorsTableHelper =
-    createColumnHelper<DeliveryCollaboratorsType>()
-
-export const columnsDeliveryCollaboratorsTable = (
-    router: AppRouterInstance
-) => [
-    columnDeliveryCollaboratorsTableHelper.accessor('date', {
-        cell: (info) =>
-            info.getValue().getMonth().toString().padStart(2, '0') +
-            '/' +
-            info.getValue().getUTCFullYear().toString().slice(2),
-        header: 'Date',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('collaborator', {
-        cell: (info) => (
-            <div className="flex items-center gap-1">
-                <Avatar>
-                    <AvatarImage src={info.getValue().avatar} />
-                    <AvatarFallback>
-                        {info.getValue().name[0].toUpperCase()}
-                    </AvatarFallback>
-                </Avatar>
-                {info.getValue().name}
-            </div>
-        ),
-        header: 'Collaborateur',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('role', {
-        cell: (info) => info.getValue(),
-        header: 'Role',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('disponibility', {
-        cell: (info) => <BadgeDisponibility isDisponible={info.getValue()} />,
-        header: 'Disponibilité',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('city', {
-        cell: (info) => info.getValue(),
-        header: 'Ville',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('zone', {
-        cell: (info) => info.getValue(),
-        header: 'Zone',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('commands', {
-        cell: (info) => info.getValue(),
-        header: 'Commandes',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('phone', {
-        cell: (info) => <PhoneBadge phone={info.getValue()} />,
-        header: 'Téléphone',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('email', {
-        cell: (info) => <EmailBadge email={info.getValue()} />,
-        header: 'Email',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('solutions', {
-        cell: (info) => (
-            <div className="flex items-center gap-1">
-                {info.getValue().map((solution) => (
-                    <PartnerSolution solution={solution} key={solution} />
-                ))}
-            </div>
-        ),
-        header: 'Solutions',
-        footer: (info) => info.column.id,
-    }),
-    columnDeliveryCollaboratorsTableHelper.accessor('id', {
-        cell: (info) => (
-            <ActionsMenu
-                id={info.getValue()}
-                menuList={[
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.deliveryCollaboratorDetails.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
-                    },
-                    {
-                        actions: () => {},
-                        icon: Archive,
-                        label: 'Archiver',
-                    },
-                ]}
-            />
-        ),
-        header: 'Activité',
-        footer: (info) => info.column.id,
-    }),
-]
 
 export const deliveryCollaboratorsData: DeliveryCollaboratorsType[] = [
     {
         id: '1',
-        city: 'Paris',
-        commands: 5,
-        collaborator: {
-            avatar: 'https://via.placeholder.com/150',
-            name: 'Test Collaborator',
-        },
-        date: new Date(),
-        disponibility: true,
-        email: 'email@test.com',
-        phone: '0123456789',
+        city: 'Fès',
+        commands: 10,
+        createdAt: '2021-09-10',
+        region: 'Fès-Meknès',
         role: 'Livreur',
-        solutions: [
-            PartnerSolutionType.DLC_PRO,
-            PartnerSolutionType.DONATE_PRO,
-        ],
-        zone: 'Zone',
-    },
-    {
-        id: '2',
-        city: 'Paris',
-        commands: 5,
-        collaborator: {
-            avatar: 'https://via.placeholder.com/150',
-            name: 'Test Collaborator',
+        status: true,
+        userInfoDto: {
+            avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+            email: 'jjj@jj.com',
+            name: 'John Doe',
+            phone: '0606060606',
+            id: '1',
         },
-        date: new Date(),
-        disponibility: false,
-        email: 'email@test.com',
-        phone: '0123456789',
-        role: 'Manager',
-        solutions: [
-            PartnerSolutionType.DLC_PRO,
-            PartnerSolutionType.DONATE_PRO,
-        ],
-        zone: 'Zone',
+        solutions: [PartnerSolutionType.DLC_PRO],
     },
 ]
 

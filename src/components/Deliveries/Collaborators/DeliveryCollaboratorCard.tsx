@@ -70,15 +70,15 @@ export const DeliveryCollaboratorCard: React.FC<
                     <Avatar className="size-[2.875rem] shrink-0">
                         <AvatarImage
                             className=""
-                            src={collaborator.collaborator.avatar}
+                            src={collaborator.userInfoDto.avatarPath}
                         />
                         <AvatarFallback>
-                            {collaborator.collaborator.name[0].toUpperCase()}
+                            {collaborator.userInfoDto.name[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={collaborator.collaborator.name}
+                            label={collaborator.userInfoDto.name}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -88,21 +88,21 @@ export const DeliveryCollaboratorCard: React.FC<
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={collaborator.date.toLocaleDateString()}
+                                label={collaborator.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[0.375rem]">
-                    <Link href={`tel:${collaborator.phone}`}>
+                    <Link href={`tel:${collaborator.userInfoDto.phone}`}>
                         <CustomButton
                             label=""
                             IconLeft={PhoneCall}
                             className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                         />
                     </Link>
-                    <Link href={`mailto:${collaborator.email}`}>
+                    <Link href={`mailto:${collaborator.userInfoDto.email}`}>
                         <CustomButton
                             label=""
                             IconLeft={Mail}
@@ -131,7 +131,7 @@ export const DeliveryCollaboratorCard: React.FC<
                         </div>
                     ))}
                 </div>
-                <BadgeDisponibility isDisponible={collaborator.disponibility} />
+                <BadgeDisponibility isDisponible={collaborator.status} />
             </div>
         </div>
     )
