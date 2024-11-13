@@ -176,12 +176,6 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                                 },
                                             ]}
                                             disabled={disabled}
-                                            onChange={(value) => {
-                                                form.setValue(
-                                                    'subscriptionPayedBySubEntities',
-                                                    value === 'subEntities'
-                                                )
-                                            }}
                                         />
                                     </div>
                                     <span className="w-fill h-[1px] bg-lynch-100" />

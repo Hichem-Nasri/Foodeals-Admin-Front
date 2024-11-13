@@ -110,10 +110,13 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             control={control}
                             name="companyType"
                             label="Type d'entreprise"
-                            options={['ASSOCIATION', 'FOOD_BANK'].map(
+                            options={['PARTNER_WITH_SB', 'NORMAL_PARTNER'].map(
                                 (type) => ({
                                     key: type,
-                                    label: type,
+                                    label:
+                                        type == 'NORMAL_PARTNER'
+                                            ? 'Normal'
+                                            : 'Principal',
                                 })
                             )}
                         />

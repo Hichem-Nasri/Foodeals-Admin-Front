@@ -16,7 +16,7 @@ export const PartnerInformationSchema = z.object({
             message: 'Le numéro de téléphone ne doit contenir que des chiffres',
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
-    commercialRegisterNumber: z.number(),
+    commercialRegisterNumber: z.number().min(1),
     partnerType: z.array(z.string()).min(1),
     country: z.string().min(3),
     city: z.string().min(3),
@@ -61,61 +61,78 @@ export interface PartnerInformationSchemaType {
     mapLocation: string
 }
 
-export const PartnerSubscriptionSchema = z.object({
-    subscriptionType: z.string().min(3),
-    bank: z.string().min(3),
-    paymentMethod: z.string().min(3),
-    beneficiary: z.string().min(3),
-    rib: z.string().min(3),
-    accountType: z.string().min(3),
-    subscribtionByEntity: z.boolean().default(false),
-    subscriptionPayedBySubEntities: z.boolean().default(false),
-    marketPro: z
-        .object({
-            selected: z.boolean().default(false),
-            duration: z.number(),
-            amount: z.number(),
-            expiration: z.number(),
-            managerId: z.string(),
-            commissionCash: z.number(),
-            commissionCard: z.number(),
-            name: z.string().nullish().default('pro_market'),
-        })
-        .optional(),
-    dlcPro: z
-        .object({
-            selected: z.boolean().default(false),
-            duration: z.number(),
-            amount: z.number(),
-            expiration: z.number(),
-            name: z.string().nullish().default('pro_dlc'),
-            commissionCash: z.number().optional(),
-            commissionCard: z.number().optional(),
-        })
-        .optional(),
-    donate: z
-        .object({
-            selected: z.boolean().default(false),
-            duration: z.number(),
-            amount: z.number(),
-            expiration: z.number(),
-            name: z.string().nullish().default('donate'),
-            commissionCash: z.number().optional(),
-            commissionCard: z.number().optional(),
-        })
-        .optional(),
-    solutions: z
-        .object({
-            solutionsId: z.array(z.string()),
-            duration: z.number(),
-            amount: z.number(),
-            expiration: z.number(),
-            managerId: z.string().optional(),
-            commissionCash: z.number().optional(),
-            commissionCard: z.number().optional(),
-        })
-        .optional(),
-})
+export const PartnerSubscriptionSchema = z
+    .object({
+        subscriptionType: z.string().min(3),
+        bank: z.string().min(3),
+        paymentMethod: z.string().min(3),
+        beneficiary: z.string().min(3),
+        rib: z.string().min(3),
+        accountType: z.string().min(3),
+        subscribtionByEntity: z.boolean().default(false),
+        subscriptionPayedBySubEntities: z.string().default('mainEntities'),
+        marketPro: z
+            .object({
+                selected: z.boolean().default(false),
+                duration: z.number(),
+                amount: z.number(),
+                expiration: z.number(),
+                managerId: z.string(),
+                commissionCash: z.number(),
+                commissionCard: z.number(),
+                name: z.string().nullish().default('pro_market'),
+            })
+            .optional(),
+        dlcPro: z
+            .object({
+                selected: z.boolean().default(false),
+                duration: z.number(),
+                amount: z.number(),
+                expiration: z.number(),
+                name: z.string().nullish().default('pro_dlc'),
+                commissionCash: z.number().optional(),
+                commissionCard: z.number().optional(),
+            })
+            .optional(),
+        donate: z
+            .object({
+                selected: z.boolean().default(false),
+                duration: z.number(),
+                amount: z.number(),
+                expiration: z.number(),
+                name: z.string().nullish().default('donate'),
+                commissionCash: z.number().optional(),
+                commissionCard: z.number().optional(),
+            })
+            .optional(),
+        solutions: z
+            .object({
+                solutionsId: z.array(z.string()),
+                duration: z.number(),
+                amount: z.number(),
+                expiration: z.number(),
+                managerId: z.string().optional(),
+                commissionCash: z.number().optional(),
+                commissionCard: z.number().optional(),
+            })
+            .optional(),
+    })
+    .refine(
+        (data) => {
+            // Check if at least one of the selected properties is true
+            const isAnySelected =
+                (data.marketPro && data.marketPro.selected) ||
+                (data.dlcPro && data.dlcPro.selected) ||
+                (data.donate && data.donate.selected)
+
+            return isAnySelected
+        },
+        {
+            message:
+                'At least one of marketPro, dlcPro, or donate must be selected.',
+            path: ['marketPro', 'dlcPro', 'donate'], // You can specify the path for the error
+        }
+    )
 
 export const defaultPartnerSubscriptionData = {
     subscriptionType: 'general',
@@ -124,7 +141,7 @@ export const defaultPartnerSubscriptionData = {
     beneficiary: '',
     rib: '',
     accountType: '',
-    subscriptionPayedBySubEntities: false,
+    subscriptionPayedBySubEntities: 'mainEntities',
     marketPro: {
         selected: false,
         duration: 0,
@@ -227,14 +244,13 @@ export interface PartnerSubscriptionSchemaType {
 export const PartnerFeaturesSchema = z.object({
     numberOfStores: z
         .number()
-        .min(0, 'Le nombre de magasins doit être supérieur ou égal à 0'),
+        .min(1, 'Le nombre de magasins doit être supérieur ou égal à 1'),
     maxNumberOfAccounts: z
         .number()
-        .min(0, 'Le nombre de compte doit être supérieur ou égal à 0'),
+        .min(1, 'Le nombre de compte doit être supérieur ou égal à 1'),
     minimumReduction: z
         .number()
-        .min(0, 'La réduction minimale doit être supérieure ou equal 0'),
-    fileType: z.array(z.string()),
+        .min(1, 'La réduction minimale doit être supérieure ou equal 1'),
 })
 
 export const defaultPartnerFeaturesData = {
@@ -258,7 +274,7 @@ export interface PartnerDataType
     contractId: string
     status: PartnerStatusType
     id?: string
-    subscriptionPayedBySubEntities: boolean
+    subscriptionPayedBySubEntities: string
 }
 
 export const defaultPartnerData: PartnerDataType = {

@@ -10,6 +10,7 @@ import {
     SubAccountPartners,
 } from './partnersType'
 import { defaultPartnerData, PartnerDataType } from './PartnerSchema'
+import { z } from 'zod'
 
 export interface PartnerGET {
     id: string
@@ -52,77 +53,6 @@ const ParnterSolutionExport: (solution: string) => PartnerSolutionType = (
         default:
             return PartnerSolutionType.NONE
     }
-}
-export const checkAllForms = (partnerData: PartnerPOST) => {
-    const requiredFields = [
-        partnerData.entityName,
-        partnerData.commercialNumber,
-        partnerData.contactDto.email,
-        partnerData.contactDto.phone,
-        partnerData.entityAddressDto.address,
-        partnerData.entityAddressDto.city,
-        partnerData.entityAddressDto.country,
-        partnerData.entityAddressDto.region,
-        partnerData.entityAddressDto.iframe,
-        partnerData.managerId,
-        partnerData.activities.length,
-        partnerData.features.length,
-        partnerData.entityType,
-        partnerData.entityBankInformationDto.beneficiaryName,
-        partnerData.entityBankInformationDto.bankName,
-        partnerData.entityBankInformationDto.rib,
-        // partnerData.solutions.length,
-        // partnerData.solutionsContractDto.length,
-        partnerData.maxNumberOfSubEntities,
-    ]
-
-    if (requiredFields.some((field) => field === '' || field === 0)) {
-        const missingFields = [
-            partnerData.entityName === '' ? 'entityName' : '',
-            partnerData.commercialNumber === '' ? 'commercialNumber' : '',
-            partnerData.contactDto.email === '' ? 'contactDto.email' : '',
-            partnerData.contactDto.phone === '' ? 'contactDto.phone' : '',
-            partnerData.entityAddressDto.address === ''
-                ? 'entityAddressDto.address'
-                : '',
-            partnerData.entityAddressDto.city === ''
-                ? 'entityAddressDto.city'
-                : '',
-            partnerData.entityAddressDto.country === ''
-                ? 'entityAddressDto.country'
-                : '',
-            partnerData.entityAddressDto.region === ''
-                ? 'entityAddressDto.region'
-                : '',
-            partnerData.entityAddressDto.iframe === ''
-                ? 'entityAddressDto.iframe'
-                : '',
-            partnerData.managerId === 0 ? 'managerId' : '',
-            partnerData.activities.length === 0 ? 'activities' : '',
-            partnerData.features.length === 0 ? 'features' : '',
-            partnerData.entityType === '' ? 'entityType' : '',
-            partnerData.entityBankInformationDto.beneficiaryName === ''
-                ? 'entityBankInformationDto.beneficiaryName'
-                : '',
-            partnerData.entityBankInformationDto.bankName === ''
-                ? 'entityBankInformationDto.bankName'
-                : '',
-            partnerData.entityBankInformationDto.rib === ''
-                ? 'entityBankInformationDto.rib'
-                : '',
-            partnerData.solutions.length === 0 ? 'solutions' : '',
-            partnerData.solutionsContractDto.length === 0
-                ? 'solutionsContractDto'
-                : '',
-            partnerData.maxNumberOfSubEntities === 0
-                ? 'maxNumberOfSubEntities'
-                : '',
-        ].filter(Boolean)
-        console.log('missingFields', missingFields)
-        return false
-    }
-
-    return true
 }
 
 export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
@@ -263,6 +193,76 @@ export interface CityRegion {
     city: string
     regions: string[]
 }
+
+const ContactDtoSchema = z.object({
+    name: z.object({
+        fullName: z.string().min(3),
+        lastName: z.string().min(3),
+    }),
+    email: z.string().email(),
+    phone: z.string().min(3),
+})
+const EntityAddressDtoSchema = z.object({
+    country: z.string().min(3),
+    city: z.string().min(3),
+    regions: z.array(z.string().min(3)),
+    address: z.string().min(3),
+    iframe: z.string().min(3),
+})
+const EntityBankInformationDtoSchema = z.object({
+    beneficiaryName: z.string().min(3),
+    bankName: z.string().min(3),
+    rib: z.string().min(3),
+})
+const SolutionsContractDtoSchema = z.object({
+    solution: z.string().min(3),
+    contractSubscriptionDto: z.object({
+        duration: z.number(),
+        annualPayment: z.number(),
+        numberOfDueDates: z.number(),
+    }),
+    contractCommissionDto: z.object({
+        withCard: z.number(),
+        withCash: z.number(),
+        deliveryAmount: z.number().optional(),
+        deliveryCommission: z.number().optional(),
+    }),
+})
+const CityRegionSchema = z.object({
+    country: z.string().min(3),
+    city: z.string().min(3),
+    regions: z.array(z.string().min(3)),
+})
+const DeliveryPartnerContractSchema = z.object({
+    solution: z.string().min(3),
+    amount: z.number(),
+    commission: z.number(),
+})
+
+export const PartnerPOSTSchema = z.object({
+    entityType: z.string().min(3),
+    entityName: z.string().min(3),
+    commercialNumber: z.string().min(3),
+    features: z.array(z.string().min(3)),
+    solutions: z.array(z.string().min(3)),
+    contactDto: ContactDtoSchema,
+    entityAddressDto: EntityAddressDtoSchema,
+    entityBankInformationDto: EntityBankInformationDtoSchema,
+    managerId: z.number(),
+    activities: z.array(z.string().min(3)),
+    maxNumberOfSubEntities: z.number(),
+    maxNumberOfAccounts: z.number(),
+    minimumReduction: z.number(),
+    commissionPayedBySubEntities: z.boolean(),
+    oneSubscription: z.boolean(),
+    solutionsContractDto: z.array(SolutionsContractDtoSchema),
+    coveredZonesDtos: z.array(CityRegionSchema),
+    deliveryPartnerContract: z.array(DeliveryPartnerContractSchema),
+    subscriptionPayedBySubEntities: z.boolean(),
+    status: z.string().min(3),
+    logo: z.union([z.instanceof(File), z.null()]).optional(),
+    cover: z.union([z.instanceof(File), z.null()]).optional(),
+})
 
 export interface PartnerPOST {
     entityType: string

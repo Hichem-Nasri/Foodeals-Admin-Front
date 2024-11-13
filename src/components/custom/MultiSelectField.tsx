@@ -19,6 +19,7 @@ interface MultiSelectFieldProps {
     transform?: (value: MultiSelectOptionsType[]) => JSX.Element[]
     emptyAvatar?: string
     len?: number
+    selected?: string[]
 }
 
 export const MultiSelectField: FC<MultiSelectFieldProps> = ({
@@ -32,7 +33,9 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     transform,
     len,
     emptyAvatar,
+    selected,
 }) => {
+    const select = selected || []
     return (
         <FormField
             control={control}
@@ -48,7 +51,7 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                             <MultiSelect
                                 options={options}
                                 disabled={options.length === 0 || disabled}
-                                selectedValues={field.value || []}
+                                selectedValues={field.value + [...select] || []}
                                 onSelect={(value) => field.onChange(value)}
                                 placeholder={placeholder}
                                 transform={transform}

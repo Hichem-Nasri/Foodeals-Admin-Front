@@ -19,11 +19,7 @@ import {
     PartnerInformationSchema,
     PartnerSubscriptionSchema,
 } from '@/types/PartnerSchema'
-import {
-    emptyPartnerPOST,
-    PartnerPOST,
-    checkAllForms,
-} from '@/types/partenairUtils'
+import { emptyPartnerPOST, PartnerPOST } from '@/types/partenairUtils'
 import { PartnerStatusType } from '@/types/partnersType'
 import { useSearchParams } from 'next/navigation'
 import { createPartner } from '@/lib/api/partner/createpartner'
@@ -99,6 +95,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         },
         onError: (err) => {
             console.error(err)
+            notif.notify(NotificationType.ERROR, 'Failed to save partner')
         },
     })
 
@@ -185,6 +182,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             setReadOnly(false)
         }
         if (saved) {
+            console.log('Saving Data ...')
             setSaved(false)
             mutate({ id: partnerId, data: partnerData })
         }

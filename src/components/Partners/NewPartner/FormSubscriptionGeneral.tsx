@@ -1,8 +1,7 @@
 import { FC, Fragment } from 'react'
-
 import { Label } from '@/components/Label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { PartnerCompanyType, PartnerSolutionType } from '@/types/partnersType'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { PartnerSolution } from '../PartnerSolution'
 import { SelectField } from '@/components/custom/SelectField'
 import { InputFieldForm } from '@/components/custom/InputField'
@@ -22,6 +21,8 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
     disabled,
 }) => {
     const { dlcPro, donate, marketPro } = form.watch()
+    const { errors } = form.formState // Get the form errors
+
     const optionsT = [
         { key: 5, label: '5' },
         { key: 10, label: '10' },
@@ -32,6 +33,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
         { key: 12, label: '12 mois' },
         { key: 24, label: '24 mois' },
     ]
+
     return (
         <Fragment>
             <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -62,6 +64,11 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                             </div>
                         )}
                     />
+                    {errors.marketPro?.selected && (
+                        <div className="text-red-500 text-sm mt-2">
+                            {errors.marketPro.selected.message}
+                        </div>
+                    )}
                 </div>
                 <SelectField
                     control={form.control}
@@ -154,6 +161,11 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                             </div>
                         )}
                     />
+                    {errors.dlcPro?.selected && (
+                        <div className="text-red-500 text-sm mt-2">
+                            {errors.dlcPro.selected.message}
+                        </div>
+                    )}
                 </div>
                 <SelectField
                     control={form.control}
@@ -208,6 +220,11 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                             </div>
                         )}
                     />
+                    {errors.donate?.selected && (
+                        <div className="text-red-500 text-sm mt-2">
+                            {errors.donate.selected.message}
+                        </div>
+                    )}
                 </div>
                 <SelectField
                     control={form.control}
@@ -234,14 +251,14 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     disabled={!donate?.selected || disabled}
                 />
             </div>
-            {form.formState.isSubmitted &&
-                !marketPro?.selected &&
-                !dlcPro?.selected &&
-                !donate?.selected && (
-                    <div className="text-red-500">
-                        Please select at least one solution.
-                    </div>
-                )}
+            {errors.marketPro?.selected ||
+            errors.dlcPro?.selected ||
+            errors.donate?.selected ? (
+                <div className="text-red-500 text-sm mt-2">
+                    At least one of marketPro, dlcPro, or donate must be
+                    selected.
+                </div>
+            ) : null}
         </Fragment>
     )
 }
