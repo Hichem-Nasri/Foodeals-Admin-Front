@@ -9,6 +9,7 @@ interface FieldActivitiesProps {
     name: string
     label: string
     disabled: boolean
+    type: 'PARTNER' | 'ASSOCIATION'
 }
 
 const FieldActivities: FC<FieldActivitiesProps> = ({
@@ -16,11 +17,12 @@ const FieldActivities: FC<FieldActivitiesProps> = ({
     disabled,
     name,
     label,
+    type,
 }) => {
     const [activities, setActivities] = useState<MultiSelectOptionsType[]>([])
     useEffect(() => {
         const fetchActivites = async () => {
-            const activity = await fetchActivities()
+            const activity = await fetchActivities(type)
             console.log('activity', activity)
             setActivities(activity)
         }

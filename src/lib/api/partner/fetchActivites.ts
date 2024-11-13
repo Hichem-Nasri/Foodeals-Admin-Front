@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:8080/Activities'
 export const fetchActivities = async (type: string) => {
     try {
         const response = await api
-            .get(API_URL + '?type=' + type)
+            .get(API_URL + '?types=' + type)
             .then((res) => res.data)
             .catch((error) => {
                 throw new Error(error)
