@@ -97,7 +97,10 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             control={control}
                             name="city"
                             label="Ville"
-                            options={[]}
+                            options={[
+                                { label: 'Princible', key: 'PARTNER_WITH_SB' },
+                                { label: 'normal', key: 'NORMAL_PARTNER' },
+                            ]}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">

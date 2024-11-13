@@ -145,7 +145,6 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             if (solution === 'DONATE_PRO') return 'pro_donate'
             return 'pro_market'
         })
-        // parse zone by mapping through it with name that have - between city and region and return an array of object with city and array of region
         const myZone = transformCityRegionArray(data.zone, data.country)
 
         setData((prev) => ({
@@ -252,7 +251,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             console.log('save data')
         }
     }, [saved, data])
-
+    const { solutions: solutionPartner } = DeliveryPartner.watch()
+    const { solutions } = DeliveryPartnerSolution.watch()
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
@@ -272,11 +272,10 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     disabled={readOnly}
+                    selectedSolution={solutions}
                 />
                 <FormSolution
-                    selectedSolution={DeliveryPartnerSolution.getValues().solutions.map(
-                        (solution) => solution as PartnerSolutionType
-                    )}
+                    selectedSolution={solutionPartner}
                     form={DeliveryPartnerSolution}
                     onSubmit={onSubmitEngagement}
                     disabled={readOnly}

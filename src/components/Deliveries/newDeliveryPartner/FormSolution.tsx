@@ -25,7 +25,7 @@ interface FormSolutionProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSolutionSchema>>
     onSubmit: (data: z.infer<typeof DeliveryPartnerSolutionSchema>) => void
     disabled?: boolean
-    selectedSolution: PartnerSolutionType[]
+    selectedSolution: string[]
 }
 
 export const FormSolution: FC<FormSolutionProps> = ({
@@ -35,11 +35,6 @@ export const FormSolution: FC<FormSolutionProps> = ({
     selectedSolution,
 }) => {
     const { handleSubmit } = form
-    const router = useRouter()
-    const showAllPartners = () => {
-        router.push(AppRoutes.collaborator)
-    }
-
     return (
         <Accordion
             type="single"
@@ -129,9 +124,14 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                                         PartnerSolutionType.DONATE_PRO
                                                                     }
                                                                     className="size-5"
-                                                                    checked={field.value.includes(
-                                                                        PartnerSolutionType.DONATE_PRO
-                                                                    )}
+                                                                    checked={
+                                                                        field.value.includes(
+                                                                            PartnerSolutionType.DONATE_PRO
+                                                                        ) ||
+                                                                        selectedSolution.includes(
+                                                                            PartnerSolutionType.DONATE_PRO
+                                                                        )
+                                                                    }
                                                                     onClick={() =>
                                                                         field.onChange(
                                                                             field.value.includes(

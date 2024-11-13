@@ -36,6 +36,7 @@ interface FormDeliveryPartnerProps {
     setCountryCode: (value: string) => void
     countryCode: string
     disabled?: boolean
+    selectedSolution?: string[]
 }
 
 export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
@@ -44,6 +45,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
     onSubmit,
     setCountryCode,
     disabled = false,
+    selectedSolution,
 }) => {
     const { id } = useParams()
     const { handleSubmit, control } = form
@@ -83,7 +85,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         alt="Logo"
                                         label="Image du logo"
                                         className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
-                                        classNameAvatar="rounded-full"
+                                        classNameAvatar="rounded-full lg:rounded-[18px]"
                                     />
                                     <AvatarField
                                         form={form}
@@ -91,7 +93,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         alt="cover"
                                         label="Photo de couverture"
                                         className="lg:w-fit w-full"
-                                        classNameAvatar="lg:h-[223px] h-[160px] lg:w-[740px] w-full rounded-[24px]"
+                                        classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px]"
                                     />
                                 </div>
                                 <span className="w-fill h-[1px] bg-lynch-100" />
@@ -133,6 +135,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                     label: PartnerSolutionType.DONATE_PRO,
                                                 },
                                             ]}
+                                            selectedSolution={selectedSolution!}
                                         />
                                         <InputPhoneField
                                             control={control}
