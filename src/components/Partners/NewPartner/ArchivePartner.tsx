@@ -17,13 +17,14 @@ import {
     defaultArchivePartnerData,
 } from '@/types/PartnerSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormField } from '@/components/ui/form'
+import { Form, FormField, FormMessage } from '@/components/ui/form'
 import { SelectField } from '@/components/custom/SelectField'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/Label'
 import { useNotification } from '@/context/NotifContext'
 import archivePatner from '@/lib/api/partner/archiverPartner'
 import { NotificationType } from '@/types/GlobalType'
+import { useRouter } from 'next/navigation'
 
 interface ArchivePartnerProps {
     partnerId?: string
@@ -36,6 +37,7 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
         defaultValues: defaultArchivePartnerData,
     })
     const notif = useNotification()
+    const router = useRouter()
 
     const onSubmit = async (data: z.infer<typeof ArchivePartnerSchema>) => {
         const archiveData = {
@@ -44,7 +46,9 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
         }
         if (!partnerId) return
         const res = await archivePatner(partnerId, archiveData)
-        if (res.status === 200) {
+        console.log(res)
+        if (res.status === 204) {
+            router.back()
             notif.notify(
                 NotificationType.SUCCESS,
                 'Partenaire archivé avec succès'
@@ -62,7 +66,7 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                     <span className="text-sm font-medium">Archiver</span>
                     <Archive />
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="min-w-max h-fit">
                     <DialogHeader>
                         <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal">
                             Archiver le partenaire
@@ -81,17 +85,21 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                                             name="archiveReason"
                                             control={control}
                                             render={({ field }) => (
-                                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
+                                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400 ">
                                                     <Label
                                                         htmlFor="archiveReason"
                                                         label="Motif"
-                                                        className="text-xs font-semibold text-lynch-950"
+                                                        className="text-sm font-semibold text-lynch-950"
                                                     />
                                                     <Textarea
                                                         {...field}
                                                         name="archiveReason"
                                                         placeholder="Texte du motif"
+                                                        className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full"
+                                                        cols={30}
+                                                        rows={10}
                                                     />
+                                                    <FormMessage {...field} />
                                                 </div>
                                             )}
                                         />

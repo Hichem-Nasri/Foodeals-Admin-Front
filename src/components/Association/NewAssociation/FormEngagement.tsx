@@ -27,6 +27,7 @@ interface FormEngagementProps {
     disabled?: boolean
     documents: File[]
     setDocument: React.Dispatch<React.SetStateAction<File[]>>
+    id: string
 }
 
 export const FormEngagement: FC<FormEngagementProps> = ({
@@ -35,11 +36,12 @@ export const FormEngagement: FC<FormEngagementProps> = ({
     disabled = false,
     documents,
     setDocument,
+    id,
 }) => {
     const { handleSubmit } = form
     const router = useRouter()
     const showAllPartners = () => {
-        router.push(AppRoutes.collaborator)
+        router.push(AppRoutes.sieges.replace(':id', id))
     }
     return (
         <Accordion
@@ -70,10 +72,13 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                         classNameParent="lg:w-1/4"
                                     />
                                     <CustomButton
-                                        className="h-fit py-4 mt-auto"
+                                        className={`${
+                                            !id && 'hidden'
+                                        } h-fit py-4 mt-auto`}
                                         label="Voir la liste"
                                         IconRight={LayoutList}
                                         onClick={showAllPartners}
+                                        disabled={disabled}
                                     />
                                     <div>
                                         <div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">

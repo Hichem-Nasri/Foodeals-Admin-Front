@@ -30,6 +30,7 @@ import {
 import { useSearchParams } from 'next/navigation'
 import validateContract from '@/lib/api/partner/validateContract'
 import { createPartner } from '@/lib/api/partner/createpartner'
+import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
 
 interface NewDeliveryProps {
     partnerDetails: DeliveryPartnerType
@@ -281,6 +282,9 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                     disabled={readOnly}
                 />
             </div>
+            {[PartnerStatusType.VALID, PartnerStatusType.IN_PROGRESS].includes(
+                status
+            ) && <ArchivePartner partnerId={deliveryId} />}
         </div>
     )
 }

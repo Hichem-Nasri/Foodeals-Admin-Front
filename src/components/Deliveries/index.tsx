@@ -107,6 +107,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
         }
         if (archive) {
             const fetchArchive = async () => {
+                setCurrentPage(() => 0)
                 try {
                     const response = await getArchivedPartners(
                         'DELIVERY_PARTNER',

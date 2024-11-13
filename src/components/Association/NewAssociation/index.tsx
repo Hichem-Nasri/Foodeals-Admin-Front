@@ -26,6 +26,7 @@ import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
 import { createAssociation } from '@/lib/api/association/createAssociations'
 import { useSearchParams } from 'next/navigation'
+import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
 
 interface NewAssociationProps {
     id: string
@@ -200,8 +201,10 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                     disabled={readOnly}
                     documents={documents}
                     setDocument={setDocuments}
+                    id={associationId}
                 />
             </div>
+            {associationId && <ArchivePartner partnerId={associationId} />}
         </div>
     )
 }

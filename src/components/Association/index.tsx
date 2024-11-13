@@ -103,7 +103,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 'ASSOCIATION',
                 currentPage,
                 pageSize
-            ) // TODO: change the current page and page size
+            )
             if (res.status === 500) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
             }

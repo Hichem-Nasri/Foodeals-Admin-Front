@@ -7,8 +7,10 @@ const getArchivedPartners = async (
         | 'ASSOCIATION'
         | 'FOOD_BANK_ASSO'
         | 'FOOD_BANK'
-        | 'NORMAL_PARTNER'
-        | 'PARTNER_WITH_SB',
+        | 'FOOD_BANK,FOOD_BANK_ASSO,ASSOCIATION'
+        | 'NORMAL_PARTNER,PARTNER_WITH_SB'
+        | 'PARTNER_WITH_SB'
+        | 'NORMAL_PARTNER',
     currentPage: number,
     pageSize: number
 ): Promise<any> => {

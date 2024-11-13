@@ -7,7 +7,7 @@ const archivePatner = async (
         details: string
     }
 ): Promise<any> => {
-    const url = `http://localhost:8080/api/v1/organizations/partners/${partnerId}`
+    const url = `http://localhost:8080/api/v1/organizations/${partnerId}`
     try {
         const response = await api
             .delete(url, {

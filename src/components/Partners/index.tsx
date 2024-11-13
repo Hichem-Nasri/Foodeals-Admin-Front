@@ -28,6 +28,8 @@ import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { set } from 'date-fns'
+import getArchivedPartners from '@/lib/api/partner/getArchiver'
 
 interface PartnersProps {
     params?: {
@@ -104,15 +106,15 @@ export const Partners: FC<PartnersProps> = ({}) => {
     useEffect(() => {
         if (archive) {
             const fetchArchive = async () => {
+                setCurrentPage(() => 0)
                 try {
-                    const response = await api
-                        .get(
-                            `${API_PARTNERS}/deleted?page=0&size=20&sort=deletedAt,desc`
-                        )
-                        .then((res) => res.data)
-                        .catch((error) => {
-                            throw new Error(error)
-                        })
+                    const response = await getArchivedPartners(
+                        'NORMAL_PARTNER,PARTNER_WITH_SB',
+                        currentPage,
+                        pageSize
+                    )
+                    setTotalPages(response.totalPages)
+                    setTotalElements(response.totalElements)
                     const data = response.content as PartnerType[]
                     setPartners(data)
                 } catch (error) {

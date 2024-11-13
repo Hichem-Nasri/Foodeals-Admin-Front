@@ -229,7 +229,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                         readOnly
                     }
                 />
-                {partnerDetails?.status === PartnerStatusType.VALID && (
+                {[
+                    PartnerStatusType.VALID,
+                    PartnerStatusType.IN_PROGRESS,
+                ].includes(partnerDetails?.status) && (
                     <ArchivePartner partnerId={partnerId} />
                 )}
             </div>
