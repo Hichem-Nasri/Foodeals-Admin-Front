@@ -86,6 +86,7 @@ export const DeliveryPaymentCard: React.FC<DeliveryPaymentCardProps> = ({
                         label="CONFIRMER"
                         id={payment.id}
                         isMobile
+                        amount={payment.toPay}
                     />
                 )}
             </div>

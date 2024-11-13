@@ -58,6 +58,7 @@ const ConfirmationAll = ({
                                     (details.status as PaymentStatusEnum)
                             }
                             isMobile={isMobile}
+                            amount={0} // TODO: add amount that received from the backend
                         />
                     )}
                 </>

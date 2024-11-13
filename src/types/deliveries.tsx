@@ -123,18 +123,22 @@ export const columnsDeliveryPaymentsTable = [
         footer: (info) => info.column.id,
     }),
     columnDeliveryPaymentsTableHelper.accessor('id', {
-        cell: (info) => (
-            <PaymentValidation
-                id={info.getValue()}
-                label="Confirmer"
-                disabled={
-                    !(
-                        info.row.getValue('status') ===
-                        PaymentStatusType.IN_PROGRESS
-                    )
-                }
-            />
-        ),
+        cell: (info) => {
+            const toPay = info.row.getValue('toPay') as number
+            return (
+                <PaymentValidation
+                    id={info.getValue()}
+                    label="Confirmer"
+                    disabled={
+                        !(
+                            info.row.getValue('status') ===
+                            PaymentStatusType.IN_PROGRESS
+                        )
+                    }
+                    amount={toPay}
+                />
+            )
+        },
         header: 'Validation',
         footer: (info) => info.column.id,
     }),
