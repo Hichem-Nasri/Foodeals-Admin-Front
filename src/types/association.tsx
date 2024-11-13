@@ -62,29 +62,30 @@ export const defaultAssociationPostData: AssociationPostType = {
 }
 
 export const exportAssociationPost: (
-    data: AssociationPostType
+    data: any
 ) => AssociationInformationSchemaType = (data) => {
     return {
-        logo: data.logo,
-        cover: data.cover,
-        companyName: data.companyName,
+        logo: data.avatarPath,
+        cover: data.coverPath,
+        companyName: data.name,
         companyType: data.activities,
         responsible:
-            data.responsible.name.firstName +
+            data.contactDto.name.firstName +
             ' ' +
-            data.responsible.name.lastName,
-        phone: data.responsible.phone,
-        email: data.responsible.email,
+            data.contactDto.name.lastName,
+        phone: data.contactDto.phone,
+        email: data.contactDto.email,
         PVNumber: data.pv,
-        managerId: data.managerID.toString(),
-        country: data.associationAddress.country,
-        city: data.associationAddress.city,
-        region: data.associationAddress.region,
-        address: data.associationAddress.address,
-        associationType: data.entityType,
-        mapLocation: data.associationAddress.iframe,
+        managerId: data.manager.id.toString(),
+        country: data.address.country,
+        city: data.address.city,
+        region: data.address.region,
+        address: data.address.address,
+        associationType: data.type,
+        mapLocation: data.address.iframe,
         numberOfSieges: data.numberOfPoints,
         solutions: data.solutions as PartnerSolutionType[],
+        status: data.status,
         documents: [],
     }
 }
