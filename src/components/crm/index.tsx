@@ -19,7 +19,11 @@ import { AppRoutes } from '@/lib/routes'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { UserRoundPlus } from 'lucide-react'
 import PaginationData from '@/components/utils/PaginationData'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import Statistics from '@/components/crm/Prospect/statistics'
 import SwitchProspects from '@/components/crm/Prospect/switchProspects'
 import { useNotification } from '@/context/NotifContext'
@@ -34,6 +38,7 @@ import { z } from 'zod'
 import { emptyFilterCrmData, FilterCrmSchema } from '@/types/CrmScheme'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PartnerStatusType } from '@/types/partnersType'
+import { set } from 'date-fns'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
@@ -41,10 +46,7 @@ export default function Crm() {
         'partenaires' | 'associations'
     >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [leadKo, setLeadKo] = useState(true)
     const [filterData, setFilterData] =
         useState<z.infer<typeof FilterCrmSchema>>(emptyFilterCrmData)
@@ -70,12 +72,12 @@ export default function Crm() {
         error,
         refetch,
     } = useQuery({
-        queryKey: ['prospects', currentPage, pageSize],
+        queryKey: ['prospects', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const response = await fetchProspect(
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     filterData,
                     switchTable === 'partenaires'
                         ? 'PARTNER'
@@ -85,8 +87,11 @@ export default function Crm() {
                     throw new Error('Error while fetching data')
                 }
                 setData(response.data.content)
-                setTotalElements(response.data.totalElements)
-                setTotalPages(response.data.totalPages)
+                setTotals({
+                    ...totals,
+                    totalPages: response.data.totalPages,
+                    totalElements: response.data.totalElements,
+                })
                 return response
             } catch (error) {
                 Notif.notify(
@@ -133,7 +138,6 @@ export default function Crm() {
         refetch()
     }, [filterData, switchTable])
     if (error) return <div>Error: {error.message}</div>
-    console.log('totalPages', totalPages)
     return (
         <div className="flex flex-col gap-3 w-full pr-2">
             <SwitchProspects setSwitch={setSwitchTable} />
@@ -152,9 +156,10 @@ export default function Crm() {
                 }
                 leadKo={leadKo}
                 handleArchive={handleArchive}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
                 open={open}
                 setOpen={setOpen}
+                switchTable={switchTable}
             />
 
             <DataTable
@@ -168,14 +173,21 @@ export default function Crm() {
             />
             <PaginationData
                 className="items-center"
-                setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                pageSize={pageSize}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                pageSize={totals.pageSize}
                 refetch={refetch}
             />
             <Link
-                href={AppRoutes.newProspect}
+                href={
+                    AppRoutes.newProspect + '?type=' + switchTable ===
+                    'partenaires'
+                        ? 'PARTNER'
+                        : 'ASSOCIATION,FOOD_BANK'
+                }
                 className="lg:hidden grid w-full"
             >
                 <CustomButton

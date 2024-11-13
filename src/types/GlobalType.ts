@@ -71,4 +71,18 @@ export type AddressType = {
     iframe: string
 }
 
+export type TotalValueProps = {
+    totalElements: number
+    totalPages: number
+    currentPage: number
+    pageSize: number
+}
+
+export const TotalValues = {
+    totalElements: 0,
+    totalPages: 0,
+    currentPage: 0,
+    pageSize: 10,
+}
+
 export type userInfoDto = PartnerInfoDto & Pick<ContactDto, 'phone' | 'email'>

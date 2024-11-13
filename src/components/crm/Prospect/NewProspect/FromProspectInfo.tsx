@@ -84,6 +84,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             name="category"
                                             label="Catégorie"
                                             disabled={disabled}
+                                            type="ASSOCIATION"
                                         />
                                         <InputFieldForm
                                             control={control}

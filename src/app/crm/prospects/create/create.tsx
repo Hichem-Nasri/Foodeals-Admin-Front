@@ -32,9 +32,11 @@ import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { TopBar } from '@/components/crm/Prospect/NewProspect/TopBar'
 import { FormCrmInfo } from '@/components/crm/Prospect/NewProspect/FromProspectInfo'
 
-interface CreateProps {}
+interface CreateProps {
+    type: string
+}
 
-export const Create: FC<CreateProps> = () => {
+export const Create: FC<CreateProps> = ({ type }) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const queryClient = useQueryClient()
     const router = useRouter()
@@ -43,9 +45,13 @@ export const Create: FC<CreateProps> = () => {
     const [convertir, setConvertir] = useState(false)
     const [open, setOpen] = useState(false)
     const Notif = useNotification()
-
+    console.log(type)
     const mutate = useMutation({
         mutationFn: async (data: any) => {
+            const req = {
+                ...data,
+                type,
+            }
             const res = await api
                 .post('http://localhost:8080/api/v1/crm/prospects/create', data)
                 .catch((err) => console.log(err))

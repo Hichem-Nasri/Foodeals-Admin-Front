@@ -29,6 +29,7 @@ interface FilterCrmProps {
     totalElements: number
     open: boolean
     setOpen: (open: boolean) => void
+    switchTable: string
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
@@ -40,6 +41,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     totalElements,
     open,
     setOpen,
+    switchTable,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -86,7 +88,15 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     label={'Importer'}
                     IconRight={Database}
                 />
-                <Link href={AppRoutes.newProspect}>
+                <Link
+                    href={
+                        AppRoutes.newProspect +
+                        '?type=' +
+                        (switchTable === 'partenaires'
+                            ? 'PARTNER'
+                            : 'ASSOCIATION,FOOD_BANK')
+                    }
+                >
                     <CustomButton
                         size="sm"
                         label="Ajouter un prospect"

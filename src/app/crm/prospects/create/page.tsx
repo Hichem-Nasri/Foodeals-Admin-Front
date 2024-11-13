@@ -4,14 +4,16 @@ import React from 'react'
 import { Create } from './create'
 import api from '@/api/Auth'
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 
 const API_URL = 'http://localhost:8080/api/v1/crm/prospects/[:id]/events'
 
 export default function CreatePage() {
+    const query = useSearchParams()
+
     return (
         <Layout>
-            <Create />
+            <Create type={query.get('type')!} />
         </Layout>
     )
 }

@@ -3,7 +3,13 @@ import SwitchToggle from '@/components/ui/SwitchToggle'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-function SwitchProspects({ data, setData }: { data: any; setData: any }) {
+function SwitchProspects({
+    setSwitch,
+}: {
+    setSwitch: React.Dispatch<
+        React.SetStateAction<'partenaires' | 'associations'>
+    >
+}) {
     const [switchToggle, setSwitchToggle] = useState<
         'Prospect des partenaires' | 'Prospect des associations'
     >('Prospect des partenaires')
@@ -18,8 +24,10 @@ function SwitchProspects({ data, setData }: { data: any; setData: any }) {
         if (type === switchToggle) return
         setSwitchToggle(type)
         if (type === 'Prospect des partenaires') {
+            setSwitch('partenaires')
             // handle partenaires
         } else {
+            setSwitch('associations')
             // handle association
         }
     }
