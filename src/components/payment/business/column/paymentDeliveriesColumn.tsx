@@ -13,40 +13,48 @@ export const columnsPaymentDeliveriesTable = () => [
     }),
     columnHelperPaymentDeliveries.accessor('deliveryCost', {
         cell: (info) => {
-            return <span>{info.getValue() + 'DH'}</span>
+            return (
+                <span>{info.getValue().amount + info.getValue().currency}</span>
+            )
         },
         header: 'Coût de livraison',
         footer: (info) => info.column.id,
     }),
     columnHelperPaymentDeliveries.accessor('commissionCost', {
         cell: (info) => {
-            return <span>{info.getValue() + 'DH'}</span>
+            return (
+                <span>{info.getValue().amount + info.getValue().currency}</span>
+            )
         },
         header: 'Coût de commission',
         footer: (info) => info.column.id,
     }),
-    columnHelperPaymentDeliveries.accessor('NbrOrder', {
+    columnHelperPaymentDeliveries.accessor('orderCount', {
         cell: (info) => {
-            return <span>{info.getValue() + 'DH'}</span>
+            return <span>{info.getValue()}</span>
         },
         header: 'Nbr de commande',
         footer: (info) => info.column.id,
     }),
-    columnHelperPaymentDeliveries.accessor('commissionfoodleas', {
+    columnHelperPaymentDeliveries.accessor('foodealsCommission', {
         cell: (info) => {
-            return <span>{info.getValue() + 'DH'}</span>
+            return (
+                <span>{info.getValue().amount + info.getValue().currency}</span>
+            )
         },
         header: 'Commission Foodeals',
         footer: (info) => info.column.id,
     }),
-    columnHelperPaymentDeliveries.accessor('toReceive', {
+    columnHelperPaymentDeliveries.accessor('amountToReceive', {
         cell: (info) => {
-            return <span>{info.getValue() + 'DH'}</span>
+            return (
+                <span>{info.getValue().amount + info.getValue().currency}</span>
+            )
         },
         header: 'A recevoir',
         footer: (info) => info.column.id,
     }),
-    columnHelperPaymentDeliveries.accessor('validation', {
+    columnHelperPaymentDeliveries.accessor('status', {
         cell: (info) => (
             <ConfirmPayment
                 id={info.getValue()}
@@ -61,33 +69,78 @@ export const columnsPaymentDeliveriesTable = () => [
 
 export const defaultDataPaymentDeliveriesTable: PaymentDeliveriesType[] = [
     {
-        id: '1',
         month: 'Janvier',
-        deliveryCost: 1000,
-        commissionCost: 1000,
-        NbrOrder: 1000,
-        commissionfoodleas: 1000,
-        toReceive: 1000,
-        validation: PaymentStatusType.IN_PROGRESS,
+        deliveryCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        orderCount: 10,
+        foodealsCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToPay: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToReceive: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        status: 'pending',
     },
     {
-        id: '2',
         month: 'Février',
-        deliveryCost: 1000,
-        commissionCost: 1000,
-        NbrOrder: 1000,
-        commissionfoodleas: 1000,
-        toReceive: 1000,
-        validation: PaymentStatusType.IN_PROGRESS,
+        deliveryCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        orderCount: 10,
+        foodealsCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToPay: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToReceive: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        status: 'pending',
     },
     {
-        id: '3',
         month: 'Mars',
-        deliveryCost: 1000,
-        commissionCost: 1000,
-        NbrOrder: 1000,
-        commissionfoodleas: 1000,
-        toReceive: 1000,
-        validation: PaymentStatusType.CANCELED,
+        deliveryCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCost: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        orderCount: 10,
+        foodealsCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToPay: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        amountToReceive: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        status: 'pending',
     },
 ]

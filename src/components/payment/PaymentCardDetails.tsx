@@ -115,6 +115,7 @@ export const PaymentCardDetails: React.FC<PaymentCardDetailsProps> = ({
                         label="CONFIRMER"
                         id={payment.ref}
                         isMobile
+                        amount={payment.toPay}
                     />
                 )}
             </div>

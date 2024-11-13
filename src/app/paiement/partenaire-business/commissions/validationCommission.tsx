@@ -28,7 +28,11 @@ import SwitchPayment from '@/components/payment/switchPayment'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { PaymentCommission } from '@/types/paymentUtils'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import PaymentCommissionCard from '@/components/payment/PaymentCommissionCard'
@@ -53,12 +57,12 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         defaultDataCommissionTable
     )
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalCommission, setTotalCommission] = useState(0)
-    const [totalSales, setTotalSales] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
+    const [totals, setTotals] = useState<
+        TotalValueProps & {
+            totalCommission: number
+            totalSales: number
+        }
+    >({ ...TotalValues, totalCommission: 0, totalSales: 0 })
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
@@ -68,17 +72,20 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
-                    currentPage - 1,
-                    pageSize,
+                    totals.currentPage - 1,
+                    totals.pageSize,
                     new Date()
                 )
                 console.log(response)
                 const statistics = response.data.statistics
-                setTotalCommission(statistics.totalCommission.amount)
-                setTotalSales(statistics.total.amount)
                 const data = response.data.commissions
-                setTotalPages(data.totalPages)
-                setTotalElements(data.totalElements)
+                setTotals({
+                    ...totals,
+                    totalCommission: statistics.totalCommission,
+                    totalSales: statistics.totalSales,
+                    totalPages: data.totalPages,
+                    totalElements: data.totalElements,
+                })
                 // setCommission(data.content)
                 return response.data
             } catch (error) {
@@ -140,13 +147,13 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                         <CardTotalValue
                             Icon={Coins}
                             title="Total des ventes"
-                            value={totalCommission}
+                            value={totals.totalCommission}
                             className="text-mountain-400 bg-mountain-400"
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des commissions"
-                            value={totalSales}
+                            value={totals.totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
                         />
                     </div>
@@ -159,7 +166,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={formatNumberWithSpaces(totalElements)}
+                            label={formatNumberWithSpaces(totals.totalElements)}
                             IconLeft={ArrowRight}
                             disabled
                             variant="destructive"
@@ -179,10 +186,12 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                         isLoading={isLoading}
                     />
                     <PaginationData
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        setCurrentPage={setCurrentPage}
-                        pageSize={pageSize}
+                        currentPage={totals.currentPage}
+                        totalPages={totals.totalPages}
+                        setCurrentPage={(page) =>
+                            setTotals({ ...totals, currentPage: page })
+                        }
+                        pageSize={totals.pageSize}
                         refetch={refetch}
                     />
                     <div className="lg:hidden flex flex-col items-center gap-4 my-3">
@@ -197,7 +206,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 </div>
             ) : (
                 <div
-                    className={` flex   flex-col justify-between  w-full min-w-full gap-[1.875rem] min-h-screen top-0 left-0 right-0 fixed bg-white overflow-auto`}
+                    className={`flex flex-col justify-between w-full min-w-full gap-[1.875rem] min-h-screen top-0 left-0 right-0 fixed bg-white overflow-auto`}
                     spellCheck
                 >
                     <div className="flex justify-between items-center flex-col h-full">

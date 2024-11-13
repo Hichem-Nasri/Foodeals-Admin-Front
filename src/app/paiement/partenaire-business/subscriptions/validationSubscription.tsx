@@ -30,7 +30,12 @@ import { useRouter } from 'next/navigation'
 import { SwitchValidation } from '@/components/payment/payment-validations/SwitchValidations'
 import SwitchPayment from '@/components/payment/switchPayment'
 import { useQuery } from '@tanstack/react-query'
-import { NotificationType, PartnerInfoDto } from '@/types/GlobalType'
+import {
+    NotificationType,
+    PartnerInfoDto,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
 import { fetchSubscription } from '@/lib/api/payment/getSubscription'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
@@ -60,12 +65,12 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     >(defaultDataSubscriptionTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [subscriptionID, setSubscriptionId] = useState('')
-    const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [total, setTotal] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
-    const [totalSales, setTotalSales] = useState(0)
+    const [totals, setTotals] = useState<
+        TotalValueProps & {
+            totalCommission: number
+            totalSales: number
+        }
+    >({ ...TotalValues, totalCommission: 0, totalSales: 0 })
     const notify = useNotification()
     const router = useRouter()
     const [dateAndPartner, setDateAndPartner] = useState<
@@ -80,17 +85,20 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         queryFn: async () => {
             try {
                 const response = await fetchSubscription(
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     dateAndPartner.date!,
                     dateAndPartner.partner!
                 )
                 const { statistics, list } = response.data
                 console.log('response', response.data)
-                setTotal(statistics.total?.amount)
-                setTotalSales(statistics.deadlines?.amount)
-                setTotalPages(list.totalPages)
-                setTotalElements(list.totalElements)
+                setTotals({
+                    ...totals,
+                    totalCommission: statistics.total?.amount,
+                    totalSales: statistics.deadlines?.amount,
+                    totalPages: list.totalPages,
+                    totalElements: list.totalElements,
+                })
                 setSubscriptionData(list.content)
                 return response.data
             } catch (error) {
@@ -146,13 +154,13 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                         <CardTotalValue
                             Icon={FileBadge}
                             title="Total des abonnements"
-                            value={total}
+                            value={totals.totalCommission}
                             className="text-mountain-400 bg-mountain-400"
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des écheances"
-                            value={totalSales}
+                            value={totals.totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
                         />
                     </div>
@@ -162,7 +170,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={formatNumberWithSpaces(totalElements)}
+                            label={formatNumberWithSpaces(totals.totalElements)}
                             IconLeft={ArrowRight}
                             disabled
                             variant="destructive"
@@ -181,10 +189,12 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                         isLoading={isLoading}
                     />
                     <PaginationData
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        setCurrentPage={setCurrentPage}
-                        pageSize={pageSize}
+                        currentPage={totals.currentPage}
+                        totalPages={totals.totalPages}
+                        setCurrentPage={(page) =>
+                            setTotals({ ...totals, currentPage: page })
+                        }
+                        pageSize={totals.pageSize}
                         refetch={refetch}
                     />
                 </div>

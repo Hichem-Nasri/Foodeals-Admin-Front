@@ -129,6 +129,7 @@ export const columnsCommissionTable = (
             const payable = info.row.getValue('payable')
             const type = info.row.getValue('partnerType')
             const id = info.row.getValue('id') as string
+            const toPay = info.row.getValue('toPay') as PriceType
             if (!payable) {
                 return (
                     <PaymentValidation
@@ -136,6 +137,7 @@ export const columnsCommissionTable = (
                         id={id}
                         label={'Payé'}
                         disabled
+                        amount={toPay.amount}
                     />
                 )
             } else {
@@ -167,6 +169,7 @@ export const columnsCommissionTable = (
                                 PaymentStatusEnum.IN_VALID !=
                                 (status as PaymentStatusEnum)
                             }
+                            amount={toPay.amount}
                         />
                     )
                 }

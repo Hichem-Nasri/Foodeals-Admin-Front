@@ -167,6 +167,7 @@ const PaymentCommissionCard = ({
                             className="w-full bg-mountain-400 text-white hover:text-mountain-400 hover:bg-white"
                             isMobile
                             id={commission.id}
+                            amount={commission.toPay.amount}
                         />
                     ) : (
                         <ConfirmPayment

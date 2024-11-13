@@ -96,6 +96,7 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
     }),
     columnHelper.accessor('ref', {
         cell: (info) => {
+            const toPay = info.row.getValue('toPay') as number
             if (info.row.getValue('payByFoodeals'))
                 return (
                     <PaymentValidation
@@ -107,6 +108,7 @@ export const columnsPaymentsTable = (router: AppRouterInstance) => [
                                 PaymentStatusType.IN_PROGRESS
                             )
                         }
+                        amount={toPay}
                     />
                 )
             return (

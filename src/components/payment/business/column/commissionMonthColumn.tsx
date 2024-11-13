@@ -30,7 +30,9 @@ export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <span>
-                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                    {info.getValue().amount > 0
+                        ? `${info.getValue().amount} MAD`
+                        : 'N/A'}
                 </span>
             )
         },
@@ -46,7 +48,9 @@ export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <span>
-                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                    {info.getValue().amount > 0
+                        ? `${info.getValue().amount} MAD`
+                        : 'N/A'}
                 </span>
             )
         },
@@ -57,7 +61,9 @@ export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <span>
-                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                    {info.getValue().amount > 0
+                        ? `${info.getValue().amount} MAD`
+                        : 'N/A'}
                 </span>
             )
         },
@@ -68,7 +74,9 @@ export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <span>
-                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                    {info.getValue().amount > 0
+                        ? `${info.getValue().amount} MAD`
+                        : 'N/A'}
                 </span>
             )
         },
@@ -79,13 +87,15 @@ export const columnsCommissionMonthTable = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <span>
-                    {info.getValue() > 0 ? `${info.getValue()} MAD` : 'N/A'}
+                    {info.getValue().amount > 0
+                        ? `${info.getValue().amount} MAD`
+                        : 'N/A'}
                 </span>
             )
         },
         header: 'C. par espèce',
         footer: (info) => info.column.id,
-    }),
+    }), // TODO: add button to multiple Product
 ]
 
 // TODO: remove this demo data
@@ -99,14 +109,27 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
             name: 'Nom du produit',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
         },
-        amount: 1000,
+        amount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cardAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCard: {
+            amount: 1000,
+            currency: 'MAD',
+        },
         quantity: 1,
-        cashAmount: 1000,
-        cardAmount: 1000,
-        cashCommission: 1000,
-        commissionCard: 1000,
-        payable: true,
-        paymentStatus: PaymentStatusEnum.VALID_BY_BOTH,
     },
     {
         id: '2',
@@ -116,14 +139,27 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
             name: 'Nom du produit',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
         },
-        amount: 1000,
+        amount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cardAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCard: {
+            amount: 1000,
+            currency: 'MAD',
+        },
         quantity: 1,
-        cashAmount: 1000,
-        cardAmount: 1000,
-        cashCommission: 1000,
-        commissionCard: 1000,
-        payable: true,
-        paymentStatus: PaymentStatusEnum.VALID_BY_FOODEALS,
     },
     {
         id: '3',
@@ -133,13 +169,26 @@ export const defaultDataCommissionMonthTable: partnerCommissionMonthType[] = [
             name: 'Nom du produit',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
         },
-        amount: 1000,
+        amount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cardAmount: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        cashCommission: {
+            amount: 1000,
+            currency: 'MAD',
+        },
+        commissionCard: {
+            amount: 1000,
+            currency: 'MAD',
+        },
         quantity: 1,
-        cashAmount: 1000,
-        cardAmount: 1000,
-        cashCommission: 1000,
-        commissionCard: 1000,
-        payable: true,
-        paymentStatus: PaymentStatusEnum.VALID_BY_FOODEALS,
     },
 ]

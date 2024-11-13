@@ -31,7 +31,11 @@ import SwitchPayment from '@/components/payment/switchPayment'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { useNotification } from '@/context/NotifContext'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommissionMonth } from '@/lib/api/payment/getCommissionMonth'
 import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
@@ -62,11 +66,13 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
         partnerCommissionMonthType[]
     >(defaultDataCommissionMonthTable)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalCommission, setTotalCommission] = useState(0)
-    const [totalSales, setTotalSales] = useState(0)
+    const [open, setOpen] = useState(false)
+    const [totals, setTotals] = useState<
+        TotalValueProps & {
+            totalCommission: number
+            totalSales: number
+        }
+    >({ ...TotalValues, totalCommission: 0, totalSales: 0 })
     const notify = useNotification()
     const router = useRouter()
 
@@ -81,7 +87,6 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
         defaultValues: dateAndPartner,
         mode: 'onBlur',
     })
-    const [open, setOpen] = useState(false)
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
         console.log(data)
     }
@@ -91,8 +96,8 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommissionMonth(
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     id as string,
                     dateAndPartner.date!
                 )
@@ -101,14 +106,17 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                 }
                 const { partner, statistics, operations } = response.data
 
-                setTotalCommission(statistics?.total.amount)
-                setTotalSales(statistics?.totalCommission.amount)
-                setTotalPages(operations.totalPages)
+                setTotals({
+                    ...totals,
+                    totalCommission: statistics.totalCommission,
+                    totalSales: statistics.totalSales,
+                    totalElements: operations.totalElements,
+                    totalPages: operations.totalPages,
+                })
                 setCommissionMonth(operations.content)
                 setDateAndPartner((prev) => {
                     return { ...prev, partner: partner.name }
                 })
-                // setOptions(options)
                 console.log('response', response.data)
                 return response.data
             } catch (error) {
@@ -151,14 +159,14 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                     <CardTotalValue
                         Icon={Coins}
                         title="Total des ventes"
-                        value={totalCommission}
+                        value={totals.totalCommission}
                         className="text-mountain-400 bg-mountain-400"
                         isLoading={isLoading}
                     />
                     <CardTotalValue
                         Icon={Percent}
                         title="Total des commissions"
-                        value={totalSales}
+                        value={totals.totalSales}
                         className="bg-amethyst-500 text-amethyst-500"
                         isLoading={isLoading}
                     />
@@ -174,7 +182,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                             details={data?.details}
                         />
                         <CustomButton
-                            label={formatNumberWithSpaces(3026)}
+                            label={formatNumberWithSpaces(totals.totalElements)}
                             IconLeft={ArrowRight}
                             disabled
                             variant="destructive"
@@ -191,10 +199,12 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                     isLoading={isLoading}
                 />
                 <PaginationData
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    setCurrentPage={setCurrentPage}
+                    pageSize={totals.pageSize}
+                    currentPage={totals.currentPage}
+                    totalPages={totals.totalPages}
+                    setCurrentPage={(page) => {
+                        setTotals({ ...totals, currentPage: page })
+                    }}
                     refetch={refetch}
                 />
                 <div className="lg:hidden flex flex-col items-center gap-4 my-3 w-full">

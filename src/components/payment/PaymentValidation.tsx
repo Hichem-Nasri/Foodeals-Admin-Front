@@ -54,6 +54,7 @@ interface PaymentValidationProps {
     IconRight?: ForwardRefExoticComponent<
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
+    amount: number
 }
 
 type FromPaymentCheck = {
@@ -152,6 +153,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
     className,
     IconLeft,
     IconRight,
+    amount,
 }) => {
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
         PaymentMethod.CASH
@@ -164,6 +166,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
         mode: 'onBlur',
         defaultValues: {
             ...defaultValuesPayment,
+            amount: amount,
         } as any,
     })
 
@@ -302,6 +305,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                             control={control}
                                             placeholder="Enter amount"
                                             type="number"
+                                            disabled
                                         />
                                         <FormField
                                             control={control}
@@ -314,9 +318,10 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                                     />
                                                     <DatePicker
                                                         onChange={(value) => {
-                                                            field.onChange(
-                                                                value.toISOString()
-                                                            )
+                                                            if (value)
+                                                                field.onChange(
+                                                                    value.toISOString()
+                                                                )
                                                         }}
                                                         value={field.value}
                                                     />
@@ -402,6 +407,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                                         />
                                                         <DatePicker
                                                             onChange={(value) =>
+                                                                value &&
                                                                 field.onChange(
                                                                     value.toISOString()
                                                                 )
@@ -425,6 +431,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                                                         />
                                                         <DatePicker
                                                             onChange={(value) =>
+                                                                value &&
                                                                 field.onChange(
                                                                     value.toISOString()
                                                                 )
