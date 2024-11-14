@@ -16,7 +16,7 @@ import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
@@ -44,7 +44,7 @@ export interface TableRowType {
 }
 
 export const Partners: FC<PartnersProps> = ({}) => {
-    const [archive, setArchive] = React.useState(false)
+    const [archive, setArchive] = React.useState(true)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [partners, setPartners] = useState<PartnerType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
@@ -56,15 +56,19 @@ export const Partners: FC<PartnersProps> = ({}) => {
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
-    const { error, isLoading, refetch } = useQuery({
+    const { error, isLoading, isRefetching, refetch } = useQuery({
         queryKey: ['partners', currentPage, pageSize],
         queryFn: async () => {
             try {
+                console.log('fetching partners')
                 const data = await fetchPartners(
+                    'PARTNERS',
                     currentPage,
                     pageSize,
-                    filterData
+                    filterData,
+                    !archive
                 )
+                console.log(data)
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalPages(data.data.totalPages)
@@ -103,33 +107,13 @@ export const Partners: FC<PartnersProps> = ({}) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
     // Handle archive
+    const handleArchive = () => {
+        if (isRefetching || isLoading) return
+        setArchive((prev) => !prev)
+    }
     useEffect(() => {
-        if (archive) {
-            const fetchArchive = async () => {
-                setCurrentPage(() => 0)
-                try {
-                    const response = await getArchivedPartners(
-                        'NORMAL_PARTNER,PARTNER_WITH_SB',
-                        currentPage,
-                        pageSize
-                    )
-                    setTotalPages(response.totalPages)
-                    setTotalElements(response.totalElements)
-                    const data = response.content as PartnerType[]
-                    setPartners(data)
-                } catch (error) {
-                    notify.notify(
-                        NotificationType.ERROR,
-                        'Error fetching partners'
-                    )
-                    setPartners([])
-                    console.log(error)
-                }
-            }
-            fetchArchive()
-        } else {
-            refetch()
-        }
+        if (isLoading || isRefetching) return
+        refetch()
     }, [archive])
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
@@ -139,19 +123,19 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 setOpen={setOpen}
                 open={open}
                 table={table}
-                setArchive={setArchive}
+                handleArchive={handleArchive}
                 archive={archive}
                 totalElements={totalElements}
             />
 
             <DataTable
-                data={partners!}
+                data={partners! || []}
                 table={table}
                 title="Listes des partenaires"
                 transform={(value) => (
                     <PartnerCard partner={value} key={value.id} />
                 )}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
             />
             <PaginationData
                 currentPage={currentPage}

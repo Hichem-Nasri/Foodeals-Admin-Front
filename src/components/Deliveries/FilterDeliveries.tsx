@@ -18,7 +18,7 @@ import { FilterTablePartner } from '../Partners/FilterTablePartner'
 
 interface FiltersDeliveriesProps {
     table: import('@tanstack/table-core').Table<any>
-    setArchive: React.Dispatch<React.SetStateAction<boolean>>
+    handleArchive: () => void
     archive: boolean
     totalElements: number
     onSubmit: (data: any) => void
@@ -30,7 +30,7 @@ interface FiltersDeliveriesProps {
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
     table,
     archive,
-    setArchive,
+    handleArchive,
     totalElements,
     onSubmit,
     form,
@@ -64,7 +64,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     variant="outline"
                     label={archive ? 'Deliveries' : 'Archives'}
                     IconRight={archive ? ArrowLeft : Archive}
-                    onClick={() => setArchive((prev: boolean) => !prev)}
+                    onClick={handleArchive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">

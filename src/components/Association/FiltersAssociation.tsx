@@ -58,8 +58,8 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={archive ? 'Archive' : 'Associations'}
-                    IconRight={archive ? Archive : ArrowLeft}
+                    label={!archive ? 'Archive' : 'Associations'}
+                    IconRight={!archive ? Archive : ArrowLeft}
                     onClick={handleArchive}
                 />
             </div>

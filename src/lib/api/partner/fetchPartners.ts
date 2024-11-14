@@ -5,8 +5,8 @@ import { PartnerType } from '@/types/partnersType'
 import { z } from 'zod'
 
 const buildQueryString = (
-    data: z.infer<typeof SchemaFilter>,
-    types: 'ASSOCIATION,FOOD_BANK' | 'PARTNER'
+    data: any,
+    type: 'PARTNERS' | 'DELIVERIES' | 'ASSOCIATIONS'
 ) => {
     const queryParts = []
 
@@ -43,28 +43,44 @@ const buildQueryString = (
     if (data.city) {
         queryParts.push(`cityId=${encodeURIComponent(data.city)}`)
     }
+    if (data.type) queryParts.push(`types=${data.type}`)
+    else {
+        switch (type) {
+            case 'PARTNERS':
+                queryParts.push(`types=PARTNER_WITH_SB,NORMAL_PARTNER`)
+                break
+            case 'ASSOCIATIONS':
+                queryParts.push(`types=ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO`)
+                break
+            case 'DELIVERIES':
+                queryParts.push(`types=DELIVERY_PARTNER`)
+                break
+        }
+    }
 
-    queryParts.push(`types=${types}`)
-
-    return queryParts.join('&')
+    return '&' + queryParts.join('&')
 }
 
 export async function fetchPartners(
+    type: 'PARTNERS' | 'DELIVERIES' | 'ASSOCIATIONS',
     currentPage: number,
     pageSize: number,
-    filterData: z.infer<typeof SchemaFilter>
+    filterData: any,
+    archived: boolean = false
 ): Promise<{ status: number; data: any }> {
     try {
-        const filterUrl = buildQueryString(filterData, 'PARTNER')
+        const filterUrl = buildQueryString(filterData, type)
+        const url =
+            `${API_PARTNERS}?page=${currentPage}&size=${pageSize}` +
+            `&organizationsType=${type}` +
+            filterUrl +
+            (archived ? '&deletedAt=true' : '&deletedAt=false')
         console.log('filterUrl', filterUrl)
-        const response = await api
-            .get(
-                `${API_PARTNERS}?page=${currentPage}&size=${pageSize}` +
-                    filterUrl
-            )
-            .catch((error) => {
-                throw error
-            })
+        console.log('archived', url)
+        const response = await api.get(url).catch((error) => {
+            throw error
+        })
+        console.log('response', response)
         return {
             status: response.status,
             data: response.data,

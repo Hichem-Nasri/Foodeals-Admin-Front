@@ -13,29 +13,27 @@ import { SchemaFilter } from '@/types/associationSchema'
 
 interface FilterAndCreatePartnersProps {
     table: import('@tanstack/table-core').Table<PartnerType>
-    setArchive: React.Dispatch<React.SetStateAction<boolean>>
+    handleArchive: () => void
     archive: boolean
     totalElements: number
     form: UseFormReturn<z.infer<typeof SchemaFilter>>
     onSubmit: (data: z.infer<typeof SchemaFilter>) => void
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    isFetching?: boolean
 }
 
 export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
     table,
-    setArchive,
+    handleArchive,
     archive,
     totalElements,
     form,
     onSubmit,
     open,
     setOpen,
+    isFetching,
 }) => {
-    const handleArchive = () => {
-        setArchive((prev) => !prev)
-        // handle archive
-    }
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
@@ -60,10 +58,10 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={archive ? 'Partners' : 'Archive'}
+                    label={archive ? 'Archive' : 'Partners'}
                     className="text-lynch-500"
                     onClick={handleArchive}
-                    IconRight={archive ? ArrowLeft : Archive}
+                    IconRight={archive ? Archive : ArrowLeft}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">

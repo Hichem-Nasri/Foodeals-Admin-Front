@@ -19,7 +19,11 @@ import { FiltersDeliveries } from './FilterDeliveries'
 import { DeliveryCard } from './DeliveryCard'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
-import { useQuery } from '@tanstack/react-query'
+import {
+    keepPreviousData,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query'
 import { fetchDeliveryPartners } from '@/lib/api/delivery/fetchDeliveryParnters'
 import { API_PARTNERS } from '@/lib/api_url'
 import api from '@/api/Auth'
@@ -34,6 +38,10 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import Link from 'next/link'
+import AppRouter from 'next/dist/client/components/app-router'
+import { AppRoutes } from '@/lib/routes'
+import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 interface DeliveriesProps {}
 
 export interface TableRowType {
@@ -55,11 +63,17 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     const router = useRouter()
     const [archive, setArchive] = useState(false)
 
-    const { error, isLoading, refetch } = useQuery({
+    const { error, isLoading, isRefetching, refetch } = useQuery({
         queryKey: ['partners', currentPage, pageSize],
         queryFn: async (data: any) => {
             try {
-                const data = await fetchDeliveryPartners(currentPage, pageSize)
+                const data = await fetchPartners(
+                    'DELIVERIES',
+                    currentPage,
+                    pageSize,
+                    FilterData,
+                    archive
+                )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 console.log('data', data)
@@ -73,6 +87,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 setDeliveries([])
             }
         },
+        placeholderData: keepPreviousData,
     })
 
     const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
@@ -101,47 +116,21 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    const handleArchive = () => {
+        if (isRefetching || isLoading) return
+        setArchive((prev) => !prev)
+    }
     useEffect(() => {
-        if (error) {
-            notify.notify(NotificationType.ERROR, error.message)
-        }
-        if (archive) {
-            const fetchArchive = async () => {
-                setCurrentPage(() => 0)
-                try {
-                    const response = await getArchivedPartners(
-                        'DELIVERY_PARTNER',
-                        currentPage,
-                        pageSize
-                    )
-                    const { status, data } = response
-                    if (status === 500)
-                        throw new Error('Error fetching partners')
-                    console.log('data', data)
-                    setTotalElements(data.totalElements)
-                    setTotalPages(data.totalPages)
-                    setDeliveries(data.content)
-                } catch (error) {
-                    notify.notify(
-                        NotificationType.ERROR,
-                        'Error fetching partners'
-                    )
-                    setDeliveries([])
-                    console.log(error)
-                }
-            } //TODO: Check recive data from backend is correct
-            fetchArchive()
-        } else {
-            refetch()
-        }
-    }, [archive, error])
+        if (isLoading || isRefetching) return
+        refetch()
+    }, [archive])
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersDeliveries
                 onSubmit={onSubmit}
                 table={table}
                 form={form}
-                setArchive={setArchive}
+                handleArchive={handleArchive}
                 archive={archive}
                 totalElements={totalElement}
                 open={open}
@@ -152,7 +141,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 table={table}
                 title="Liste des partenaires de livraison"
                 transform={(value) => <DeliveryCard delivery={value} />}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
             />
             <PaginationData
                 currentPage={currentPage}
@@ -162,13 +151,16 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 refetch={refetch}
             />
 
-            <div className="lg:hidden flex flex-col items-center gap-4 ">
+            <Link
+                href={AppRoutes.newDelivery.replace(':id', 'new')}
+                className="lg:hidden flex flex-col items-center gap-4 "
+            >
                 <CustomButton
                     label="Ajouter un partenaire"
                     className="w-full"
                     IconRight={Store}
                 />
-            </div>
+            </Link>
         </div>
     )
 }

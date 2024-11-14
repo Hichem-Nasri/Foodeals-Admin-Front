@@ -2,6 +2,7 @@ import { FC } from 'react'
 
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -104,12 +105,15 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                                             )}
                                         />
                                         <div className="flex justify-end items-center gap-2.5">
-                                            <CustomButton
-                                                label="Annuler"
-                                                IconRight={X}
-                                                variant="outline"
-                                                className="h-fit py-3"
-                                            />
+                                            <DialogClose>
+                                                <CustomButton
+                                                    label="Annuler"
+                                                    IconRight={X}
+                                                    variant="outline"
+                                                    className="h-fit py-3"
+                                                    type="button"
+                                                />
+                                            </DialogClose>
                                             <CustomButton
                                                 label="Archiver"
                                                 IconRight={Archive}

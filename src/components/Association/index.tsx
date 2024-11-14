@@ -29,6 +29,7 @@ import PaginationData from '../utils/PaginationData'
 import { AppRoutes } from '@/lib/routes'
 import { columnsAssociationsTable } from './column/associationColumn'
 import getArchivedPartners from '@/lib/api/partner/getArchiver'
+import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 
 interface AssociationsProps {}
 
@@ -46,15 +47,21 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
-    const [archive, setArchive] = useState(true)
+    const [archive, setArchive] = useState(false)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
-    const { error, isLoading, refetch } = useQuery({
+    const { error, isLoading, isRefetching, refetch } = useQuery({
         queryKey: ['partners', currentPage, pageSize],
         queryFn: async () => {
             try {
-                const data = await fetchAssociations(currentPage, pageSize)
+                const data = await fetchPartners(
+                    'ASSOCIATIONS',
+                    currentPage,
+                    pageSize,
+                    filterData,
+                    archive
+                )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
                 setTotalElements(data.data?.totalElements)
@@ -68,12 +75,6 @@ export const Associations: FC<AssociationsProps> = ({}) => {
             }
         },
     })
-
-    // handleArchive function
-    const handleArchive = () => {
-        // fetching Archived associations
-        setArchive((prev) => !prev)
-    }
 
     const form = useForm<z.infer<typeof SchemaFilter>>({
         resolver: zodResolver(SchemaFilter),
@@ -96,26 +97,14 @@ export const Associations: FC<AssociationsProps> = ({}) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    // handleArchive function
+    const handleArchive = () => {
+        if (isRefetching || isLoading) return
+        setArchive((prev) => !prev)
+    }
     useEffect(() => {
-        const fetchArchivedAssociations = async () => {
-            setCurrentPage(() => 0)
-            const res = await getArchivedPartners(
-                'ASSOCIATION',
-                currentPage,
-                pageSize
-            )
-            if (res.status === 500) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
-            }
-            setTotalElements(res.data.totalElements)
-            setTotalPages(res.data.totalPages)
-            setAssociations(res.data?.content)
-        }
-        if (archive) {
-            refetch()
-        } else {
-            fetchArchivedAssociations()
-        }
+        if (isLoading || isRefetching) return
+        refetch()
     }, [archive])
 
     return (
@@ -135,7 +124,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 table={table}
                 title="Liste des associations"
                 transform={(value) => <AssociationCard association={value} />}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
             />
             <PaginationData
                 pageSize={pageSize}
