@@ -35,12 +35,13 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     emptyAvatar,
     selected,
 }) => {
-    const select = selected || []
+    const select = selected && selected.map((val) => ({ key: val, label: val }))
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => {
+                console.log(typeof field.value)
                 return (
                     <div className={cn('flex flex-col w-full', className)}>
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
@@ -51,7 +52,11 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                             <MultiSelect
                                 options={options}
                                 disabled={options.length === 0 || disabled}
-                                selectedValues={field.value + [...select] || []}
+                                selectedValues={
+                                    select
+                                        ? select.push(field.value)
+                                        : field.value
+                                }
                                 onSelect={(value) => field.onChange(value)}
                                 placeholder={placeholder}
                                 transform={transform}
