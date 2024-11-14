@@ -2,11 +2,14 @@ import { FC } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Label } from '../Label'
 import {
+    Archive,
     CalendarClock,
     Eye,
+    FileBadge,
     HandCoins,
     HeartHandshake,
     Mail,
+    Pen,
     PhoneCall,
     Store,
     Users,
@@ -21,6 +24,7 @@ import { PaymentStatus } from '../payment/PaymentStatus'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PaymentStatusType } from '@/types/PaymentType'
 import { PartnerSolutionType } from '@/types/partnersType'
+import { getContract } from '@/lib/api/partner/getContract'
 
 interface AssociationCardProps {
     association?: AssociationType
@@ -52,21 +56,61 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             icon: HandCoins,
         },
     ]
-
-    const actions: ActionType[] = [
+    const id = association.id
+    const listActions = [
         {
-            actions: (id) =>
-                router.push(AppRoutes.paymentDetails.replace(':id', id)),
+            actions: () =>
+                router.push(AppRoutes.newAssociation.replace(':id', id!)),
             icon: Eye,
             label: 'Voir',
         },
         {
-            actions: (id) =>
-                router.push(AppRoutes.collaborator.replace(':id', id)),
-            icon: Users,
-            label: 'Collaborateurs',
+            actions: () => {
+                router.push(
+                    AppRoutes.newAssociation.replace(':id', id!) + '?mode=edit'
+                )
+            },
+            icon: Pen,
+            label: 'Modifier',
         },
     ]
+    if (association.subEntities > 0) {
+        listActions.push({
+            actions: () =>
+                router.push(AppRoutes.collaborator.replace(':id', id!)),
+            icon: Users,
+            label: 'Collaborateurs',
+        })
+    }
+    if (association.users > 0) {
+        listActions.push({
+            actions: () => router.push(AppRoutes.sieges.replace(':id', id!)),
+            icon: Store,
+            label: 'Sièges',
+        })
+    }
+    if (association.status === PaymentStatusType.PAID) {
+        listActions.push({
+            actions: async () => {
+                try {
+                    const contractData = await getContract(id)
+                    const url = window.URL.createObjectURL(contractData)
+                    window.open(url, '_blank') // Opens the contract in a new tab
+                } catch (error) {
+                    console.error('Error opening contract:', error)
+                }
+            },
+            icon: FileBadge,
+            label: 'Contrat',
+        })
+    }
+    listActions.push({
+        actions: () => {
+            console.log('archive')
+        },
+        icon: Archive,
+        label: 'Archiver',
+    })
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -118,7 +162,7 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
                             />
                         </Link>
                         <ActionsMenu
-                            menuList={actions}
+                            menuList={listActions}
                             className="[&>svg]:size-6 p-[0.625rem]"
                         />
                     </div>

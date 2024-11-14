@@ -46,31 +46,52 @@ export const FormAssociation: FC<FormAssociationProps> = ({
     })
     const { handleSubmit, control } = form
     return (
-        <Accordion
-            type="single"
-            collapsible
-            className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
-            defaultValue="partnerInfo"
-        >
-            <AccordionItem
-                value="partnerInfo"
-                className="text-lynch-400 text-[1.375rem] font-normal"
+        <Form {...form}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="gap-[30px] lg:gap-0 flex flex-col px-4 pb-4 lg:px-0"
             >
-                <AccordionTrigger className="font-normal text-[1.375rem] py-0">
-                    Information de l’asociation
-                </AccordionTrigger>
-                <AccordionContent className="pt-7">
-                    <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex relative gap-5 lg:pb-0 pb-14 lg:hidden my-6">
+                    <AvatarField
+                        form={form}
+                        name="logo"
+                        alt="Logo"
+                        label="Image du logo"
+                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
+                        classNameAvatar="rounded-full lg:rounded-[18px] bg-white"
+                    />
+                    <AvatarField
+                        form={form}
+                        name="cover"
+                        alt="cover"
+                        label="Photo de couverture"
+                        className="lg:w-fit w-full"
+                        classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px] bg-white"
+                    />
+                </div>
+                <Accordion
+                    type="single"
+                    collapsible
+                    className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
+                    defaultValue="partnerInfo"
+                >
+                    <AccordionItem
+                        value="partnerInfo"
+                        className="text-lynch-400 text-[1.375rem] font-normal"
+                    >
+                        <AccordionTrigger className="font-normal text-[1.375rem] py-0">
+                            Information de l’asociation
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-7">
                             <div className="flex flex-col gap-[1.875rem]">
-                                <div className="flex relative gap-5 lg:pb-0 pb-14">
+                                <div className="lg:flex relative gap-5 lg:pb-0 pb-14 hidden">
                                     <AvatarField
                                         form={form}
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
-                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10"
-                                        classNameAvatar=""
+                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
+                                        classNameAvatar="rounded-full lg:rounded-[18px]"
                                         disabled={disabled}
                                     />
                                     <AvatarField
@@ -79,11 +100,11 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         alt="cover"
                                         label="Photo de couverture"
                                         className="lg:w-fit w-full"
-                                        classNameAvatar="lg:h-[223px] h-[160px] lg:w-[740px] w-full rounded-[24px]"
+                                        classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px]"
                                         disabled={disabled}
                                     />
                                 </div>
-                                <span className="w-fill h-[1px] bg-lynch-100" />
+                                <span className="w-fill h-[1px] bg-lynch-100 lg:flex hidden" />
                                 <div className="flex flex-col gap-[1.875rem]">
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <InputFieldForm
@@ -216,10 +237,10 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                     />
                                 </div>
                             </div>
-                        </form>
-                    </Form>
-                </AccordionContent>
-            </AccordionItem>
-        </Accordion>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </form>
+        </Form>
     )
 }

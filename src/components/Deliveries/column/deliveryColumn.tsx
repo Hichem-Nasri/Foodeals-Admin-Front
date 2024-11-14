@@ -4,7 +4,7 @@ import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { AppRoutes } from '@/lib/routes'
 import { DeliveryType } from '@/types/deliveries'
-import { PartnerSolutionType } from '@/types/partnersType'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -83,6 +83,11 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         header: 'Email',
         footer: (info) => info.column.id,
     }),
+    columnDeliveriesTableHelper.accessor('status', {
+        cell: (info) => null,
+        header: '',
+        footer: (info) => info.column.id,
+    }),
     columnDeliveriesTableHelper.accessor('solutions', {
         cell: (info) => (
             <div className="flex items-center gap-1">
@@ -98,66 +103,67 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
         footer: (info) => info.column.id,
     }),
     columnDeliveriesTableHelper.accessor('id', {
-        cell: (info) => (
-            <ActionsMenu
-                id={info.getValue()}
-                menuList={[
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newDelivery.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
+        cell: (info) => {
+            const ListActions = [
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.newDelivery.replace(
+                                ':id',
+                                info.getValue()!
+                            )
+                        ),
+                    icon: Eye,
+                    label: 'Voir',
+                },
+                {
+                    actions: (id: string) =>
+                        router.push(
+                            AppRoutes.newDelivery.replace(':id', id) +
+                                '?mode=edit'
+                        ),
+                    icon: Pen,
+                    label: 'Modifier',
+                },
+                {
+                    actions: () => {
+                        // Archive
                     },
-                    {
-                        actions: (id) =>
-                            router.push(
-                                AppRoutes.newDelivery.replace(':id', id) +
-                                    '?mode=edit'
-                            ),
-                        icon: Pen,
-                        label: 'Modifier',
+                    icon: Archive,
+                    label: 'Archiver',
+                },
+                {
+                    actions: (id: string) =>
+                        router.push(
+                            AppRoutes.deliveryCollaborator.replace(
+                                ':id',
+                                info.getValue()!
+                            )
+                        ),
+                    icon: Users,
+                    label: 'Collaborateurs',
+                },
+                {
+                    actions: (id: string) =>
+                        router.push(
+                            AppRoutes.deliveryPayment.replace(':id', id)
+                        ),
+                    icon: Users,
+                    label: 'Liste des paiement',
+                },
+            ]
+            const status = info.row.getValue('status') as PartnerStatusType
+            if (status == PartnerStatusType.VALID) {
+                ListActions.push({
+                    actions: (id) => {
+                        // Contract
                     },
-                    {
-                        actions: () => {
-                            // Archive
-                        },
-                        icon: Archive,
-                        label: 'Archiver',
-                    },
-                    {
-                        actions: (id) =>
-                            router.push(
-                                AppRoutes.deliveryCollaborator.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Users,
-                        label: 'Collaborateurs',
-                    },
-                    {
-                        actions: (id) =>
-                            router.push(
-                                AppRoutes.deliveryPayment.replace(':id', id)
-                            ),
-                        icon: Users,
-                        label: 'Liste des paiement',
-                    },
-                    {
-                        actions: (id) => {
-                            // Contract
-                        },
-                        icon: FileBadge,
-                        label: 'Contrat',
-                    },
-                ]}
-            />
-        ),
+                    icon: FileBadge,
+                    label: 'Contrat',
+                })
+            }
+            return <ActionsMenu id={info.getValue()} menuList={ListActions} />
+        },
         header: 'Activité',
         footer: (info) => info.column.id,
     }),
