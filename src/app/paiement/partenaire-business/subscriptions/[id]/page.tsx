@@ -2,10 +2,16 @@ import { Layout } from '@/components/Layout/Layout'
 import React from 'react'
 import DeadlinesOfSubscription from './deadlinesOfSubscription'
 
-function SubscriptionsDeadlinesPage() {
+function SubscriptionsDeadlinesPage({
+    params,
+}: {
+    params: {
+        id: string
+    }
+}) {
     return (
         <Layout>
-            <DeadlinesOfSubscription />
+            <DeadlinesOfSubscription id={params.id} />
         </Layout>
     )
 }

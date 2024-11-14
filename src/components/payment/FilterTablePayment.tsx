@@ -19,6 +19,11 @@ interface FilterTablePaymentProps {
     header?: string
     dateForm?: string
     type?: string
+    typePartner?:
+        | 'PARTNER_SB,NORMAL_PARTNER'
+        | 'PARTNER_SB'
+        | 'NORMAL_PARTNER'
+        | 'SUB_ENTITY'
     id?: string
 }
 
@@ -29,18 +34,19 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
     header,
     dateForm,
     type,
+    typePartner,
     id,
 }) => {
     // dialog that take all the page and show the filter form with buttons in bottom of the page
 
     return (
-        <div className=" hidden lg:flex w-full max-w-2xl">
+        <div className="  w-full lg:max-w-2xl">
             <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between w-full">
                 <span className="text-lg text-lynch-950">
                     {header ? header : 'Tableau de validation des commission'}
                 </span>
                 <div
-                    className="hover:text-black hover:bg-neutral-100 bg-white text-lynch-500 rounded-full p-3  cursor-pointer flex items-center justify-center w-fit"
+                    className=" bg-white text-lynch-500 rounded-full p-3  cursor-pointer flex items-center justify-center w-fit"
                     onClick={() => setOpen((prev) => !prev)}
                 >
                     <ListFilter />
@@ -54,6 +60,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
                     onBlurMode="onChange"
                     dateForm={dateForm}
                     type={type}
+                    typePartner={typePartner}
                     id={id}
                 />
             </div>

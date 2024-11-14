@@ -1,4 +1,4 @@
-import { deadlineType } from '@/types/PaymentType'
+import { DeadlineStatus, deadlineType } from '@/types/PaymentType'
 import React from 'react'
 import { cn } from '@/lib/utils'
 // import { Label } from '@radix-ui/react-dropdown-menu';
@@ -30,7 +30,7 @@ const OperationSubscriptionCard = ({
             label: 'P. d’échéance: ' + subscription.amount.amount,
             icon: CirclePercent,
             className:
-                subscription.deadlineStatus == 'CONFIRMED_BY_FOODEALS'
+                subscription.deadlineStatus == DeadlineStatus.PAYED_BY_PARTNER
                     ? ''
                     : 'bg-coral-100 text-coral-500',
         },
@@ -63,12 +63,12 @@ const OperationSubscriptionCard = ({
                             disabled={
                                 !(
                                     subscription.deadlineStatus ==
-                                    'CONFIRMED_BY_PARTNER'
+                                    DeadlineStatus.PAYED_BY_PARTNER
                                 )
                             }
                             label={
                                 subscription.deadlineStatus ==
-                                'CONFIRMED_BY_PARTNER'
+                                DeadlineStatus.PAYED_BY_PARTNER
                                     ? 'A Recevoir'.toUpperCase()
                                     : 'Reçu'.toUpperCase()
                             }

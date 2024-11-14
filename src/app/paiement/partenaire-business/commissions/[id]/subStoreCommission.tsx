@@ -47,10 +47,9 @@ const SubStoreCommission = () => {
     const { id } = useParams()
     const [commissionSubStore, setCommissionSubStore] = useState<
         PaymentCommission[]
-    >(defaultDataCommissionTable)
-    const [options, setOptions] = useState([])
+    >([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
     const [totalCommission, setTotalCommission] = useState(0)
@@ -64,7 +63,7 @@ const SubStoreCommission = () => {
         z.infer<typeof PaymentFilterSchema>
     >({
         date: getFilterDate(new Date()),
-        partner: 'all',
+        partner: id as string,
     })
     const form = useForm({
         resolver: zodResolver(PaymentFilterSchema),
@@ -72,18 +71,19 @@ const SubStoreCommission = () => {
         mode: 'onBlur',
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
-        console.log(data)
+        setDateAndPartner(data)
+        refetch()
     }
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, isRefetching, error, refetch } = useQuery({
         queryKey: ['commissions', id, currentPage, pageSize],
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
-                    currentPage - 1,
+                    currentPage,
                     pageSize,
-                    new Date(),
-                    id as string
+                    dateAndPartner.date!,
+                    dateAndPartner.partner!
                 )
                 console.log(response)
                 const statistics = response.data.statistics
@@ -93,7 +93,6 @@ const SubStoreCommission = () => {
                 setTotalPages(data.totalPages)
                 setTotalElements(data.totalElements)
                 setCommissionSubStore(data.content)
-                // setOptions(options)
                 return response.data
                 return []
             } catch (error) {
@@ -134,18 +133,21 @@ const SubStoreCommission = () => {
                             setOpen={setOpen}
                             type="organization"
                             id={id as string}
+                            typePartner="PARTNER_SB"
                         />
                         <CardTotalValue
                             Icon={Coins}
                             title="Total des ventes"
                             value={totalCommission}
                             className="text-mountain-400 bg-mountain-400"
+                            isLoading={isLoading || isRefetching}
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des commissions"
                             value={totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
+                            isLoading={isLoading || isRefetching}
                         />
                     </div>
                     <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
@@ -174,7 +176,7 @@ const SubStoreCommission = () => {
                                 path="subStore"
                             />
                         )}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isRefetching}
                     />
                     <PaginationData
                         currentPage={currentPage}

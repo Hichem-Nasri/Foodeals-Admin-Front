@@ -17,7 +17,11 @@ interface FormFilterPaymentProps {
     dateForm?: string
     type?: string
     id?: string
-    typePartner?: PartnerEntitiesType[]
+    typePartner?:
+        | 'PARTNER_SB,NORMAL_PARTNER'
+        | 'PARTNER_SB'
+        | 'NORMAL_PARTNER'
+        | 'SUB_ENTITY'
 }
 
 export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
@@ -26,7 +30,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
     onBlurMode = 'onBlur',
     dateForm = 'MM/YYYY',
     type,
-    typePartner = ['PARTNER_SB', 'NORMAL_PARTNER', 'SUB_ENTITY'],
+    typePartner = 'PARTNER_SB,NORMAL_PARTNER',
     id,
 }) => {
     const { handleSubmit, control } = form
@@ -61,6 +65,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                         label="Partenaire"
                         disabled={false}
                         type={typePartner}
+                        id={id}
                     />
                 </div>
             </form>

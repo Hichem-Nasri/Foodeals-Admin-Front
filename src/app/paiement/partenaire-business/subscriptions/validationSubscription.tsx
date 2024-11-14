@@ -80,7 +80,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         partner: 'all',
     })
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, error, isRefetching, refetch } = useQuery({
         queryKey: ['subscription'],
         queryFn: async () => {
             try {
@@ -149,19 +149,21 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             onSubmit={onSubmit}
                             setOpen={setOpen}
                             header="Tableau de validation des abonnements"
-                            dateForm="YYYY  "
+                            dateForm="YYYY"
                         />
                         <CardTotalValue
                             Icon={FileBadge}
                             title="Total des abonnements"
                             value={totals.totalCommission}
                             className="text-mountain-400 bg-mountain-400"
+                            isLoading={isLoading || isRefetching}
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des écheances"
                             value={totals.totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
+                            isLoading={isLoading || isRefetching}
                         />
                     </div>
                     <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
@@ -186,7 +188,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                                 setSubscriptionId={setSubscriptionId}
                             />
                         )}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isRefetching}
                     />
                     <PaginationData
                         currentPage={totals.currentPage}

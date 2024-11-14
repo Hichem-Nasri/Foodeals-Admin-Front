@@ -13,8 +13,14 @@ import PaymentOnesSubscriptionCard from '@/components/payment/paymentOneSubscrip
 import SwitchPayment from '@/components/payment/switchPayment'
 import PaginationData from '@/components/utils/PaginationData'
 import { useNotification } from '@/context/NotifContext'
-import { fetchSubscriptionEntity } from '@/lib/api/payment/getSubscription'
-import { NotificationType, PartnerInfoDto } from '@/types/GlobalType'
+import { fetchSubscription } from '@/lib/api/payment/getSubscription'
+import { formatNumberWithSpaces } from '@/lib/utils'
+import {
+    NotificationType,
+    PartnerInfoDto,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import {
     deadlineType,
     defaultDataSubscriptionOnesTable,
@@ -31,46 +37,51 @@ import {
 } from '@tanstack/react-table'
 import { set } from 'date-fns'
 import { ArrowRight, RotateCw } from 'lucide-react'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import {
+    useParams,
+    usePathname,
+    useRouter,
+    useSearchParams,
+} from 'next/navigation'
 import React, { Fragment, useEffect, useState } from 'react'
 
-function DeadlinesOfSubscription() {
+function DeadlinesOfSubscription({ id }: { id: string }) {
     const [partnerSubscripton, setPartnerSubscripton] = useState<
         partnerSubscriptonOnesType[]
     >(defaultDataSubscriptionOnesTable)
     const [partnerDeadlines, setPartnerDeadlines] = useState<deadlineType[]>([])
     const [partner, setPartner] = useState<PartnerInfoDto>({
-        name: 'Marjane',
-        avatarPath: 'https://i.pravatar.cc/300',
-        id: '1',
+        name: '',
+        avatarPath: '',
+        id: '',
     })
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [subscriptionId, setSubscriptionId] = useState('')
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
+    const [year, setYear] = useState<number>(new Date().getFullYear())
+    const query = useSearchParams()
     const notify = useNotification()
     const router = useRouter()
-    const params = useParams()
-    const id = params.id
-    console.log('id', id)
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, isRefetching, error, refetch } = useQuery({
         queryKey: ['subscription'],
         queryFn: async () => {
             try {
-                const response = await fetchSubscriptionEntity(
-                    new Date(),
-                    id as string,
-                    currentPage,
-                    pageSize
+                const response = await fetchSubscription(
+                    totals.currentPage,
+                    totals.pageSize,
+                    year.toString(),
+                    id as string
                 )
                 if (response.status !== 200) {
                     throw new Error('Error fetching subscriptions')
                 }
-                const { partner, list } = response.data
+                const { partner, subscriptions } = response.data
                 setPartner(partner)
-                setTotalPages(list.totalPages)
-                setPartnerSubscripton(list.content)
+                setTotals({
+                    ...totals,
+                    totalElements: subscriptions.totalElements,
+                    totalPages: subscriptions.totalPages,
+                })
+                setPartnerSubscripton(subscriptions)
                 return response.data
             } catch (error) {
                 console.log('error', error)
@@ -80,10 +91,9 @@ function DeadlinesOfSubscription() {
                 )
             }
         },
-        initialData: null, // Add initialData property here
         placeholderData: keepPreviousData,
     })
-    const onSubmit = () => {}
+
     const tableOperations = useReactTable({
         data: partnerSubscripton,
         columns: columnsSubscriptionOnesTable(setPartnerDeadlines),
@@ -93,6 +103,7 @@ function DeadlinesOfSubscription() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
     const table = useReactTable({
         data: partnerDeadlines,
         columns: columnsValidationTable,
@@ -102,9 +113,14 @@ function DeadlinesOfSubscription() {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    useEffect(() => {
-        console.log('partnerSubscripton', partnerSubscripton)
-    }, [partnerDeadlines])
+    // useEffect(() => {
+    //     if (!year) {
+    //         const queryYear = query.get('year')!
+    //         if (year) {
+    //             setYear(parseInt(queryYear))
+    //         }
+    //     }
+    // }, [query.get('year')]) // TODO: check the year logic
 
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -114,11 +130,10 @@ function DeadlinesOfSubscription() {
                     <SwitchValidation />
                 </div>
                 <CustomButton
-                    label={'3025'}
+                    label={formatNumberWithSpaces(totals.totalElements)}
                     IconLeft={ArrowRight}
                     disabled
-                    variant="outline"
-                    className="disabled:border-lynch-400 disabled:opacity-100 disabled:text-lynch-400 font-semibold text-lg py-3 px-5 h-fit"
+                    variant="destructive"
                 />
             </div>
             {partnerDeadlines.length > 0 ? (
@@ -129,7 +144,7 @@ function DeadlinesOfSubscription() {
                     transform={(data) => (
                         <OperationSubscriptionCard
                             subscription={data}
-                            partner={partner}
+                            partner={partner!}
                         />
                     )}
                     partnerData={{
@@ -141,7 +156,7 @@ function DeadlinesOfSubscription() {
                     onBack={() => {
                         setPartnerDeadlines([])
                     }}
-                    isLoading={isLoading}
+                    isLoading={isLoading || isRefetching}
                 />
             ) : (
                 <>
@@ -162,14 +177,16 @@ function DeadlinesOfSubscription() {
                             city: partner?.name.split(' ').slice(-1)[0]!,
                         }}
                         hideColumns={['payable']}
-                        back={false}
-                        isLoading={isLoading}
+                        back
+                        isLoading={isLoading || isRefetching}
                     />
                     <PaginationData
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        totalPages={totalPages}
-                        pageSize={pageSize}
+                        currentPage={totals.currentPage}
+                        setCurrentPage={(page) =>
+                            setTotals({ ...totals, currentPage: page })
+                        }
+                        totalPages={totals.totalPages}
+                        pageSize={totals.pageSize}
                         refetch={refetch}
                     />
                 </>

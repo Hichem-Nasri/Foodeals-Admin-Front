@@ -33,6 +33,7 @@ import { useNotification } from '@/context/NotifContext'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
 import {
     NotificationType,
+    PartnerEntitiesType,
     TotalValueProps,
     TotalValues,
 } from '@/types/GlobalType'
@@ -64,7 +65,7 @@ interface CommissionMonthProps {
 const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     const [commissionMonth, setCommissionMonth] = useState<
         partnerCommissionMonthType[]
-    >(defaultDataCommissionMonthTable)
+    >([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [open, setOpen] = useState(false)
     const [totals, setTotals] = useState<
@@ -80,44 +81,44 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
         z.infer<typeof PaymentFilterSchema>
     >({
         date: getFilterDate(new Date()),
-        partner: 'all',
+        partner: id,
     })
+
     const form = useForm({
         resolver: zodResolver(PaymentFilterSchema),
         defaultValues: dateAndPartner,
         mode: 'onBlur',
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
-        console.log(data)
+        setDateAndPartner(data)
+        refetch()
     }
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, isRefetching, error, refetch } = useQuery({
         queryKey: ['commissionMonth', id],
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommissionMonth(
                     totals.currentPage,
                     totals.pageSize,
-                    id as string,
+                    dateAndPartner.partner!,
                     dateAndPartner.date!
                 )
                 if (response.status === 500) {
                     throw new Error('Error fetching commissions')
                 }
                 const { partner, statistics, operations } = response.data
-
                 setTotals({
                     ...totals,
-                    totalCommission: statistics.totalCommission,
-                    totalSales: statistics.totalSales,
+                    totalCommission: statistics.totalCommission.amount,
+                    totalSales: statistics.total.amount,
                     totalElements: operations.totalElements,
                     totalPages: operations.totalPages,
                 })
-                setCommissionMonth(operations.content)
                 setDateAndPartner((prev) => {
                     return { ...prev, partner: partner.name }
                 })
-                console.log('response', response.data)
+                setCommissionMonth(operations.content)
                 return response.data
             } catch (error) {
                 notify.notify(
@@ -129,9 +130,9 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
         },
         refetchOnWindowFocus: false,
     })
-    const { handleSubmit } = form
+
     const tableCommission = useReactTable({
-        data: defaultDataCommissionMonthTable,
+        data: commissionMonth,
         columns: columnsCommissionMonthTable(router),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -143,7 +144,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     const handleConfirmAll = () => {
         // handle confirm all
     }
-    console.log('data', data)
+    if (error) return <h1>Error: {error.message}...</h1>
     return (
         <Fragment>
             <div className="flex flex-col gap-3 w-full px-3 lg:px-0 mr-2">
@@ -154,6 +155,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                         onSubmit={onSubmit}
                         setOpen={setOpen}
                         type="partner"
+                        typePartner={'SUB_ENTITY'}
                         id={id}
                     />
                     <CardTotalValue
@@ -161,14 +163,14 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                         title="Total des ventes"
                         value={totals.totalCommission}
                         className="text-mountain-400 bg-mountain-400"
-                        isLoading={isLoading}
+                        isLoading={isLoading || isRefetching}
                     />
                     <CardTotalValue
                         Icon={Percent}
                         title="Total des commissions"
                         value={totals.totalSales}
                         className="bg-amethyst-500 text-amethyst-500"
-                        isLoading={isLoading}
+                        isLoading={isLoading || isRefetching}
                     />
                 </div>
                 <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
@@ -191,12 +193,12 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                 </div>
                 <DataTable
                     table={tableCommission}
-                    data={defaultDataCommissionMonthTable}
+                    data={commissionMonth}
                     title="Tableau de validation des commission"
                     transform={(data) => (
                         <CommissionSubStoreCard commission={data} />
                     )}
-                    isLoading={isLoading}
+                    isLoading={isLoading || isRefetching}
                 />
                 <PaginationData
                     pageSize={totals.pageSize}

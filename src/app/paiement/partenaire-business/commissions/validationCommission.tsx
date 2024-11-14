@@ -53,9 +53,7 @@ import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
 interface OperationsProps {}
 
 export const ValidationCommissions: FC<OperationsProps> = ({}) => {
-    const [commission, setCommission] = useState<PaymentCommission[]>(
-        defaultDataCommissionTable
-    )
+    const [commission, setCommission] = useState<PaymentCommission[]>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [totals, setTotals] = useState<
         TotalValueProps & {
@@ -63,30 +61,37 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
             totalSales: number
         }
     >({ ...TotalValues, totalCommission: 0, totalSales: 0 })
+    const [dateAndPartner, setDateAndPartner] = useState<
+        z.infer<typeof PaymentFilterSchema>
+    >({
+        // date MM/yyyy
+        date: getFilterDate(new Date()),
+        partner: 'all',
+    })
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, isRefetching, error, refetch } = useQuery({
         queryKey: ['commissions'],
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
                     totals.currentPage - 1,
                     totals.pageSize,
-                    new Date()
+                    dateAndPartner.date!
                 )
                 console.log(response)
                 const statistics = response.data.statistics
                 const data = response.data.commissions
                 setTotals({
                     ...totals,
-                    totalCommission: statistics.totalCommission,
-                    totalSales: statistics.totalSales,
+                    totalCommission: statistics.totalCommission.amount,
+                    totalSales: statistics.total.amount,
                     totalPages: data.totalPages,
                     totalElements: data.totalElements,
                 })
-                // setCommission(data.content)
+                setCommission(data.content)
                 return response.data
             } catch (error) {
                 notify.notify(
@@ -97,20 +102,15 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
             }
         },
     })
-    const [dateAndPartner, setDateAndPartner] = useState<
-        z.infer<typeof PaymentFilterSchema>
-    >({
-        // date MM/yyyy
-        date: getFilterDate(new Date()),
-        partner: 'all',
-    })
+
     const form = useForm({
         resolver: zodResolver(PaymentFilterSchema),
         defaultValues: dateAndPartner,
         mode: 'onBlur',
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
-        console.log(data)
+        setDateAndPartner(data)
+        refetch()
     }
 
     const { handleSubmit } = form
@@ -149,12 +149,14 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                             title="Total des ventes"
                             value={totals.totalCommission}
                             className="text-mountain-400 bg-mountain-400"
+                            isLoading={isLoading || isRefetching}
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des commissions"
                             value={totals.totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
+                            isLoading={isLoading || isRefetching}
                         />
                     </div>
                     <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
@@ -183,7 +185,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                             />
                         )}
                         hideColumns={['payable', 'entityId', 'id']}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isRefetching}
                     />
                     <PaginationData
                         currentPage={totals.currentPage}
@@ -194,15 +196,6 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                         pageSize={totals.pageSize}
                         refetch={refetch}
                     />
-                    <div className="lg:hidden flex flex-col items-center gap-4 my-3">
-                        <CustomButton
-                            size="sm"
-                            label="Voir plus"
-                            className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                            variant="outline"
-                            IconRight={RotateCw}
-                        />
-                    </div>
                 </div>
             ) : (
                 <div
