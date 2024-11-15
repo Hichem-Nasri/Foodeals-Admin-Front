@@ -1,14 +1,18 @@
 import { Layout } from '@/components/Layout/Layout'
 import { Operations } from '@/components/payment/PaymentDetails'
-import { PaymentDeliveries } from './validationLivraisons'
 import { defaultDataPaymentDeliveriesTable } from '@/components/payment/business/column/paymentDeliveriesColumn'
+import { PaymentDeliveries } from './validationLivraisons'
 
-interface PaymentPageProps {}
+interface PaymentPageProps {
+    params: {
+        id: string
+    }
+}
 
-export default async function PaymentPage({}: PaymentPageProps) {
+export default async function PaymentPage({ params }: PaymentPageProps) {
     return (
         <Layout>
-            <PaymentDeliveries payments={defaultDataPaymentDeliveriesTable} />
+            <PaymentDeliveries id={params.id} />
         </Layout>
     )
 }

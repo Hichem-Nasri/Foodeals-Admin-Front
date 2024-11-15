@@ -57,6 +57,7 @@ export const defaultValuesConfirmPayment: ConfirmPaymentType = {
 }
 
 export interface PaymentDeliveriesType {
+    id: string
     month: string
     deliveryCost: PriceType
     commissionCost: PriceType
