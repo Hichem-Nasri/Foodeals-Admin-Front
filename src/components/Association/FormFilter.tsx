@@ -33,6 +33,10 @@ import SelectManager from '../utils/SelectManager'
 import { SelectField } from '../custom/SelectField'
 import { PartnerEntitiesType } from '@/types/GlobalType'
 import MobileHeader from '../utils/MobileHeader'
+import { FilterOrganizations } from '../utils/FilterOrganizations'
+import { capitalize } from '@/types/utils'
+import { FilterCity } from '../utils/FilterCity'
+import { FilterManager } from '../utils/FilterManger'
 
 interface FormFilterProps {
     form: UseFormReturn<z.infer<typeof SchemaFilter>>
@@ -94,25 +98,26 @@ const FormAssociation: FC<FormAssociationProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterMultiSelect
+                        <FilterOrganizations
                             control={control}
                             name="companyName"
                             label="Raison sociale"
-                            emptyAvatar="/avatar/emptyPartner.png"
+                            placeholder="Partenaire"
+                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
                         />
-                        <FilterMultiSelect
+                        <FilterManager
                             control={control}
                             name="collaborators"
                             label="Collaborateurs"
-                            emptyAvatar="/avatar/emptyUser.png"
+                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
-                        <SelectField
+                        <FilterCity
                             control={control}
                             name="city"
                             label="Ville"
-                            options={[]}
+                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
                         />
                         <SelectField
                             control={control}
@@ -121,7 +126,7 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             options={['ASSOCIATION', 'FOOD_BANK'].map(
                                 (type) => ({
                                     key: type,
-                                    label: type,
+                                    label: capitalize(type),
                                 })
                             )}
                         />
@@ -163,32 +168,35 @@ const FormAssociation: FC<FormAssociationProps> = ({
 
                 <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <CustomButton
-                        variant="secondary"
+                        variant="ghost"
                         title="Réinitialiser les filtres"
-                        label=""
-                        className="[&>.icon]:ml-0 h-12 w-12 rounded-full px-2 py-2 justify-self-start"
+                        label="Clear"
+                        className="[&>.icon]:ml-0 space-x-2 text-primary lg:[&>.label]:hidden h-12 w-fit lg:rounded-full px-2 py-2 justify-self-start"
                         IconRight={Eraser}
                         onClick={() => {
                             form.reset()
                         }}
+                        type="reset"
                     />
-                    <CustomButton
-                        variant="secondary"
-                        label="Annuler"
-                        onClick={() => {
-                            setOpen(false)
-                        }}
-                        className="px-5 py-3 h-fit lg:w-fit w-full"
-                        IconRight={X}
-                        type="submit"
-                    />
-                    <CustomButton
-                        label="Confirmer"
-                        onClick={() => {}}
-                        className="px-5 py-3 h-fit"
-                        IconRight={Check}
-                        type="submit"
-                    />
+                    <div className="flex justify-evenly items-center space-x-2">
+                        <CustomButton
+                            variant="secondary"
+                            label="Annuler"
+                            onClick={() => {
+                                setOpen(false)
+                            }}
+                            className="px-5 py-3 h-fit lg:w-fit w-full"
+                            IconRight={X}
+                            type="submit"
+                        />
+                        <CustomButton
+                            label="Confirmer"
+                            onClick={() => {}}
+                            className="px-5 py-3 h-fit w-full"
+                            IconRight={Check}
+                            type="submit"
+                        />
+                    </div>
                 </div>
             </form>
         </Form>

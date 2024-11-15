@@ -21,7 +21,7 @@ import api from '@/api/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
+import { NotificationType, PartnerEntitiesType } from '@/types/GlobalType'
 import { columnsPartnersTable } from './column/partnerColumn'
 import PaginationData from '../utils/PaginationData'
 import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
@@ -30,6 +30,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { set } from 'date-fns'
 import getArchivedPartners from '@/lib/api/partner/getArchiver'
+import Link from 'next/link'
+import { AppRoutes } from '@/lib/routes'
 
 interface PartnersProps {
     params?: {
@@ -144,20 +146,16 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 pageSize={pageSize}
                 refetch={refetch}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 ">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
-                />
+            <Link
+                href={AppRoutes.newPartner.replace(':id', 'new')}
+                className="w-full lg:hidden flex flex-col items-center gap-4 "
+            >
                 <CustomButton
                     label="Ajouter un partenaire"
                     className="w-full"
                     IconRight={Store}
                 />
-            </div>
+            </Link>
         </div>
     )
 }

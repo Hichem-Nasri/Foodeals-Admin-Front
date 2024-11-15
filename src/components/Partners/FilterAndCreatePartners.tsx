@@ -45,6 +45,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     onSubmit={onSubmit}
                     setOpen={setOpen}
                     open={open}
+                    type="PARTNER_WITH_SB,NORMAL_PARTNER,SUB_ENTITY"
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -53,6 +54,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     onSubmit={onSubmit}
                     setOpen={setOpen}
                     open={open}
+                    type="PARTNER_WITH_SB,NORMAL_PARTNER,SUB_ENTITY"
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
