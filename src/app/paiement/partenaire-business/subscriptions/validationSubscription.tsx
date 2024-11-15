@@ -138,7 +138,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     return (
         <>
             {!open ? (
-                <div className="flex flex-col gap-3 w-full pr-2">
+                <div className="flex flex-col gap-3 w-full lg:px-0 p-2 lg:pr-2">
                     <SwitchPayment />
                     <div className="flex justify-center items-center lg:hidden">
                         <SwitchValidation />

@@ -131,7 +131,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     return (
         <Fragment>
             {!open ? (
-                <div className="flex flex-col gap-3 w-full lg:px-0 px-3 mr-2">
+                <div className="flex flex-col gap-3 w-full lg:px-0 p-2 lg:pr-2">
                     <SwitchPayment />
                     <div className="flex justify-center items-center lg:hidden">
                         <SwitchValidation />
