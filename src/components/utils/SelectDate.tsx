@@ -39,7 +39,7 @@ const SelectDate = ({
     format = 'MM/YYYY',
     placeholder,
     value,
-    type,
+    type = 'partner',
     id,
 }: {
     onChange: (value: string) => void

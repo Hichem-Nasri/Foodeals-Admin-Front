@@ -14,12 +14,14 @@ const SelectParnter = ({
     name,
     label,
     type,
+    id,
 }: {
     control: Control<any>
     disabled?: boolean
     name: string
     label: string
-    type: string[]
+    type: string
+    id?: string
 }) => {
     console.log('SelectParnter')
     const [search, setSearch] = useState('') // Initial search state
@@ -29,7 +31,7 @@ const SelectParnter = ({
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchManagerData = async () => {
-            const data = await getPartners(type, search)
+            const data = await getPartners(type, search, id)
             console.log('options: ', data)
             setOptions([
                 ...data.map((partner: PartnerInfoDto) => ({
