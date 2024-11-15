@@ -17,8 +17,8 @@ const SwitchToggle = <T extends string>({
     }
 
     return (
-        <div className="w-fit p-2 rounded-[14px] bg-white flex items-center justify-start">
-            <div className="w-auto rounded-[14px] bg-white flex items-center justify-start gap-2 relative">
+        <div className="w-fit p-2 rounded-[14px] bg-white flex items-center text-xs lg:text-[14px] justify-start">
+            <div className="w-auto rounded-[14px] bg-white flex items-center  justify-start gap-2 relative">
                 {options.map((option) => (
                     <div
                         key={option}
@@ -26,7 +26,9 @@ const SwitchToggle = <T extends string>({
                         className={cn(
                             `px-5 py-2 rounded-[4px] text-lynch-400 w-auto cursor-pointer`,
                             `${
-                                selectedType === option ? 'text-white z-10' : ''
+                                selectedType === option
+                                    ? ' text-white z-10'
+                                    : ''
                             }`
                         )}
                     >
