@@ -6,17 +6,16 @@ export default async function getDateAvailable(
     id?: string
 ): Promise<any> {
     try {
-        let url = API_URL + '/payments/commissions/available-months'
+        let url = API_URL + '/v1/payments/commissions/available-months'
         switch (type) {
-            case 'partner':
-                url += '/partners?partnerId=' + id
-                break
             case 'organization':
-                url += '/organizations?organizationId=' + id
+                url += '/organizations?organizationId=' + (id ? id : '')
                 break
             default:
+                url += '/partners?partnerId=' + (id ? id : '')
                 break
         }
+        console.log('url is: ', url)
         const res = await api.get(url).catch((err) => {
             throw new Error(err)
         })

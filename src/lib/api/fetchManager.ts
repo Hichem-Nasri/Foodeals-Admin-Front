@@ -1,13 +1,16 @@
 import api from '@/api/Auth'
 
 // Define the API function for fetching a manager
-export const fetchManager = async (searchName: string) => {
+export const fetchManager = async (
+    searchName: string,
+    types?: string,
+    id?: string
+) => {
     try {
         // Make a GET request to the API endpoint with the search name as a query parameter
+        const url = `localhost:8080/v1/users/search?name=${searchName}&pageNumber=0&pageSize=10`
         const response = await api
-            .get(
-                `http://localhost:8080/v1/users/search?query=${searchName}&page=0&size=20&sort=name.firstName,asc`
-            )
+            .get(url)
             .then((res) => res.data)
             .catch((error) => {
                 throw new Error(error)
