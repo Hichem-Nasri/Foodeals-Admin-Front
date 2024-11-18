@@ -1,12 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Label } from '../Label'
 import {
+    Archive,
     ArchiveRestore,
     Building,
     CalendarClock,
     Eye,
+    FileBadge,
     Frame,
     Mail,
+    Pen,
     PhoneCall,
     Users,
 } from 'lucide-react'
@@ -18,7 +21,9 @@ import { PartnerSolution } from '../Partners/PartnerSolution'
 import { CustomButton } from '../custom/CustomButton'
 import { ActionsMenu, ActionType } from '../custom/ActionsMenu'
 import { useRouter } from 'next/navigation'
-import { PartnerSolutionType } from '@/types/partnersType'
+import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
+import { getContract } from '@/lib/api/partner/getContract'
+import { PartnerStatus } from '../Partners/PartnerStatus'
 
 interface DeliveryCardProps {
     delivery: DeliveryType
@@ -47,6 +52,21 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
             label: 'Voir',
         },
         {
+            actions: (id: string) =>
+                router.push(
+                    AppRoutes.newDelivery.replace(':id', id) + '?mode=edit'
+                ),
+            icon: Pen,
+            label: 'Modifier',
+        },
+        {
+            actions: () => {
+                // Archive
+            },
+            icon: Archive,
+            label: 'Archiver',
+        },
+        {
             actions: () =>
                 router.push(
                     AppRoutes.deliveryCollaborator.replace(':id', delivery.id)
@@ -57,12 +77,27 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
         {
             actions: () =>
                 router.push(
-                    AppRoutes.deliveryPayment.replace(':id', delivery.id)
+                    AppRoutes.deliveryPayment + '?deliveryId=' + delivery.id
                 ),
             icon: Users,
             label: 'Liste des paiement',
         },
     ]
+    if (delivery.status == PartnerStatusType.VALID) {
+        actions.push({
+            actions: async () => {
+                try {
+                    const contractData = await getContract(delivery.id)
+                    const url = window.URL.createObjectURL(contractData as Blob)
+                    window.open(url, '_blank') // Opens the contract in a new tab
+                } catch (error) {
+                    console.error('Error opening contract:', error)
+                }
+            },
+            icon: FileBadge,
+            label: 'Contrat',
+        })
+    }
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem] cursor-pointer">
@@ -91,25 +126,30 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-[0.375rem]">
-                    <Link href={`tel:${delivery.responsibleInfoDto.phone}`}>
-                        <CustomButton
-                            label=""
-                            IconLeft={PhoneCall}
-                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
+                <div className="flex flex-col justify-evenly items-end space-y-4">
+                    <PartnerStatus status={delivery.status} />
+                    <div className="flex items-center gap-[0.375rem]">
+                        <Link href={`tel:${delivery.responsibleInfoDto.phone}`}>
+                            <CustomButton
+                                label=""
+                                IconLeft={PhoneCall}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
+                            />
+                        </Link>
+                        <Link
+                            href={`mailto:${delivery.responsibleInfoDto.email}`}
+                        >
+                            <CustomButton
+                                label=""
+                                IconLeft={Mail}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
+                            />
+                        </Link>
+                        <ActionsMenu
+                            menuList={actions}
+                            className="[&>svg]:size-6 p-[0.625rem]"
                         />
-                    </Link>
-                    <Link href={`mailto:${delivery.responsibleInfoDto.email}`}>
-                        <CustomButton
-                            label=""
-                            IconLeft={Mail}
-                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
-                        />
-                    </Link>
-                    <ActionsMenu
-                        menuList={actions}
-                        className="[&>svg]:size-6 p-[0.625rem]"
-                    />
+                    </div>
                 </div>
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />

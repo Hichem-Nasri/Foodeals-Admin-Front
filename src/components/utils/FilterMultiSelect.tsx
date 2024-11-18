@@ -16,6 +16,7 @@ interface FilterMultiSelectProps {
     length?: number
     normalTransform?: boolean
     emptyAvatar?: string
+    type?: string
 }
 
 const optionsStatus = [
@@ -54,16 +55,21 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
     label,
     placeholder,
     transform,
+    type,
     ...rest
 }) => {
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() =>
         name == 'status'
             ? optionsStatus
             : name == 'solution'
-            ? optionsSolutions
+            ? type?.includes('DELIVERY_PARTNER')
+                ? optionsSolutions.filter(
+                      (option) => option.key !== PartnerSolutionType.DLC_PRO
+                  )
+                : optionsSolutions
             : []
     )
-
+    console.log(options)
     useEffect(() => {
         const fetchOptions = async () => {
             // fetch options

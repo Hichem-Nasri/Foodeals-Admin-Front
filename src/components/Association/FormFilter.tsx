@@ -171,10 +171,12 @@ const FormAssociation: FC<FormAssociationProps> = ({
                         variant="ghost"
                         title="Réinitialiser les filtres"
                         label="Clear"
-                        className="[&>.icon]:ml-0 space-x-2 text-primary lg:[&>.label]:hidden h-12 w-fit lg:rounded-full px-2 py-2 justify-self-start"
-                        IconRight={Eraser}
+                        className="[&>.icon]:mr-0 space-x-2 lg:space-x-0 text-primary lg:[&>.label]:hidden h-12 w-12 lg:rounded-full px-2 py-2 "
+                        IconLeft={Eraser}
                         onClick={() => {
                             form.reset()
+                            form.setValue('startDate', undefined)
+                            form.setValue('endDate', undefined)
                         }}
                         type="reset"
                     />

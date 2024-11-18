@@ -31,21 +31,21 @@ export const PartnerSolution: FC<PartnerSolutionProps> = ({
     switch (solution) {
         case PartnerSolutionType.MARKET_PRO:
             solutionColor = {
-                name: 'Market PRO',
+                name: 'PRO MARKET',
                 className: 'bg-mountain-100 text-mountain-500',
                 Icon: ShoppingBag,
             }
             break
         case PartnerSolutionType.DONATE_PRO:
             solutionColor = {
-                name: 'DONATE',
+                name: 'PRO DONATE',
                 className: 'bg-scooter-100 text-scooter-500',
                 Icon: HandCoins,
             }
             break
         case PartnerSolutionType.DLC_PRO:
             solutionColor = {
-                name: 'DLC PRO',
+                name: 'PRO DLC',
                 className: 'bg-tulip-100 text-tulip-500',
                 Icon: HeartHandshake,
             }

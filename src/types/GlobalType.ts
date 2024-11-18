@@ -1,5 +1,5 @@
 import { ContactDto } from './partenairUtils'
-import { PartnerSolutionType } from './partnersType'
+import { PartnerSolutionType, PartnerStatusType } from './partnersType'
 
 export enum PartnerEntitiesType {
     PARTNER_SB = 'PARTNER_SB',
@@ -83,6 +83,18 @@ export const TotalValues = {
     totalPages: 0,
     currentPage: 0,
     pageSize: 10,
+}
+
+export interface DetailsArchiveType {
+    reason: string
+    details: string
+    deletedAt: Date
+}
+
+export const ContractStatusPartner: { [key: string]: PartnerStatusType } = {
+    ['VALIDATED']: PartnerStatusType.VALID,
+    ['PENDING']: PartnerStatusType.IN_PROGRESS,
+    ['REJECTED']: PartnerStatusType.CANCELED,
 }
 
 export type userInfoDto = PartnerInfoDto & Pick<ContactDto, 'phone' | 'email'>

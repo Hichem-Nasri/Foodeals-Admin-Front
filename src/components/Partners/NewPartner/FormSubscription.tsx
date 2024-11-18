@@ -47,11 +47,11 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
     const partnerType = [
         {
             key: 'NORMAL_PARTNER',
-            label: 'Normal',
+            label: 'Compte normal',
         },
         {
             key: 'PARTNER_WITH_SB',
-            label: 'Principal',
+            label: 'Compte principale',
         },
     ]
     const documents = [
@@ -85,7 +85,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                             <div className="flex flex-col gap-[1.875rem]">
                                 <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
                                     <Label
-                                        label="Type d’Subscription"
+                                        label="Type d’abonnement"
                                         className="text-sm font-medium"
                                     />
                                     <RadioButton
@@ -94,11 +94,11 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                         options={[
                                             {
                                                 key: 'general',
-                                                label: 'Subscription générale',
+                                                label: 'Abonnement générale',
                                             },
                                             {
                                                 key: 'personalized',
-                                                label: 'Subscription personnalisée',
+                                                label: 'Abonnement personnalisée',
                                             },
                                         ]}
                                         disabled={disabled}
@@ -117,24 +117,8 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             ]}
                                             disabled={disabled}
                                         />
-                                        <SelectField
-                                            control={form.control}
-                                            name="paymentMethod"
-                                            label="Mode de paeiement"
-                                            options={[
-                                                {
-                                                    key: 'transfer',
-                                                    label: 'Virement',
-                                                },
-                                                {
-                                                    key: 'check',
-                                                    label: 'check',
-                                                },
-                                            ]}
-                                            disabled={disabled}
-                                        />
                                         <InputFieldForm
-                                            label="Raison sociale"
+                                            label="Bénéficaire"
                                             name="beneficiary"
                                             control={form.control}
                                             placeholder="Saisir le nom du bénéficaire"
@@ -146,14 +130,14 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             label="RIB"
                                             name="rib"
                                             control={form.control}
-                                            placeholder="Saisir le rib"
+                                            placeholder="02278012236547789*****"
                                         />
                                         <SelectField
                                             control={form.control}
                                             name="accountType"
                                             label="Type de compte"
                                             options={partnerType}
-                                            className="lg:w-2/4"
+                                            className=""
                                             disabled={disabled}
                                         />
                                     </div>

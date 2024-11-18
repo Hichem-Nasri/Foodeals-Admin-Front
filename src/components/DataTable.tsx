@@ -142,9 +142,31 @@ export const DataTable: FC<DataTableProps<any>> = ({
                         </div>
                     )}
                     {!partnerData && (
-                        <h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">
-                            {title}
-                        </h1>
+                        <div
+                            className={`${
+                                !back ? 'justify-between' : 'justify-start'
+                            } flex items-center w-full`}
+                        >
+                            {/* // TODO: Check Association Collaborator it's passed with partner data */}
+                            <h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">
+                                {title}
+                            </h1>
+                            {!back && (
+                                <CustomButton
+                                    className="h-fit py-4 text-lynch-500 ml-1"
+                                    label="Retour"
+                                    IconLeft={ArrowLeft}
+                                    variant="outline"
+                                    onClick={() => {
+                                        if (onBack) {
+                                            onBack()
+                                        } else {
+                                            router.back()
+                                        }
+                                    }}
+                                />
+                            )}
+                        </div>
                     )}
                     <div className="w-full overflow-auto rounded-[14px]">
                         <Table className="rounded-[14px] bg-white py-2">

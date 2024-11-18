@@ -10,11 +10,14 @@ interface FilterAndCreatePartnerCollaboratorsProps {
     collaborators: PartnerCollaborators[]
     form: UseFormReturn<any>
     table: import('@tanstack/table-core').Table<PartnerCollaborators>
+    onSubmit: (data: any) => void
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const FilterAndCreatePartnerCollaborators: FC<
     FilterAndCreatePartnerCollaboratorsProps
-> = ({ collaborators, form, table }) => {
+> = ({ collaborators, form, table, onSubmit, open, setOpen }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
@@ -22,14 +25,18 @@ export const FilterAndCreatePartnerCollaborators: FC<
                     Liste des collaborateurs
                 </h2>
                 <FilterTablePartnerCollaborators
-                    partners={collaborators}
                     form={form}
+                    onSubmit={onSubmit}
+                    open={open}
+                    setOpen={setOpen}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTablePartnerCollaborators
-                    partners={collaborators}
                     form={form}
+                    onSubmit={onSubmit}
+                    open={open}
+                    setOpen={setOpen}
                 />
                 <ColumnVisibilityModal table={table} />
             </div>

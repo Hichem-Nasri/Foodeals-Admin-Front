@@ -66,6 +66,7 @@ export const defaultAssociationInformationData = {
     address: '',
     associationType: '',
     mapLocation: '',
+    status: 'PENDING',
 }
 
 export const engagementSchema = z.object({
@@ -100,4 +101,5 @@ export interface AssociationInformationSchemaType {
     numberOfSieges: number
     solutions: PartnerSolutionType[]
     documents: string[]
+    status: string
 }

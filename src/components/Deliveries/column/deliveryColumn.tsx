@@ -1,7 +1,10 @@
-import { ActionsMenu } from '@/components/custom/ActionsMenu'
+import { AvatarAndName } from '@/components/AvatarAndName'
+import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
+import DetailsArchive from '@/components/utils/DetailsArchive'
+import { getContract } from '@/lib/api/partner/getContract'
 import { AppRoutes } from '@/lib/routes'
 import { DeliveryType } from '@/types/deliveries'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
@@ -13,7 +16,10 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()
 
-export const columnsDeliveriesTable = (router: AppRouterInstance) => [
+export const columnsDeliveriesTable = (
+    router: AppRouterInstance,
+    archive: boolean
+) => [
     columnDeliveriesTableHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date',
@@ -21,15 +27,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
     }),
     columnDeliveriesTableHelper.accessor('partnerInfoDto', {
         cell: (info) => (
-            <div className="flex items-center gap-1">
-                <Avatar>
-                    <AvatarImage src={info.getValue().avatarPath} />
-                    <AvatarFallback>
-                        {info.getValue().name[0].toUpperCase()}
-                    </AvatarFallback>
-                </Avatar>
-                {info.getValue().name}
-            </div>
+            <AvatarAndName
+                name={info.getValue().name}
+                avatar={info.getValue().avatarPath}
+            />
         ),
         header: 'Partenaire',
         footer: (info) => info.column.id,
@@ -41,15 +42,10 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                 ' ' +
                 capitalize(info.getValue().name.lastName)
             return (
-                <div className="flex items-center gap-1">
-                    <Avatar>
-                        <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>
-                            {fullName && fullName[0].toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    {fullName}
-                </div>
+                <AvatarAndName
+                    name={fullName}
+                    avatar={info.getValue().avatarPath}
+                />
             )
         },
         header: 'Résponsable',
@@ -104,7 +100,9 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
     }),
     columnDeliveriesTableHelper.accessor('id', {
         cell: (info) => {
-            const ListActions = [
+            if (archive) return <DetailsArchive id={info.getValue()} />
+            const status = info.row.getValue('status') as string
+            const ListActions: ActionType[] = [
                 {
                     actions: () =>
                         router.push(
@@ -146,22 +144,28 @@ export const columnsDeliveriesTable = (router: AppRouterInstance) => [
                 {
                     actions: (id: string) =>
                         router.push(
-                            AppRoutes.deliveryPayment.replace(':id', id)
+                            AppRoutes.deliveryPayment + '?deliveryId=' + id
                         ),
                     icon: Users,
                     label: 'Liste des paiement',
                 },
-            ]
-            const status = info.row.getValue('status') as PartnerStatusType
-            if (status == PartnerStatusType.VALID) {
-                ListActions.push({
-                    actions: (id) => {
-                        // Contract
+                {
+                    actions: async (id) => {
+                        try {
+                            const contractData = await getContract(id)
+                            const url = window.URL.createObjectURL(
+                                contractData as Blob
+                            )
+                            window.open(url, '_blank') // Opens the contract in a new tab
+                        } catch (error) {
+                            console.error('Error opening contract:', error)
+                        }
                     },
                     icon: FileBadge,
                     label: 'Contrat',
-                })
-            }
+                    shouldNotDisplay: status !== 'VALIDATED',
+                },
+            ]
             return <ActionsMenu id={info.getValue()} menuList={ListActions} />
         },
         header: 'Activité',

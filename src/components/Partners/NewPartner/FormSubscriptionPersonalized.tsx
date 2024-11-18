@@ -21,6 +21,7 @@ export const FormSubscriptionPersonalized: FC<
     FormSubscriptionPersonalizedProps
 > = ({ form, disabled }) => {
     const { solutions } = form.watch()
+    console.log('hello person')
 
     return (
         <Fragment>

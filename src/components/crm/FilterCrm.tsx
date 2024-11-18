@@ -30,6 +30,7 @@ interface FilterCrmProps {
     open: boolean
     setOpen: (open: boolean) => void
     switchTable: string
+    isLoading?: boolean
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
@@ -42,6 +43,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     open,
     setOpen,
     switchTable,
+    isLoading,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -60,6 +62,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                         size="sm"
                         className="text-lynch-500 rounded-full bg-white hover:bg-transparent hover:text-black w-14 h-14"
                         onClick={handleArchive}
+                        disabled={isLoading}
                     >
                         <Archive size={26} />
                     </Button>
@@ -76,17 +79,20 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={leadKo ? 'Lead Ko' : 'Prospects'}
+                    label={!leadKo ? 'Lead Ko' : 'Prospects'}
                     onClick={handleArchive}
-                    IconRight={leadKo ? Archive : ArrowLeft}
+                    IconRight={!leadKo ? Archive : ArrowLeft}
+                    disabled={isLoading}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2 px-4">
                 <CustomButton
                     size={'sm'}
+                    variant="outline"
                     className="border-[1.5px] border-primary text-primary hover:bg-primary bg-white hover:text-white transition-all"
                     label={'Importer'}
                     IconRight={Database}
+                    disabled={isLoading}
                 />
                 <Link
                     href={
@@ -101,6 +107,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                         size="sm"
                         label="Ajouter un prospect"
                         IconRight={UserRoundPlus}
+                        disabled={isLoading}
                     />
                 </Link>
                 <CustomButton

@@ -57,6 +57,7 @@ import ConfirmationAll, {
     DetailsPayment,
 } from '@/components/payment/PaymentDetails/ConfirmationAll'
 import PaginationData from '@/components/utils/PaginationData'
+import { MyError } from '@/components/Error'
 
 interface CommissionMonthProps {
     id: string
@@ -144,7 +145,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     const handleConfirmAll = () => {
         // handle confirm all
     }
-    if (error) return <h1>Error: {error.message}...</h1>
+    if (error) return <MyError message={error.message} />
     return (
         <Fragment>
             <div className="flex flex-col gap-3 w-full px-3 lg:px-0 mr-2">

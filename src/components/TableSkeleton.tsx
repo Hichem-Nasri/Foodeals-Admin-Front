@@ -19,7 +19,12 @@ export const DataTableSkeleton: FC<DataTableSkeletonProps> = ({
     rowCount,
 }) => {
     return (
-        <div className="w-full overflow-auto rounded-[14px] lg:flex hidden">
+        <div className="w-full overflow-auto rounded-[14px] lg:flex hidden flex-col justify-start items-start gap-[1.2rem]">
+            <Skeleton className="h-12 w-full rounded-lg lg:w-60 bg-white flex justify-start items-center px-2">
+                <div className="flex items-center gap-2">
+                    <Skeleton className="h-8 w-56 rounded" />
+                </div>
+            </Skeleton>
             <Table className="rounded-[14px] bg-white py-2">
                 <TableHeader>
                     <TableRow>

@@ -67,12 +67,13 @@ export const TopBar: FC<TopBarProps> = ({
     hideStatus = false,
     isPending,
 }) => {
+    console.log('status:', status)
     const [isDownloading, setIsDownloading] = useState(false)
     const notif = useNotification()
     const handleOpenContract = async () => {
         try {
             const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData)
+            const url = window.URL.createObjectURL(contractData as Blob)
             window.open(url, '_blank') // Opens the contract in a new tab
         } catch (error) {
             console.error('Error opening contract:', error)
@@ -81,7 +82,7 @@ export const TopBar: FC<TopBarProps> = ({
     const handleCopyContractLink = async () => {
         try {
             const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData)
+            const url = window.URL.createObjectURL(contractData as Blob)
             const fullLink = url // Use the generated URL
             await navigator.clipboard.writeText(fullLink)
             notif.notify(NotificationType.INFO, 'Lien du contrat copié')
@@ -120,8 +121,7 @@ export const TopBar: FC<TopBarProps> = ({
         try {
             console.log(id, 'contract')
             const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData)
-
+            const url = window.URL.createObjectURL(contractData as Blob)
             const link = document.createElement('a')
             link.href = url
             link.setAttribute('download', `contract_${id}.pdf`)
@@ -130,6 +130,7 @@ export const TopBar: FC<TopBarProps> = ({
             document.body.removeChild(link)
             window.URL.revokeObjectURL(url)
             setIsDownloading(true)
+            notif.notify(NotificationType.SUCCESS, 'Contrat généré avec succès')
         } catch (error) {
             notif.notify(
                 NotificationType.ERROR,
@@ -213,6 +214,7 @@ export const TopBar: FC<TopBarProps> = ({
                         size="sm"
                         label="Valider le contrat"
                         IconRight={FileBadge}
+                        type="submit"
                     />
                 )}
             </div>

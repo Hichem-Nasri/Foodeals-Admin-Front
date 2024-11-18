@@ -58,7 +58,14 @@ export interface CrmInformationSchemaType {
     category: string[]
     responsable: string
     managerInfo: string | number
-    creatorInfo?: string | number
+    creatorInfo?: {
+        id: string | number
+        name: {
+            firstName: string
+            lastName: string
+        }
+        avatarPath?: string
+    }
     phone: string
     email: string
     country: string

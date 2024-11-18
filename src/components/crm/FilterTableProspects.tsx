@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -20,6 +20,8 @@ import { PartnerStatus } from '../Partners/PartnerStatus'
 import { PartnerStatusType } from '@/types/partnersType'
 import { useRouter } from 'next/navigation'
 import MobileHeader from '../utils/MobileHeader'
+import { SelectField } from '../custom/SelectField'
+import api from '@/api/Auth'
 
 interface FilterTableProspectsProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
@@ -94,6 +96,37 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
     setOpen,
 }) => {
     const { handleSubmit, control } = FilterForm
+    const [country, setCountry] = useState<string>('')
+    const [city, setCity] = useState<string>('')
+    const [Options, setOptions] = useState<{
+        country: MultiSelectOptionsType[]
+        city: MultiSelectOptionsType[]
+    }>({
+        country: [],
+        city: [],
+    })
+    useEffect(() => {
+        const fetchCountry = async () => {
+            const res = await api.get('/api/countries')
+            const data = await res.data
+            const options = data.map((country: string) => ({
+                key: country,
+                value: country,
+            }))
+            setOptions((prev) => ({ ...prev, country: options }))
+        }
+        // fetchCountry()
+        const fetchCity = async () => {
+            const res = await api.get('/api/cities')
+            const data = await res.data
+            const options = data.map((city: string) => ({
+                key: city,
+                value: city,
+            }))
+            setOptions((prev) => ({ ...prev, city: options }))
+        }
+        // fetchCity()
+    }, [country, city])
     return (
         <Form {...FilterForm}>
             <form
@@ -131,6 +164,39 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
+                        <SelectField
+                            control={control}
+                            name="country"
+                            label="Pays"
+                            placeholder="Saisir le pays"
+                            options={
+                                Options.country.length > 0
+                                    ? Options.country
+                                    : []
+                            }
+                            onChange={(e) => {
+                                setCountry(e)
+                            }}
+                        />
+                        <SelectField
+                            disabled={country === ''}
+                            control={control}
+                            name="city"
+                            label="Ville"
+                            placeholder={
+                                country == ''
+                                    ? "Saisir le pays d'abord"
+                                    : 'Saisir le ville'
+                            }
+                            options={
+                                Options.city.length > 0 ? Options.city : []
+                            }
+                            onChange={(e) => {
+                                setCity(e)
+                            }}
+                        />
+                    </div>
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <InputFieldForm
                             control={control}
                             name="email"
@@ -163,35 +229,37 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
                         />
                     </div>
                 </div>
-                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem] w-full">
+                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <CustomButton
-                        variant="secondary"
+                        variant="ghost"
                         title="Réinitialiser les filtres"
-                        label=""
-                        className="[&>.icon]:ml-0 h-12 w-12 rounded-full px-2 py-2 justify-self-start"
+                        label="Clear"
+                        className="[&>.icon]:ml-0 space-x-2 text-primary lg:[&>.label]:hidden h-12 w-fit lg:rounded-full px-2 py-2 justify-self-start"
                         IconRight={Eraser}
                         onClick={() => {
                             FilterForm.reset()
                         }}
+                        type="reset"
                     />
-                    <CustomButton
-                        variant="secondary"
-                        label="Annuler"
-                        title="Annuler"
-                        className="px-5 py-3 h-fit lg:w-fit w-full"
-                        IconRight={X}
-                        type="button"
-                        onClick={() => {
-                            setOpen(false)
-                        }}
-                    />
-                    <CustomButton
-                        label="Confirmer"
-                        title="Confimer les filtres"
-                        className="px-5 py-3 h-fit lg:w-fit w-full"
-                        IconRight={Check}
-                        type="submit"
-                    />
+                    <div className="flex justify-evenly items-center space-x-2">
+                        <CustomButton
+                            variant="secondary"
+                            label="Annuler"
+                            onClick={() => {
+                                setOpen(false)
+                            }}
+                            className="px-5 py-3 h-fit lg:w-fit w-full"
+                            IconRight={X}
+                            type="submit"
+                        />
+                        <CustomButton
+                            label="Confirmer"
+                            onClick={() => {}}
+                            className="px-5 py-3 h-fit w-full"
+                            IconRight={Check}
+                            type="submit"
+                        />
+                    </div>
                 </div>
             </form>
         </Form>

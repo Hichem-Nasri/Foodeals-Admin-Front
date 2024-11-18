@@ -17,12 +17,16 @@ import { InputFieldForm } from '../custom/InputField'
 import { SelectField } from '../custom/SelectField'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import MobileHeader from '../utils/MobileHeader'
+import { FilterOrganizations } from '../utils/FilterOrganizations'
+import { FilterCity } from '../utils/FilterCity'
+import { FilterManager } from '../utils/FilterManger'
 
 interface FormFilterProps {
     form: UseFormReturn<any>
     onSubmit: (data: any) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
+    type: string
 }
 
 export const FormFilter: FC<FormFilterProps> = ({
@@ -30,6 +34,7 @@ export const FormFilter: FC<FormFilterProps> = ({
     onSubmit,
     setOpen,
     open,
+    type,
 }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -42,6 +47,7 @@ export const FormFilter: FC<FormFilterProps> = ({
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
+                    type={type}
                 />
             </DialogContent>
         </Dialog>
@@ -52,12 +58,14 @@ interface FormAssociationProps {
     form: UseFormReturn<any>
     onSubmit: (data: any) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    type: string
 }
 
 const FormAssociation: FC<FormAssociationProps> = ({
     form,
     onSubmit,
     setOpen,
+    type,
 }) => {
     const { handleSubmit, control } = form
     return (
@@ -78,29 +86,26 @@ const FormAssociation: FC<FormAssociationProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterMultiSelect
+                        <FilterOrganizations
                             control={control}
                             name="companyName"
                             label="Raison sociale"
                             placeholder="Partenaire"
-                            emptyAvatar="/avatar/emptyPartner.png"
+                            type={type}
                         />
-                        <FilterMultiSelect
+                        <FilterManager
                             control={control}
                             name="collaborators"
                             label="Collaborateurs"
-                            emptyAvatar="/avatar/emptyUser.png"
+                            type={type}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
-                        <SelectField
+                        <FilterCity
                             control={control}
                             name="city"
                             label="Ville"
-                            options={[
-                                { label: 'Princible', key: 'PARTNER_WITH_SB' },
-                                { label: 'normal', key: 'NORMAL_PARTNER' },
-                            ]}
+                            type={type}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
@@ -124,6 +129,7 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             control={control}
                             name="solution"
                             label="Solutions"
+                            type={type}
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (
                                     <PartnerSolution
@@ -140,33 +146,35 @@ const FormAssociation: FC<FormAssociationProps> = ({
 
                 <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <CustomButton
-                        variant="secondary"
+                        variant="ghost"
                         title="Réinitialiser les filtres"
-                        label=""
-                        className="[&>.icon]:ml-0 h-12 w-12 rounded-full px-2 py-2 justify-self-start"
+                        label="Clear"
+                        className="[&>.icon]:ml-0 space-x-2 text-primary lg:[&>.label]:hidden h-12 w-fit lg:rounded-full px-2 py-2 justify-self-start"
                         IconRight={Eraser}
                         onClick={() => {
                             form.reset()
                         }}
                         type="reset"
                     />
-                    <CustomButton
-                        variant="secondary"
-                        label="Annuler"
-                        onClick={() => {
-                            setOpen(false)
-                        }}
-                        className="px-5 py-3 h-fit lg:w-fit w-full"
-                        IconRight={X}
-                        type="submit"
-                    />
-                    <CustomButton
-                        label="Confirmer"
-                        onClick={() => {}}
-                        className="px-5 py-3 h-fit"
-                        IconRight={Check}
-                        type="submit"
-                    />
+                    <div className="flex justify-evenly items-center space-x-2">
+                        <CustomButton
+                            variant="secondary"
+                            label="Annuler"
+                            onClick={() => {
+                                setOpen(false)
+                            }}
+                            className="px-5 py-3 h-fit lg:w-fit w-full"
+                            IconRight={X}
+                            type="submit"
+                        />
+                        <CustomButton
+                            label="Confirmer"
+                            onClick={() => {}}
+                            className="px-5 py-3 h-fit w-full"
+                            IconRight={Check}
+                            type="submit"
+                        />
+                    </div>
                 </div>
             </form>
         </Form>

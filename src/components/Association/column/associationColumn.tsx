@@ -1,13 +1,19 @@
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import { PartnerStatus } from '@/components/Partners/PartnerStatus'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { PaymentStatus } from '@/components/payment/PaymentStatus'
+import DetailsArchive from '@/components/utils/DetailsArchive'
 import { getContract } from '@/lib/api/partner/getContract'
 import { AppRoutes } from '@/lib/routes'
 import { AssociationType } from '@/types/association'
 import { PartnerInfoDto } from '@/types/GlobalType'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
+import {
+    ContractStatus,
+    PartnerSolutionType,
+    PartnerStatusType,
+} from '@/types/partnersType'
 import { PaymentStatusType } from '@/types/PaymentType'
 import { capitalize } from '@/types/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
@@ -17,7 +23,10 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 const columnHelper = createColumnHelper<AssociationType>()
 
-export const columnsAssociationsTable = (router: AppRouterInstance) => [
+export const columnsAssociationsTable = (
+    router: AppRouterInstance,
+    archive: boolean
+) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date de création',
@@ -28,7 +37,7 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
             const { avatarPath, name } = info.getValue()
             return (
                 <Avatar className="size-[2.875rem] shrink-0 justify-center items-center flex bg-lynch-100 rounded-full">
-                    <AvatarImage src={avatarPath} />
+                    <AvatarImage src={avatarPath} className="rounded-full" />
                     <AvatarFallback>
                         {name && name[0].toUpperCase()}
                     </AvatarFallback>
@@ -53,7 +62,10 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
             return (
                 <div className="flex items-center space-x-2">
                     <Avatar className="size-[2.875rem] shrink-0 justify-center items-center flex bg-lynch-100 rounded-full">
-                        <AvatarImage src={info.getValue().avatarPath} />
+                        <AvatarImage
+                            src={info.getValue().avatarPath}
+                            className="rounded-full"
+                        />
                         <AvatarFallback>
                             {fullName[0].toUpperCase()}
                         </AvatarFallback>
@@ -65,7 +77,7 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
         header: 'Responsable',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('subEntities', {
+    columnHelper.accessor('users', {
         cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
         header: 'Collaborateurs',
         footer: (info) => info.column.id,
@@ -80,7 +92,7 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
         header: 'Récupération',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('users', {
+    columnHelper.accessor('subEntities', {
         cell: (info) => (info.getValue() === 0 ? 'N/A' : info.getValue()),
         header: 'Sièges',
         footer: (info) => info.column.id,
@@ -128,16 +140,34 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('status', {
-        cell: (info) => (
-            <PaymentStatus status={info.getValue() as PaymentStatusType} />
-        ),
+        cell: (info) => {
+            let status
+            switch (info.getValue() as ContractStatus) {
+                case ContractStatus.IN_PROGRESS:
+                    status = PartnerStatusType.IN_PROGRESS
+                    break
+                case ContractStatus.VALIDATED:
+                    status = PartnerStatusType.VALID
+                    break
+                case ContractStatus.REJECTED:
+                    status = PartnerStatusType.CANCELED
+                    break
+            }
+
+            return <PartnerStatus status={status as PartnerStatusType} />
+        },
         header: 'Statut',
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
+            console.log('Archive', archive)
+            if (archive === true) return <DetailsArchive id={info.getValue()} />
             const id = (info.row.getValue('partner') as PartnerInfoDto)
                 .id as string
+            const subEntities = info.row.getValue('subEntities') as number
+            const collaborator = info.row.getValue('users') as number
+            const status = info.row.getValue('status') as PartnerStatusType
             const listActions = [
                 {
                     actions: () =>
@@ -157,32 +187,36 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
                     icon: Pen,
                     label: 'Modifier',
                 },
-            ]
-            const subEntities = info.row.getValue('subEntities') as number
-            const siage = info.row.getValue('users') as number
-            const status = info.row.getValue('status') as PaymentStatusType
-            if (subEntities > 0) {
-                listActions.push({
+                {
                     actions: () =>
-                        router.push(AppRoutes.collaborator.replace(':id', id!)),
+                        router.push(
+                            AppRoutes.collaboratorAssociation.replace(
+                                ':id',
+                                id!
+                            )
+                        ),
                     icon: Users,
                     label: 'Collaborateurs',
-                })
-            }
-            if (siage > 0) {
-                listActions.push({
+                    shouldNotDisplay: collaborator === 0,
+                },
+                {
                     actions: () =>
                         router.push(AppRoutes.sieges.replace(':id', id!)),
                     icon: Store,
                     label: 'Sièges',
-                })
-            }
-            if (status === PaymentStatusType.PAID) {
-                listActions.push({
+                    shouldNotDisplay: subEntities === 0,
+                },
+                {
                     actions: async () => {
                         try {
-                            const contractData = await getContract(id)
-                            const url = window.URL.createObjectURL(contractData)
+                            const contractData = await getContract(id).catch(
+                                (error) => {
+                                    throw new Error('Error getting contract')
+                                }
+                            )
+                            const url = window.URL.createObjectURL(
+                                contractData as Blob
+                            )
                             window.open(url, '_blank') // Opens the contract in a new tab
                         } catch (error) {
                             console.error('Error opening contract:', error)
@@ -190,16 +224,14 @@ export const columnsAssociationsTable = (router: AppRouterInstance) => [
                     },
                     icon: FileBadge,
                     label: 'Contrat',
-                })
-            }
-            listActions.push({
-                actions: () => {
-                    // const res = api.delete(`http://localhost:8080/api/v1/...`)
-                    console.log('archive')
+                    shouldNotDisplay: status !== PartnerStatusType.VALID,
                 },
-                icon: Archive,
-                label: 'Archiver',
-            })
+                {
+                    actions: () => {},
+                    icon: Archive,
+                    label: 'Archiver',
+                },
+            ]
             return <ActionsMenu id={id} menuList={listActions} />
         },
         header: 'Activité',

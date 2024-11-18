@@ -41,7 +41,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                     <Loader className="mr-2 icon shrink-0 animate-spin" />
                 </div>
             ) : (
-                <>{label}</>
+                <span className="label">{label}</span>
             )}
             {IconRight && <IconRight className=" ml-2 icon shrink-0" />}
         </Button>

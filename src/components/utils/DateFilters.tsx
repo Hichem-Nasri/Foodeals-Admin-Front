@@ -2,8 +2,6 @@ import { FC } from 'react'
 import { DatePicker } from '../DatePicker'
 import { Label } from '../Label'
 import { UseFormReturn, Controller } from 'react-hook-form'
-import { FilterCrmSchema } from '@/types/CrmScheme'
-import { z } from 'zod'
 
 interface DateFilterProps {
     form: UseFormReturn<any>
@@ -34,6 +32,8 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                             value={
                                 !field.value ? undefined : new Date(field.value)
                             }
+                            id="start"
+                            disabled={disabled}
                         />
                     )}
                 />
@@ -54,6 +54,8 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                             value={
                                 !field.value ? undefined : new Date(field.value)
                             }
+                            id="end"
+                            disabled={disabled}
                         />
                     )}
                 />

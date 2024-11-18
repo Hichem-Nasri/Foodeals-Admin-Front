@@ -42,6 +42,7 @@ import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
 import MobileHeader from '@/components/utils/MobileHeader'
 import PaginationData from '@/components/utils/PaginationData'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
+import { MyError } from '@/components/Error'
 
 const SubStoreCommission = () => {
     const { id } = useParams()
@@ -117,6 +118,8 @@ const SubStoreCommission = () => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    if (error) return <MyError message={error.message} />
 
     return (
         <>

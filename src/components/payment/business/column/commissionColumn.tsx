@@ -20,7 +20,14 @@ export const columnsCommissionTable = (
     path: 'parnter' | 'subStore' = 'parnter'
 ) => [
     columnHelperCommission.accessor('ref', {
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+            const id = info.row.original.id
+            return (
+                <div className="flex items-center gap-1">
+                    {id.slice(0, 4) + id.slice(-4)}
+                </div>
+            )
+        },
         header: 'Réf',
         footer: (info) => info.column.id,
     }),
@@ -130,49 +137,40 @@ export const columnsCommissionTable = (
             const type = info.row.getValue('partnerType')
             const id = info.row.getValue('id') as string
             const toPay = info.row.getValue('toPay') as PriceType
-            if (!payable) {
+            console.log(toPay)
+
+            const status = info.row.getValue(
+                'paymentStatus'
+            ) as PaymentStatusEnum
+            const paid = info.row.original.toPay.amount
+
+            if (!paid) {
+                return (
+                    <ConfirmPayment
+                        className="min-w-full"
+                        id={id}
+                        label={'Confirmer'}
+                        disabled={
+                            [
+                                PaymentStatusEnum.IN_VALID,
+                                PaymentStatusEnum.VALID_BY_BOTH,
+                            ].includes(status as PaymentStatusEnum) || !payable
+                        }
+                    />
+                )
+            } else {
                 return (
                     <PaymentValidation
                         className="min-w-full"
                         id={id}
                         label={'Payé'}
-                        disabled
+                        disabled={
+                            PaymentStatusEnum.IN_VALID !=
+                                (status as PaymentStatusEnum) || !payable
+                        }
                         amount={toPay.amount}
                     />
                 )
-            } else {
-                const status = info.row.getValue(
-                    'paymentStatus'
-                ) as PaymentStatusEnum
-                const paid =
-                    (info.row.getValue('toPay') as PriceType).amount == 0
-
-                if (paid) {
-                    return (
-                        <ConfirmPayment
-                            className="min-w-full"
-                            id={id}
-                            label={'Confirmer'}
-                            disabled={[
-                                PaymentStatusEnum.IN_VALID,
-                                PaymentStatusEnum.VALID_BY_BOTH,
-                            ].includes(status as PaymentStatusEnum)}
-                        />
-                    )
-                } else {
-                    return (
-                        <PaymentValidation
-                            className="min-w-full"
-                            id={id}
-                            label={'Payé'}
-                            disabled={
-                                PaymentStatusEnum.IN_VALID !=
-                                (status as PaymentStatusEnum)
-                            }
-                            amount={toPay.amount}
-                        />
-                    )
-                }
             }
         },
         header: 'Validation',

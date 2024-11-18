@@ -5,9 +5,14 @@ import { FilterAndCreatePartnerCollaborators } from '@/components/Partners/colla
 import { PartnerCollaboratesCard } from '@/components/Partners/collaborators/PartnerCollaboratorsCard'
 import { columnsSubAccountTable } from '@/components/Partners/column/subentitiesColumn'
 import { HeaderSubAccount } from '@/components/Partners/subAccount/HeaderSubAccount'
+import PaginationData from '@/components/utils/PaginationData'
 import { useNotification } from '@/context/NotifContext'
 import fetchSubPartner from '@/lib/api/partner/fetchSubPartner'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { SubAccountPartners } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -21,7 +26,7 @@ import {
 import { table } from 'console'
 import { RotateCw, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { FC, useState } from 'react'
+import React, { FC, Fragment, useState } from 'react'
 
 interface SubAccountProps {
     id: string
@@ -31,21 +36,25 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
     const [subAccount, setSubAccount] = useState<SubAccountPartners[]>([])
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalElements, setTotalElements] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const notify = useNotification()
     const router = useRouter()
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, refetch, isRefetching, error } = useQuery({
         queryKey: ['subEntities', id],
         queryFn: async () => {
             try {
-                const res = await fetchSubPartner(id, currentPage, pageSize)
+                const res = await fetchSubPartner(
+                    id,
+                    totals.currentPage,
+                    totals.pageSize
+                )
                 if (res.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalPages(res.data.totalPages)
-                setTotalElements(res.data.totalElements)
+                setTotals({
+                    ...totals,
+                    totalPages: res.data.totalPages,
+                    totalElements: res.data.totalElements,
+                })
                 setSubAccount(res.data.content as SubAccountPartners[])
                 return res.data
             } catch (e) {
@@ -67,36 +76,38 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    const partnerData = {
-        id: 1,
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneGourmet',
-        city: 'Casablanca',
-    }
+    // const partnerData = {
+    //     id: 1,
+    //     name: 'Marjane',
+    //     avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneGourmet',
+    //     city: 'Casablanca',
+    // }
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4 scroll">
             <HeaderSubAccount
                 collaborators={subAccount}
                 table={table}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
             />
             <DataTable
                 title="Listes des sous comptes"
                 table={table}
                 data={subAccount}
-                transform={(value) => (
-                    <PartnerCollaboratesCard partner={value} key={value.id} />
-                )}
-                partnerData={partnerData}
+                transform={(value) => <Fragment key={value.id} />}
+                back={false}
+                isLoading={isLoading || isRefetching}
+                hideColumns={['contractStatus']}
+            />
+            <PaginationData
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
+                pageSize={totals.pageSize}
+                refetch={refetch}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 ">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
-                />
                 <CustomButton
                     label="Retour"
                     className="w-full"

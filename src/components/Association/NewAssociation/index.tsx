@@ -27,6 +27,8 @@ import { NotificationType } from '@/types/GlobalType'
 import { createAssociation } from '@/lib/api/association/createAssociations'
 import { useSearchParams } from 'next/navigation'
 import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
+import validateContract from '@/lib/api/partner/validateContract'
+import { PartnerStatusType } from '@/types/partnersType'
 
 interface NewAssociationProps {
     id: string
@@ -42,10 +44,15 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
     )
     const searchParams = useSearchParams()
     const [associationId, setAssociationId] = useState(id)
-    const [readOnly, setReadOnly] = useState(id !== '')
+    const [readOnly, setReadOnly] = useState(
+        id !== '' || partnerDetails?.status === PartnerStatusType.VALID
+    )
     const [save, setSave] = useState(false)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [documents, setDocuments] = useState<File[]>([])
+    const [contractValid, setContractValid] = useState(
+        partnerDetails?.status === PartnerStatusType.VALID
+    )
     const notify = useNotification()
 
     // Check if the mode is edit
@@ -72,6 +79,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         },
         onSuccess: (data) => {
             setSave(false)
+            console.log('data:', data)
             setAssociationId(data.data)
             notify.notify(
                 NotificationType.SUCCESS,
@@ -141,12 +149,28 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         }))
     }
 
-    const onSubmit = () => {
-        onSubmitPartnerInfo(associationInformation.getValues())
-        onSubmitEngagement(partnerEngagement.getValues())
+    const onSubmit = async () => {
+        if (!documents || documents.length === 0) {
+            notify.notify(NotificationType.ERROR, 'Please upload the contract')
+            return
+        }
+
+        const res = await validateContract(associationId, documents)
+
+        if (res.status === 200) {
+            setContractValid(true)
+            notify.notify(NotificationType.SUCCESS, 'Contract VALID')
+        } else {
+            notify.notify(NotificationType.ERROR, 'Failed to validate contract')
+        }
     }
 
-    const onSaveData = () => {
+    const onSaveData = (modify?: boolean) => {
+        console.log('save data')
+        if (modify === true) {
+            setContractValid(false)
+            return
+        }
         if (
             associationInformation.formState.isValid &&
             partnerEngagement.formState.isValid
@@ -167,19 +191,31 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
     }
     useEffect(() => {
         if (save) {
+            console.log('mutate')
             mutate()
         }
-    }, [save, payload])
-
+    }, [save])
+    console.log('id: ', associationId)
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
+                status={
+                    contractValid
+                        ? PartnerStatusType.VALID
+                        : partnerDetails
+                        ? (partnerDetails.status as PartnerStatusType)
+                        : associationId != ''
+                        ? PartnerStatusType.IN_PROGRESS
+                        : PartnerStatusType.DRAFT
+                }
+                hideStatus={contractValid}
                 primaryButtonDisabled={
-                    (!associationInformation.formState.isDirty &&
+                    !associationId &&
+                    ((!associationInformation.formState.isDirty &&
                         !associationInformation.formState.isValid &&
                         !partnerEngagement.formState.isDirty &&
                         !partnerEngagement.formState.isValid) ||
-                    readOnly
+                        readOnly)
                 }
                 secondaryButtonDisabled={readOnly}
                 onSaveData={onSaveData}
@@ -187,7 +223,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                 id={associationId}
                 isPending={isPending}
             />
-            <div className="flex flex-col gap-[1.875rem] h-full w-full">
+            <div className="flex flex-col lg:gap-0 gap-[1.875rem] h-full w-full">
                 <FormAssociation
                     onSubmit={onSubmitPartnerInfo}
                     form={associationInformation}
@@ -202,6 +238,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                     documents={documents}
                     setDocument={setDocuments}
                     id={associationId}
+                    contractValid={contractValid}
                 />
             </div>
             {associationId && <ArchivePartner partnerId={associationId} />}

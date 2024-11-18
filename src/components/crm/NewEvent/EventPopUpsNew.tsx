@@ -10,7 +10,7 @@ import { CrmObjectType, EventType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
 import { useMutation } from '@tanstack/react-query'
 import { NotificationType } from '@/types/GlobalType'
-import { createArchive } from '@/lib/api/crm/prospect/createEvents'
+import { createEvents } from '@/lib/api/crm/prospect/createEvents'
 import { useNotification } from '@/context/NotifContext'
 import { TopBar } from '../Prospect/NewProspect/TopBar'
 
@@ -43,10 +43,10 @@ export const EventPopUpsNew = ({
 
     const mutation = useMutation({
         mutationFn: async (data: CrmObjectType) => {
-            const res = await createArchive(data, id!)
+            console.log('id', id)
+            const res = await createEvents(data, id!)
 
-            if (![200, 201].includes(res.status))
-                throw new Error('Failed to create event')
+            if (res.status === 500) throw new Error('Failed to create event')
             return res.data
         },
         onSuccess: (data) => {
@@ -65,9 +65,11 @@ export const EventPopUpsNew = ({
 
     const onSubmit = (e: CrmObjectType) => {
         try {
+            console.log('e', e)
             mutation.mutate(e)
+            console.log('mutation')
         } catch (error) {
-            Notify.notify(NotificationType.ERROR, 'Failed to create event')
+            // Notify.notify(NotificationType.ERROR, 'Failed to create event')
             console.log(error)
         }
     }

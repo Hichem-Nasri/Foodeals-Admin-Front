@@ -49,6 +49,7 @@ import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import MobileHeader from '@/components/utils/MobileHeader'
 import PaginationData from '@/components/utils/PaginationData'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
+import { MyError } from '@/components/Error'
 
 interface OperationsProps {}
 
@@ -77,7 +78,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
-                    totals.currentPage - 1,
+                    totals.currentPage,
                     totals.pageSize,
                     dateAndPartner.date!
                 )
@@ -127,6 +128,10 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    if (error) {
+        return <MyError message={error.message} />
+    }
 
     return (
         <Fragment>

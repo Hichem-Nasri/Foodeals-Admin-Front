@@ -50,6 +50,7 @@ interface MultiSelectProps {
     type?: 'company' | 'status'
     normalTransform?: boolean
     region?: boolean
+    ref?: React.Ref<HTMLInputElement> // TODO: Tesing this ref
 }
 
 const defaultTransform = (
@@ -80,7 +81,7 @@ const defaultTransform = (
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
     options,
-    selectedValues,
+    selectedValues = [],
     onSelect,
     transform,
     disabled = false,
@@ -92,12 +93,13 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     type = 'company',
     normalTransform = false,
     region = false,
+    ref,
 }) => {
     const selectedOptions = options.filter(
         (option) =>
             selectedValues &&
-            (selectedValues.includes(option.key.toString()) ||
-                selectedValues.includes(option.label))
+            (selectedValues?.includes(option.key.toString()) ||
+                selectedValues?.includes(option.label))
     )
     const len = length ?? 3
     if (normalTransform) {
@@ -110,22 +112,22 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     className={cn(
                         'flex items-center gap-2 py-2 px-3 w-full rounded-[12px] bg-lynch-50 border-0 text-lynch-400 hover:text-lynch-700 font-normal text-base min-h-14 max-w-[32.625rem] min-w-full flex-1',
                         disabled ? 'opacity-50' : 'cursor-pointer',
-                        selectedValues.length > 0 ? 'border-textGray' : ''
+                        selectedValues?.length > 0 ? 'border-textGray' : ''
                     )}
                 >
-                    {selectedValues.length == 1 && !transform ? (
+                    {selectedValues?.length == 1 && !transform ? (
                         selectedOptions[0] && (
                             <AvatarAndName
                                 avatar={selectedOptions[0].avatar!}
                                 name={selectedOptions[0].label}
                             />
                         )
-                    ) : !selectedValues.length && !transform ? (
+                    ) : !selectedValues?.length && !transform ? (
                         <AvatarAndName
                             avatar={emptyAvatar}
                             name={placeholder}
                         />
-                    ) : transform && selectedValues.length ? (
+                    ) : transform && selectedValues?.length ? (
                         selectedOptions.length > len ? (
                             <React.Fragment>
                                 {transform(selectedOptions).slice(0, len)}
@@ -155,15 +157,18 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         ) : (
                             transform(selectedOptions)
                         )
-                    ) : transform && !selectedValues.length ? (
-                        placeholder
+                    ) : transform && !selectedValues?.length ? (
+                        <AvatarAndName
+                            avatar={emptyAvatar}
+                            name={placeholder}
+                        />
                     ) : (
                         <AvatarAndName
                             avatar={emptyAvatar}
                             name={region ? 'Plusieurs zone' : 'Multi'}
                         />
                     )}
-                    {region && selectedValues.length > 1 ? (
+                    {region && selectedValues?.length > 1 ? (
                         <ListPlus className="opacity-50 ml-auto" />
                     ) : (
                         <ChevronDown className="opacity-50 ml-auto" />
@@ -176,13 +181,17 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         <CommandInput
                             className="bg-lynch-50 placeholder:text-base placeholder:font-normal text-base font-normal placeholder:text-input text-textGray"
                             placeholder={searchPlaceholder}
+                            ref={ref}
+                            onValueChange={(value) => {
+                                console.log({ value })
+                            }}
                         />
                     )}
                     <CommandList>
                         <CommandGroup className="p-0">
                             {!disabled &&
                                 options?.map((option) => {
-                                    const isSelected = selectedValues.includes(
+                                    const isSelected = selectedValues?.includes(
                                         option.key.toString()
                                     )
                                     return (
@@ -191,7 +200,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                             onSelect={(name: string) => {
                                                 if (isSelected) {
                                                     const newData =
-                                                        selectedValues.filter(
+                                                        selectedValues?.filter(
                                                             (selected) =>
                                                                 option.key !==
                                                                 selected

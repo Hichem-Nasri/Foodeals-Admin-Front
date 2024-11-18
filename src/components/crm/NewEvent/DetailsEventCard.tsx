@@ -2,13 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CalendarMinus2, Eye, Mail, PhoneCall, TextQuote } from 'lucide-react'
 import React, { FC } from 'react'
 import { DetailsEvenetProspect } from './DetailsEvenet'
-import { EventType } from '@/types/CrmType'
+import { CrmType, EventType } from '@/types/CrmType'
+import Link from 'next/link'
 
 interface DetailsEventCardProps {
     detailsData: EventType
+    prospect: CrmType
 }
 
-const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
+const DetailsEventCard: FC<DetailsEventCardProps> = ({
+    detailsData,
+    prospect,
+}) => {
     const { lead, object, createdAt } = detailsData
     const createdAtDate = new Date(createdAt)
     const date = createdAtDate.toLocaleDateString()
@@ -52,12 +57,18 @@ const DetailsEventCard: FC<DetailsEventCardProps> = ({ detailsData }) => {
                             <Eye />
                         </div>
                     </DetailsEvenetProspect>
-                    <div className="rounded-full bg-amethyst-500 size-11 text-white grid place-items-center hover:border-2 hover:border-amethyst-500 hover:bg-transparent hover:text-amethyst-500 transition-all cursor-pointer ">
+                    <Link
+                        href={`mailto:${prospect?.contact.email}`}
+                        className="rounded-full bg-amethyst-500 size-11 text-white grid place-items-center hover:border-2 hover:border-amethyst-500 hover:bg-transparent hover:text-amethyst-500 transition-all cursor-pointer "
+                    >
                         <Mail />
-                    </div>
-                    <div className="rounded-full bg-mountain-400 size-11 text-white grid place-items-center hover:border-2 hover:border-mountain-400 hover:bg-transparent hover:text-mountain-400 transition-all cursor-pointer ">
+                    </Link>
+                    <Link
+                        href={`tel:${prospect?.contact.phone}`}
+                        className="rounded-full bg-mountain-400 size-11 text-white grid place-items-center hover:border-2 hover:border-mountain-400 hover:bg-transparent hover:text-mountain-400 transition-all cursor-pointer "
+                    >
                         <PhoneCall />
-                    </div>
+                    </Link>
                 </div>
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />

@@ -10,6 +10,8 @@ import { Eye, Archive } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { BadgeDisponibility } from '../Collaborators/BadgeDisponibility'
 import { userInfoDto } from '@/types/GlobalType'
+import { capitalize } from '@/types/utils'
+import { AvatarAndName } from '@/components/AvatarAndName'
 
 const columnDeliveryCollaboratorsTableHelper =
     createColumnHelper<DeliveryCollaboratorsType>()
@@ -17,27 +19,29 @@ const columnDeliveryCollaboratorsTableHelper =
 export const columnsDeliveryCollaboratorsTable = (
     router: AppRouterInstance
 ) => [
-    columnDeliveryCollaboratorsTableHelper.accessor('createdAt', {
+    columnDeliveryCollaboratorsTableHelper.accessor('userInfoDto.createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date',
         footer: (info) => info.column.id,
     }),
     columnDeliveryCollaboratorsTableHelper.accessor('userInfoDto', {
-        cell: (info) => (
-            <div className="flex items-center gap-1">
-                <Avatar>
-                    <AvatarImage src={info.getValue().avatarPath} />
-                    <AvatarFallback>
-                        {info.getValue().name[0].toUpperCase()}
-                    </AvatarFallback>
-                </Avatar>
-                {info.getValue().name}
-            </div>
-        ),
+        cell: (info) => {
+            const fullName =
+                capitalize(info.getValue().name.firstName) +
+                ' ' +
+                capitalize(info.getValue().name.lastName)
+
+            return (
+                <AvatarAndName
+                    avatar={info.getValue().avatarPath}
+                    name={fullName}
+                />
+            )
+        },
         header: 'Collaborateur',
         footer: (info) => info.column.id,
     }),
-    columnDeliveryCollaboratorsTableHelper.accessor('role', {
+    columnDeliveryCollaboratorsTableHelper.accessor('userInfoDto.role', {
         cell: (info) => info.getValue(),
         header: 'Role',
         footer: (info) => info.column.id,
@@ -57,11 +61,14 @@ export const columnsDeliveryCollaboratorsTable = (
         header: 'Zone',
         footer: (info) => info.column.id,
     }),
-    // columnDeliveryCollaboratorsTableHelper.accessor('commands', {
-    //     cell: (info) => info.getValue(),
-    //     header: 'Commandes',
-    //     footer: (info) => info.column.id,
-    // }),
+    columnDeliveryCollaboratorsTableHelper.accessor('commands', {
+        cell: (info) => {
+            const role = info.row.getValue('role')
+            return role == 'Manager' ? '--' : info.getValue() || 0
+        },
+        header: 'Commandes',
+        footer: (info) => info.column.id,
+    }),
     columnDeliveryCollaboratorsTableHelper.accessor('userInfoDto.phone', {
         cell: (info) => <PhoneBadge phone={info.getValue()} />,
         header: 'Téléphone',

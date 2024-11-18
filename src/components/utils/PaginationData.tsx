@@ -17,6 +17,7 @@ interface PaginationDataProps {
     currentPage: number
     totalPages: number
     pageSize: number
+    isLoading?: boolean
     refetch?: () => void
 }
 
@@ -26,6 +27,7 @@ const PaginationData: FC<PaginationDataProps> = ({
     currentPage,
     totalPages,
     pageSize,
+    isLoading,
     refetch,
 }) => {
     const handlePageChange = (page: number) => {
@@ -43,7 +45,8 @@ const PaginationData: FC<PaginationDataProps> = ({
     }
 
     useEffect(() => {
-        if (refetch) refetch()
+        if (isLoading || !refetch) return
+        refetch()
     }, [currentPage])
 
     return (

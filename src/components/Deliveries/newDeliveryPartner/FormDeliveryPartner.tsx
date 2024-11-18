@@ -45,7 +45,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
     onSubmit,
     setCountryCode,
     disabled = false,
-    selectedSolution,
+    selectedSolution = [],
 }) => {
     const { id } = useParams()
     const { handleSubmit, control } = form

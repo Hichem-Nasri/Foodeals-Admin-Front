@@ -21,10 +21,8 @@ const buildQueryString = (
             `names=${encodeURIComponent(data.companyName.join(','))}`
         )
     }
-    if (data.collaborators && data.collaborators.length > 0) {
-        queryParts.push(
-            `collabId=${encodeURIComponent(data.collaborators.join(','))}`
-        )
+    if (data.collaborators) {
+        queryParts.push(`collabId=${encodeURIComponent(data.collaborators)}`)
     }
     if (data.phone) {
         queryParts.push(`phone=${encodeURIComponent(data.phone)}`)
@@ -37,13 +35,16 @@ const buildQueryString = (
     }
     if (data.solution && data.solution.length > 0) {
         queryParts.push(
-            `statuses=${encodeURIComponent(data.solution.join(','))}`
+            `solutions=${encodeURIComponent(data.solution.join(','))}`
         )
+    }
+    if (data.status) {
+        queryParts.push(`status=${encodeURIComponent(data.status)}`)
     }
     if (data.city) {
         queryParts.push(`cityId=${encodeURIComponent(data.city)}`)
     }
-    if (data.type) queryParts.push(`types=${data.type}`)
+    if (data.companyType) queryParts.push(`types=${data.companyType}`)
     else {
         switch (type) {
             case 'PARTNERS':

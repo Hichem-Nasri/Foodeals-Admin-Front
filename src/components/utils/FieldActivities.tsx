@@ -19,15 +19,21 @@ const FieldActivities: FC<FieldActivitiesProps> = ({
     label,
     type,
 }) => {
-    const [activities, setActivities] = useState<MultiSelectOptionsType[]>([])
+    const [activities, setActivities] = useState<MultiSelectOptionsType[]>([
+        {
+            key: 'autre',
+            label: 'Autre',
+        },
+    ])
     useEffect(() => {
         const fetchActivites = async () => {
             const activity = await fetchActivities(type)
-            console.log('activity', activity)
-            setActivities(activity)
+
+            setActivities([...activity, ...activities])
         }
         fetchActivites()
     }, [])
+
     return (
         <MultiSelectField
             control={control}

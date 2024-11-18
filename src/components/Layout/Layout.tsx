@@ -9,6 +9,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, formTitle }) => {
+    console.log('formTitle----', formTitle)
     return (
         <QueryProvider>
             <NotificationProvider>

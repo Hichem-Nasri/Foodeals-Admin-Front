@@ -11,7 +11,7 @@ interface FieldSolutionProps {
     control: Control<any>
     disabled: boolean
     options?: MultiSelectOptionsType[]
-    selectedSolution: string[]
+    selectedSolution?: string[]
 }
 const defaultOptions: MultiSelectOptionsType[] = [
     {
@@ -33,7 +33,7 @@ const FieldSolutions: FC<FieldSolutionProps> = ({
     control,
     options = defaultOptions,
     disabled,
-    selectedSolution,
+    selectedSolution = [],
 }) => {
     return (
         <MultiSelectField

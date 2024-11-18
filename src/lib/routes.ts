@@ -1,8 +1,13 @@
+import Collaborateurs from '@/components/Collaborators'
+import { Collaborator } from '@/components/Deliveries/Collaborators/Collaborator'
+
 export const AppRoutes = {
     home: '/',
     payment: '/paiement',
+    collaboratorAssociation: '/associations/collaborateur/:id',
     paymentDetails: '/paiement/:id',
     businessPartner: '/paiement/partenaire-business',
+    businessPartnerDetails: '/paiement/partenaire-livraisons/:id',
     PBCommission: '/paiement/partenaire-business/commissions',
     PBSubscription: '/paiement/partenaire-business/subscriptions',
     PBCommissionDetails: '/paiement/partenaire-business/commissions/:id',
@@ -10,6 +15,9 @@ export const AppRoutes = {
         '/paiement/partenaire-business/commissions/sub-store/:id',
     PBSubscriptionDetails: '/paiement/partenaire-business/subscriptions/:id',
     newBusinessPartner: '/paiement/partenaire-business/:id',
+    paymentDeliveries: '/paiement/partenaire-livraisons',
+    paymentDeliveriesDetails:
+        '/paiement/partenaire-livraisons/operation-month/:id',
     statistics: '/statistique',
     partners: '/partenaires',
     newPartner: '/partenaires/partenair/:id',
@@ -23,6 +31,7 @@ export const AppRoutes = {
     collaboratorDetails:
         '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
     collaborator: '/partenaires/collaborateurs/:id',
+    CollaboratorSubEntities: '/collaborateurs/:id',
     products: '/produits',
     newProduct: '/produits/new',
     ProductDetails: '/produits/:id',

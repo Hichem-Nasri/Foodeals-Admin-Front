@@ -98,11 +98,6 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                                 {isMobile && (
                                     <div className="w-full flex lg:flex-row flex-col space-y-2 space-x-0 justify-center items-center lg:space-x-4">
                                         <CustomButton
-                                            onClick={() => {
-                                                setOpen((prev) => {
-                                                    return !prev
-                                                })
-                                            }}
                                             title={
                                                 !convertir
                                                     ? 'Veuillez convertir le prospect avant de confirmer l’évènement'

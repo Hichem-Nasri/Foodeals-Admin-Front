@@ -16,7 +16,7 @@ import { InputPhoneField } from '@/components/custom/InputFieldPhone'
 import { Mail, PhoneCall } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
-import { CountryData } from '@/types/utils'
+import { capitalize, CountryData } from '@/types/utils'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/api/Auth'
 import { useNotification } from '@/context/NotifContext'
@@ -27,6 +27,9 @@ import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
 import SelectManager from '@/components/utils/SelectManager'
 import FieldSolutions from '@/components/utils/FieldSolutions'
+import { Label } from '@/components/Label'
+import { AvatarAndName } from '@/components/AvatarAndName'
+import { LabelAndAvatar } from '@/components/custom/LabelAndAvatar'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -53,6 +56,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
         regionId: '',
     })
     const { handleSubmit, control } = form
+    const creatorInfo = form.watch('creatorInfo')
     return (
         <Accordion
             type="single"
@@ -72,8 +76,9 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-[1.875rem] w-full">
                                 <div className="flex flex-col gap-[1.875rem] w-full">
-                                    <div className="flex lg:flex-row flex-col items-start gap-3 w-full">
+                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3 w-full">
                                         <FieldSolutions
+                                            className="col-span-2"
                                             control={control}
                                             disabled={disabled}
                                         />
@@ -120,10 +125,23 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
                                         />
-                                        <SelectManager
-                                            control={control}
+
+                                        <LabelAndAvatar
+                                            value={
+                                                capitalize(
+                                                    creatorInfo?.name
+                                                        .firstName || ''
+                                                ) +
+                                                ' ' +
+                                                capitalize(
+                                                    creatorInfo?.name
+                                                        ?.lastName || ''
+                                                )
+                                            }
+                                            onChange={() => {}}
                                             name="creatorInfo"
-                                            label="Alimenté par"
+                                            label={'Alimenter par'}
+                                            avatar={creatorInfo?.avatarPath}
                                             disabled={disabled}
                                         />
                                     </div>

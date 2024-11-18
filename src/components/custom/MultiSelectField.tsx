@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { Control } from 'react-hook-form'
 import { FormField, FormMessage } from '../ui/form'
 import { cn } from '@/lib/utils'
@@ -20,6 +20,7 @@ interface MultiSelectFieldProps {
     emptyAvatar?: string
     len?: number
     selected?: string[]
+    ref?: React.Ref<HTMLInputElement>
 }
 
 export const MultiSelectField: FC<MultiSelectFieldProps> = ({
@@ -34,14 +35,16 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     len,
     emptyAvatar,
     selected,
+    ref,
 }) => {
-    const select = selected && selected.map((val) => ({ key: val, label: val }))
+    const select =
+        (selected && selected.map((val) => ({ key: val, label: val }))) || []
+    console.log('select', select)
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => {
-                console.log(typeof field.value)
                 return (
                     <div className={cn('flex flex-col w-full', className)}>
                         <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
@@ -52,16 +55,13 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                             <MultiSelect
                                 options={options}
                                 disabled={options.length === 0 || disabled}
-                                selectedValues={
-                                    select
-                                        ? select.push(field.value)
-                                        : field.value
-                                }
+                                selectedValues={field.value}
                                 onSelect={(value) => field.onChange(value)}
                                 placeholder={placeholder}
                                 transform={transform}
                                 length={len}
                                 emptyAvatar={emptyAvatar}
+                                ref={ref}
                             />
                         </div>
                         <FormMessage />

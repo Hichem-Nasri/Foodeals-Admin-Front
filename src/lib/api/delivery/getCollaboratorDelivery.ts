@@ -7,10 +7,11 @@ export async function getCollaboratorDelivery(id: string): Promise<{
 }> {
     try {
         const res = await api
-            .get(`localhost:8080/v1/users/${id}/profile`)
+            .get(`http://localhost:8080/v1/users/${id}/profile`)
             .catch((error) => {
                 throw new Error(error.response.data.message)
             })
+        console.log('res', res)
         return { status: res.status, data: res.data }
     } catch (error) {
         console.error(error)

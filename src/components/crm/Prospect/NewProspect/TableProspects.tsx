@@ -19,19 +19,21 @@ import {
 import Link from 'next/link'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { FilePlus } from 'lucide-react'
-import { EventType } from '@/types/CrmType'
+import { CrmType, EventType } from '@/types/CrmType'
 import DetailsEventCard from '../../NewEvent/DetailsEventCard'
 import { columnsProspectTable } from '../column/EventColumn'
 
 type TableProspectsProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     data: EventType[]
+    prospect: CrmType
     disabled?: boolean
 }
 
 export const TableProspects: FC<TableProspectsProps> = ({
     setOpen,
     data,
+    prospect,
     disabled,
 }) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -67,12 +69,15 @@ export const TableProspects: FC<TableProspectsProps> = ({
                                 table={table}
                                 data={data}
                                 transform={(data) => (
-                                    <DetailsEventCard detailsData={data} />
+                                    <DetailsEventCard
+                                        detailsData={data}
+                                        prospect={prospect}
+                                    />
                                 )}
                                 hidden={true}
                             />
                         </div>
-                        <div className="self-end">
+                        <div className="lg:self-end lg:w-fit w-full">
                             <CustomButton
                                 disabled={disabled}
                                 onClick={() => setOpen((prev) => !prev)}

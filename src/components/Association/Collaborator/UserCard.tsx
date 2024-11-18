@@ -28,7 +28,7 @@ export const UsersCard: FC<UsersCardProps> = ({ User }) => {
 
     const dataArray = [
         {
-            label: `Responsable : ${User.roleName}`,
+            label: `Responsable : ${User.userInfoDto.role}`,
             icon: Handshake,
         },
         {
@@ -78,7 +78,7 @@ export const UsersCard: FC<UsersCardProps> = ({ User }) => {
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={User.createdAt}
+                                label={User.userInfoDto.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>

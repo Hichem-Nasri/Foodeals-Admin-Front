@@ -53,7 +53,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
         cityId: '',
         regionId: '',
     })
-
+    console.log('hello partner')
     return (
         <Accordion
             type="single"

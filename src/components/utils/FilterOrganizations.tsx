@@ -35,10 +35,7 @@ export const FilterOrganizations: FC<FilterOrganizationsProps> = ({
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchFilters = async () => {
-            const data = await fetchOragnizations(
-                search,
-                inputRef.current?.value!
-            )
+            const data = await fetchOragnizations(search, type)
             console.log('FilterOrganizations data', data)
             setOptions(data)
         }
@@ -52,9 +49,13 @@ export const FilterOrganizations: FC<FilterOrganizationsProps> = ({
             label={label}
             placeholder={'Selectionner'}
             transform={(value) => {
-                return value.map((item) => {
+                return value.map((item, index) => {
                     return (
-                        <AvatarAndName name={item.label} avatar={item.avatar} />
+                        <AvatarAndName
+                            key={index}
+                            name={item.label}
+                            avatar={item.avatar}
+                        />
                     )
                 })
             }}

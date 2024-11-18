@@ -80,11 +80,17 @@ export const AvatarProfile: React.FC<AvatarProfileProps> = ({
                         ) : (
                             <div
                                 className={cn(
-                                    ' rounded-[24px] text-lynch-200 w-full h-full flex justify-center items-center bg-lynch-50',
+                                    ' rounded-[24px] text-lynch-200 w-full h-full flex flex-col space-y-2 justify-center items-center bg-lynch-50',
                                     className
                                 )}
                             >
                                 <ImageUp className="w-full" size={56} />
+                                {alt == 'cover' && (
+                                    <Label
+                                        label="Photo du couverture"
+                                        className="text-[14px] font-[17.07px]  text-lynch-300 lg:hidden flex"
+                                    />
+                                )}
                             </div>
                         )}
                     </>

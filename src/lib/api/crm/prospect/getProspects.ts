@@ -39,7 +39,7 @@ const buildQueryString = (
         queryParts.push(`leadId=${encodeURIComponent(data.managerInfo)}`)
     }
     if (data.status && data.status.length > 0) {
-        queryParts.push(`statuses=${encodeURIComponent(data.status.join(','))}`)
+        queryParts.push(`status=${encodeURIComponent(data.status.join(','))}`)
     }
     // Assuming cityId and countryId are fixed values
     if (data.country) {
@@ -63,7 +63,9 @@ export async function fetchProspect(
     try {
         const filter = buildQueryString(FilterData, types)
         const url =
-            `${API_PROSPECTS}?page=${currentPage}&size=${pageSize}` + filter
+            `${API_PROSPECTS}?page=${
+                filter ? '0' : currentPage
+            }&size=${pageSize}&` + filter
         console.log('url', url)
         const response = await api.get(url).catch((error) => {
             throw error

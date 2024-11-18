@@ -19,6 +19,7 @@ interface SelectFieldProps {
     search?: boolean
     onChangeSearch?: (value: string) => void
     inputRef?: React.RefObject<HTMLInputElement>
+    emptyAvatar?: string
 }
 
 export const SelectField: FC<SelectFieldProps> = ({
@@ -35,6 +36,7 @@ export const SelectField: FC<SelectFieldProps> = ({
     search = false,
     onChangeSearch,
     inputRef,
+    emptyAvatar,
 }) => {
     return (
         <FormField
@@ -65,6 +67,7 @@ export const SelectField: FC<SelectFieldProps> = ({
                             search={search}
                             onChangeSearch={onChangeSearch}
                             inputRef={inputRef}
+                            emptyAvatar={emptyAvatar}
                         />
                         <FormMessage />
                     </div>

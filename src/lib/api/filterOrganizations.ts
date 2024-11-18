@@ -2,10 +2,13 @@ import api from '@/api/Auth'
 import { API_URL } from '.'
 
 export async function fetchOragnizations(search: string, type: string) {
+    const [types, archived] = type.split('&')
     try {
         const res = await api
             .get(
-                `${API_URL}i/v1/organizations/partners/search?name=${search}&types=${type}&deleted=true&page=0&size=10`
+                `${API_URL}/v1/organizations/partners/search?name=${search}&page=0&size=10` +
+                    (types ? `&types=${types}` : '') +
+                    `&deleted=${archived}`
             )
             .catch((error) => {
                 throw new Error(error)

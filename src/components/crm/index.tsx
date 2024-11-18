@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { CustomButton } from '@/components/custom/CustomButton'
@@ -39,6 +39,7 @@ import { emptyFilterCrmData, FilterCrmSchema } from '@/types/CrmScheme'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PartnerStatusType } from '@/types/partnersType'
 import { set } from 'date-fns'
+import { MyError } from '../Error'
 
 export default function Crm() {
     const [data, setData] = useState<CrmType[]>([])
@@ -47,7 +48,7 @@ export default function Crm() {
     >('partenaires')
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
-    const [leadKo, setLeadKo] = useState(true)
+    const [leadKo, setLeadKo] = useState(false)
     const [filterData, setFilterData] =
         useState<z.infer<typeof FilterCrmSchema>>(emptyFilterCrmData)
     const [open, setOpen] = useState(false)
@@ -69,6 +70,7 @@ export default function Crm() {
     const {
         data: query,
         isLoading,
+        isRefetching,
         error,
         refetch,
     } = useQuery({
@@ -82,7 +84,7 @@ export default function Crm() {
                     switchTable === 'partenaires'
                         ? 'PARTNER'
                         : 'ASSOCIATION,FOOD_BANK'
-                )
+                ) // TODO: check teh pagination work with the filter
                 if (response.status === 500) {
                     throw new Error('Error while fetching data')
                 }
@@ -102,10 +104,11 @@ export default function Crm() {
                 console.error(error)
             }
         },
+        placeholderData: keepPreviousData,
     })
     const tableAssocciation = useReactTable({
         data,
-        columns: columnCrmAssociations(router, setData),
+        columns: columnCrmAssociations(router, setData, leadKo),
         state: {
             columnFilters,
         },
@@ -117,7 +120,7 @@ export default function Crm() {
     })
     const table = useReactTable({
         data,
-        columns: columnsCrmTable(router, setData),
+        columns: columnsCrmTable(router, setData, leadKo),
         state: {
             columnFilters,
         },
@@ -130,16 +133,20 @@ export default function Crm() {
     const handleArchive = () => {
         setLeadKo((prev: boolean) => !prev)
         setFilterData((prev) => {
-            return { ...prev, status: [PartnerStatusType.CANCELED] }
+            return {
+                ...prev,
+                status: leadKo ? [] : [PartnerStatusType.CANCELED],
+            }
         })
-        refetch()
     }
     useEffect(() => {
+        if (error || isLoading || isRefetching) return
         refetch()
     }, [filterData, switchTable])
-    if (error) return <div>Error: {error.message}</div>
+
+    if (error) return <MyError message={error.message} />
     return (
-        <div className="flex flex-col gap-3 w-full pr-2">
+        <div className="flex flex-col gap-3 w-full p-2 lg:pr-2 lg:px-0 lg-p-0">
             <SwitchProspects setSwitch={setSwitchTable} />
             <Statistics
                 type={
@@ -147,6 +154,7 @@ export default function Crm() {
                         ? 'PARTNER'
                         : 'ASSOCIATION,FOOD_BANK'
                 }
+                isFetching={isLoading || isRefetching}
             />
             <FilterCrm
                 FilterForm={FilterForm}
@@ -160,6 +168,7 @@ export default function Crm() {
                 open={open}
                 setOpen={setOpen}
                 switchTable={switchTable}
+                isLoading={isLoading || isRefetching}
             />
 
             <DataTable
@@ -169,7 +178,7 @@ export default function Crm() {
                 data={data}
                 title="Listes des prospects"
                 transform={(data: any) => <CrmCardDetails crm={data} />}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
             />
             <PaginationData
                 className="items-center"
@@ -179,14 +188,16 @@ export default function Crm() {
                 currentPage={totals.currentPage}
                 totalPages={totals.totalPages}
                 pageSize={totals.pageSize}
+                isLoading={isLoading || isRefetching}
                 refetch={refetch}
             />
             <Link
                 href={
-                    AppRoutes.newProspect + '?type=' + switchTable ===
-                    'partenaires'
+                    AppRoutes.newProspect +
+                    '?type=' +
+                    (switchTable === 'partenaires'
                         ? 'PARTNER'
-                        : 'ASSOCIATION,FOOD_BANK'
+                        : 'ASSOCIATION,FOOD_BANK')
                 }
                 className="lg:hidden grid w-full"
             >

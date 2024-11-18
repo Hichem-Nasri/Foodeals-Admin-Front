@@ -13,20 +13,20 @@ export const createPartner = async (
 ): Promise<any> => {
     const formData = new FormData()
     // remover status from data
-    const { status, ...rest } = partner
+    const { status, logo, cover, ...rest } = partner
     const blob = new Blob([JSON.stringify(rest)], {
         type: 'application/json',
     })
-    console.log(JSON.stringify(rest))
+    console.log(JSON.stringify(rest), assets.logo, assets.cover)
     formData.append('dto', blob)
-    formData.append('logo', assets.logo as Blob)
-    formData.append('cover', assets.cover as Blob)
+    if (assets.logo) formData.append('logo', assets.logo)
+    if (assets.cover) formData.append('cover', assets.cover)
     const url = id ? `${API_PARTNERS}/edit/${id}` : `${API_PARTNERS}/create`
     const method = id ? 'put' : 'post'
-
+    console.log('methode: ', method, url)
     const response = await api[method](url, formData).catch((err) => {
         console.error(err)
-        throw new Error('Failed to save partner')
+        throw new Error(' Failed to save partner')
     })
     return response
 }

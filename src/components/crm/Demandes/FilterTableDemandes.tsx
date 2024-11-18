@@ -60,7 +60,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400">
                     Filtrer par
                 </DialogTitle>
-                <div className="flex flex-col gap-y-2 gap-x-4">
+                {/* <div className="flex flex-col gap-y-2 gap-x-4">
                     <DateFilter
                         date={filterData.date}
                         setDate={(date) =>
@@ -141,7 +141,7 @@ export const FilterTableDemandes: FC<FilterTableDemandesProps> = ({
                             placeholder="Saisir le téléphone"
                         />
                     </div>
-                </div>
+                </div> */}
 
                 <DialogDescription className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
                     <DialogClose className="lg:w-fit w-full">

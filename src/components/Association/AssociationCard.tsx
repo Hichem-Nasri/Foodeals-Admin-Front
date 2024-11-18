@@ -25,12 +25,17 @@ import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PaymentStatusType } from '@/types/PaymentType'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { getContract } from '@/lib/api/partner/getContract'
+import DetailsArchive from '../utils/DetailsArchive'
 
 interface AssociationCardProps {
     association?: AssociationType
+    archive?: boolean
 }
 
-export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
+export const AssociationCard: FC<AssociationCardProps> = ({
+    association,
+    archive,
+}) => {
     const router = useRouter()
     if (!association) return
 
@@ -57,7 +62,7 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
         },
     ]
     const id = association.id
-    const listActions = [
+    const listActions: ActionType[] = [
         {
             actions: () =>
                 router.push(AppRoutes.newAssociation.replace(':id', id!)),
@@ -73,28 +78,24 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             icon: Pen,
             label: 'Modifier',
         },
-    ]
-    if (association.subEntities > 0) {
-        listActions.push({
+        {
             actions: () =>
                 router.push(AppRoutes.collaborator.replace(':id', id!)),
             icon: Users,
             label: 'Collaborateurs',
-        })
-    }
-    if (association.users > 0) {
-        listActions.push({
+            shouldNotDisplay: association.users === 0,
+        },
+        {
             actions: () => router.push(AppRoutes.sieges.replace(':id', id!)),
             icon: Store,
             label: 'Sièges',
-        })
-    }
-    if (association.status === PaymentStatusType.PAID) {
-        listActions.push({
+            shouldNotDisplay: association.subEntities === 0,
+        },
+        {
             actions: async () => {
                 try {
                     const contractData = await getContract(id)
-                    const url = window.URL.createObjectURL(contractData)
+                    const url = window.URL.createObjectURL(contractData as Blob)
                     window.open(url, '_blank') // Opens the contract in a new tab
                 } catch (error) {
                     console.error('Error opening contract:', error)
@@ -102,15 +103,14 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
             },
             icon: FileBadge,
             label: 'Contrat',
-        })
-    }
-    listActions.push({
-        actions: () => {
-            console.log('archive')
+            shouldNotDisplay: association.status !== 'VALIDATED',
         },
-        icon: Archive,
-        label: 'Archiver',
-    })
+        {
+            actions: () => {},
+            icon: Archive,
+            label: 'Archiver',
+        },
+    ]
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -161,10 +161,14 @@ export const AssociationCard: FC<AssociationCardProps> = ({ association }) => {
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
                             />
                         </Link>
-                        <ActionsMenu
-                            menuList={listActions}
-                            className="[&>svg]:size-6 p-[0.625rem]"
-                        />
+                        {archive ? (
+                            <ActionsMenu
+                                menuList={listActions}
+                                className="[&>svg]:size-6 p-[0.625rem]"
+                            />
+                        ) : (
+                            <DetailsArchive id={id} />
+                        )}
                     </div>
                 </div>
             </div>

@@ -20,6 +20,7 @@ interface FiltersAssociationProps {
     siege?: boolean
     totalElements: number
     onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+    isFetching?: boolean
 }
 
 export const FiltersAssociation: FC<FiltersAssociationProps> = ({
@@ -32,6 +33,7 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
     siege = false,
     totalElements,
     onSubmit,
+    isFetching,
 }) => {
     const router = useRouter()
     return (
@@ -58,9 +60,12 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={!archive ? 'Archive' : 'Associations'}
+                    label={
+                        !archive ? 'Archive' : siege ? 'Sièges' : 'Associations'
+                    }
                     IconRight={!archive ? Archive : ArrowLeft}
                     onClick={handleArchive}
+                    disabled={isFetching}
                 />
             </div>
             <div className={` lg:flex hidden gap-3 p-2`}>
@@ -74,6 +79,7 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                             AppRoutes.newAssociation.replace(':id', 'new')
                         )
                     }
+                    disabled={isFetching}
                 />
                 <CustomButton
                     label={formatNumberWithSpaces(totalElements)}

@@ -70,7 +70,7 @@ const SelectDate = ({
             setOptions(res.map((date: string) => ({ key: date, label: date })))
         }
         fetch()
-    }, [])
+    }, [format, id, type])
 
     return (
         <div className="flex flex-col w-full items-start text-sm font-semibold">

@@ -1,11 +1,14 @@
 import api from '@/api/Auth'
+import { PartnerStatus } from '@/components/Partners/PartnerStatus'
 import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
 import { getSolutions } from '@/lib/utils'
 import {
     DeliveryPartnerType,
     emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
+import { ContractStatusPartner } from '@/types/GlobalType'
 import { PartnerPOST } from '@/types/partenairUtils'
+import { PartnerStatusType } from '@/types/partnersType'
 
 export async function fetchDeliveryPartners(
     currentPage: number,
@@ -72,8 +75,8 @@ export const getDelivery = async (id: string) => {
                         data.solutionsContractDto.at(0)?.contractCommissionDto
                             .deliveryCommission) ||
                     0,
+                status: ContractStatusPartner[data.status] as PartnerStatusType,
             }
-            console.log('hello:', deliveryData)
             return deliveryData
         }
     } catch (e) {

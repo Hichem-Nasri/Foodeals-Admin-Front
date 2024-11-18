@@ -14,7 +14,7 @@ interface FilterCityProps {
     disabled?: boolean
     name: string
     label: string
-    type?: string
+    type: string
 }
 
 export const FilterCity: FC<FilterCityProps> = ({
@@ -30,7 +30,7 @@ export const FilterCity: FC<FilterCityProps> = ({
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchFilterCities = async () => {
-            const data = await fetchCities(search, 'morocco', type)
+            const data = await fetchCities(search, type, 'morocco')
             console.log('FilterCity data', data)
             setOptions(data)
         }

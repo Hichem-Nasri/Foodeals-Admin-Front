@@ -4,8 +4,17 @@ import anime from 'animejs'
 import Lottie from 'react-lottie'
 import foodealsLoading from '@/lotties/foodealsLoading.json'
 
-const SplashScreen = ({ finishLoading }: { finishLoading: Function }) => {
+const SplashScreen = ({
+    finishLoading,
+    loop = false,
+}: {
+    finishLoading: Function
+    loop?: boolean
+}) => {
     useEffect(() => {
+        if (loop) {
+            return
+        }
         const loader = anime.timeline({
             complete: () => finishLoading(),
         })

@@ -32,13 +32,16 @@ export interface DeliveryType {
 
 export interface DeliveryCollaboratorsType {
     id: string
-    createdAt: string
-    role: string
     status: boolean
     city: string
     region: string
     commands: number
-    userInfoDto: userInfoDto
+    userInfoDto: ContactDto & {
+        createdAt: string
+        id: string
+        avatarPath: string
+        role: string
+    }
     solutions: PartnerSolutionType[]
 }
 
@@ -47,14 +50,17 @@ export const deliveryCollaboratorsData: DeliveryCollaboratorsType[] = [
         id: '1',
         city: 'Fès',
         commands: 10,
-        createdAt: '2021-09-10',
         region: 'Fès-Meknès',
-        role: 'Livreur',
         status: true,
         userInfoDto: {
+            createdAt: '2021-09-10',
+            role: 'Admin',
             avatarPath: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
             email: 'jjj@jj.com',
-            name: 'John Doe',
+            name: {
+                firstName: 'John',
+                lastName: 'Doe',
+            },
             phone: '0606060606',
             id: '1',
         },

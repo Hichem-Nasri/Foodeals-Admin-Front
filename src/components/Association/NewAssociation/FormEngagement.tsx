@@ -20,6 +20,7 @@ import { AppRoutes } from '@/lib/routes'
 import { engagementSchema } from '@/types/associationSchema'
 import { UploadFile } from '@/components/Partners/NewPartner/UploadFile'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import { getContract } from '@/lib/api/partner/getContract'
 
 interface FormEngagementProps {
     form: UseFormReturn<z.infer<typeof engagementSchema>>
@@ -28,6 +29,7 @@ interface FormEngagementProps {
     documents: File[]
     setDocument: React.Dispatch<React.SetStateAction<File[]>>
     id: string
+    contractValid: boolean
 }
 
 export const FormEngagement: FC<FormEngagementProps> = ({
@@ -37,9 +39,19 @@ export const FormEngagement: FC<FormEngagementProps> = ({
     documents,
     setDocument,
     id,
+    contractValid,
 }) => {
     const { handleSubmit } = form
     const router = useRouter()
+    const handleOpenContract = async () => {
+        try {
+            const contractData = await getContract(id!)
+            const url = window.URL.createObjectURL(contractData as Blob)
+            window.open(url, '_blank') // Opens the contract in a new tab
+        } catch (error) {
+            console.error('Error opening contract:', error)
+        }
+    }
     const showAllPartners = () => {
         router.push(AppRoutes.sieges.replace(':id', id))
     }
@@ -184,13 +196,37 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                 </div>
                                 <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                                     <Label
-                                        label="Ajouter les documents"
+                                        label={
+                                            contractValid
+                                                ? 'Documents'
+                                                : 'Ajouter les documents'
+                                        }
                                         className="text-xs font-semibold text-lynch-950"
                                     />
-                                    <UploadFile
-                                        onChange={(files) => setDocument(files)}
-                                        value={documents}
-                                    />
+                                    {contractValid ? (
+                                        <button
+                                            type="button"
+                                            title="voir contract"
+                                            className="p-2 rounded-[12px] bg-lynch-100 flex justify-start flex-col items-center space-y-2"
+                                            onClick={handleOpenContract}
+                                        >
+                                            <img
+                                                src="/icons/pdf.png"
+                                                alt="pdf"
+                                                className="w-24 h-fit object-cover"
+                                            />
+                                            <h3 className="text-lynch-950 text-xs">
+                                                Contrat.pdf
+                                            </h3>
+                                        </button>
+                                    ) : (
+                                        <UploadFile
+                                            onChange={(files) =>
+                                                setDocument(files)
+                                            }
+                                            value={documents}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </Form>

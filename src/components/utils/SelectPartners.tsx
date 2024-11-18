@@ -47,7 +47,7 @@ const SelectParnter = ({
             ])
         }
         fetchManagerData()
-    }, [search])
+    }, [search, id, type])
 
     return (
         <SelectField

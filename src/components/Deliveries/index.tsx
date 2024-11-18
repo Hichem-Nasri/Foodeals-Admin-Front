@@ -42,6 +42,7 @@ import Link from 'next/link'
 import AppRouter from 'next/dist/client/components/app-router'
 import { AppRoutes } from '@/lib/routes'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
+import { MyError } from '../Error'
 interface DeliveriesProps {}
 
 export interface TableRowType {
@@ -74,8 +75,9 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                     FilterData,
                     archive
                 )
-                if (data.status === 500)
+                if (data.status === 500) {
                     throw new Error('Error fetching partners')
+                }
                 console.log('data', data)
                 setTotalElements(data.data.totalElements)
                 setTotalPages(data.data.totalPages)
@@ -101,12 +103,11 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     ) => {
         setFilterData(data)
         setOpen(false)
-        refetch()
     }
 
     const table = useReactTable({
         data: deliveries,
-        columns: columnsDeliveriesTable(router),
+        columns: columnsDeliveriesTable(router, archive),
         state: {
             columnFilters,
         },
@@ -120,10 +121,15 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
         if (isRefetching || isLoading) return
         setArchive((prev) => !prev)
     }
+
     useEffect(() => {
         if (isLoading || isRefetching) return
         refetch()
-    }, [archive])
+    }, [archive, FilterData])
+
+    if (error) {
+        return <MyError message={error.message} />
+    }
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersDeliveries
@@ -135,6 +141,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 totalElements={totalElement}
                 open={open}
                 setOpen={setOpen}
+                isFetching={isLoading || isRefetching}
             />
             <DataTable
                 data={deliveries}
@@ -142,6 +149,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 title="Liste des partenaires de livraison"
                 transform={(value) => <DeliveryCard delivery={value} />}
                 isLoading={isLoading || isRefetching}
+                hideColumns={['status']}
             />
             <PaginationData
                 currentPage={currentPage}

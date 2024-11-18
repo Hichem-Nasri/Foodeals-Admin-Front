@@ -19,6 +19,7 @@ import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
 import SelectManager from '@/components/utils/SelectManager'
 import FieldSolutions from '@/components/utils/FieldSolutions'
+import { SelectField } from '@/components/custom/SelectField'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -26,6 +27,7 @@ interface FormCrmInfoProps {
     disabled?: boolean
     setCountryCode: (value: string) => void
     countryCode: string
+    type: string
 }
 
 export const FormCrmInfo: FC<FormCrmInfoProps> = ({
@@ -34,6 +36,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
     countryCode,
     setCountryCode,
     disabled = false,
+    type,
 }) => {
     const [address, setAddress] = useState<{
         countryId: string
@@ -166,6 +169,24 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
+                                        {type != 'PARTNER' && (
+                                            <SelectField
+                                                control={control}
+                                                name="type"
+                                                label="Type"
+                                                disabled={disabled}
+                                                options={[
+                                                    {
+                                                        label: 'Association',
+                                                        key: 'ASSOCIATION',
+                                                    },
+                                                    {
+                                                        label: 'Food Bank',
+                                                        key: 'FOOD_BANK',
+                                                    },
+                                                ]}
+                                            />
+                                        )}
                                         <InputFieldForm
                                             classNameParent="col-span-2"
                                             className=" flex-1 w-full"

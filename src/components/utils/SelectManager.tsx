@@ -31,10 +31,11 @@ const SelectManager = ({
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
 
     useEffect(() => {
-        if (inputRef.current) inputRef.current.focus()
+        // if (inputRef.current) inputRef.current.focus()
         const fetchManagerData = async () => {
             const data = await fetchManager(search)
             setOptions(data)
+            inputRef.current?.focus()
         }
         fetchManagerData()
     }, [search])

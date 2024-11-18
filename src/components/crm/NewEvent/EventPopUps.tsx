@@ -11,7 +11,7 @@ import { useMediaQuery } from 'react-responsive'
 import { useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/api/Auth'
-import { createArchive } from '@/lib/api/crm/prospect/createEvents'
+import { createEvents } from '@/lib/api/crm/prospect/createEvents'
 import { NotificationType } from '@/types/GlobalType'
 import { useNotification } from '@/context/NotifContext'
 import { TopBar } from '../Prospect/NewProspect/TopBar'
@@ -49,9 +49,8 @@ export const EventPopUps = ({
     const mutation = useMutation({
         mutationFn: async (data: CrmObjectType) => {
             console.log('data', data, id)
-            const res = await createArchive(data, id as string)
-            if ([200, 201].includes(res.status))
-                throw new Error('Failed to create event')
+            const res = await createEvents(data, id as string)
+            if (res.status === 500) throw new Error('Failed to create event')
             return res.data
         },
         onSuccess: (data) => {

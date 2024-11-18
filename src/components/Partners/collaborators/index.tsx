@@ -16,6 +16,7 @@ import { ArrowLeft, Eye, RotateCw, Store } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import {
     columnsPartnerCollaboratorsTable,
+    defaultFilter,
     PartnerCollaborators,
     PartnerCollaboratorsFilerSchema,
 } from '@/types/collaborators'
@@ -41,22 +42,16 @@ export const Collaborators: FC<CollaboratorsProps> = ({
     partnerId,
 }) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [open, setOpen] = useState(false)
     const router = useRouter()
     const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
         resolver: zodResolver(PartnerCollaboratorsFilerSchema),
         mode: 'onBlur',
-        defaultValues: {
-            startDate: undefined,
-            endDate: undefined,
-            company: [],
-            email: '',
-            phone: '',
-            city: '',
-            companyType: '',
-            solution: [],
-        },
+        defaultValues: defaultFilter,
     })
-
+    const onSubmit = (data: any) => {
+        console.log(data)
+    }
     const [data, _setData] = useState(() => [...collaborators])
 
     const actionsList = (id: string) =>
@@ -95,6 +90,9 @@ export const Collaborators: FC<CollaboratorsProps> = ({
                 table={table}
                 form={form}
                 collaborators={collaborators}
+                open={open}
+                setOpen={setOpen}
+                onSubmit={onSubmit}
             />
             <DataTable
                 title="Listes des collaborateurs"

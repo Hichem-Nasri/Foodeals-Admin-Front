@@ -23,9 +23,10 @@ const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects/statistics'
 
 interface FcStatisticsProps {
     type: string
+    isFetching?: boolean
 }
 
-const Statistics: FC<FcStatisticsProps> = ({ type }) => {
+const Statistics: FC<FcStatisticsProps> = ({ type, isFetching }) => {
     const { data, isLoading, error } = useQuery({
         queryKey: ['statistics'],
         queryFn: async () => {
@@ -40,7 +41,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type }) => {
     return (
         <div className="flex lg:flex-row flex-col items-center gap-3 w-full max-w-full">
             <CardTotalValue
-                isLoading={isLoading}
+                isLoading={isLoading || isFetching}
                 Icon={UserRoundCheck}
                 title="Nombre des leads"
                 value={data?.total!}
@@ -48,7 +49,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type }) => {
                 currency={true}
             />
             <CardTotalValue
-                isLoading={isLoading}
+                isLoading={isLoading || isFetching}
                 Icon={RocketIcon}
                 title={'Lead active'}
                 value={data?.activeLeads!}
@@ -56,7 +57,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type }) => {
                 currency={true}
             />
             <CardTotalValue
-                isLoading={isLoading}
+                isLoading={isLoading || isFetching}
                 Icon={UserRoundX}
                 title={'Prospect non convertis'}
                 value={data?.notConverted!}
@@ -64,7 +65,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type }) => {
                 currency={true}
             />
             <CardTotalValue
-                isLoading={isLoading}
+                isLoading={isLoading || isFetching}
                 Icon={UsersRound}
                 title={'Prospect convertis'}
                 value={data?.converted!}

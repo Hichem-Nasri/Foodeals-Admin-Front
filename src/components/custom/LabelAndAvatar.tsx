@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
 import { LucideProps } from 'lucide-react'
 import { ForwardRefExoticComponent, RefAttributes, FC } from 'react'
-import { Label } from '../ui/label'
 import { Input, Input as ShadCnInput } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { AvatarAndName } from '../AvatarAndName'
+import { Label } from '../Label'
 
 interface InputProps {
     onChange: (value: string | number) => void
@@ -51,11 +51,9 @@ export const LabelAndAvatar: FC<InputProps> = ({
         >
             {label && (
                 <Label
-                    htmlFor={name}
+                    label={label}
                     className="text-sm font-semibold text-lynch-950"
-                >
-                    {label}
-                </Label>
+                />
             )}
             <div
                 className={`relative w-full  ${

@@ -23,7 +23,11 @@ import { SiegeCard } from './SiegeCard'
 import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
 import { columnsSiegesTable, siegesData } from '../column/siegeColumn'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { arch } from 'os'
 import PaginationData from '@/components/utils/PaginationData'
@@ -44,23 +48,27 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
-    const [totalElements, setTotalElements] = useState(0)
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [archive, setArchive] = useState(true)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
+    const [archive, setArchive] = useState(false)
     const notify = useNotification()
     const router = useRouter()
-    const { error, isLoading, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+    const { error, isLoading, isRefetching, refetch } = useQuery({
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
-                const data = await fetchSieages(id, currentPage, pageSize)
+                const data = await fetchSieages(
+                    id,
+                    totals.currentPage,
+                    totals.pageSize
+                )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalPages(data.data.totalPages)
-                setTotalElements(data.data.totalElements)
-                // setSieges(data.data?.content)
+                setTotals({
+                    ...totals,
+                    totalPages: data.data?.totalPages,
+                    totalElements: data.data?.totalElements,
+                })
+                setSieges(data.data?.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -107,7 +115,8 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 handleArchive={handleArchive}
                 open={open}
                 setOpen={setOpen}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
+                isFetching={isLoading || isRefetching}
                 siege
             />
             <DataTable
@@ -115,13 +124,15 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 table={table}
                 title="Liste des sièges"
                 transform={(value) => <SiegeCard sieges={value} />}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
             />
             <PaginationData
-                pageSize={pageSize}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
+                pageSize={totals.pageSize}
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
                 refetch={refetch}
             />
         </div>

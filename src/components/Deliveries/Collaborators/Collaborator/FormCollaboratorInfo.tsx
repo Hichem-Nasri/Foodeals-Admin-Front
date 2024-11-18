@@ -70,6 +70,7 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
                                         label="Photo de profil"
                                         className="!rounded-full"
                                         classNameAvatar="!rounded-full size-[8.125rem]"
+                                        disabled={disabled}
                                     />
                                 </div>
                                 <span className="w-fill h-[1px] bg-lynch-100" />
@@ -126,8 +127,8 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
                                                     label: 'Italy',
                                                 },
                                                 {
-                                                    key: 'United States',
-                                                    label: 'United States',
+                                                    key: 'American',
+                                                    label: 'American',
                                                 },
                                             ]}
                                             disabled={disabled}
@@ -171,6 +172,7 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
                                             control={control}
                                             label="Partenaire"
                                             className="w-full"
+                                            disabled={disabled}
                                             transform={(value) => {
                                                 const option =
                                                     PartnerOptions.find(

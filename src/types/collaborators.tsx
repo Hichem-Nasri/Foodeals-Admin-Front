@@ -156,32 +156,22 @@ export const collaboratorData: CollaboratorDataType = {
 export const PartnerCollaboratorsFilerSchema = z.object({
     startDate: z.date().optional(),
     endDate: z.date().optional(),
-    company: z
-        .array(
-            z.object({
-                label: z.string().optional(),
-                key: z.string().optional(),
-                avatar: z.string().optional(),
-            })
-        )
-        .optional(),
+    companyName: z.array(z.string()).optional(),
     email: z.string().optional(),
     phone: z.string().optional(),
     city: z.string().optional(),
-    companyType: z.string().optional(),
-    solution: z
-        .array(z.enum(['MARKET_PRO', 'DLC_PRO', 'DONATE_PRO']))
-        .optional(),
+    collaborators: z.string().optional(),
+    solution: z.array(z.string()).optional(),
 })
 
 export const defaultFilter: z.infer<typeof PartnerCollaboratorsFilerSchema> = {
     startDate: undefined,
     endDate: undefined,
-    company: [],
+    companyName: [],
     email: '',
     phone: '',
     city: '',
-    companyType: '',
+    collaborators: '',
     solution: [],
 }
 

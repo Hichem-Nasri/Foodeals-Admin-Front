@@ -24,6 +24,7 @@ import { PartnerStatusType } from '@/types/partnersType'
 import { useSearchParams } from 'next/navigation'
 import { createPartner } from '@/lib/api/partner/createpartner'
 import { SaveInfoData, SaveSubscriptionData } from './helperSubmit'
+import { validProspect } from '@/lib/api/crm/prospect/validProspect'
 
 interface NewPartnerProps {
     partner?: PartnerDataType
@@ -77,8 +78,8 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         mutationKey: ['partner'],
         mutationFn: async (data: { id: string; data: PartnerPOST }) => {
             const response = await createPartner(partnerId, data.data, {
-                logo: partnerDetails.logo,
-                cover: partnerDetails.cover,
+                logo: partnerDetails.logo!,
+                cover: partnerDetails.cover!,
             })
             if (![200, 201].includes(response.status)) {
                 notif.notify(NotificationType.ERROR, 'Failed to save partner')
@@ -87,6 +88,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             return response.data
         },
         onSuccess: (data) => {
+            setPartnerDetails((prev) => ({
+                ...prev,
+                status: data.contractStatus,
+            }))
             setPartnerId(data.id)
             notif.notify(
                 NotificationType.SUCCESS,
@@ -140,6 +145,11 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
         }
+        console.log(
+            partnerInformation.formState.isValid,
+            partnerSubscription.formState.isValid,
+            partnerFeatures.formState.isValid
+        )
 
         if (
             partnerInformation.formState.isValid &&
@@ -152,6 +162,12 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             console.log('saved')
             setSaved(true)
         } else {
+            console.log(
+                'error',
+                partnerInformation.formState.errors,
+                partnerSubscription.formState.errors,
+                partnerFeatures.formState.errors
+            )
             partnerInformation.trigger()
             partnerSubscription.trigger()
             partnerFeatures.trigger()
@@ -166,7 +182,20 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         const res = await validateContract(partnerId, contractUpload)
 
         if (res.status === 200) {
-            notif.notify(NotificationType.SUCCESS, 'Contract VALID')
+            if (id.includes('?convertir')) {
+                const valid = await validProspect(id)
+                if (valid.status == 200) {
+                    notif.notify(
+                        NotificationType.SUCCESS,
+                        'Prospect converted successfully'
+                    ) //TODO: check if redirect is needed
+                } else {
+                    notif.notify(
+                        NotificationType.ERROR,
+                        'Failed to convert prospect'
+                    )
+                }
+            } else notif.notify(NotificationType.SUCCESS, 'Contract VALID')
             setPartnerDetails((prev) => ({
                 ...prev,
                 status: PartnerStatusType.VALID,
@@ -186,7 +215,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             setSaved(false)
             mutate({ id: partnerId, data: partnerData })
         }
-    }, [partnerData, saved, searchParams])
+    }, [partnerData, saved])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">

@@ -26,7 +26,11 @@ import { FiltersAssociation } from '../FiltersAssociation'
 import { SiegeCard } from '../Sieges/SiegeCard'
 import { UsersCard } from './UserCard'
 import { getCollaborator } from '@/lib/api/association/getCollaborator'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 
 interface CollaboratorAssociationsProps {
     id: string
@@ -38,32 +42,36 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const [collaborators, setCollaborators] = useState<
         CollaboratorAssociationsType[]
     >(CollaboratorAssociationsData)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
-    const [totalElements, setTotalElements] = useState(0)
-    const [archive, setArchive] = useState(true)
+    const [archive, setArchive] = useState(false)
     const notify = useNotification()
     const router = useRouter()
     const { error, isLoading, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
-                const data = await getCollaborator(id, currentPage, pageSize)
+                const data = await getCollaborator(
+                    id,
+                    totals.currentPage,
+                    totals.pageSize
+                )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalPages(data.data.totalPages)
-                setTotalElements(data.data.totalElements)
-                // setCollaborators(data.data?.content)
+                setTotals({
+                    ...totals,
+                    totalPages: data.data.totalPages,
+                    totalElements: data.data.totalElements,
+                })
+                setCollaborators(data.data?.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
                 console.log(error)
-                // setCollaborators([])
+                setCollaborators([])
             }
         },
     })
@@ -105,7 +113,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 handleArchive={handleArchive}
                 open={open}
                 setOpen={setOpen}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
                 siege
             />
             <DataTable
@@ -118,10 +126,12 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 onBack={() => router.back()}
             />
             <PaginationData
-                pageSize={pageSize}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
+                pageSize={totals.pageSize}
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
                 refetch={refetch}
             />
         </div>

@@ -1,5 +1,10 @@
-import { PartnerSolutionType } from './partnersType'
-import { AddressType, ContactType, PartnerInfoDto } from './GlobalType'
+import { ContractStatus, PartnerSolutionType } from './partnersType'
+import {
+    AddressType,
+    ContactType,
+    ContractStatusPartner,
+    PartnerInfoDto,
+} from './GlobalType'
 import { AssociationInformationSchemaType } from './associationSchema'
 
 export type EntitiesType = 'FOOD_BANK' | 'ASSOCIATION'
@@ -85,18 +90,20 @@ export const exportAssociationPost: (
         mapLocation: data.address.iframe,
         numberOfSieges: data.numberOfPoints,
         solutions: data.solutions as PartnerSolutionType[],
-        status: data.status,
+        status: ContractStatusPartner[data.status],
         documents: [],
     }
 }
 
 export interface CollaboratorAssociationsType {
     id: string
-    createdAt: string
-    roleName: string
     city: string
     region: string
-    userInfoDto: ContactType & { avatarPath: string }
+    userInfoDto: ContactType & {
+        avatarPath: string
+        role: string
+        createdAt: string
+    }
 }
 
 export interface SiegesType {

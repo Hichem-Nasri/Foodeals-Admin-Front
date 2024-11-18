@@ -45,7 +45,6 @@ export const TopBar: FC<TopBarProps> = ({
                                 status == PartnerStatusType.VALID
                             }
                             size="sm"
-                            className="bg-white text-primary border-[1.5px] border-primary hover:text-white hover:bg-primary/60"
                             label="Enregistrer"
                             IconRight={Save}
                             variant="outline"

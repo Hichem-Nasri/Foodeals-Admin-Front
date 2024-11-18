@@ -265,7 +265,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                     />
                 )}
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-4 lg:rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem] h-screen lg:min-h-fit lg:max-h-[95vh] flex  flex-col rounded-none">
+            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-4 lg:rounded-[14px] max-w-[42.5rem] w-full gap-[1.875rem] h-screen lg:h-fit lg:min-h-fit lg:max-h-[95vh] flex  flex-col rounded-none">
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Commission à payer
                 </DialogTitle>
@@ -279,7 +279,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                 <Form {...form}>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
-                        className="flex flex-col gap-3 justify-between w-full p-4  flex-1 h-full overflow-scroll"
+                        className="flex flex-col gap-3 justify-between w-full p-4  flex-1  overflow-auto"
                     >
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col lg:flex-row gap-4">

@@ -10,12 +10,15 @@ import { FilePlus } from 'lucide-react'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { EventType } from '@/types/CrmType'
 import { TableProspects } from '../Prospect/NewProspect/TableProspects'
+import { PartnerStatusType } from '@/types/partnersType'
 
 interface EventProps {
     Event: EventType[]
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     convertir: boolean
     disabled?: boolean
+    status: PartnerStatusType
+    prospect: any
 }
 
 export const NewEvenent: FC<EventProps> = ({
@@ -23,10 +26,12 @@ export const NewEvenent: FC<EventProps> = ({
     setOpen,
     convertir,
     disabled,
+    status,
+    prospect,
 }) => {
     return (
         <div className="w-full self-start h-full relative">
-            {Event.length == 0 ? (
+            {Event && Event.length == 0 ? (
                 <Accordion
                     type="single"
                     className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
@@ -56,7 +61,10 @@ export const NewEvenent: FC<EventProps> = ({
                                     prospect.&quot;
                                 </p>
                                 <CustomButton
-                                    disabled={!convertir}
+                                    disabled={
+                                        !convertir &&
+                                        status != PartnerStatusType.IN_PROGRESS
+                                    }
                                     onClick={() => {
                                         setOpen((prev) => !prev)
                                     }}
@@ -72,7 +80,8 @@ export const NewEvenent: FC<EventProps> = ({
                 <TableProspects
                     setOpen={setOpen}
                     data={Event}
-                    disabled={disabled}
+                    disabled={disabled || status == PartnerStatusType.CANCELED}
+                    prospect={prospect}
                 />
             )}
         </div>

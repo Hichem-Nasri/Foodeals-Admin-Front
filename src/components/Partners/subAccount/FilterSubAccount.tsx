@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { BaseSyntheticEvent, FC, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -17,7 +17,24 @@ import { DatePicker } from '@/components/DatePicker'
 import { Label } from '@/components/Label'
 import { MultiSelect } from '@/components/MultiSelect'
 import { Input } from '@/components/custom/Input'
-import { UseFormReturn } from 'react-hook-form'
+import {
+    ErrorOption,
+    Field,
+    FieldArray,
+    FieldArrayPath,
+    FieldError,
+    FieldErrors,
+    FieldName,
+    FieldRefs,
+    FieldValues,
+    FormState,
+    InternalFieldName,
+    RegisterOptions,
+    SubmitErrorHandler,
+    SubmitHandler,
+    UseFormRegisterReturn,
+    UseFormReturn,
+} from 'react-hook-form'
 import { Select } from '@/components/custom/Select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DialogClose } from '@radix-ui/react-dialog'
@@ -126,42 +143,20 @@ export const FilterSubAccount: FC<FilterSubAccountProps> = () => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 w-full">
-                        <FilterMultiSelect
+                        {/* <MultiSelect
                             transform={(value) => {
                                 return value.map((val, index) => {
                                     return (
                                         <PartnerSolution
-                                            solution={
-                                                val.label as PartnerSolutionType
-                                            }
+                                            solution={val.label as PartnerSolutionType}
                                             className="px-4 py-3"
                                             size={20}
-                                            key={index}
-                                        />
-                                    )
-                                })
-                            }}
+                                            key={index} />
+                                    );
+                                });
+                            } }
                             length={3}
-                            label="solutions"
-                            options={[
-                                {
-                                    key: PartnerSolutionType.DLC_PRO,
-                                    label: PartnerSolutionType.DLC_PRO,
-                                },
-                                {
-                                    key: PartnerSolutionType.MARKET_PRO,
-                                    label: PartnerSolutionType.MARKET_PRO,
-                                },
-                                {
-                                    key: PartnerSolutionType.DONATE_PRO,
-                                    label: PartnerSolutionType.DONATE_PRO,
-                                },
-                            ]}
-                            item={selectedValuesSolution}
-                            setItem={(solution) => {
-                                setSelectedValuesSolution(solution)
-                            }}
-                        />
+                            /> */}
                     </div>
                 </div>
                 <DialogDescription className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">

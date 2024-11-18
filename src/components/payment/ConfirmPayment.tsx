@@ -91,7 +91,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
         }
         if (!fetched) fetchConfirmation()
         setFetched(true)
-    }, [])
+    }, [fetched, id])
 
     // INFO: the PartnerOptions is an array of stores as objects with the following structure: { id: string, name: string, avatar: string }
     const adaptOptions = PartnerOptions.map((option) => ({

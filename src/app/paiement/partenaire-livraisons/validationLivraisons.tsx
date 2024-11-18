@@ -57,7 +57,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
         z.infer<typeof PaymentFilterSchema>
     >({
         date: getFilterDate(new Date()),
-        partner: '',
+        partner: id,
     })
 
     const { data, isLoading, refetch, isRefetching, error } = useQuery({

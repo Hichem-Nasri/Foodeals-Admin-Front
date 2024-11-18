@@ -107,11 +107,11 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    const partnerData = {
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        city: 'Fès',
-    }
+    // const partnerData = {
+    //     name: 'Marjane',
+    //     avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
+    //     city: 'Fès',
+    // }
     if (error) {
         return <div>Error: {error.message}</div>
     }
@@ -134,7 +134,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 transform={(value) => (
                     <DeliveryCollaboratorCard collaborator={value} />
                 )}
-                partnerData={partnerData}
+                back={false}
                 isLoading={isLoading}
             />
             <PaginationData

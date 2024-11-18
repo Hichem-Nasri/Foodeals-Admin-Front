@@ -10,10 +10,23 @@ import { EmailBadge } from '../EmailBadge'
 import { PartnerContractStatus } from '../PartnerContractStatus'
 import { PartnerSolution } from '../PartnerSolution'
 import { PhoneBadge } from '../PhoneBadge'
+import { DialogClose } from '@radix-ui/react-dialog'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import api from '@/api/Auth'
+import { ArchivePartner } from '../NewPartner/ArchivePartner'
+import { Label } from '@/components/Label'
+import { Input } from '@/components/custom/Input'
+import { Textarea } from '@/components/ui/textarea'
+import { getContract } from '@/lib/api/partner/getContract'
+import { fetchDetailsArchived } from '@/lib/api/partner/getDetailsArchived'
+import DetailsArchive from '@/components/utils/DetailsArchive'
 
 const columnHelper = createColumnHelper<PartnerType>()
 
-export const columnsPartnersTable = (router: AppRouterInstance) => [
+export const columnsPartnersTable = (
+    router: AppRouterInstance,
+    archive: boolean
+) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date de création',
@@ -21,7 +34,7 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
     }),
     columnHelper.accessor('logo', {
         cell: (info) => (
-            <Avatar>
+            <Avatar className="size-12 rounded-full bg-lynch-100">
                 <AvatarImage src={info.getValue()} />
                 <AvatarFallback>
                     {info.getValue() && info.getValue()[0].toUpperCase()}
@@ -99,10 +112,10 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
-            const found =
-                info.row.original.type === PartnerEntitiesType.SUB_ENTITY
-
-            // Define common actions
+            const id = info.getValue()! as string
+            if (archive) {
+                return <DetailsArchive id={id} />
+            }
             const commonActions: ActionType[] = [
                 {
                     actions: () =>
@@ -127,21 +140,40 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
                     label: 'Modifier',
                 },
                 {
-                    actions: (id) =>
-                        router.push(AppRoutes.collaborator.replace(':id', id)),
-                    icon: Users,
-                    label: 'Collaborateurs',
+                    label: 'Sous Compte',
+                    actions: async () => {
+                        router.push(
+                            AppRoutes.subAccountPartner.replace(':id', id)
+                        )
+                    },
+                    shouldNotDisplay: info.row.original.subEntities === 0,
+                    icon: Store,
                 },
                 {
-                    actions: () =>
+                    actions: (id) =>
                         router.push(
-                            AppRoutes.newPartner.replace(
-                                ':id',
-                                info.getValue()!
-                            )
+                            AppRoutes.CollaboratorSubEntities.replace(':id', id)
                         ),
+                    icon: Users,
+                    label: 'Collaborateurs',
+                    shouldNotDisplay: info.row.original.users === 0,
+                },
+                {
+                    actions: async () => {
+                        try {
+                            const contractData = await getContract(id!)
+                            const url = window.URL.createObjectURL(
+                                contractData as Blob
+                            )
+                            window.open(url, '_blank') // Opens the contract in a new tab
+                        } catch (error) {
+                            console.error('Error opening contract:', error)
+                        }
+                    },
                     icon: FileBadge,
                     label: 'Contrat',
+                    shouldNotDisplay:
+                        info.row.original.contractStatus !== 'VALIDATED',
                 },
                 {
                     actions: () => {
@@ -154,29 +186,8 @@ export const columnsPartnersTable = (router: AppRouterInstance) => [
             ]
 
             // Define principal actions
-            const principalActions: ActionType[] = found
-                ? [
-                      {
-                          actions: () =>
-                              router.push(
-                                  AppRoutes.subAccountPartner.replace(
-                                      ':id',
-                                      info.getValue()!
-                                  )
-                              ),
-                          icon: Store,
-                          label: 'Sous Comptes',
-                      },
-                  ]
-                : []
 
-            const menuList: ActionType[] = [
-                ...commonActions.slice(0, 2),
-                ...principalActions,
-                ...commonActions.slice(2),
-            ]
-
-            return <ActionsMenu id={info.getValue()} menuList={menuList} />
+            return <ActionsMenu id={info.getValue()} menuList={commonActions} />
         },
         header: 'Activité',
     }),

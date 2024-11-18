@@ -1,5 +1,9 @@
 import { CrmType } from './CrmType'
-import { PartnerEntitiesType, PartnerInfoDto } from './GlobalType'
+import {
+    ContractStatusPartner,
+    PartnerEntitiesType,
+    PartnerInfoDto,
+} from './GlobalType'
 import {
     exportSolutionType,
     PartnerCompanyTypeOptions,
@@ -58,6 +62,55 @@ const ParnterSolutionExport: (solution: string) => PartnerSolutionType = (
 export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
     partner
 ) => {
+    let marketPro = {
+            selected: false,
+            duration: 0,
+            amount: 0,
+            expiration: 0,
+            managerId: partner.managerInfo.id + '',
+            commissionCash: 0,
+            commissionCard: 0,
+            name: 'pro_market',
+        },
+        dlcPro = {
+            selected: false,
+            duration: 0,
+            amount: 0,
+            expiration: 0,
+            name: 'pro_dlc',
+            commissionCash: 0,
+        },
+        donate = {
+            selected: false,
+            duration: 0,
+            amount: 0,
+            expiration: 0,
+            name: 'pro_donate',
+            commissionCash: 0,
+        }
+    partner.solutions.forEach((solution) => {
+        switch (solution) {
+            case 'pro_market':
+                marketPro = {
+                    ...marketPro,
+                    selected: true,
+                }
+                break
+            case 'pro_dlc':
+                dlcPro = {
+                    ...dlcPro,
+                    selected: true,
+                }
+                break
+            case 'pro_donate':
+                donate = {
+                    ...donate,
+                    selected: true,
+                }
+                break
+        }
+    })
+
     return {
         ...defaultPartnerData,
         companyName: partner.companyName,
@@ -73,15 +126,18 @@ export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
             duration: 0,
             amount: 0,
             expiration: 0,
-            managerId: '',
+            managerId: partner.managerInfo.id + '',
             commissionCash: 0,
             commissionCard: 0,
         },
+        marketPro,
+        dlcPro,
+        donate,
         subscriptionType: 'general',
         mapLocation: partner.address.iframe,
         phone: partner.contact.phone,
         email: partner.contact.email,
-        managerId: partner.managerInfo.id,
+        managerId: partner.managerInfo.id + '',
         country: partner.address.country,
         city: partner.address.city,
         region: partner.address.region,
@@ -122,7 +178,9 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         accountType: partner.entityType,
         managerId: partner.managerId + '',
         subscriptionType: partner.oneSubscription ? 'personalized' : 'general',
-        subscriptionPayedBySubEntities: partner.subscriptionPayedBySubEntities,
+        subscriptionPayedBySubEntities: partner.subscriptionPayedBySubEntities
+            ? 'mainEntity'
+            : 'subEntities',
         marketPro: {
             selected: !!marketPro,
             duration: marketPro?.contractSubscriptionDto.duration || 0,
@@ -176,9 +234,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         maxNumberOfAccounts: partner.maxNumberOfAccounts,
         minimumReduction: partner.minimumReduction,
         contractId: '',
-        status: partner.status
-            ? (partner.status as PartnerStatusType)
-            : PartnerStatusType.IN_PROGRESS,
+        status: ContractStatusPartner[partner.status],
         logo: null,
         cover: null,
         paymentMethod: 'transfer',

@@ -40,7 +40,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
     // dialog that take all the page and show the filter form with buttons in bottom of the page
 
     return (
-        <div className="  w-fit lg:max-w-2xl">
+        <div className=" lg:w-full w-fit lg:max-w-2xl">
             <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between w-full">
                 <span className="text-lg text-lynch-950">
                     {header ? header : 'Tableau de validation des commission'}

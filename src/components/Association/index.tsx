@@ -30,6 +30,7 @@ import { AppRoutes } from '@/lib/routes'
 import { columnsAssociationsTable } from './column/associationColumn'
 import getArchivedPartners from '@/lib/api/partner/getArchiver'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
+import { MyError } from '../Error'
 
 interface AssociationsProps {}
 
@@ -47,7 +48,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     const [pageSize, setPageSize] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
-    const [archive, setArchive] = useState(false)
+    const [archive, setArchive] = useState(() => false)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
@@ -66,7 +67,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                     throw new Error('Error fetching partners')
                 setTotalElements(data.data?.totalElements)
                 setTotalPages(data.data?.totalPages)
-                setAssociations(data.data?.content)
+                setAssociations(data.data.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -84,12 +85,13 @@ export const Associations: FC<AssociationsProps> = ({}) => {
 
     const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
         console.log('Filters:', data)
+        setFilterData(data)
         setOpen(false)
     }
 
     const table = useReactTable({
         data: associations,
-        columns: columnsAssociationsTable(router),
+        columns: columnsAssociationsTable(router, archive),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -105,7 +107,9 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     useEffect(() => {
         if (isLoading || isRefetching) return
         refetch()
-    }, [archive])
+    }, [archive, filterData])
+
+    if (error) return <MyError message={error.message} />
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
@@ -118,12 +122,15 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 archive={archive}
                 handleArchive={handleArchive}
                 totalElements={totalElements}
+                isFetching={isLoading || isRefetching}
             />
             <DataTable
                 data={associations}
                 table={table}
                 title="Liste des associations"
-                transform={(value) => <AssociationCard association={value} />}
+                transform={(value) => (
+                    <AssociationCard association={value} archive={archive} />
+                )}
                 isLoading={isLoading || isRefetching}
             />
             <PaginationData

@@ -8,6 +8,7 @@ import {
     HandCoins,
     ListPlus,
     Mail,
+    Pencil,
     PhoneCall,
     Store,
     Users,
@@ -37,11 +38,15 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
             icon: Store,
         },
         {
-            label: partner.offer,
+            label: partner.collaborators,
+            icon: Users,
+        },
+        {
+            label: 'OFFER: ' + partner.offer,
             icon: Boxes,
         },
         {
-            label: partner.order,
+            label: 'COMMANDE: ' + partner.order,
             icon: HandCoins,
         },
     ]
@@ -49,9 +54,18 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
     const actions: ActionType[] = [
         {
             actions: (id) =>
-                router.push(AppRoutes.paymentDetails.replace(':id', id)),
+                router.push(AppRoutes.newPartner.replace(':id', id)),
             icon: Eye,
-            label: 'Voir',
+            label: 'VOIR PLUS DES DETAIL',
+        },
+        {
+            actions: (id) => {
+                router.push(
+                    AppRoutes.paymentDetails.replace(':id', id) + '?mode=edit'
+                )
+            },
+            icon: Pencil,
+            label: 'MODIFIER UN PARTENAIRE',
         },
     ]
 

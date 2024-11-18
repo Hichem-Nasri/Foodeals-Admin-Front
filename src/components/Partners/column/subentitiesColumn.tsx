@@ -8,6 +8,9 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { EmailBadge } from '../EmailBadge'
 import { PartnerSolution } from '../PartnerSolution'
 import { PhoneBadge } from '../PhoneBadge'
+import { getContract } from '@/lib/api/partner/getContract'
+import { PartnerStatus } from '../PartnerStatus'
+import { AvatarAndName } from '@/components/AvatarAndName'
 
 const columnHelperSubAccount = createColumnHelper<SubAccountPartners>()
 
@@ -17,15 +20,8 @@ export const columnsSubAccountTable = (router: AppRouterInstance) => [
         header: 'Date de création',
         footer: (info) => info.column.id,
     }),
-    columnHelperSubAccount.accessor('logo', {
-        cell: (info) => (
-            <Avatar>
-                <AvatarImage src={info.getValue()} />
-                <AvatarFallback>
-                    {info.getValue()[0].toUpperCase()}
-                </AvatarFallback>
-            </Avatar>
-        ),
+    columnHelperSubAccount.accessor('partnerInfoDto.avatarPath', {
+        cell: (info) => <AvatarAndName name="" avatar={info.getValue()} />,
         header: 'Logo',
         footer: (info) => info.column.id,
     }),
@@ -80,58 +76,77 @@ export const columnsSubAccountTable = (router: AppRouterInstance) => [
         header: 'Solution',
         footer: (info) => info.column.id,
     }),
+    columnHelperSubAccount.accessor('contractStatus', {
+        cell: (info) => null,
+        header: '',
+        footer: (info) => info.column.id,
+    }),
     columnHelperSubAccount.accessor('id', {
-        cell: (info) => (
-            <ActionsMenu
-                id={info.getValue()}
-                menuList={[
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Store,
-                        label: 'Principal',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: Users,
-                        label: 'Collaborateurs',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newPartner.replace(
-                                    ':id',
-                                    info.getValue()!
-                                )
-                            ),
-                        icon: FileBadge,
-                        label: 'Contrat',
-                    },
-                ]}
-            />
-        ),
+        cell: (info) => {
+            const status = info.row.getValue('contractStatus')
+            const collaborateurs = info.row.getValue('users')
+            const partnerInfo = info.row.original.partnerInfoDto
+            return (
+                <ActionsMenu
+                    id={info.getValue()}
+                    menuList={[
+                        {
+                            actions: () =>
+                                router.push(
+                                    AppRoutes.newPartner.replace(
+                                        ':id',
+                                        info.getValue()!
+                                    )
+                                ),
+                            icon: Eye,
+                            label: 'Voir',
+                        },
+                        {
+                            actions: () =>
+                                router.push(
+                                    AppRoutes.newPartner.replace(
+                                        ':id',
+                                        partnerInfo.id!
+                                    )
+                                ),
+                            icon: Store,
+                            label: 'Principal',
+                        },
+                        {
+                            actions: () =>
+                                router.push(
+                                    AppRoutes.CollaboratorSubEntities.replace(
+                                        ':id',
+                                        info.getValue()!
+                                    )
+                                ),
+                            icon: Users,
+                            label: 'Collaborateurs',
+                            shouldNotDisplay: collaborateurs === 0,
+                        },
+                        {
+                            actions: async (id) => {
+                                try {
+                                    const contractData = await getContract(id)
+                                    const url = window.URL.createObjectURL(
+                                        contractData as Blob
+                                    )
+                                    window.open(url, '_blank') // Opens the contract in a new tab
+                                } catch (error) {
+                                    console.error(
+                                        'Error opening contract:',
+                                        error
+                                    )
+                                }
+                            },
+                            icon: FileBadge,
+                            label: 'Contrat',
+                            shouldNotDisplay: status !== 'VALIDATED',
+                        },
+                    ]}
+                />
+            )
+        },
         header: 'Activité',
     }),
 ]

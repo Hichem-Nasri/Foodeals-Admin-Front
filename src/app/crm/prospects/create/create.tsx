@@ -31,6 +31,7 @@ import { AppRoutes } from '@/lib/routes'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { TopBar } from '@/components/crm/Prospect/NewProspect/TopBar'
 import { FormCrmInfo } from '@/components/crm/Prospect/NewProspect/FromProspectInfo'
+import { createProspect } from '@/lib/api/crm/prospect/createProspect'
 
 interface CreateProps {
     type: string
@@ -48,12 +49,11 @@ export const Create: FC<CreateProps> = ({ type }) => {
     console.log(type)
     const mutate = useMutation({
         mutationFn: async (data: any) => {
-            const req = {
-                ...data,
-                type,
-            }
             const res = await api
-                .post('http://localhost:8080/api/v1/crm/prospects/create', data)
+                .post('http://localhost:8080/api/v1/crm/prospects/create', {
+                    ...data,
+                    type: type == 'PARTNER' || !type ? 'PARTNER' : data.type,
+                })
                 .catch((err) => console.log(err))
             if (!res || ![201, 200].includes(res.status))
                 throw new Error('Failed to create prospect')
@@ -71,7 +71,7 @@ export const Create: FC<CreateProps> = ({ type }) => {
         },
         onError: (error) => {
             Notif.notify(NotificationType.ERROR, 'Failed to create prospect')
-            console.log(error) // Todo: add system notification for error
+            console.log(error)
         },
     })
     const handleLeadKO = async () => {
@@ -93,6 +93,7 @@ export const Create: FC<CreateProps> = ({ type }) => {
         router.push(AppRoutes.newConvertir.replace(':id', Info.id))
     }
     const onSaveData = (e: CrmInformationSchemaType) => {
+        console.log('e', e)
         const createProspect = getCrmCreateData(e)
         mutate.mutate(createProspect)
     }
@@ -104,7 +105,9 @@ export const Create: FC<CreateProps> = ({ type }) => {
             {!open ? (
                 <>
                     <TopBar
-                        status={PartnerStatusType.DRAFT}
+                        status={
+                            (Info && Info.status) || PartnerStatusType.DRAFT
+                        }
                         primaryButtonDisabled={!convertir}
                         secondaryButtonDisabled={convertir}
                         onSaveData={handleSubmit((e) => onSaveData(e))}
@@ -116,11 +119,16 @@ export const Create: FC<CreateProps> = ({ type }) => {
                         countryCode={countryCode}
                         setCountryCode={setCountryCode}
                         disabled={convertir}
+                        type={type}
                     />
                     <NewEvenent
                         Event={events}
                         setOpen={setOpen}
                         convertir={convertir}
+                        status={
+                            (Info && Info.status) || PartnerStatusType.DRAFT
+                        }
+                        prospect={Info}
                     />
                     {Info && Info.event && Info.events.length > 0 && (
                         <div className="bg-white lg:p-5 px-4 py-6 rounded-[14px] flex justify-end items-center">

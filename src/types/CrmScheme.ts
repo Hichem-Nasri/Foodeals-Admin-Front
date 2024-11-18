@@ -15,7 +15,16 @@ export const CrmInformationSchema = z.object({
         .refine((value) => /^\d+$/.test(value), {
             message: 'Le numéro de téléphone ne doit contenir que des chiffres',
         }),
-    creatorInfo: z.union([z.string(), z.number()]),
+    creatorInfo: z
+        .object({
+            id: z.union([z.string(), z.number()]),
+            name: z.object({
+                firstName: z.string(),
+                lastName: z.string(),
+            }),
+            avatarPath: z.string().optional(),
+        })
+        .optional(),
     email: z.string().email('Veuillez entrer une adresse email valide'),
     country: z.string().min(3),
     managerInfo: z.union([z.string(), z.number()]),
@@ -23,6 +32,7 @@ export const CrmInformationSchema = z.object({
     region: z.string().min(3),
     solutions: z.array(z.string()).min(1),
     address: z.string().min(3),
+    type: z.string().default('ASSOCIATION').optional(),
 })
 
 export const CrmObjectSchema = z.object({
@@ -89,7 +99,14 @@ export const defaultCrmInformationData = {
     responsable: '',
     phone: '',
     email: '',
-    creatorInfo: '',
+    creatorInfo: {
+        id: '',
+        name: {
+            firstName: '',
+            lastName: '',
+        },
+        avatarPath: '',
+    },
     managerInfo: '',
     country: '',
     city: '',
@@ -108,7 +125,7 @@ export function getInfoData(data: CrmType) {
             capitalize(data.contact.name.lastName),
         phone: data.contact.phone,
         email: data.contact.email,
-        creatorInfo: data.creatorInfo.id,
+        creatorInfo: data.creatorInfo,
         managerInfo: data.managerInfo.id,
         country: data.address.country,
         city: data.address.city,
@@ -131,7 +148,6 @@ export const getCrmCreateData = (data: CrmInformationSchemaType) => {
             email: data.email,
             phone: data.phone,
         },
-        powered_by: data?.creatorInfo,
         manager_id: data.managerInfo,
         address: {
             country: data.country,

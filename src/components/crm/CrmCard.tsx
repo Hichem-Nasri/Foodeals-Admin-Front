@@ -22,15 +22,15 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
 }): JSX.Element => {
     const dataCrm = {
         creator:
-            crm.creatorInfo.name.firstName +
+            crm?.creatorInfo.name.firstName +
             ' ' +
-            crm.creatorInfo.name.lastName,
+            crm?.creatorInfo.name.lastName,
         manager:
-            crm.managerInfo.name.firstName +
+            crm?.managerInfo.name.firstName +
             ' ' +
-            crm.managerInfo.name.lastName,
-        classNameStatus: StyleStatus[crm.status],
-        IconStatus: IconStatus[crm.status],
+            crm?.managerInfo.name.lastName,
+        classNameStatus: StyleStatus[crm?.status],
+        IconStatus: IconStatus[crm?.status],
     }
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] w-full">

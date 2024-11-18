@@ -4,7 +4,10 @@ import { Layout } from '@/components/Layout/Layout'
 import { useNotification } from '@/context/NotifContext'
 import { getDelivery } from '@/lib/api/delivery/fetchDeliveryParnters'
 import { API_PARTNERS } from '@/lib/api_url'
-import { DeliveryPartnerType } from '@/types/DeliverySchema'
+import {
+    DeliveryPartnerType,
+    emptyDeliveryPartner,
+} from '@/types/DeliverySchema'
 import { NotificationType } from '@/types/GlobalType'
 import { PartnerPOST } from '@/types/partenairUtils'
 import { useQuery } from '@tanstack/react-query'
@@ -35,11 +38,14 @@ export default function DeliveryPage({ params }: { params: { id: string } }) {
         queryKey: ['partners', params.id],
         queryFn: async () => {
             try {
+                if (params.id === 'new') {
+                    return emptyDeliveryPartner
+                }
                 const data = await getDelivery(params.id)
                 return data
             } catch (error) {
                 console.log(error)
-                return []
+                return emptyDeliveryPartner
             }
         },
     })

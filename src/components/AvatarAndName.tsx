@@ -22,12 +22,16 @@ export const AvatarAndName: FC<AvatarAndName> = ({
             {avatar && (
                 <Avatar className={classNameAvatar}>
                     <AvatarImage src={avatar} />
-                    <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                        {name && name[0].toUpperCase()}
+                    </AvatarFallback>
                 </Avatar>
             )}
-            <span className={cn('line-clamp-1 text-input', classNameName)}>
-                {name}
-            </span>
+            {name && (
+                <span className={cn('line-clamp-1 text-input', classNameName)}>
+                    {name}
+                </span>
+            )}
         </div>
     )
 }

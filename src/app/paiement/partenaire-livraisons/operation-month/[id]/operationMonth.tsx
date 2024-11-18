@@ -1,7 +1,7 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
-import { Error } from '@/components/Error'
+import { MyError } from '@/components/Error'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
@@ -142,10 +142,10 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
     useEffect(() => {
         if (!isRefetching || !isLoading) return
         refetch()
-    }, [id, month, multiProductId])
+    }, [id, month, multiProductId, isRefetching, isLoading])
 
     if (error) {
-        return <Error message={error.message} />
+        return <MyError message={error.message} />
     }
 
     return (

@@ -22,7 +22,7 @@ export const PartnerInformationSchema = z.object({
     city: z.string().min(3),
     region: z.string().min(3),
     address: z.string().min(3),
-    mapLocation: z.string().min(3),
+    mapLocation: z.string().optional(),
 })
 
 export const defaultPartnerInformationData = {
@@ -61,78 +61,60 @@ export interface PartnerInformationSchemaType {
     mapLocation: string
 }
 
-export const PartnerSubscriptionSchema = z
-    .object({
-        subscriptionType: z.string().min(3),
-        bank: z.string().min(3),
-        paymentMethod: z.string().min(3),
-        beneficiary: z.string().min(3),
-        rib: z.string().min(3),
-        accountType: z.string().min(3),
-        subscribtionByEntity: z.boolean().default(false),
-        subscriptionPayedBySubEntities: z.string().default('mainEntities'),
-        marketPro: z
-            .object({
-                selected: z.boolean().default(false),
-                duration: z.number(),
-                amount: z.number(),
-                expiration: z.number(),
-                managerId: z.string(),
-                commissionCash: z.number(),
-                commissionCard: z.number(),
-                name: z.string().nullish().default('pro_market'),
-            })
-            .optional(),
-        dlcPro: z
-            .object({
-                selected: z.boolean().default(false),
-                duration: z.number(),
-                amount: z.number(),
-                expiration: z.number(),
-                name: z.string().nullish().default('pro_dlc'),
-                commissionCash: z.number().optional(),
-                commissionCard: z.number().optional(),
-            })
-            .optional(),
-        donate: z
-            .object({
-                selected: z.boolean().default(false),
-                duration: z.number(),
-                amount: z.number(),
-                expiration: z.number(),
-                name: z.string().nullish().default('donate'),
-                commissionCash: z.number().optional(),
-                commissionCard: z.number().optional(),
-            })
-            .optional(),
-        solutions: z
-            .object({
-                solutionsId: z.array(z.string()),
-                duration: z.number(),
-                amount: z.number(),
-                expiration: z.number(),
-                managerId: z.string().optional(),
-                commissionCash: z.number().optional(),
-                commissionCard: z.number().optional(),
-            })
-            .optional(),
-    })
-    .refine(
-        (data) => {
-            // Check if at least one of the selected properties is true
-            const isAnySelected =
-                (data.marketPro && data.marketPro.selected) ||
-                (data.dlcPro && data.dlcPro.selected) ||
-                (data.donate && data.donate.selected)
-
-            return isAnySelected
-        },
-        {
-            message:
-                'At least one of marketPro, dlcPro, or donate must be selected.',
-            path: ['marketPro', 'dlcPro', 'donate'], // You can specify the path for the error
-        }
-    )
+export const PartnerSubscriptionSchema = z.object({
+    subscriptionType: z.string().min(3),
+    bank: z.string().min(3),
+    beneficiary: z.string().min(3),
+    rib: z.string().min(3),
+    accountType: z.string().min(3),
+    subscribtionByEntity: z.boolean().default(false),
+    subscriptionPayedBySubEntities: z.string().default('mainEntities'),
+    marketPro: z
+        .object({
+            selected: z.boolean().default(false),
+            duration: z.number(),
+            amount: z.number(),
+            expiration: z.number(),
+            managerId: z.string(),
+            commissionCash: z.number().min(1).max(100),
+            commissionCard: z.number().min(1).max(100),
+            name: z.string().nullish().default('pro_market'),
+        })
+        .optional(),
+    dlcPro: z
+        .object({
+            selected: z.boolean().default(false),
+            duration: z.number(),
+            amount: z.number(),
+            expiration: z.number(),
+            name: z.string().nullish().default('pro_dlc'),
+            commissionCash: z.number().optional(),
+            commissionCard: z.number().optional(),
+        })
+        .optional(),
+    donate: z
+        .object({
+            selected: z.boolean().default(false),
+            duration: z.number(),
+            amount: z.number(),
+            expiration: z.number(),
+            name: z.string().nullish().default('donate'),
+            commissionCash: z.number().optional(),
+            commissionCard: z.number().optional(),
+        })
+        .optional(),
+    solutions: z
+        .object({
+            solutionsId: z.array(z.string()),
+            duration: z.number(),
+            amount: z.number(),
+            expiration: z.number(),
+            managerId: z.string().optional(),
+            commissionCash: z.number().optional(),
+            commissionCard: z.number().optional(),
+        })
+        .optional(),
+})
 
 export const defaultPartnerSubscriptionData = {
     subscriptionType: 'general',

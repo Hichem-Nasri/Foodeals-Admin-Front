@@ -7,6 +7,8 @@ import { FilterTablePartnerCollaborators } from '@/components/Partners/collabora
 import { DeliveryCollaboratorsType } from '@/types/deliveries'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { FilterTablePartner } from '@/components/Partners/FilterTablePartner'
+import { FilterCollaborators } from '@/components/Collaborators/FilterCollaborators'
+import { FormFilterCollaborator } from './FilterCollaborator'
 
 interface FilterDeliveryCollaboratorsProps {
     open: boolean
@@ -37,7 +39,7 @@ export const FilterDeliveryCollaborators: FC<
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des collaborateurs
                 </h2>
-                <FilterTablePartner
+                <FormFilterCollaborator
                     form={form}
                     open={open}
                     setOpen={setOpen}
@@ -45,7 +47,7 @@ export const FilterDeliveryCollaborators: FC<
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
-                <FilterTablePartner
+                <FormFilterCollaborator
                     form={form}
                     open={open}
                     setOpen={setOpen}

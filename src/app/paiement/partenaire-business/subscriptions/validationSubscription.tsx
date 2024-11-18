@@ -56,6 +56,7 @@ import { PartnerType } from '@/types/paymentUtils'
 import { Staatliches } from 'next/font/google'
 import PaginationData from '@/components/utils/PaginationData'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import { MyError } from '@/components/Error'
 
 interface OperationsProps {}
 
@@ -134,6 +135,8 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    if (error) return <MyError message={error.message} />
 
     return (
         <>

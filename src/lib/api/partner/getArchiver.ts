@@ -12,12 +12,14 @@ const getArchivedPartners = async (
         | 'PARTNER_WITH_SB'
         | 'NORMAL_PARTNER',
     currentPage: number,
-    pageSize: number
+    pageSize: number,
+    archived: boolean
 ): Promise<any> => {
     try {
         const response = await api
             .get(
-                `${API_PARTNERS}/deleted?page=${currentPage}&size=${pageSize}&sort=deletedAt,desc&type=${type}`
+                `${API_PARTNERS}/deleted?page=${currentPage}&size=${pageSize}&sort=deletedAt,desc&type=${type}` +
+                    (archived ? '&deletedAt=true' : '')
             )
             .catch((error) => {
                 throw new Error(error)

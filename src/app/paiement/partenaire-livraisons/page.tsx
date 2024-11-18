@@ -7,12 +7,19 @@ interface PaymentPageProps {
     params: {
         id: string
     }
+    searchParams: {
+        deliveryId: string
+    }
 }
 
-export default async function PaymentPage({ params }: PaymentPageProps) {
+export default async function PaymentPage({
+    params,
+    searchParams,
+}: PaymentPageProps) {
+    console.log('searchParams', searchParams)
     return (
         <Layout>
-            <PaymentDeliveries id={params.id} />
+            <PaymentDeliveries id={searchParams.deliveryId} />
         </Layout>
     )
 }

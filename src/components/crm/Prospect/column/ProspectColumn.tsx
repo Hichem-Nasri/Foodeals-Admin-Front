@@ -1,4 +1,5 @@
-import { ActionsMenu } from '@/components/custom/ActionsMenu'
+import { AvatarAndName } from '@/components/AvatarAndName'
+import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
@@ -19,7 +20,11 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 const columnHelper = createColumnHelper<CrmType>()
 
-export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
+export const columnsCrmTable = (
+    router: AppRouterInstance,
+    setData: any,
+    leadKo: boolean
+) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => {
             const date = info.getValue()
@@ -65,9 +70,6 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
         ),
         header: 'Catégorie',
         footer: (info) => info.column.id,
-        filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(row.original.category)
-        },
     }),
     columnHelper.accessor('contact', {
         cell: (info) => {
@@ -102,9 +104,6 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
         ),
         header: 'Solution',
         footer: (info) => info.column.id,
-        filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(row.original.solutions)
-        },
     }),
     columnHelper.accessor('address.country', {
         cell: (info) => (
@@ -143,9 +142,6 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
         cell: (info) => info.getValue(),
         header: 'Ville',
         footer: (info) => info.column.id,
-        filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(row.original.address.city)
-        },
     }),
     columnHelper.accessor('address.address', {
         cell: (info) => info.getValue(),
@@ -158,25 +154,14 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                 info.getValue().name.firstName
             )} ${capitalize(info.getValue().name.lastName)}`
             return (
-                <div className="flex items-center gap-2 min-w-full">
-                    <Avatar>
-                        <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>
-                            {fullName && fullName.at(0)?.toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    <span className="text-nowrap">{fullName}</span>
-                </div>
+                <AvatarAndName
+                    name={fullName}
+                    avatar={info.getValue().avatarPath}
+                />
             )
         },
         header: 'Alimenter par',
-        filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(
-                row.original.creatorInfo.name.firstName +
-                    ' ' +
-                    row.original.creatorInfo.name.lastName
-            )
-        },
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('managerInfo', {
         cell: (info) => {
@@ -184,18 +169,15 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                 info.getValue().name.firstName
             )} ${capitalize(info.getValue().name.lastName)}`
             return (
-                <div className="flex items-center gap-2 min-w-44">
-                    <Avatar>
-                        <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>
-                            {fullName && fullName.at(0)?.toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    <span>{fullName}</span>
-                </div>
+                <AvatarAndName
+                    name={fullName}
+                    avatar={info.getValue().avatarPath}
+                    className="flex items-center item gap-4 min-w-44"
+                />
             )
         },
         header: 'Effectuée à',
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('event', {
         cell: (info) => (
@@ -222,13 +204,11 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
         },
         header: 'Status',
         footer: (info) => info.column.id,
-        filterFn: (row, columnId, filterValue) => {
-            return filterValue.includes(row.original.status)
-        },
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
-            const menu = [
+            const status = info.row.original.status
+            const menu: ActionType[] = [
                 {
                     actions: () =>
                         router.push(
@@ -237,51 +217,36 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
                     icon: Eye,
                     label: 'Voir',
                 },
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.prospects +
+                                '/' +
+                                info.getValue() +
+                                '?mode=edit'
+                        ),
+                    icon: Pencil,
+                    label: 'Modifier',
+                },
+                {
+                    actions: () =>
+                        router.push(
+                            AppRoutes.newConvertir.replace(
+                                ':id',
+                                info.getValue()
+                            )
+                        ),
+                    icon: Rocket,
+                    label: 'Convertir',
+                    shouldNotDisplay: status != 'IN_PROGRESS' || leadKo,
+                },
+                {
+                    actions: async () => {},
+                    icon: Archive,
+                    label: 'Lead Ko',
+                    shouldNotDisplay: status == 'CANCELED',
+                },
             ]
-            if (!['VALID', 'CANCELED'].includes(info.row.original.status)) {
-                menu.push(
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.prospects +
-                                    '/' +
-                                    info.getValue() +
-                                    '?mode=edit'
-                            ),
-                        icon: Pencil,
-                        label: 'Modifier',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newConvertir.replace(
-                                    ':id',
-                                    info.getValue()
-                                )
-                            ),
-                        icon: Rocket,
-                        label: 'Convertir',
-                    },
-                    {
-                        actions: async () => {
-                            const res = await archiveProspect(info.getValue())
-                            setData((prev: any) => {
-                                return prev.map((item: any) => {
-                                    if (item.id === info.getValue()) {
-                                        item.status = PartnerStatusType.CANCELED
-                                    }
-                                })
-                            })
-                        },
-                        icon: Archive,
-                        label: 'Lead Ko',
-                    }
-                )
-            }
-            const tmp = ['Voir', 'Modifier', 'Convertir', 'Lead Ko']
-            menu.sort((a, b) => {
-                return tmp.indexOf(a.label) - tmp.indexOf(b.label)
-            })
             return <ActionsMenu id={info.getValue()} menuList={menu} />
         },
         header: 'Activité',
@@ -290,9 +255,10 @@ export const columnsCrmTable = (router: AppRouterInstance, setData: any) => [
 
 export const columnCrmAssociations = (
     router: AppRouterInstance,
-    setData: any
+    setData: any,
+    leadKo: boolean
 ) => [
-    ...columnsCrmTable(router, setData).slice(0, 4),
+    ...columnsCrmTable(router, setData, leadKo).slice(0, 4),
     columnHelper.accessor('type', {
         cell: (info) => {
             const value = info.getValue()
@@ -300,8 +266,8 @@ export const columnCrmAssociations = (
             if (!value) return null // or return <span></span> for an empty cell
             return <span>{value}</span> // Display the value if it exists
         },
-        header: 'Type de compote',
+        header: 'Type de compte',
         footer: (info) => info.column.id,
     }),
-    ...columnsCrmTable(router, setData).slice(4, 16),
+    ...columnsCrmTable(router, setData, leadKo).slice(4, 16),
 ]

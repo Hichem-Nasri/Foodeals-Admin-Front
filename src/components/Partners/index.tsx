@@ -32,6 +32,7 @@ import { set } from 'date-fns'
 import getArchivedPartners from '@/lib/api/partner/getArchiver'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
+import { MyError } from '../Error'
 
 interface PartnersProps {
     params?: {
@@ -46,7 +47,7 @@ export interface TableRowType {
 }
 
 export const Partners: FC<PartnersProps> = ({}) => {
-    const [archive, setArchive] = React.useState(true)
+    const [archive, setArchive] = React.useState(false)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [partners, setPartners] = useState<PartnerType[]>([])
     const [currentPage, setCurrentPage] = useState(0)
@@ -68,7 +69,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
                     currentPage,
                     pageSize,
                     filterData,
-                    !archive
+                    archive
                 )
                 console.log(data)
                 if (data.status === 500)
@@ -93,12 +94,13 @@ export const Partners: FC<PartnersProps> = ({}) => {
 
     const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
         console.log('Filters:', data)
+        setFilterData(data)
         setOpen(false)
     }
 
     const table = useReactTable({
         data: partners || [],
-        columns: columnsPartnersTable(router),
+        columns: columnsPartnersTable(router, archive),
         state: {
             columnFilters,
         },
@@ -116,7 +118,8 @@ export const Partners: FC<PartnersProps> = ({}) => {
     useEffect(() => {
         if (isLoading || isRefetching) return
         refetch()
-    }, [archive])
+    }, [archive, filterData])
+
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartners
@@ -128,15 +131,14 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 handleArchive={handleArchive}
                 archive={archive}
                 totalElements={totalElements}
+                isFetching={isLoading || isRefetching}
             />
 
             <DataTable
                 data={partners! || []}
                 table={table}
                 title="Listes des partenaires"
-                transform={(value) => (
-                    <PartnerCard partner={value} key={value.id} />
-                )}
+                transform={(value) => <PartnerCard partner={value} />}
                 isLoading={isLoading || isRefetching}
             />
             <PaginationData

@@ -3,34 +3,41 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { countryCodes } from '@/lib/utils'
 import {
     CollaboratorDeliveryScheduleSchema,
     CollaboratorDeliveryType,
     CollaboratorDeliveryTypeSchema,
+    defaultCollaboratorDeliveryData,
 } from '@/types/DeliverySchema'
 import { FormCollaboratorInfo } from './FormCollaboratorInfo'
 import { FormWorkSchedule } from './FormWorkSchedule'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { getCollaboratorDelivery } from '@/lib/api/delivery/getCollaboratorDelivery'
+import { useQuery } from '@tanstack/react-query'
 
 interface CollaboratorProps {
-    partnerDetails: CollaboratorDeliveryType
+    collaborator: CollaboratorDeliveryType
+    id: string
 }
 
 export const Collaborator: React.FC<CollaboratorProps> = ({
-    partnerDetails,
+    collaborator,
+    id,
 }) => {
-    console.log('partnerDetails', partnerDetails)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
+    const [readOnly, setReadOnly] = useState(id !== '')
+    const router = useRouter()
+
     const deliveryCollaborator = useForm<
         z.infer<typeof CollaboratorDeliveryTypeSchema>
     >({
         resolver: zodResolver(CollaboratorDeliveryTypeSchema),
         mode: 'onBlur',
-        defaultValues: partnerDetails,
+        defaultValues: collaborator,
     })
 
     // const DeliveryPartnerSolution = useForm<
@@ -65,8 +72,7 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
             // DeliveryPartnerSolution.getValues()
         )
     }
-    console.log(deliveryCollaborator.getValues())
-    const router = useRouter()
+    console.log('collaborator', collaborator)
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             {/* <TopBar
@@ -94,9 +100,12 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
                     form={deliveryCollaborator}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
-                    disabled={false}
+                    disabled={readOnly}
                 />
-                <FormWorkSchedule form={deliveryCollaborator} />
+                <FormWorkSchedule
+                    form={deliveryCollaborator}
+                    disabled={readOnly}
+                />
             </div>
         </div>
     )

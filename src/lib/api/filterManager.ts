@@ -1,10 +1,14 @@
 import api from '@/api/Auth'
+import { API_URL } from '.'
 
 export async function fetchFilterManager(search: string, type: string) {
     try {
-        const url =
-            `localhost:8080/v1/users/search?name=${search}/roleName=MANAGERR&pageNumber=0&pageSize=10` +
-            (type ? `&types=${type}` : '')
+        const [types, archived] = type.split('&')
+        const url = `${API_URL.replace(
+            '/api',
+            ''
+        )}/v1/users/search?name=${search}&types=${types}&pageNumber=0&pageSize=10`
+        console.log('url: ', url)
         const res = await api.get(url).catch((error) => {
             throw new Error(error)
         })

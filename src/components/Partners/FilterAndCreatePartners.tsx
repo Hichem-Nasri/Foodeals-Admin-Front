@@ -45,7 +45,10 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     onSubmit={onSubmit}
                     setOpen={setOpen}
                     open={open}
-                    type="PARTNER_WITH_SB,NORMAL_PARTNER,SUB_ENTITY"
+                    type={
+                        'PARTNER_WITH_SB,NORMAL_PARTNER' +
+                        `${archive ? '&true' : '&false'}`
+                    }
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -54,16 +57,20 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                     onSubmit={onSubmit}
                     setOpen={setOpen}
                     open={open}
-                    type="PARTNER_WITH_SB,NORMAL_PARTNER,SUB_ENTITY"
+                    type={
+                        'PARTNER_WITH_SB,NORMAL_PARTNER' +
+                        `${archive ? '&true' : '&false'}`
+                    }
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={archive ? 'Archive' : 'Partners'}
+                    label={!archive ? 'Archive' : 'Partners'}
                     className="text-lynch-500"
                     onClick={handleArchive}
-                    IconRight={archive ? Archive : ArrowLeft}
+                    IconRight={!archive ? Archive : ArrowLeft}
+                    disabled={isFetching}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -72,6 +79,7 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                         size="sm"
                         label="Ajouter un partenaire"
                         IconRight={Store}
+                        disabled={isFetching}
                     />
                 </Link>
                 <CustomButton

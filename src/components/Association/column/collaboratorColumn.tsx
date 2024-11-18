@@ -15,7 +15,7 @@ const columnCollaboratorTableHelper =
     createColumnHelper<CollaboratorAssociationsType>()
 
 export const columnsCollaboratorTable = (router: AppRouterInstance) => [
-    columnCollaboratorTableHelper.accessor('createdAt', {
+    columnCollaboratorTableHelper.accessor('userInfoDto.createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date',
         footer: (info) => info.column.id,
@@ -42,11 +42,11 @@ export const columnsCollaboratorTable = (router: AppRouterInstance) => [
         header: 'Nom',
         footer: (info) => info.column.id,
     }),
-    columnCollaboratorTableHelper.accessor('roleName', {
+    columnCollaboratorTableHelper.accessor('userInfoDto.role', {
         cell: (info) => (
             <div className="flex items-center gap-1">{info.getValue()}</div>
         ),
-        header: 'Responsable',
+        header: 'Rôle',
         footer: (info) => info.column.id,
     }),
     columnCollaboratorTableHelper.accessor('city', {
@@ -74,11 +74,11 @@ export const columnsCollaboratorTable = (router: AppRouterInstance) => [
 export const CollaboratorAssociationsData: CollaboratorAssociationsType[] = [
     {
         id: '1',
-        createdAt: '2021-12-12',
-        roleName: 'Role Name',
         city: 'City',
         region: 'Region',
         userInfoDto: {
+            createdAt: '2021-12-12',
+            role: 'Role Name',
             avatarPath: 'https://randomuser.me/api/portraits',
             email: 'test@gmail.com',
             phone: '1234567890',
@@ -90,11 +90,11 @@ export const CollaboratorAssociationsData: CollaboratorAssociationsType[] = [
     },
     {
         id: '2',
-        createdAt: '2021-12-12',
-        roleName: 'Role Name',
         city: 'City',
         region: 'Region',
         userInfoDto: {
+            createdAt: '2021-12-12',
+            role: 'Role Name',
             avatarPath: 'https://randomuser.me/api/portraits',
             email: 'helo@fasafs.co',
             phone: '1234567890',

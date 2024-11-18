@@ -75,7 +75,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const [status, setStatus] = useState<PartnerStatusType>(
         deliveryId == ''
             ? PartnerStatusType.DRAFT
-            : PartnerStatusType.IN_PROGRESS
+            : (partnerDetails.status as PartnerStatusType)
     )
     console.log(deliveryId)
     useEffect(() => {
@@ -239,7 +239,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         ) {
             DeliveryPartner.handleSubmit(onSubmitPartnerInfo)()
             DeliveryPartnerSolution.handleSubmit(onSubmitEngagement)()
-            setSaved(true)
+            setSaved((prev) => !prev)
         } else {
             DeliveryPartner.trigger()
             DeliveryPartnerSolution.trigger()
@@ -251,9 +251,8 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             mutation.mutate({ id: deliveryId, data })
             console.log('save data')
         }
-    }, [saved, data])
-    const { solutions: solutionPartner } = DeliveryPartner.watch()
-    const { solutions } = DeliveryPartnerSolution.watch()
+    }, [saved])
+    console.log('status: ', status)
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
@@ -266,20 +265,22 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 hideStatus={true}
                 isPending={mutation.isPending}
             />
-            <div className="flex flex-col gap-[1.875rem] h-full w-full">
+            <div className="flex flex-col gap-[1.875rem] lg:gap-0 h-full w-full">
                 <FormDeliveryPartner
                     onSubmit={onSubmitPartnerInfo}
                     form={DeliveryPartner}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     disabled={readOnly}
-                    selectedSolution={solutions}
+                    // selectedSolution={solutions}
                 />
                 <FormSolution
-                    selectedSolution={solutionPartner}
+                    // selectedSolution={solutionPartner}
+                    status={status}
                     form={DeliveryPartnerSolution}
                     onSubmit={onSubmitEngagement}
                     disabled={readOnly}
+                    id={deliveryId}
                 />
             </div>
             {[PartnerStatusType.VALID, PartnerStatusType.IN_PROGRESS].includes(

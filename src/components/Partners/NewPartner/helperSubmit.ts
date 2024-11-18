@@ -44,7 +44,7 @@ export const SaveInfoData = (
             city: data.city,
             region: data.region,
             address: data.address,
-            iframe: data.mapLocation,
+            iframe: data.mapLocation || '',
         },
         managerId: +data.managerId,
         activities: data.companyType,
@@ -62,7 +62,10 @@ export const SaveSubscriptionData = (
             bankName: data.bank,
             rib: data.rib,
         },
-        subscriptionPayedBySubEntities: data.subscriptionPayedBySubEntities,
+        subscriptionPayedBySubEntities:
+            data.subscriptionPayedBySubEntities == 'mainEntities'
+                ? true
+                : false,
     }
 
     const setSolutionsData = (solutions: any[], isGeneral: boolean) => {

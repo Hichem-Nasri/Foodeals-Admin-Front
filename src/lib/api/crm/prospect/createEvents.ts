@@ -1,7 +1,7 @@
 import api from '@/api/Auth'
 import { CrmObjectType } from '@/types/CrmType'
 
-export async function createArchive(event: CrmObjectType, id: string) {
+export async function createEvents(event: CrmObjectType, id: string) {
     try {
         const newEvent = {
             object: event.object,

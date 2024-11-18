@@ -28,6 +28,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { useRouter } from 'next/navigation'
 import { BadgeDisponibility } from './BadgeDisponibility'
+import { capitalize } from '@/types/utils'
 
 interface DeliveryCollaboratorCardProps {
     collaborator: DeliveryCollaboratorsType
@@ -39,11 +40,11 @@ export const DeliveryCollaboratorCard: React.FC<
     const router = useRouter()
     const dataArray = [
         {
-            label: collaborator.role,
+            label: collaborator.userInfoDto.role,
             icon: Store,
         },
         {
-            label: collaborator.commands,
+            label: collaborator?.commands || 0,
             icon: Boxes,
         },
         {
@@ -62,7 +63,10 @@ export const DeliveryCollaboratorCard: React.FC<
             label: 'Voir',
         },
     ]
-
+    const fullName =
+        capitalize(collaborator.userInfoDto.name.firstName) +
+        ' ' +
+        capitalize(collaborator.userInfoDto.name.lastName)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -73,12 +77,12 @@ export const DeliveryCollaboratorCard: React.FC<
                             src={collaborator.userInfoDto.avatarPath}
                         />
                         <AvatarFallback>
-                            {collaborator.userInfoDto.name[0].toUpperCase()}
+                            {fullName[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={collaborator.userInfoDto.name}
+                            label={fullName}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -88,7 +92,7 @@ export const DeliveryCollaboratorCard: React.FC<
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={collaborator.createdAt}
+                                label={collaborator.userInfoDto.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
@@ -123,7 +127,7 @@ export const DeliveryCollaboratorCard: React.FC<
                             key={data.label.toString()}
                             className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
                         >
-                            <data.icon size={18} key={data.label.toString()} />
+                            <data.icon size={18} />
                             <Label
                                 label={data.label.toString()}
                                 className="text-lynch-500"

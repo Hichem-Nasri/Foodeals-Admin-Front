@@ -37,6 +37,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
     const showAllPartners = () => {
         router.push(AppRoutes.collaborator)
     }
+    console.log('hello features')
     return (
         <Accordion
             type="single"

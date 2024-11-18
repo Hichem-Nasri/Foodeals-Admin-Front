@@ -10,13 +10,19 @@ import { ListPlus, LucideProps } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
 import { Archiver } from '../utils/Archiver'
+import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
+import { NotificationType } from '@/types/GlobalType'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNotification } from '@/context/NotifContext'
+import ArchiveConfimation from '../crm/Prospect/ArchiveConfimation'
 
-export interface ActionType {
+export type ActionType = {
     label: string
     actions: (id: string) => void
     icon: ForwardRefExoticComponent<
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
+    shouldNotDisplay?: boolean
 }
 
 interface ActionsMenuProps {
@@ -31,9 +37,26 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
     className,
 }) => {
     const [open, setOpen] = useState(false)
+    const [leadKo, setLeadKo] = useState(false)
+    const [closeDrawer, setCloseDrawer] = useState(false)
+    const Notif = useNotification()
+    const queryClient = useQueryClient()
+
+    const handleArchiver = async (id?: string) => {
+        const res = await archiveProspect(id!)
+        if (res.status === 200) {
+            Notif.notify(
+                NotificationType.SUCCESS,
+                'Prospect archived successfully'
+            )
+        } else {
+            Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
+        }
+        queryClient.invalidateQueries({ queryKey: ['prospect'] })
+    }
     return (
         <>
-            <Drawer>
+            <Drawer open={closeDrawer} onOpenChange={setCloseDrawer}>
                 <DrawerTrigger
                     className={cn(
                         'flex lg:hidden justify-center items-center bg-lynch-300 text-white rounded-full p-2 w-fit mx-auto focus:outline-none [&>svg]:size-[1.125rem]',
@@ -43,19 +66,33 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                     <ListPlus />
                 </DrawerTrigger>
                 <DrawerContent className="flex flex-col gap-2 p-3 rounded-[16px] lg:hidden">
-                    {menuList.map((item) => {
-                        return (
-                            <button
-                                key={item.label}
-                                onClick={() => item.actions(id)}
-                                className="flex items-center
-							gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
-                            >
-                                <item.icon size={20} />
-                                {item.label}
-                            </button>
+                    {menuList
+                        .filter((item) =>
+                            item.shouldNotDisplay ? false : true
                         )
-                    })}
+                        .map((item) => {
+                            return (
+                                <button
+                                    key={item.label}
+                                    onClick={() => {
+                                        if (item.label === 'Archiver') {
+                                            setOpen(true)
+                                            setCloseDrawer(false)
+                                        }
+                                        if (item.label === 'Lead Ko') {
+                                            setLeadKo(true)
+                                            setCloseDrawer(false)
+                                        }
+                                        item.actions(id)
+                                    }}
+                                    className="flex items-center
+							gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
+                                >
+                                    <item.icon size={20} />
+                                    {item.label}
+                                </button>
+                            )
+                        })}
                 </DrawerContent>
             </Drawer>
             <DropdownMenu>
@@ -68,27 +105,40 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                     <ListPlus />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="lg:flex hidden flex-col gap-2 p-3 rounded-[16px]">
-                    {menuList.map((item) => {
-                        return (
-                            <DropdownMenuItem
-                                key={item.label}
-                                onClick={() => {
-                                    item.actions(id)
-                                    if (item.label === 'Archiver') {
-                                        setOpen(true)
-                                    }
-                                }}
-                                className="flex items-center
-					gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
-                            >
-                                <item.icon size={20} />
-                                {item.label}
-                            </DropdownMenuItem>
+                    {menuList
+                        .filter((item) =>
+                            item.shouldNotDisplay ? false : true
                         )
-                    })}
+                        .map((item) => {
+                            return (
+                                <DropdownMenuItem
+                                    key={item.label}
+                                    onClick={() => {
+                                        item.actions(id)
+                                        if (item.label === 'Archiver') {
+                                            setOpen(true)
+                                        }
+                                        if (item.label === 'Lead Ko') {
+                                            setLeadKo(true)
+                                        }
+                                    }}
+                                    className="flex items-center
+					gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
+                                >
+                                    <item.icon size={20} />
+                                    {item.label}
+                                </DropdownMenuItem>
+                            )
+                        })}
                 </DropdownMenuContent>
             </DropdownMenu>
-            {/* <Archiver partnerId={id} open={open} setOpen={setOpen} /> */}
+            <Archiver partnerId={id} open={open} setOpen={setOpen} />
+            <ArchiveConfimation
+                handleArchiver={() => handleArchiver(id)}
+                readOnly={false}
+                setOpen={setLeadKo}
+                open={leadKo}
+            />
         </>
     )
 }

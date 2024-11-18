@@ -25,6 +25,7 @@ interface FiltersDeliveriesProps {
     open: boolean
     form: UseFormReturn<any>
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    isFetching?: boolean
 }
 
 export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
@@ -36,6 +37,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
     form,
     open,
     setOpen,
+    isFetching,
 }) => {
     const router = useRouter()
     return (
@@ -49,6 +51,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
+                    type={'DELIVERY_PARTNER&' + (archive ? 'true' : 'false')}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -57,6 +60,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
+                    type={'DELIVERY_PARTNER&' + (archive ? 'true' : 'false')}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
@@ -65,6 +69,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     label={archive ? 'Deliveries' : 'Archives'}
                     IconRight={archive ? ArrowLeft : Archive}
                     onClick={handleArchive}
+                    disabled={isFetching}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -75,6 +80,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     onClick={() =>
                         router.push(AppRoutes.newDelivery.replace(':id', 'new'))
                     }
+                    disabled={isFetching}
                 />
                 <CustomButton
                     label={formatNumberWithSpaces(totalElements)}
