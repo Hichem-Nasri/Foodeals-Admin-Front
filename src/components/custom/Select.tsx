@@ -165,7 +165,7 @@ export const Select: FC<SelectProps> = ({
                             </div>
                         </div>
                     )}
-                    {options?.map((option) => (
+                    {options?.map((option, index) => (
                         <SelectItem
                             key={option.key}
                             value={option.key.toString()}

@@ -21,6 +21,7 @@ interface MultiSelectFieldProps {
     len?: number
     selected?: string[]
     ref?: React.Ref<HTMLInputElement>
+    onChange?: (value: string[]) => void
 }
 
 export const MultiSelectField: FC<MultiSelectFieldProps> = ({
@@ -36,10 +37,10 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
     emptyAvatar,
     selected,
     ref,
+    onChange,
 }) => {
     const select =
         (selected && selected.map((val) => ({ key: val, label: val }))) || []
-    console.log('select', select)
     return (
         <FormField
             control={control}
@@ -56,7 +57,11 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                                 options={options}
                                 disabled={options.length === 0 || disabled}
                                 selectedValues={field.value}
-                                onSelect={(value) => field.onChange(value)}
+                                onSelect={(value) => {
+                                    if (onChange) {
+                                        onChange(value)
+                                    } else field.onChange(value)
+                                }}
                                 placeholder={placeholder}
                                 transform={transform}
                                 length={len}
