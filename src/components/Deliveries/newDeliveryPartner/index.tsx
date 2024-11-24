@@ -8,11 +8,7 @@ import { countryCodes } from '@/lib/utils'
 import { TopBar } from '@/components/Partners/NewPartner/TopBar'
 import { FormDeliveryPartner } from './FormDeliveryPartner'
 import {
-    defaultDeliveryPartnerData,
-    defaultDeliveryPartnerSolutionData,
     DeliveryPartnerSchema,
-    DeliveryPartnerSchemaType,
-    DeliveryPartnerSolutionSchema,
     DeliveryPartnerType,
     emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
@@ -21,42 +17,16 @@ import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { useMutation } from '@tanstack/react-query'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
-import api from '@/api/Auth'
-import {
-    CityRegion,
-    emptyPartnerPOST,
-    PartnerPOST,
-} from '@/types/partenairUtils'
 import { useSearchParams } from 'next/navigation'
 import validateContract from '@/lib/api/partner/validateContract'
 import { createPartner } from '@/lib/api/partner/createpartner'
 import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
+import { emptyPartnerPOST, PartnerPOST } from '@/types/partenairUtils'
+import { transformCityRegionArray } from '@/types/DeliveriesUtils'
 
 interface NewDeliveryProps {
     partnerDetails: DeliveryPartnerType
     id: string
-}
-
-function transformCityRegionArray(
-    arr: string[],
-    country: string
-): CityRegion[] {
-    const cityMap: { [key: string]: string[] } = {}
-
-    arr.forEach((item) => {
-        const [city, region] = item.split('-')
-
-        if (!cityMap[city]) {
-            cityMap[city] = []
-        }
-        cityMap[city].push(region)
-    })
-
-    return Object.entries(cityMap).map(([city, regions]) => ({
-        country,
-        city,
-        regions,
-    }))
 }
 
 export const NewDelivery: React.FC<NewDeliveryProps> = ({
@@ -66,49 +36,54 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     const [deliveryId, setDeliveryId] = useState(id === 'new' ? '' : id)
     const [deliveryPartnerData, setDeliveryPartnerData] =
         useState<DeliveryPartnerType>(partnerDetails || emptyDeliveryPartner)
-    const [data, setData] = useState<PartnerPOST>(emptyPartnerPOST)
+    const [data, setData] = useState<PartnerPOST>(emptyPartnerPOST) // Define data type appropriately
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [readOnly, setReadOnly] = useState<boolean>(deliveryId !== '')
     const searchParams = useSearchParams()
-    const [saved, setSaved] = useState(false)
     const notif = useNotification()
     const [status, setStatus] = useState<PartnerStatusType>(
-        deliveryId == ''
+        deliveryId === ''
             ? PartnerStatusType.DRAFT
             : (partnerDetails.status as PartnerStatusType)
     )
-    console.log(deliveryId)
+
     useEffect(() => {
-        const mode = searchParams.get('mode') // Access the mode from searchParams
+        const mode = searchParams.get('mode')
         if (mode === 'edit') {
-            console.log('edit mode')
             setReadOnly(false)
         }
     }, [searchParams])
+
     const DeliveryPartner = useForm<z.infer<typeof DeliveryPartnerSchema>>({
         resolver: zodResolver(DeliveryPartnerSchema),
         mode: 'onBlur',
         defaultValues: {
             ...deliveryPartnerData,
+            solutions: {
+                marketPro: {
+                    selected: deliveryPartnerData.solutions.includes(
+                        PartnerSolutionType.MARKET_PRO
+                    ),
+                    deliveryCost: 0,
+                    commission: 0,
+                },
+                donatePro: {
+                    selected: deliveryPartnerData.solutions.includes(
+                        PartnerSolutionType.DONATE_PRO
+                    ),
+                    deliveryCost: 0,
+                    commission: 0,
+                },
+            },
             logo: undefined,
             cover: undefined,
         },
     })
-    const DeliveryPartnerSolution = useForm<
-        z.infer<typeof DeliveryPartnerSolutionSchema>
-    >({
-        resolver: zodResolver(DeliveryPartnerSolutionSchema),
-        mode: 'onBlur',
-        defaultValues: {
-            ...deliveryPartnerData,
-            documents: undefined,
-        },
-    })
+
     const mutation = useMutation({
         mutationKey: ['delivery-partner'],
-        mutationFn: async (data: { id: string; data: PartnerPOST }) => {
-            console.log('data: ', JSON.stringify(data))
-            const response = await createPartner(data.id, data.data, {
+        mutationFn: async () => {
+            const response = await createPartner(deliveryId, data, {
                 logo: deliveryPartnerData.logo! as File,
                 cover: deliveryPartnerData.cover! as File,
             })
@@ -118,14 +93,16 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             }
             notif.notify(
                 NotificationType.SUCCESS,
-                `The Deliver Partner has been saved successfully`
+                `The Delivery Partner has been saved successfully`
             )
             return response.data
         },
         onSuccess: (data) => {
+            notif.notify(NotificationType.SUCCESS, 'Delivery Partner saved')
             setDeliveryId(data.id)
         },
         onError: (err) => {
+            notif.notify(NotificationType.ERROR, 'Failed to save partner')
             console.log(err)
         },
     })
@@ -134,26 +111,52 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         data: z.infer<typeof DeliveryPartnerSchema>
     ) => {
         if (data.logo && data.cover) {
-            setDeliveryPartnerData((prev: DeliveryPartnerType) => {
-                return {
-                    ...prev,
-                    logo: data.logo!,
-                    cover: data.cover!,
-                }
+            setDeliveryPartnerData((prev: DeliveryPartnerType) => ({
+                ...prev,
+                logo: data.logo!,
+                cover: data.cover!,
+            }))
+        }
+        let solutions = []
+        if (data.solutions.donatePro.selected) {
+            solutions.push(PartnerSolutionType.DONATE_PRO)
+        }
+        if (data.solutions.marketPro.selected) {
+            solutions.push(PartnerSolutionType.MARKET_PRO)
+        }
+        const myZone = transformCityRegionArray(data.zone, data.country)
+
+        if (data.documents && data.documents.length > 0) {
+            setDeliveryPartnerData((prev) => ({
+                ...prev,
+                documents:
+                    data.documents?.filter(
+                        (doc): doc is File => doc !== undefined
+                    ) ?? [],
+            }))
+        }
+        let mySolution = []
+        console.log('data: ', data)
+        if (solutions.includes(PartnerSolutionType.DONATE_PRO)) {
+            mySolution.push({
+                solution: PartnerSolutionType.DONATE_PRO,
+                amount: data.solutions.donatePro.deliveryCost ?? 0,
+                commission: data.solutions.donatePro.commission ?? 0,
             })
         }
-        const mySolution = data.solutions.map((solution) => {
-            if (solution === 'DONATE_PRO') return 'pro_donate'
-            return 'pro_market'
-        })
-        const myZone = transformCityRegionArray(data.zone, data.country)
+        if (solutions.includes(PartnerSolutionType.MARKET_PRO)) {
+            mySolution.push({
+                solution: PartnerSolutionType.MARKET_PRO,
+                amount: data.solutions.marketPro.deliveryCost ?? 0,
+                commission: data.solutions.marketPro.commission ?? 0,
+            })
+        }
 
         setData((prev) => ({
             ...prev,
             entityType: 'DELIVERY_PARTNER',
             entityName: data.companyName,
-            // commercialNumber: data.commercialRegisterNumber.toString(),
-            solutions: mySolution,
+            solutions: solutions,
             contactDto: {
                 name: {
                     firstName: data.responsibleId.split(' ')[0],
@@ -172,48 +175,26 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             coveredZonesDtos: myZone,
             activities: data.companyType,
             commissionPayedBySubEntities: true,
-            // managerId: +data.managerId,
-        }))
-    }
-
-    const onSubmitEngagement = (
-        data: z.infer<typeof DeliveryPartnerSolutionSchema>
-    ) => {
-        console.log('partnerSolution: ', data)
-        if (data.documents) {
-            setDeliveryPartnerData((prev) => {
-                return {
-                    ...prev,
-                    documents: data?.documents?.filter(
-                        (doc): doc is File => doc !== undefined
-                    )!,
-                }
-            })
-        }
-        const mySolution = data.solutions.map((solution) => {
-            return {
-                solution: solution,
-                amount: data.deliveryCost,
-                commission: data.commission,
-            }
-        })
-        console.log('partnerSolution: ', mySolution)
-        setData((prev) => ({
-            ...prev,
             deliveryPartnerContract: mySolution,
         }))
     }
 
+    const onSubmitEngagement = (
+        data: z.infer<typeof DeliveryPartnerSchema>
+    ) => {}
+
     const onSubmit = async () => {
-        const document = DeliveryPartnerSolution.getValues('documents')?.filter(
-            (docs) => docs !== undefined
+        const documents = DeliveryPartner.getValues('documents')?.filter(
+            (doc) => doc !== undefined
         )
-        if (!document) {
-            notif.notify(NotificationType.ERROR, "importer d'abord le contrat")
+        if (!documents || documents.length === 0) {
+            notif.notify(
+                NotificationType.ERROR,
+                'Please upload the contract first'
+            )
             return
         }
-        console.log(document)
-        const res = await validateContract(deliveryId, document)
+        const res = await validateContract(deliveryId, documents)
         if (res.status === 200) {
             notif.notify(NotificationType.SUCCESS, 'Contract VALID')
             setStatus(PartnerStatusType.VALID)
@@ -223,36 +204,26 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     }
 
     const onSaveData = async (modify?: boolean) => {
-        if (modify === true) {
+        console.log('save data')
+        if (modify) {
             setStatus(PartnerStatusType.IN_PROGRESS)
             return
         }
-        console.log('Save data')
-        console.log(
-            DeliveryPartner.getValues(),
-            DeliveryPartnerSolution.getValues()
-        )
-
-        if (
-            DeliveryPartner.formState.isValid &&
-            DeliveryPartnerSolution.formState.isValid
-        ) {
-            DeliveryPartner.handleSubmit(onSubmitPartnerInfo)()
-            DeliveryPartnerSolution.handleSubmit(onSubmitEngagement)()
-            setSaved((prev) => !prev)
+        console.log('hello world!')
+        const ValidPartner = await DeliveryPartner.trigger()
+        if (ValidPartner) {
+            console.log('done: ', data)
+            await DeliveryPartner.handleSubmit(onSubmitPartnerInfo)()
+            mutation.mutate()
         } else {
-            DeliveryPartner.trigger()
-            DeliveryPartnerSolution.trigger()
+            console.log('invalid', DeliveryPartner.formState.errors)
+            notif.notify(
+                NotificationType.INFO,
+                'Please fill in all the required fields'
+            )
         }
     }
-    useEffect(() => {
-        if (saved) {
-            setSaved(false)
-            mutation.mutate({ id: deliveryId, data })
-            console.log('save data')
-        }
-    }, [saved])
-    console.log('status: ', status)
+
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
@@ -272,12 +243,9 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     disabled={readOnly}
-                    // selectedSolution={solutions}
                 />
                 <FormSolution
-                    // selectedSolution={solutionPartner}
-                    status={status}
-                    form={DeliveryPartnerSolution}
+                    form={DeliveryPartner}
                     onSubmit={onSubmitEngagement}
                     disabled={readOnly}
                     id={deliveryId}

@@ -24,13 +24,18 @@ import { useRouter } from 'next/navigation'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { getContract } from '@/lib/api/partner/getContract'
 import { PartnerStatus } from '../Partners/PartnerStatus'
+import { getListActions } from './column/getListActions'
 
 interface DeliveryCardProps {
     delivery: DeliveryType
+    archive: boolean
+    refetch: () => void
 }
 
 export const DeliveryCard: React.FC<DeliveryCardProps> = ({
     delivery,
+    archive,
+    refetch,
 }): JSX.Element => {
     const router = useRouter()
     const dataArray = [
@@ -44,60 +49,12 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
         },
     ]
 
-    const actions: ActionType[] = [
-        {
-            actions: () =>
-                router.push(AppRoutes.newDelivery.replace(':id', delivery.id)),
-            icon: Eye,
-            label: 'Voir',
-        },
-        {
-            actions: (id: string) =>
-                router.push(
-                    AppRoutes.newDelivery.replace(':id', id) + '?mode=edit'
-                ),
-            icon: Pen,
-            label: 'Modifier',
-        },
-        {
-            actions: () => {
-                // Archive
-            },
-            icon: Archive,
-            label: 'Archiver',
-        },
-        {
-            actions: () =>
-                router.push(
-                    AppRoutes.deliveryCollaborator.replace(':id', delivery.id)
-                ),
-            icon: Users,
-            label: 'Collaborateurs',
-        },
-        {
-            actions: () =>
-                router.push(
-                    AppRoutes.deliveryPayment + '?deliveryId=' + delivery.id
-                ),
-            icon: Users,
-            label: 'Liste des paiement',
-        },
-    ]
-    if (delivery.status == PartnerStatusType.VALID) {
-        actions.push({
-            actions: async () => {
-                try {
-                    const contractData = await getContract(delivery.id)
-                    const url = window.URL.createObjectURL(contractData as Blob)
-                    window.open(url, '_blank') // Opens the contract in a new tab
-                } catch (error) {
-                    console.error('Error opening contract:', error)
-                }
-            },
-            icon: FileBadge,
-            label: 'Contrat',
-        })
-    }
+    const actions: ActionType[] = getListActions(
+        delivery.id,
+        delivery.status,
+        archive,
+        refetch
+    )
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem] cursor-pointer">

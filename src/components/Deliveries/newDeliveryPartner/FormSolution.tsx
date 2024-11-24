@@ -19,12 +19,12 @@ import { useRouter } from 'next/navigation'
 import { AppRoutes } from '@/lib/routes'
 import { UploadFile } from '@/components/Partners/NewPartner/UploadFile'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
-import { DeliveryPartnerSolutionSchema } from '@/types/DeliverySchema'
+import { DeliveryPartnerSchema } from '@/types/DeliverySchema'
 import { getContract } from '@/lib/api/partner/getContract'
 
 interface FormSolutionProps {
-    form: UseFormReturn<z.infer<typeof DeliveryPartnerSolutionSchema>>
-    onSubmit: (data: z.infer<typeof DeliveryPartnerSolutionSchema>) => void
+    form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
+    onSubmit: (data: z.infer<typeof DeliveryPartnerSchema>) => void
     disabled?: boolean
     selectedSolution?: string[]
     id?: string
@@ -49,6 +49,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
             console.error('Error opening contract:', error)
         }
     }
+    const solutions = form.watch('solutions')
     return (
         <Accordion
             type="single"
@@ -66,10 +67,10 @@ export const FormSolution: FC<FormSolutionProps> = ({
                 <AccordionContent className="pt-7">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Form {...form}>
-                            <div className="flex flex-col justify-end gap-[1.875rem]">
-                                <div className="flex lg:flex-row flex-col lg:items-center gap-3">
+                            <div className="flex flex-col justify-end gap-[1.875rem] w-full">
+                                <div className=" lg:flex-row flex-col lg:items-center gap-3 w-full">
                                     <div>
-                                        <div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
+                                        <div className="flex flex-col gap-3 h-fit text-lynch-400 lg:min-w-40 min-w-full">
                                             <Label
                                                 label="Nos solution"
                                                 htmlFor={
@@ -77,128 +78,87 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                 }
                                                 className="text-xs font-semibold text-lynch-950"
                                             />
-                                            <FormField
-                                                control={form.control}
-                                                name="solutions"
-                                                render={({ field }) => (
-                                                    <>
-                                                        <div className="flex gap-3 items-center">
-                                                            <div className="flex items-center my-auto h-full gap-2">
-                                                                <Checkbox
+                                            <div className="flex gap-4  flex-col w-full">
+                                                <>
+                                                    {solutions.marketPro
+                                                        .selected && (
+                                                        <div className="flex lg:flex-row flex-col items-start justify-start my-auto h-fit w-full gap-4">
+                                                            <PartnerSolution
+                                                                solution={
+                                                                    PartnerSolutionType.MARKET_PRO
+                                                                }
+                                                                className="px-4 py-[0.4rem] my-3"
+                                                                size={20}
+                                                            />
+                                                            <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
+                                                                <InputFieldForm
+                                                                    label="Coût de livraison"
+                                                                    name="solutions.marketPro.deliveryCost"
+                                                                    control={
+                                                                        form.control
+                                                                    }
+                                                                    placeholder="Saisir Coût de livraison"
+                                                                    type="number"
                                                                     disabled={
                                                                         disabled
                                                                     }
-                                                                    name={
-                                                                        PartnerSolutionType.MARKET_PRO
-                                                                    }
-                                                                    className="size-5"
-                                                                    checked={
-                                                                        field.value.includes(
-                                                                            PartnerSolutionType.MARKET_PRO
-                                                                        ) ||
-                                                                        selectedSolution.includes(
-                                                                            PartnerSolutionType.MARKET_PRO
-                                                                        )
-                                                                    }
-                                                                    onClick={() =>
-                                                                        field.onChange(
-                                                                            field.value.includes(
-                                                                                PartnerSolutionType.MARKET_PRO
-                                                                            )
-                                                                                ? [
-                                                                                      ...field.value.filter(
-                                                                                          (
-                                                                                              item
-                                                                                          ) =>
-                                                                                              item !==
-                                                                                              PartnerSolutionType.MARKET_PRO
-                                                                                      ),
-                                                                                  ]
-                                                                                : [
-                                                                                      ...field.value,
-                                                                                      PartnerSolutionType.MARKET_PRO,
-                                                                                  ]
-                                                                        )
-                                                                    }
                                                                 />
-                                                                <PartnerSolution
-                                                                    solution={
-                                                                        PartnerSolutionType.MARKET_PRO
+                                                                <InputFieldForm
+                                                                    label="Commission Foodeals"
+                                                                    name="solutions.marketPro.commission"
+                                                                    control={
+                                                                        form.control
                                                                     }
-                                                                    className="px-4 py-[0.4rem] my-3"
-                                                                    size={20}
-                                                                />
-                                                            </div>
-                                                            <div className="flex items-center my-auto h-full gap-2">
-                                                                <Checkbox
+                                                                    placeholder="Saisir Commission Foodeals"
+                                                                    type="number"
                                                                     disabled={
                                                                         disabled
                                                                     }
-                                                                    name={
-                                                                        PartnerSolutionType.DONATE_PRO
-                                                                    }
-                                                                    className="size-5"
-                                                                    checked={
-                                                                        field.value.includes(
-                                                                            PartnerSolutionType.DONATE_PRO
-                                                                        ) ||
-                                                                        selectedSolution.includes(
-                                                                            PartnerSolutionType.DONATE_PRO
-                                                                        )
-                                                                    }
-                                                                    onClick={() =>
-                                                                        field.onChange(
-                                                                            field.value.includes(
-                                                                                PartnerSolutionType.DONATE_PRO
-                                                                            )
-                                                                                ? [
-                                                                                      ...field.value.filter(
-                                                                                          (
-                                                                                              item
-                                                                                          ) =>
-                                                                                              item !==
-                                                                                              PartnerSolutionType.DONATE_PRO
-                                                                                      ),
-                                                                                  ]
-                                                                                : [
-                                                                                      ...field.value,
-                                                                                      PartnerSolutionType.DONATE_PRO,
-                                                                                  ]
-                                                                        )
-                                                                    }
-                                                                />
-                                                                <PartnerSolution
-                                                                    solution={
-                                                                        PartnerSolutionType.DONATE_PRO
-                                                                    }
-                                                                    className="px-4 py-[0.4rem] my-3"
-                                                                    size={20}
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <FormMessage />
-                                                    </>
-                                                )}
-                                            />
+                                                    )}
+                                                    {solutions.donatePro
+                                                        .selected && (
+                                                        <div className="flex lg:flex-row flex-col items-start  my-auto w-full gap-2 flex-1">
+                                                            <PartnerSolution
+                                                                solution={
+                                                                    PartnerSolutionType.DONATE_PRO
+                                                                }
+                                                                className="px-4 py-[0.4rem] my-3"
+                                                                size={20}
+                                                            />
+                                                            <div className="flex lg:flex-row flex-col items-center gap-3 w-full flex-1">
+                                                                <InputFieldForm
+                                                                    label="Coût de livraison"
+                                                                    name="solutions.donatePro.deliveryCost"
+                                                                    control={
+                                                                        form.control
+                                                                    }
+                                                                    placeholder="Saisir Coût de livraison"
+                                                                    type="number"
+                                                                    disabled={
+                                                                        disabled
+                                                                    }
+                                                                />
+                                                                <InputFieldForm
+                                                                    label="Commission Foodeals"
+                                                                    name="solutions.donatePro.commission"
+                                                                    control={
+                                                                        form.control
+                                                                    }
+                                                                    placeholder="Saisir Commission Foodeals"
+                                                                    type="number"
+                                                                    disabled={
+                                                                        disabled
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
-                                        <InputFieldForm
-                                            label="Coût de livraison"
-                                            name="deliveryCost"
-                                            control={form.control}
-                                            placeholder="Saisir Coût de livraison"
-                                            type="number"
-                                            disabled={disabled}
-                                        />
-                                        <InputFieldForm
-                                            label="Commission Foodeals"
-                                            name="commission"
-                                            control={form.control}
-                                            placeholder="Saisir Commission Foodeals"
-                                            type="number"
-                                            disabled={disabled}
-                                        />
                                     </div>
                                 </div>
                                 {

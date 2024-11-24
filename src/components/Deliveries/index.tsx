@@ -107,7 +107,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
 
     const table = useReactTable({
         data: deliveries,
-        columns: columnsDeliveriesTable(router, archive),
+        columns: columnsDeliveriesTable(router, archive, refetch),
         state: {
             columnFilters,
         },
@@ -127,9 +127,6 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
         refetch()
     }, [archive, FilterData])
 
-    if (error) {
-        return <MyError message={error.message} />
-    }
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FiltersDeliveries
@@ -147,7 +144,13 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 data={deliveries}
                 table={table}
                 title="Liste des partenaires de livraison"
-                transform={(value) => <DeliveryCard delivery={value} />}
+                transform={(value) => (
+                    <DeliveryCard
+                        delivery={value}
+                        archive={archive}
+                        refetch={refetch}
+                    />
+                )}
                 isLoading={isLoading || isRefetching}
                 hideColumns={['status']}
             />

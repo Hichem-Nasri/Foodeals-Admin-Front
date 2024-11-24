@@ -4,21 +4,37 @@ import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import DetailsArchive from '@/components/utils/DetailsArchive'
+import { useNotification } from '@/context/NotifContext'
+import archivePatner from '@/lib/api/partner/archiverPartner'
 import { getContract } from '@/lib/api/partner/getContract'
 import { AppRoutes } from '@/lib/routes'
 import { DeliveryType } from '@/types/deliveries'
+import { ArchiveType, NotificationType } from '@/types/GlobalType'
+import { ArchivePartnerSchema } from '@/types/PartnerSchema'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import { useQueryClient } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Eye, Pen, Archive, Users, FileBadge } from 'lucide-react'
+import {
+    Eye,
+    Pen,
+    Archive,
+    Users,
+    FileBadge,
+    ArchiveRestore,
+    Info,
+} from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { z } from 'zod'
+import { getListActions } from './getListActions'
 
 const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()
 
 export const columnsDeliveriesTable = (
     router: AppRouterInstance,
-    archive: boolean
+    archive: boolean,
+    refetch: () => void
 ) => [
     columnDeliveriesTableHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
@@ -58,7 +74,7 @@ export const columnsDeliveriesTable = (
     }),
     columnDeliveriesTableHelper.accessor('numberOfDeliveryPeople', {
         cell: (info) => info.getValue(),
-        header: 'Commandes',
+        header: 'Nb livreurs',
         footer: (info) => info.column.id,
     }),
     columnDeliveriesTableHelper.accessor('distribution', {
@@ -100,73 +116,20 @@ export const columnsDeliveriesTable = (
     }),
     columnDeliveriesTableHelper.accessor('id', {
         cell: (info) => {
-            if (archive) return <DetailsArchive id={info.getValue()} />
             const status = info.row.getValue('status') as string
-            const ListActions: ActionType[] = [
-                {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.newDelivery.replace(
-                                ':id',
-                                info.getValue()!
-                            )
-                        ),
-                    icon: Eye,
-                    label: 'Voir',
-                },
-                {
-                    actions: (id: string) =>
-                        router.push(
-                            AppRoutes.newDelivery.replace(':id', id) +
-                                '?mode=edit'
-                        ),
-                    icon: Pen,
-                    label: 'Modifier',
-                },
-                {
-                    actions: () => {
-                        // Archive
-                    },
-                    icon: Archive,
-                    label: 'Archiver',
-                },
-                {
-                    actions: (id: string) =>
-                        router.push(
-                            AppRoutes.deliveryCollaborator.replace(
-                                ':id',
-                                info.getValue()!
-                            )
-                        ),
-                    icon: Users,
-                    label: 'Collaborateurs',
-                },
-                {
-                    actions: (id: string) =>
-                        router.push(
-                            AppRoutes.deliveryPayment + '?deliveryId=' + id
-                        ),
-                    icon: Users,
-                    label: 'Liste des paiement',
-                },
-                {
-                    actions: async (id) => {
-                        try {
-                            const contractData = await getContract(id)
-                            const url = window.URL.createObjectURL(
-                                contractData as Blob
-                            )
-                            window.open(url, '_blank') // Opens the contract in a new tab
-                        } catch (error) {
-                            console.error('Error opening contract:', error)
-                        }
-                    },
-                    icon: FileBadge,
-                    label: 'Contrat',
-                    shouldNotDisplay: status !== 'VALIDATED',
-                },
-            ]
-            return <ActionsMenu id={info.getValue()} menuList={ListActions} />
+            const list = getListActions(
+                info.getValue(),
+                status,
+                archive,
+                refetch
+            )
+            return (
+                <ActionsMenu
+                    id={info.getValue()}
+                    menuList={list}
+                    prospect={archive ? 'organisation' : false}
+                />
+            )
         },
         header: 'Activité',
         footer: (info) => info.column.id,

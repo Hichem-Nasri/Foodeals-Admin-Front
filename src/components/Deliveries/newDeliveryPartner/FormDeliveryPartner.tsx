@@ -156,6 +156,30 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                     label: PartnerSolutionType.DONATE_PRO,
                                                 },
                                             ]}
+                                            onChange={(value) => {
+                                                form.setValue(
+                                                    'solutionsList',
+                                                    value
+                                                )
+                                                form.setValue('solutions', {
+                                                    marketPro: {
+                                                        selected:
+                                                            value.includes(
+                                                                PartnerSolutionType.MARKET_PRO
+                                                            ),
+                                                        deliveryCost: 0,
+                                                        commission: 0,
+                                                    },
+                                                    donatePro: {
+                                                        selected:
+                                                            value.includes(
+                                                                PartnerSolutionType.DONATE_PRO
+                                                            ),
+                                                        deliveryCost: 0,
+                                                        commission: 0,
+                                                    },
+                                                })
+                                            }}
                                             selectedSolution={selectedSolution!}
                                         />
                                         <InputPhoneField
