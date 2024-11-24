@@ -2,23 +2,29 @@ import api from '@/api/Auth'
 import { API_URL } from '..'
 import { DetailsArchiveType } from '@/types/GlobalType'
 
-export async function fetchDetailsArchived(id: string) {
+export async function fetchDetailsArchived(
+    id: string,
+    leadKo: boolean,
+    currentPage: number,
+    pageSize: number
+): Promise<{ status: number; data: DetailsArchiveType[] }> {
     try {
-        const response = await api
-            .get(`${API_URL}/v1/organizations/${id}/deletion-details`)
-            .catch((error) => {
-                throw new Error(error)
-            })
+        const url =
+            `${API_URL}/v1/` +
+            (leadKo ? `crm/prospects/` : `organizations/`) +
+            `${id}/deletion-details` +
+            `?page=${currentPage}&size=${pageSize}`
+        console.log('url: ---', url)
+        const response = await api.get(url).catch((error) => {
+            throw new Error(error)
+        })
         console.log('response: ', response)
         return {
             status: response.status,
-            data: {
-                ...response.data,
-                deletedAt: new Date(response.data.deletedAt),
-            } as DetailsArchiveType,
+            data: response.data.content as any[],
         }
     } catch (error) {
         console.error(error)
-        return { status: 500, data: null }
+        return { status: 500, data: [] }
     }
 }
