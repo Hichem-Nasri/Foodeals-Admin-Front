@@ -15,10 +15,17 @@ import { NotificationType } from '@/types/GlobalType'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNotification } from '@/context/NotifContext'
 import ArchiveConfimation from '../crm/Prospect/ArchiveConfimation'
+import { ArchivePartnerSchema } from '@/types/PartnerSchema'
+import { z } from 'zod'
+import DetailsArchive from '../utils/DetailsArchive'
 
 export type ActionType = {
     label: string
-    actions: (id: string) => void
+    actions: (
+        id: string,
+        data?: z.infer<typeof ArchivePartnerSchema>,
+        handleDone?: (type: boolean, message: string, query: any[]) => void
+    ) => void
     icon: ForwardRefExoticComponent<
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
@@ -29,30 +36,46 @@ interface ActionsMenuProps {
     id?: string
     menuList: ActionType[]
     className?: string
+    prospect?: 'prospect' | 'organisation' | false
 }
 
 export const ActionsMenu: FC<ActionsMenuProps> = ({
     id = '',
     menuList,
     className,
+    prospect = false,
 }) => {
     const [open, setOpen] = useState(false)
     const [leadKo, setLeadKo] = useState(false)
+    const [desarchive, setDesarchive] = useState(false)
+    const [info, setInfo] = useState(false)
     const [closeDrawer, setCloseDrawer] = useState(false)
     const Notif = useNotification()
     const queryClient = useQueryClient()
 
-    const handleArchiver = async (id?: string) => {
-        const res = await archiveProspect(id!)
-        if (res.status === 200) {
-            Notif.notify(
-                NotificationType.SUCCESS,
-                'Prospect archived successfully'
-            )
-        } else {
-            Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
+    const handleArchiver = async (
+        data: z.infer<typeof ArchivePartnerSchema>
+    ) => {
+        const handleDone = async (
+            type: boolean,
+            message: string,
+            query: any[]
+        ) => {
+            if (type) {
+                Notif.notify(NotificationType.SUCCESS, message)
+                setOpen(false)
+                queryClient.invalidateQueries({
+                    queryKey: query,
+                })
+                setLeadKo(false)
+            } else {
+                Notif.notify(NotificationType.ERROR, message)
+            }
         }
-        queryClient.invalidateQueries({ queryKey: ['prospect'] })
+        const type = leadKo ? 'Lead Ko' : open ? 'Archiver' : 'Désarchiver'
+        const archiveAction = menuList.find((item) => item.label === type)
+        if (!id || !archiveAction) return
+        archiveAction.actions(id, data, handleDone)
     }
     return (
         <>
@@ -75,15 +98,21 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                                 <button
                                     key={item.label}
                                     onClick={() => {
-                                        if (item.label === 'Archiver') {
-                                            setOpen(true)
+                                        if (
+                                            item.label === 'Archiver' ||
+                                            item.label === 'Lead Ko' ||
+                                            item.label === 'Désarchiver'
+                                        ) {
+                                            item.label == 'Archiver'
+                                                ? setOpen(true)
+                                                : item.label == 'Lead Ko'
+                                                ? setLeadKo(true)
+                                                : setDesarchive(true)
                                             setCloseDrawer(false)
-                                        }
-                                        if (item.label === 'Lead Ko') {
-                                            setLeadKo(true)
+                                        } else if (item.label === 'Info') {
+                                            setInfo(true)
                                             setCloseDrawer(false)
-                                        }
-                                        item.actions(id)
+                                        } else item.actions(id)
                                     }}
                                     className="flex items-center
 							gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
@@ -114,13 +143,21 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                                 <DropdownMenuItem
                                     key={item.label}
                                     onClick={() => {
-                                        item.actions(id)
-                                        if (item.label === 'Archiver') {
-                                            setOpen(true)
-                                        }
-                                        if (item.label === 'Lead Ko') {
-                                            setLeadKo(true)
-                                        }
+                                        if (
+                                            item.label === 'Archiver' ||
+                                            item.label === 'Lead Ko' ||
+                                            item.label === 'Désarchiver'
+                                        ) {
+                                            item.label == 'Archiver'
+                                                ? setOpen(true)
+                                                : item.label == 'Lead Ko'
+                                                ? setLeadKo(true)
+                                                : setDesarchive(true)
+                                            setCloseDrawer(false)
+                                        } else if (item.label === 'Info') {
+                                            setInfo(true)
+                                            setCloseDrawer(false)
+                                        } else item.actions(id)
                                     }}
                                     className="flex items-center
 					gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
@@ -132,13 +169,27 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                         })}
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Archiver partnerId={id} open={open} setOpen={setOpen} />
-            <ArchiveConfimation
-                handleArchiver={() => handleArchiver(id)}
-                readOnly={false}
-                setOpen={setLeadKo}
-                open={leadKo}
+            <Archiver
+                partnerId={id}
+                open={open || leadKo || desarchive}
+                setOpen={open ? setOpen : leadKo ? setLeadKo : setDesarchive}
+                handleArchiver={handleArchiver}
+                title={
+                    leadKo
+                        ? 'Archiver le Prospect'
+                        : desarchive
+                        ? 'Désarchiver'
+                        : 'Archiver le partenaire'
+                }
             />
+            {prospect && (
+                <DetailsArchive
+                    id={id}
+                    open={info}
+                    setOpen={setInfo}
+                    leadKo={prospect === 'prospect'}
+                />
+            )}
         </>
     )
 }

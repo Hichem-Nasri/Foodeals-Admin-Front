@@ -61,7 +61,7 @@ export const FormWorkSchedule: FC<FormWorkScheduleProps> = ({
                 className="text-lynch-400 text-[1.375rem] font-normal"
             >
                 <AccordionTrigger className="font-normal text-[1.375rem] py-0">
-                    Affectation
+                    Horaire du travail
                 </AccordionTrigger>
                 <AccordionContent className="pt-7 grid grid-cols-3 gap-x-8 gap-y-5">
                     {workingHours &&

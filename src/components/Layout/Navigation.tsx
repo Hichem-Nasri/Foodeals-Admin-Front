@@ -16,6 +16,9 @@ import { path } from 'animejs'
 
 interface NavigationProps {}
 
+/* The above code is a TypeScript React component called Navigation. It is rendering a navigation menu
+based on the data provided in the `pagesData` array. The navigation menu consists of links and
+accordion items with subpages. */
 export const Navigation: FC<NavigationProps> = () => {
     const pathname = usePathname()
     const router = useRouter()
@@ -44,6 +47,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                             ? 'bg-primary/90 text-white'
                                             : ''
                                     )}
+                                    classNameArrow="w-7 h-7 shrink-0 mr-2"
                                 >
                                     <>
                                         <div
@@ -67,7 +71,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                         </div>
                                     </>
                                 </AccordionTrigger>
-                                <AccordionContent className="space-y-1">
+                                <AccordionContent className="space-y-1 ml-1 pl-2 border-l-[2px] border-lynch-100">
                                     {page.ListSubPage?.map((item, index) => (
                                         <Fragment key={index}>
                                             <CustomButton
@@ -79,7 +83,7 @@ export const Navigation: FC<NavigationProps> = () => {
                                                     router.push(item.href)
                                                 }}
                                                 className={cn(
-                                                    'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
+                                                    'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4 ',
                                                     pathname.includes(item.href)
                                                         ? 'bg-lynch-100 '
                                                         : ''
@@ -96,7 +100,7 @@ export const Navigation: FC<NavigationProps> = () => {
                         <Link key={index} href={page.href} passHref>
                             <CustomButton
                                 className={cn(
-                                    'w-full justify-normal bg-transparent text-lynch-500 hover:text-white rounded-[6px] p-4',
+                                    'w-full justify-normal bg-transparent  truncate whitespace-nowrap  text-lynch-500 hover:text-white rounded-[6px] p-4',
                                     (pathname.includes(page.href) &&
                                         page.href != AppRoutes.home) ||
                                         (pathname === page.href &&
