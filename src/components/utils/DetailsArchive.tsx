@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Dialog,
     DialogClose,
@@ -9,30 +9,59 @@ import {
 } from '../ui/dialog'
 import { fetchDetailsArchived } from '@/lib/api/partner/getDetailsArchived'
 import { info } from 'console'
-import { Calendar, Eclipse, Eye, X } from 'lucide-react'
+import {
+    Archive,
+    ArchiveRestore,
+    ArchiveX,
+    Calendar,
+    Eclipse,
+    Eye,
+    X,
+} from 'lucide-react'
 import { Textarea } from '../ui/textarea'
 import { Input } from '../custom/Input'
 import { Label } from '../Label'
-import { DetailsArchiveType } from '@/types/GlobalType'
+import {
+    DetailsArchiveType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import MobileHeader from './MobileHeader'
+import PaginationData from './PaginationData'
 
-const DetailsArchive = ({ id }: { id: string }) => {
-    const [details, setDetails] = React.useState<DetailsArchiveType>({
-        reason: '',
-        details: '',
-        deletedAt: new Date(),
-    })
+const DetailsArchive = ({
+    id,
+    open,
+    setOpen,
+    leadKo = false,
+}: {
+    id: string
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    leadKo: boolean
+}) => {
+    const [details, setDetails] = React.useState<DetailsArchiveType[]>([])
+    const [selected, setSelected] = React.useState<DetailsArchiveType | null>(
+        null
+    )
+    const [total, setTotal] = useState<TotalValueProps>(TotalValues)
     console.log('id', id)
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch, isRefetching } = useQuery({
         queryKey: ['partners', id],
         queryFn: async () => {
             try {
-                const data = await fetchDetailsArchived(id)
+                const data = await fetchDetailsArchived(
+                    id,
+                    leadKo,
+                    total.currentPage,
+                    total.pageSize
+                )
                 console.log('data------------', data)
                 if (data.status === 500 || data.data === null)
                     throw new Error('Error fetching partners')
                 setDetails(data!.data)
+                if (data.data.length > 0) setSelected(data.data[0])
                 return data.data
             } catch (error) {
                 console.log(error)
@@ -42,12 +71,7 @@ const DetailsArchive = ({ id }: { id: string }) => {
     })
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <button className="lg:flex hidden justify-center items-center bg-lynch-300 text-white rounded-full p-2 w-fit mx-auto focus:outline-none [&>svg]:size-[1.125rem] my-auto">
-                    <Eye size={20} />
-                </button>
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent
                 showContent={false}
                 className="min-w-full h-screen lg:h-fit lg:min-w-fit flex flex-col gap-5 justify-start px-0 lg:px-4 py-0 lg:py-4"
@@ -68,65 +92,112 @@ const DetailsArchive = ({ id }: { id: string }) => {
                 {isLoading ? (
                     <div>Loading...</div>
                 ) : (
-                    <DialogDescription className="flex flex-col gap-5 mt-8 p-4 lg:p-0">
-                        <div className="flex justify-between flex-col items-start space-y-2">
-                            <Label
-                                htmlFor="archiveReason"
-                                label="Reason"
-                                className="text-sm font-semibold text-lynch-950"
-                            />
-                            <Input
-                                value={
-                                    (data && data.reason) ??
-                                    details!.reason ??
-                                    ''
-                                }
-                                className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full"
-                                disabled
-                                name={'Type d’archive'}
-                                onChange={() => {}}
-                            />
+                    <div className="flex flex-col">
+                        <div className="flex gap-2 items-center justify-start">
+                            {data?.map((detail, index) => (
+                                <button
+                                    type="button"
+                                    title={
+                                        detail.action ? 'ARCHIVE' : 'RESTORE'
+                                    }
+                                    className={`${
+                                        detail.action == 'ARCHIVE'
+                                            ? 'text-coral-500'
+                                            : 'text-primary'
+                                    } p-2 rounded-full bg-white border-[1.5px] border-current hover:scale-105 transition-all`}
+                                    onClick={() => {
+                                        setSelected(detail)
+                                    }}
+                                    style={{
+                                        opacity: selected === detail ? 1 : 0.5,
+                                        scale: selected === detail ? 1.1 : 1,
+                                        boxShadow:
+                                            selected === detail
+                                                ? '0 0 10px 0 rgba(0, 0, 0, 0.1)'
+                                                : 'none',
+                                    }}
+                                >
+                                    {detail.action == 'ARCHIVE' ? (
+                                        <ArchiveX size={24} />
+                                    ) : (
+                                        <ArchiveRestore size={24} />
+                                    )}
+                                </button>
+                            ))}
                         </div>
-                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400 ">
-                            <Label
-                                htmlFor="archiveReason"
-                                label="Motif"
-                                className="text-sm font-semibold text-lynch-950"
-                            />
-                            <Textarea
-                                name="archiveReason"
-                                placeholder="Texte du motif"
-                                className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full disabled:text-lynch-400 disabled:select-text disabled:cursor-text disabled:opacity-100 text-md"
-                                cols={30}
-                                rows={10}
-                                value={
-                                    (data && data.details) ??
-                                    details!.details ??
-                                    ''
-                                }
-                                disabled
-                            />
-                        </div>
-                        <div className="flex flex-col items-start gap-3 w-full text-lynch-400 ">
-                            <Label
-                                htmlFor=""
-                                label="Deleted at"
-                                className="text-sm font-semibold text-lynch-950"
-                            />
-                            <Input
-                                IconLeft={Calendar}
-                                value={
-                                    details!.deletedAt.toDateString() +
-                                    ' ' +
-                                    details!.deletedAt.toLocaleTimeString()
-                                }
-                                className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full [&>.icon]:text-primary"
-                                disabled
-                                name={'Date d’archive'}
-                                onChange={() => {}}
-                            />
-                        </div>
-                    </DialogDescription>
+                        {selected && (
+                            <DialogDescription className="flex flex-col gap-5 mt-8 p-4 lg:p-0">
+                                <div className="flex justify-between flex-col items-start space-y-2">
+                                    <Label
+                                        htmlFor="archiveReason"
+                                        label="Reason"
+                                        className="text-sm font-semibold text-lynch-950"
+                                    />
+                                    <Input
+                                        value={
+                                            (selected && selected.reason) ?? ''
+                                        }
+                                        className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full"
+                                        disabled
+                                        name={'Type d’archive'}
+                                        onChange={() => {}}
+                                    />
+                                </div>
+                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400 ">
+                                    <Label
+                                        htmlFor="archiveReason"
+                                        label="Motif"
+                                        className="text-sm font-semibold text-lynch-950"
+                                    />
+                                    <Textarea
+                                        name="archiveReason"
+                                        placeholder="Texte du motif"
+                                        className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full disabled:text-lynch-400 disabled:select-text disabled:cursor-text disabled:opacity-100 text-md"
+                                        cols={30}
+                                        rows={10}
+                                        value={
+                                            (selected && selected.details) ?? ''
+                                        }
+                                        disabled
+                                    />
+                                </div>
+                                <div className="flex flex-col items-start gap-3 w-full text-lynch-400 ">
+                                    <Label
+                                        htmlFor=""
+                                        label="Deleted at"
+                                        className="text-sm font-semibold text-lynch-950"
+                                    />
+                                    <Input
+                                        IconLeft={Calendar}
+                                        value={
+                                            selected!.deletedAt.split('T')[0] +
+                                            ' ' +
+                                            selected!.deletedAt
+                                                .split('T')[1]
+                                                .split('.')[0]
+                                        }
+                                        className="outline-none  text-lynch-400 select-none focus:ring-0 focus:outline-none focus-within:ring-0 focus-within:outline-none min-h-fit w-full [&>.icon]:text-primary"
+                                        disabled
+                                        name={'Date d’archive'}
+                                        onChange={() => {}}
+                                    />
+                                </div>
+                                <PaginationData
+                                    currentPage={total.currentPage}
+                                    setCurrentPage={(page) =>
+                                        setTotal({
+                                            ...total,
+                                            currentPage: page,
+                                        })
+                                    }
+                                    totalPages={total.totalPages}
+                                    pageSize={total.pageSize}
+                                    refetch={refetch}
+                                    isLoading={isLoading || isRefetching}
+                                />
+                            </DialogDescription>
+                        )}
+                    </div>
                 )}
             </DialogContent>
         </Dialog>

@@ -18,8 +18,6 @@ import { SelectField } from '@/components/custom/SelectField'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/Label'
 import { useNotification } from '@/context/NotifContext'
-import archivePatner from '@/lib/api/partner/archiverPartner'
-import { NotificationType } from '@/types/GlobalType'
 import { cn } from '@/lib/utils'
 import {
     ArchivePartnerSchema,
@@ -32,9 +30,17 @@ interface ArchiverProps {
     partnerId?: string
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
+    handleArchiver: (data: z.infer<typeof ArchivePartnerSchema>) => void
+    title: string
 }
 
-export const Archiver: FC<ArchiverProps> = ({ partnerId, open, setOpen }) => {
+export const Archiver: FC<ArchiverProps> = ({
+    partnerId,
+    open,
+    setOpen,
+    title,
+    handleArchiver,
+}) => {
     const form = useForm<z.infer<typeof ArchivePartnerSchema>>({
         resolver: zodResolver(ArchivePartnerSchema),
         mode: 'onBlur',
@@ -45,23 +51,7 @@ export const Archiver: FC<ArchiverProps> = ({ partnerId, open, setOpen }) => {
     const queryClient = useQueryClient()
 
     const onSubmit = async (data: z.infer<typeof ArchivePartnerSchema>) => {
-        const archiveData = {
-            reason: data.archiveType,
-            details: data.archiveReason,
-        }
-        if (!partnerId) return
-        const res = await archivePatner(partnerId, archiveData)
-        if (res.status === 204) {
-            setOpen(false)
-            queryClient.invalidateQueries({
-                queryKey: ['partners', 0, 10],
-            })
-            notif.notify(
-                NotificationType.SUCCESS,
-                'Partenaire archivé avec succès'
-            )
-        }
-        console.log(res)
+        handleArchiver(data)
     }
 
     const { handleSubmit, control } = form
@@ -76,7 +66,7 @@ export const Archiver: FC<ArchiverProps> = ({ partnerId, open, setOpen }) => {
             >
                 <DialogHeader className="flex flex-row justify-between items-center w-full ">
                     <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal ">
-                        Archiver le partenaire
+                        {title}
                     </DialogTitle>
                     <DialogClose
                         className={cn('p-2 rounded-full text-lynch-400')}
