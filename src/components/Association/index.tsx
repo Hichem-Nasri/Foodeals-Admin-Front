@@ -91,7 +91,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
 
     const table = useReactTable({
         data: associations,
-        columns: columnsAssociationsTable(router, archive),
+        columns: columnsAssociationsTable(router, archive, refetch),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),

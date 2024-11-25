@@ -42,12 +42,12 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
     const [payload, setPayload] = useState<AssociationPostType>(
         defaultAssociationPostData
     )
+    const [isLoading, setIsLoading] = useState(false)
     const searchParams = useSearchParams()
     const [associationId, setAssociationId] = useState(id)
     const [readOnly, setReadOnly] = useState(
         id !== '' || partnerDetails?.status === PartnerStatusType.VALID
     )
-    const [save, setSave] = useState(false)
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [documents, setDocuments] = useState<File[]>([])
     const [contractValid, setContractValid] = useState(
@@ -74,23 +74,26 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                 return res
             } catch (error) {
                 console.error('Error creating association:', error)
-                return { status: 500, data: null }
+                throw error
             }
         },
         onSuccess: (data) => {
-            setSave(false)
+            setIsLoading(false)
             console.log('data:', data)
             setAssociationId(data.data)
+            partnerDetails.status = PartnerStatusType.IN_PROGRESS
             notify.notify(
                 NotificationType.SUCCESS,
                 'Association created successfully'
             )
         },
         onError: (error) => {
+            setIsLoading(false)
             notify.notify(NotificationType.ERROR, 'Error creating association')
             console.error('Error creating association:', error)
         },
     })
+
     // Form for association information
     const associationInformation = useForm<
         z.infer<typeof associationInformationSchema>
@@ -103,6 +106,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
             cover: partnerDetails?.cover || '',
         },
     })
+
     // Form for partner engagement
     const partnerEngagement = useForm<z.infer<typeof engagementSchema>>({
         resolver: zodResolver(engagementSchema),
@@ -165,37 +169,32 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         }
     }
 
-    const onSaveData = (modify?: boolean) => {
+    const onSaveData = async (modify?: boolean) => {
         console.log('save data')
         if (modify === true) {
             setContractValid(false)
             return
         }
-        if (
-            associationInformation.formState.isValid &&
-            partnerEngagement.formState.isValid
-        ) {
-            associationInformation.handleSubmit(onSubmitPartnerInfo)()
-            partnerEngagement.handleSubmit(onSubmitEngagement)()
 
-            setSave(true)
+        const isAssociationFormValid = await associationInformation.trigger()
+        const isEngagementFormValid = await partnerEngagement.trigger()
+
+        console.log('id: ', isAssociationFormValid, isEngagementFormValid)
+
+        if (isAssociationFormValid && isEngagementFormValid) {
+            setIsLoading(true)
+            await associationInformation.handleSubmit(onSubmitPartnerInfo)()
+            await partnerEngagement.handleSubmit(onSubmitEngagement)()
+            mutate()
         } else {
             console.log(
                 'invalid',
                 associationInformation.formState.errors,
                 partnerEngagement.formState.errors
             )
-            associationInformation.trigger()
-            partnerEngagement.trigger()
         }
     }
-    useEffect(() => {
-        if (save) {
-            console.log('mutate')
-            mutate()
-        }
-    }, [save])
-    console.log('id: ', associationId)
+
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
@@ -221,7 +220,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                 onSaveData={onSaveData}
                 onSubmit={onSubmit}
                 id={associationId}
-                isPending={isPending}
+                isPending={isPending || isLoading}
             />
             <div className="flex flex-col lg:gap-0 gap-[1.875rem] h-full w-full">
                 <FormAssociation

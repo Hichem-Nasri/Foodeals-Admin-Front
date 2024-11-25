@@ -15,7 +15,7 @@ import {
     getPaginationRowModel,
 } from '@tanstack/react-table'
 import { useRouter } from 'next/navigation'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
@@ -50,7 +50,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const [archive, setArchive] = useState(false)
     const notify = useNotification()
     const router = useRouter()
-    const { error, isLoading, refetch } = useQuery({
+    const { error, isLoading, refetch, isRefetching } = useQuery({
         queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
@@ -80,6 +80,10 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const handleArchive = () => {
         // fetching Archived associations
         setArchive((prev) => !prev)
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
     }
 
     const form = useForm<z.infer<typeof SchemaFilter>>({
@@ -95,13 +99,18 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
 
     const table = useReactTable({
         data: collaborators,
-        columns: columnsCollaboratorTable(router),
+        columns: columnsCollaboratorTable(router, archive, refetch),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        refetch()
+    }, [archive, filterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">

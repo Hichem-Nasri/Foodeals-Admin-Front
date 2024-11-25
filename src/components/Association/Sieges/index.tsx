@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -32,6 +32,7 @@ import { useQuery } from '@tanstack/react-query'
 import { arch } from 'os'
 import PaginationData from '@/components/utils/PaginationData'
 import { fetchSieages } from '@/lib/api/association/getSieages'
+import { fetchSubEntities } from '@/lib/api/partner/fetchSubEntities'
 
 interface SiegesProps {
     id: string
@@ -52,14 +53,17 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
     const [archive, setArchive] = useState(false)
     const notify = useNotification()
     const router = useRouter()
-    const { error, isLoading, isRefetching, refetch } = useQuery({
+    const { isLoading, isRefetching, refetch } = useQuery({
         queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
-                const data = await fetchSieages(
+                const data = await fetchSubEntities(
                     id,
+                    'ASSOCIATIONS',
                     totals.currentPage,
-                    totals.pageSize
+                    totals.pageSize,
+                    filterData,
+                    archive
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
@@ -97,13 +101,22 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
 
     const table = useReactTable({
         data: sieges,
-        columns: columnsSiegesTable(router),
+        columns: columnsSiegesTable(router, archive, refetch),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
+        refetch()
+    }, [archive])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">

@@ -5,10 +5,16 @@ import { PartnerStatus } from '@/components/Partners/PartnerStatus'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
 import { PaymentStatus } from '@/components/payment/PaymentStatus'
 import DetailsArchive from '@/components/utils/DetailsArchive'
+import { useNotification } from '@/context/NotifContext'
+import archivePatner from '@/lib/api/partner/archiverPartner'
 import { getContract } from '@/lib/api/partner/getContract'
 import { AppRoutes } from '@/lib/routes'
 import { AssociationType } from '@/types/association'
-import { PartnerInfoDto } from '@/types/GlobalType'
+import {
+    ArchiveType,
+    NotificationType,
+    PartnerInfoDto,
+} from '@/types/GlobalType'
 import {
     ContractStatus,
     PartnerSolutionType,
@@ -17,15 +23,27 @@ import {
 import { PaymentStatusType } from '@/types/PaymentType'
 import { capitalize } from '@/types/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import { useQueryClient } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Eye, Pen, Users, Store, FileBadge, Archive } from 'lucide-react'
+import {
+    Eye,
+    Pen,
+    Users,
+    Store,
+    FileBadge,
+    Archive,
+    Info,
+    ArchiveX,
+} from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { act } from 'react'
 
 const columnHelper = createColumnHelper<AssociationType>()
 
 export const columnsAssociationsTable = (
     router: AppRouterInstance,
-    archive: boolean
+    archive: boolean,
+    refetch: any
 ) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
@@ -162,7 +180,60 @@ export const columnsAssociationsTable = (
     columnHelper.accessor('id', {
         cell: (info) => {
             console.log('Archive', archive)
-            if (archive === true) return <DetailsArchive id={info.getValue()} />
+            if (archive === true) {
+                const actionsList = [
+                    {
+                        actions: () => {},
+                        label: 'Info',
+                        icon: Info,
+                    },
+                    {
+                        actions: async (
+                            id: string,
+                            data: any,
+                            handleDone?: (
+                                type: boolean,
+                                message: string,
+                                query: any[]
+                            ) => void
+                        ) => {
+                            const archiveData: ArchiveType = {
+                                action: 'DE_ARCHIVE',
+                                reason: data?.archiveType,
+                                details: data?.archiveReason,
+                            }
+                            const res = await archivePatner(id, archiveData)
+                                .then((res) => {
+                                    handleDone &&
+                                        handleDone(
+                                            true,
+                                            'désarchivage effectué',
+                                            ['partners', 0, 10]
+                                        )
+                                    refetch()
+                                })
+                                .catch((err) => {
+                                    handleDone &&
+                                        handleDone(
+                                            false,
+                                            'Failed to archive',
+                                            []
+                                        )
+                                    console.log(err)
+                                })
+                        },
+                        label: 'Désarchiver',
+                        icon: ArchiveX,
+                    },
+                ]
+                return (
+                    <ActionsMenu
+                        id={info.getValue()}
+                        menuList={actionsList}
+                        prospect={'organisation'}
+                    />
+                )
+            }
             const id = (info.row.getValue('partner') as PartnerInfoDto)
                 .id as string
             const subEntities = info.row.getValue('subEntities') as number
@@ -197,14 +268,14 @@ export const columnsAssociationsTable = (
                         ),
                     icon: Users,
                     label: 'Collaborateurs',
-                    shouldNotDisplay: collaborator === 0,
+                    // shouldNotDisplay: collaborator === 0,
                 },
                 {
                     actions: () =>
                         router.push(AppRoutes.sieges.replace(':id', id!)),
                     icon: Store,
                     label: 'Sièges',
-                    shouldNotDisplay: subEntities === 0,
+                    // shouldNotDisplay: subEntities === 0,
                 },
                 {
                     actions: async () => {
@@ -227,7 +298,37 @@ export const columnsAssociationsTable = (
                     shouldNotDisplay: status !== PartnerStatusType.VALID,
                 },
                 {
-                    actions: () => {},
+                    actions: async (
+                        id: string,
+                        data: any,
+                        handleDone?: (
+                            type: boolean,
+                            message: string,
+                            query: any[]
+                        ) => void
+                    ) => {
+                        const archiveData: ArchiveType = {
+                            action: 'ARCHIVE',
+                            reason: data?.archiveType,
+                            details: data?.archiveReason,
+                        }
+                        const res = await archivePatner(id, archiveData).catch(
+                            (err) => {
+                                handleDone &&
+                                    handleDone(false, 'Failed to archive', [])
+                                console.log(err)
+                            }
+                        )
+                        if (res.status === 204) {
+                            handleDone &&
+                                handleDone(true, "L'archive a été effectuée", [
+                                    'partners',
+                                    '0',
+                                    '10',
+                                ])
+                        }
+                        console.log(res)
+                    },
                     icon: Archive,
                     label: 'Archiver',
                 },
