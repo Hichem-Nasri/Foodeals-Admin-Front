@@ -4,20 +4,21 @@ import { API_URL } from '../..'
 
 export async function archiveProspect(
     id: string,
-    data: ArchiveType
+    data: ArchiveType,
+    status: string = 'CANCELED'
 ): Promise<{ status: number; data: any }> {
     try {
         const res = await api
-            .post(`${API_URL}/v1/crm/prospects/${id}`, {
-                status: 'CANCELED',
+            .post(`${API_URL}/v1/crm/prospects/status/${id}`, {
+                status: status,
                 reason: { ...data },
             })
             .catch((err) => {
                 throw err
             })
+        console.log('res', res)
         return { status: res.status, data: res.data }
     } catch (e) {
-        console.error(e)
-        return { status: 500, data: null }
+        throw new Error('Failed to archive prospect')
     }
 }

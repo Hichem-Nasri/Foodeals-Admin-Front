@@ -20,6 +20,7 @@ interface TopBarProps {
     onSaveData: () => void
     onSubmit: () => void
     open?: boolean
+    isLoading?: boolean
 }
 
 export const TopBar: FC<TopBarProps> = ({
@@ -29,6 +30,7 @@ export const TopBar: FC<TopBarProps> = ({
     secondaryButtonDisabled,
     onSubmit,
     open,
+    isLoading,
 }) => {
     return (
         <div className="flex lg:relative fixed bottom-0 left-0 z-40 justify-between w-full rounded-[18px] lg:bg-white">
@@ -42,7 +44,8 @@ export const TopBar: FC<TopBarProps> = ({
                             onClick={onSaveData}
                             disabled={
                                 secondaryButtonDisabled ||
-                                status == PartnerStatusType.VALID
+                                status == PartnerStatusType.VALID ||
+                                isLoading
                             }
                             size="sm"
                             label="Enregistrer"
@@ -53,7 +56,8 @@ export const TopBar: FC<TopBarProps> = ({
                             <CustomButton
                                 disabled={
                                     primaryButtonDisabled ||
-                                    status == PartnerStatusType.VALID
+                                    status == PartnerStatusType.VALID ||
+                                    isLoading
                                 }
                                 onClick={onSubmit}
                                 size="sm"
@@ -64,7 +68,8 @@ export const TopBar: FC<TopBarProps> = ({
                             <CustomButton
                                 disabled={
                                     primaryButtonDisabled ||
-                                    status == PartnerStatusType.VALID
+                                    status == PartnerStatusType.VALID ||
+                                    isLoading
                                 }
                                 onClick={() => {
                                     onSubmit()

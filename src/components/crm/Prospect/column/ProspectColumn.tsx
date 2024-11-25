@@ -3,9 +3,12 @@ import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
+import { useNotification } from '@/context/NotifContext'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { AppRoutes } from '@/lib/routes'
 import { CrmType } from '@/types/CrmType'
+import { ArchiveType, NotificationType } from '@/types/GlobalType'
+import { ArchivePartnerSchema } from '@/types/PartnerSchema'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import {
     capitalize,
@@ -14,9 +17,18 @@ import {
     StringStatus,
 } from '@/types/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import { useQueryClient } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Eye, Archive, Pencil, Rocket } from 'lucide-react'
+import {
+    Eye,
+    Archive,
+    Pencil,
+    Rocket,
+    Info,
+    ArchiveRestore,
+} from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { z } from 'zod'
 
 const columnHelper = createColumnHelper<CrmType>()
 
@@ -207,47 +219,129 @@ export const columnsCrmTable = (
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
+            let menu: ActionType[] = []
             const status = info.row.original.status
-            const menu: ActionType[] = [
-                {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.prospects + '/' + info.getValue()
-                        ),
-                    icon: Eye,
-                    label: 'Voir',
-                },
-                {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.prospects +
-                                '/' +
-                                info.getValue() +
-                                '?mode=edit'
-                        ),
-                    icon: Pencil,
-                    label: 'Modifier',
-                },
-                {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.newConvertir.replace(
-                                ':id',
-                                info.getValue()
+            if (leadKo) {
+                menu = [
+                    {
+                        actions: () => {},
+                        label: 'Info',
+                        icon: Info,
+                    },
+                    {
+                        actions: async (id: string, data, handlDone) => {
+                            const archive: ArchiveType = {
+                                action: 'DE_ARCHIVE',
+                                reason: data?.archiveType || 'OTHER',
+                                details: data?.archiveReason || '',
+                            }
+                            await archiveProspect(
+                                info.getValue(),
+                                archive,
+                                'IN_PROGRESS'
                             )
-                        ),
-                    icon: Rocket,
-                    label: 'Convertir',
-                    shouldNotDisplay: status != 'IN_PROGRESS' || leadKo,
-                },
-                {
-                    actions: async () => {},
-                    icon: Archive,
-                    label: 'Lead Ko',
-                    shouldNotDisplay: status == 'CANCELED',
-                },
-            ]
-            return <ActionsMenu id={info.getValue()} menuList={menu} />
+                                .then((res) => {
+                                    handlDone &&
+                                        handlDone(true, 'Prospect désarchivé', [
+                                            'prospects',
+                                        ])
+                                })
+                                .catch((err) => {
+                                    handlDone &&
+                                        handlDone(
+                                            false,
+                                            'Echec de la désarchivage',
+                                            []
+                                        )
+                                })
+                        },
+
+                        label: 'Désarchiver',
+                        icon: ArchiveRestore,
+                    },
+                ]
+            } else
+                menu = [
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.prospects + '/' + info.getValue()
+                            ),
+                        icon: Eye,
+                        label: 'Voir',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.prospects +
+                                    '/' +
+                                    info.getValue() +
+                                    '?mode=edit'
+                            ),
+                        icon: Pencil,
+                        label: 'Modifier',
+                    },
+                    {
+                        actions: () =>
+                            router.push(
+                                AppRoutes.newConvertir.replace(
+                                    ':id',
+                                    info.getValue()
+                                )
+                            ),
+                        icon: Rocket,
+                        label: 'Convertir',
+                        shouldNotDisplay: status != 'IN_PROGRESS' || leadKo,
+                    },
+                    {
+                        actions: async (
+                            id: string,
+                            data?: z.infer<typeof ArchivePartnerSchema>,
+                            handleDone?: (
+                                type: boolean,
+                                message: string,
+                                query: any[]
+                            ) => void
+                        ) => {
+                            const archive: ArchiveType = {
+                                action: 'ARCHIVE',
+                                reason: data?.archiveType || 'OTHER',
+                                details: data?.archiveReason || '',
+                            }
+                            console.log('archive', archive)
+                            const res = await archiveProspect(
+                                info.getValue(),
+                                archive
+                            )
+                                .then(
+                                    (res) =>
+                                        handleDone &&
+                                        handleDone(true, 'Prospect archivé', [
+                                            'prospects',
+                                        ])
+                                )
+                                .catch(
+                                    (err) =>
+                                        handleDone &&
+                                        handleDone(
+                                            false,
+                                            "Echec de l'archivage",
+                                            []
+                                        )
+                                )
+                        },
+                        icon: Archive,
+                        label: 'Lead Ko',
+                        shouldNotDisplay: status == 'CANCELED',
+                    },
+                ]
+            return (
+                <ActionsMenu
+                    id={info.getValue()}
+                    menuList={menu}
+                    prospect={leadKo ? 'prospect' : false}
+                />
+            )
         },
         header: 'Activité',
     }),

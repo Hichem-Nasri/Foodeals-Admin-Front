@@ -22,7 +22,7 @@ export const CrmInformationSchema = z.object({
                 firstName: z.string(),
                 lastName: z.string(),
             }),
-            avatarPath: z.string().optional(),
+            avatarPath: z.string().nullable().optional(),
         })
         .optional(),
     email: z.string().email('Veuillez entrer une adresse email valide'),
@@ -32,7 +32,7 @@ export const CrmInformationSchema = z.object({
     region: z.string().min(3),
     solutions: z.array(z.string()).min(1),
     address: z.string().min(3),
-    type: z.string().default('ASSOCIATION').optional(),
+    type: z.string().default('PARTNER'),
 })
 
 export const CrmObjectSchema = z.object({
@@ -120,9 +120,9 @@ export function getInfoData(data: CrmType) {
         companyName: data.companyName,
         category: [data.category],
         responsable:
-            capitalize(data.contact.name.firstName) +
+            capitalize(data.contact?.name?.firstName) +
             ' ' +
-            capitalize(data.contact.name.lastName),
+            capitalize(data.contact?.name?.lastName),
         phone: data.contact.phone,
         email: data.contact.email,
         creatorInfo: data.creatorInfo,
@@ -131,7 +131,7 @@ export function getInfoData(data: CrmType) {
         city: data.address.city,
         region: data.address.region,
         address: data.address.address,
-        solutions: getSolutions(data.solutions),
+        solutions: data.solutions,
     }
 }
 
@@ -156,6 +156,7 @@ export const getCrmCreateData = (data: CrmInformationSchemaType) => {
             region: data.region,
         },
         event: null,
+        type: data.type,
         solutions: data.solutions,
     }
 }

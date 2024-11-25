@@ -8,6 +8,12 @@ export enum PartnerEntitiesType {
     DELIVERY_PARTNER = 'DELIVERY_PARTNER',
 }
 
+export type ArchiveType = {
+    action: 'ARCHIVE' | 'DE_ARCHIVE'
+    reason: string
+    details: string
+}
+
 export type ProfileType = {
     id: string
     name: {
@@ -86,14 +92,15 @@ export const TotalValues = {
 }
 
 export interface DetailsArchiveType {
+    action: 'ARCHIVE' | 'DE_ARCHIVE'
     reason: string
     details: string
-    deletedAt: Date
+    deletedAt: string
 }
 
 export const ContractStatusPartner: { [key: string]: PartnerStatusType } = {
     ['VALIDATED']: PartnerStatusType.VALID,
-    ['PENDING']: PartnerStatusType.IN_PROGRESS,
+    ['IN_PROGRESS']: PartnerStatusType.IN_PROGRESS,
     ['REJECTED']: PartnerStatusType.CANCELED,
 }
 

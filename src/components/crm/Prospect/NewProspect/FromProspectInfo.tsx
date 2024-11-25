@@ -27,7 +27,7 @@ interface FormCrmInfoProps {
     disabled?: boolean
     setCountryCode: (value: string) => void
     countryCode: string
-    type: string
+    type: 'PARTNER' | 'ASSOCIATION'
 }
 
 export const FormCrmInfo: FC<FormCrmInfoProps> = ({
@@ -69,6 +69,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                 <div className="flex flex-col gap-[1.875rem] w-full">
                                     <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3 w-full">
                                         <FieldSolutions
+                                            name="solutions"
                                             className="col-span-2"
                                             control={control}
                                             disabled={disabled}
@@ -87,7 +88,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             name="category"
                                             label="Catégorie"
                                             disabled={disabled}
-                                            type="ASSOCIATION"
+                                            type={type}
                                         />
                                         <InputFieldForm
                                             control={control}

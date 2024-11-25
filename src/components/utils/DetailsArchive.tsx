@@ -34,12 +34,12 @@ const DetailsArchive = ({
     id,
     open,
     setOpen,
-    leadKo = false,
+    type = 'organisation',
 }: {
     id: string
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
-    leadKo: boolean
+    type: 'prospect' | 'organisation' | 'sub-entites' | false
 }) => {
     const [details, setDetails] = React.useState<DetailsArchiveType[]>([])
     const [selected, setSelected] = React.useState<DetailsArchiveType | null>(
@@ -53,7 +53,7 @@ const DetailsArchive = ({
             try {
                 const data = await fetchDetailsArchived(
                     id,
-                    leadKo,
+                    type,
                     total.currentPage,
                     total.pageSize
                 )
@@ -69,6 +69,7 @@ const DetailsArchive = ({
             }
         },
     })
+    console.log('data', data)
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -93,7 +94,7 @@ const DetailsArchive = ({
                     <div>Loading...</div>
                 ) : (
                     <div className="flex flex-col">
-                        <div className="flex gap-2 items-center justify-start">
+                        <div className="flex gap-2 items-center justify-start px-4">
                             {data?.map((detail, index) => (
                                 <button
                                     type="button"
@@ -104,7 +105,7 @@ const DetailsArchive = ({
                                         detail.action == 'ARCHIVE'
                                             ? 'text-coral-500'
                                             : 'text-primary'
-                                    } p-2 rounded-full bg-white border-[1.5px] border-current hover:scale-105 transition-all`}
+                                    } p-2 rounded-full bg-white border-[1.5px] border-current hover:scale-105 transition-all `}
                                     onClick={() => {
                                         setSelected(detail)
                                     }}

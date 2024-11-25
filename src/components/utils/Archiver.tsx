@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog'
 import { CustomButton } from '@/components/custom/CustomButton'
-import { Archive, X } from 'lucide-react'
+import { Archive, ArchiveRestore, X } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,6 +25,7 @@ import {
 } from '@/types/PartnerSchema'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useQueryClient } from '@tanstack/react-query'
+import { capitalize } from '@/types/utils'
 
 interface ArchiverProps {
     partnerId?: string
@@ -41,6 +42,7 @@ export const Archiver: FC<ArchiverProps> = ({
     title,
     handleArchiver,
 }) => {
+    const type = title.split(' ')[0].toLowerCase()
     const form = useForm<z.infer<typeof ArchivePartnerSchema>>({
         resolver: zodResolver(ArchivePartnerSchema),
         mode: 'onBlur',
@@ -117,8 +119,12 @@ export const Archiver: FC<ArchiverProps> = ({
                                         onClick={() => setOpen(false)}
                                     />
                                     <CustomButton
-                                        label="Archiver"
-                                        IconRight={Archive}
+                                        label={capitalize(type)}
+                                        IconRight={
+                                            type == 'archiver'
+                                                ? Archive
+                                                : ArchiveRestore
+                                        }
                                         type="submit"
                                         className="h-fit py-3"
                                     />

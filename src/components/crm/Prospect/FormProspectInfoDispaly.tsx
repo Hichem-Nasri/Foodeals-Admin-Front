@@ -78,6 +78,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                 <div className="flex flex-col gap-[1.875rem] w-full">
                                     <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3 w-full">
                                         <FieldSolutions
+                                            name="solutions"
                                             className="col-span-2"
                                             control={control}
                                             disabled={disabled}
@@ -141,7 +142,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             onChange={() => {}}
                                             name="creatorInfo"
                                             label={'Alimenter par'}
-                                            avatar={creatorInfo?.avatarPath}
+                                            avatar={creatorInfo?.avatarPath!}
                                             disabled={disabled}
                                         />
                                     </div>

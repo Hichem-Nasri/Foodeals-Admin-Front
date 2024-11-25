@@ -7,6 +7,7 @@ import { FormCrmInfoDisplay } from '@/components/crm/Prospect/FormProspectInfoDi
 import { TopBar } from '@/components/crm/Prospect/NewProspect/TopBar'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { Layout } from '@/components/Layout/Layout'
+import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
 import {
     Dialog,
     DialogClose,
@@ -15,6 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
+import { Archiver } from '@/components/utils/Archiver'
 import { useNotification } from '@/context/NotifContext'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { API_PROSPECTS } from '@/lib/api_url'
@@ -25,31 +27,38 @@ import {
     getInfoData,
 } from '@/types/CrmScheme'
 import { CrmType } from '@/types/CrmType'
-import { NotificationType } from '@/types/GlobalType'
+import { ArchiveType, NotificationType } from '@/types/GlobalType'
+import { ArchivePartnerSchema } from '@/types/PartnerSchema'
 import { PartnerStatusType } from '@/types/partnersType'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { get } from 'http'
 import { Archive, Info, X } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-const ProspectElement = ({ data }: { data: CrmType }) => {
+const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
     const [prospect, setProspect] = React.useState(() => data)
     const params = useSearchParams()
     const [countryCode, setCountryCode] = React.useState('')
     const [open, setOpen] = React.useState(false)
+    const [leadKo, setLeadko] = React.useState(false)
     const [readOnly, setReadOnly] = React.useState(true)
     const Notif = useNotification()
     const router = useRouter()
-    const { id } = useParams()
     console.log(id)
-    const { mutate } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationKey: ['prospect'],
         mutationFn: (data: any) => {
-            return api.put(`${API_PROSPECTS}/${id}`, data)
+            console.log('data: ', data)
+            console.log('prospect: ', prospect)
+            return api.put(`${API_PROSPECTS}/${id}`, {
+                ...data,
+                status: prospect.status,
+                type: prospect.type,
+            })
         },
         onSuccess: () => {
             Notif.notify(
@@ -61,12 +70,14 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
             Notif.notify(NotificationType.ERROR, 'Failed to update prospect')
         },
     })
+    console.log('prospect: ', prospect)
     const CrmInformation = useForm<z.infer<typeof CrmInformationSchema>>({
         resolver: zodResolver(CrmInformationSchema),
         mode: 'onBlur',
         defaultValues: { ...getInfoData(prospect) },
     })
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {
+        console.log('UPdate')
         const newData = {
             ...getCrmCreateData(data),
         }
@@ -78,16 +89,37 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
     }
     const queryClient = useQueryClient()
 
-    const handleArchiver = async (id?: string) => {
-        const res = await archiveProspect(prospect.id)
+    const handleArchiver = async (
+        data: z.infer<typeof ArchivePartnerSchema>
+    ) => {
+        const type =
+            prospect.status == PartnerStatusType.CANCELED
+                ? 'DE_ARCHIVE'
+                : 'ARCHIVE'
+        const archiveData: ArchiveType = {
+            action: type,
+            reason: data?.archiveType || 'OTHER',
+            details: data?.archiveReason || '',
+        }
+        const res = await archiveProspect(
+            id,
+            archiveData,
+            prospect.status == PartnerStatusType.CANCELED
+                ? 'IN_PROGRESS'
+                : 'CANCELED'
+        )
         if (res.status === 200) {
             Notif.notify(
                 NotificationType.SUCCESS,
-                'Prospect archived successfully'
+                'Prospect' +
+                    (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
+                    'successfully'
             )
+            prospect.status = type == 'ARCHIVE' ? 'CANCELED' : 'IN_PROGRESS'
         } else {
             Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
         }
+        setLeadko(false)
         queryClient.invalidateQueries({ queryKey: ['prospect'] })
     }
 
@@ -96,6 +128,8 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
             setReadOnly(false)
         }
     }, [params])
+
+    console.log('prospect: ', CrmInformation.formState.errors)
     return (
         <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
             {!open ? (
@@ -119,6 +153,7 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
                             )
                         }}
                         open={open}
+                        isLoading={isPending}
                     />
                     <FormCrmInfoDisplay
                         onSubmit={onSubmitCrmInfo}
@@ -147,15 +182,29 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
                         status={prospect.status as PartnerStatusType}
                         prospect={prospect}
                     />
-                    {prospect.event && prospect.event.length > 0 && (
-                        <ArchiveConfimation
-                            handleArchiver={handleArchiver}
-                            readOnly={
-                                readOnly ||
+                    <div className="w-full p-4 rounded-[18px] bg-white flex justify-end items-center">
+                        <CustomButton
+                            label={
                                 prospect.status == PartnerStatusType.CANCELED
+                                    ? 'LeadOK'
+                                    : 'LeadKo'
                             }
+                            onClick={() => setLeadko(true)}
+                            size={'sm'}
+                            disabled={
+                                readOnly ||
+                                [PartnerStatusType.VALID].includes(
+                                    prospect.status as PartnerStatusType
+                                )
+                            }
+                            variant={'secondary'}
+                            className={`w-fit${
+                                prospect.status == PartnerStatusType.CANCELED
+                                    ? 'bg-mountain-100 border-primary text-primary'
+                                    : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'
+                            }`}
                         />
-                    )}
+                    </div>
                 </>
             ) : (
                 <EventPopUps
@@ -165,6 +214,17 @@ const ProspectElement = ({ data }: { data: CrmType }) => {
                     prospect={prospect}
                 />
             )}
+            <Archiver
+                partnerId={id as string}
+                open={leadKo}
+                setOpen={setLeadko}
+                handleArchiver={handleArchiver}
+                title={
+                    prospect.status == PartnerStatusType.CANCELED
+                        ? 'Désarchiver le Prospect'
+                        : 'Archiver le Prospect'
+                }
+            />
         </div>
     )
 }
@@ -177,9 +237,14 @@ const useProspect = (id: string) => {
     return { prospect: data, isSuccess, error }
 }
 
-const ProspectPage = () => {
-    const { id } = useParams()
-    const { prospect, isSuccess, error } = useProspect(id as string)
+interface ProspectProps {
+    params: {
+        id: string
+    }
+}
+
+const ProspectPage: FC<ProspectProps> = ({ params }) => {
+    const { prospect, isSuccess, error } = useProspect(params.id)
 
     return (
         <Layout formTitle="Prospect">
@@ -188,7 +253,7 @@ const ProspectPage = () => {
             ) : error ? (
                 <div>Error: {error?.message}</div>
             ) : (
-                <ProspectElement data={prospect} />
+                <ProspectElement data={prospect} id={params.id} />
             )}
         </Layout>
     )
