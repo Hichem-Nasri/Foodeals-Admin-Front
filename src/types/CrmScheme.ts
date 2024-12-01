@@ -139,14 +139,16 @@ export function getInfoData(data: CrmType) {
 }
 
 export const getCrmCreateData = (data: CrmInformationSchemaType) => {
-    const [firstName, lastName] = data.responsable.split(' ')
+    const [firstName, lastName] = data.responsable.includes(' ')
+        ? data.responsable.split(' ')
+        : [data.responsable, '']
     return {
         companyName: data.companyName,
         activities: data.category,
         responsible: {
             name: {
-                firstName: firstName,
-                lastName: lastName,
+                firstName: firstName + '',
+                lastName: lastName + '',
             },
             email: data.email,
             phone: data.phone,

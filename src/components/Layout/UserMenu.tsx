@@ -10,19 +10,12 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
 import { getUser } from '@/app/actions'
 import { Skeleton } from '../ui/skeleton'
+import { useUser } from '@/context/useUser'
 
 interface UserMenuProps {}
 
 export const UserMenu: FC<UserMenuProps> = ({}) => {
-    const [user, setUser] = useState<any | null>(null)
-    // const user =  getUser()
-    useEffect(() => {
-        const getUserData = async () => {
-            const user = await getUser()
-            setUser(user)
-        }
-        if (!user) getUserData()
-    }, [])
+    const { user, loading } = useUser()
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild className="">

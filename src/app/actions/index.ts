@@ -37,5 +37,5 @@ export async function LogIn(data: z.infer<typeof LoginSchema>) {
 
 export async function getUser() {
     const session = await auth()
-    return session?.user
+    return session?.user || null
 }
