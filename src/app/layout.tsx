@@ -6,6 +6,7 @@ import QueryProvider from '@/components/Layout/QueryProvider'
 import { SessionProvider } from 'next-auth/react'
 import { auth } from '@/auth'
 import { NotificationProvider } from '@/context/NotifContext'
+import { UserProvider } from '@/context/useUser'
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: '500' })
 
@@ -25,13 +26,15 @@ export default async function RootLayout({
     return (
         <html lang="fr">
             <SessionProvider session={session}>
-                <NotificationProvider>
-                    <QueryProvider>
-                        <body className={`${montserrat.className} `}>
-                            {children}
-                        </body>
-                    </QueryProvider>
-                </NotificationProvider>
+                <UserProvider>
+                    <NotificationProvider>
+                        <QueryProvider>
+                            <body className={`${montserrat.className} `}>
+                                {children}
+                            </body>
+                        </QueryProvider>
+                    </NotificationProvider>
+                </UserProvider>
             </SessionProvider>
         </html>
     )
