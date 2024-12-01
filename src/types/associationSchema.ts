@@ -19,11 +19,26 @@ export const associationInformationSchema = z.object({
         .min(0, 'Le numéro de téléphone doit contenir au moins 9 chiffres'),
     managerId: z.string().min(1, 'selectionner un manager'),
     country: z.string().min(3, 'selectionner un pays'),
+    state: z.string().min(3, 'selectionner un stat'),
     city: z.string().min(3, 'selectionner une ville'),
     region: z.string().min(3, 'selectionner une region'),
     address: z.string().min(3, 'saissir une adresse'),
     associationType: z.string().min(3, "selectionner un type d'association"),
-    mapLocation: z.string().min(3, 'coller iframe'),
+    mapLocation: z.string().optional(),
+})
+
+export const SchemaFilterUser = z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    companyName: z.array(z.string()).optional(),
+    roleName: z.string().optional(),
+    collaborators: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    city: z.string().optional(),
+    companyType: z.string().optional(),
+    solution: z.array(z.string()).optional(),
+    status: z.string().optional(),
 })
 
 export const SchemaFilter = z.object({

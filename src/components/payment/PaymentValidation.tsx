@@ -38,9 +38,10 @@ import { z } from 'zod'
 import { NotificationType, PriceType } from '@/types/GlobalType'
 import AmountAndCurrency from './AmountAndCurrency'
 import { useMutation } from '@tanstack/react-query'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { useNotification } from '@/context/NotifContext'
 import MobileHeader from '../utils/MobileHeader'
+import { API_URL } from '@/lib/api'
 
 interface PaymentValidationProps {
     id: string
@@ -182,7 +183,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                 if (document) formData.append('document', document)
                 const res = await api
                     .post(
-                        'http://localhost:8080/api/v1/payments/process?type=COMMISSION',
+                        `${API_URL}/v1/payments/process?type=COMMISSION`,
                         formData
                     )
                     .catch((e) => {

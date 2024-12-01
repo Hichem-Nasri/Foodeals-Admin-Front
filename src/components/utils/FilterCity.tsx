@@ -4,10 +4,11 @@ import { FormField, FormMessage } from '../ui/form'
 import { cn } from '@/lib/utils'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { Select } from '../custom/Select'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { SelectField } from '../custom/SelectField'
 import { fetchManager } from '@/lib/api/fetchManager'
 import { fetchCities } from '@/lib/api/filterFetchCities'
+import { usePathname } from 'next/navigation'
 
 interface FilterCityProps {
     control: Control<any>
@@ -27,10 +28,11 @@ export const FilterCity: FC<FilterCityProps> = ({
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
     const [search, setSearch] = useState('')
+    const path = usePathname()
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchFilterCities = async () => {
-            const data = await fetchCities(search, type, 'morocco')
+            const data = await fetchCities(search, type, 'morocco', path)
             console.log('FilterCity data', data)
             setOptions(data)
         }

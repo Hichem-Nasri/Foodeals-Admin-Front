@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_URL } from '..'
 import { appApi } from '@/lib/routes'
 import { ProductSchemaType, ProductType } from '@/types/products'
@@ -12,10 +12,10 @@ export async function fetchProduct(
             .catch((error) => {
                 throw new Error('Failed to fetch product')
             })
-        return { data: demoData, status: response.status } // TODO: replace demoData with response.data
+        return { data: response.data, status: response.status } // TODO: replace demoData with response.data
     } catch (error) {
         console.error(error)
-        return { data: demoData, status: 200 } // TODO: replace demoData with response.data
+        return { data: [], status: 500 } // TODO: replace demoData with response.data
     }
 }
 
@@ -40,12 +40,19 @@ export async function fetchAllProduct(
     }
 }
 
-export const demoData: ProductSchemaType = {
-    title: 'Demo Product',
-    description: 'This is a demo product',
-    marque: 'Demo Marque',
-    subCategories: 'Demo Subcategory',
-    categories: 'Demo Category',
-    avatar: 'https://img.freepik.com/free-photo/foundation-with-dark-background_23-2148978146.jpg?t=st=1730482023~exp=1730485623~hmac=bbc9a6cf6637648c68bc930b30f33ea02ea5adccfc84daa95fcb121a5c016c63&w=1060',
-    codeBar: '1234567890',
+export const emptyProduct: ProductSchemaType = {
+    name: '',
+    description: '',
+    price: {
+        amount: 0,
+        currency: 'USD',
+    },
+    categoryId: '',
+    subCategoryId: '',
+    productImagePath: '',
+    barcode: '',
+    type: '',
+    title: '',
+    brandId: '',
+    rayonId: '',
 }

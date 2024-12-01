@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_URL } from '.'
 
 // Define the API function for fetching a manager
@@ -7,8 +7,8 @@ export const fetchManager = async (searchName: string) => {
         // Make a GET request to the API endpoint with the search name as a query parameter
         const url = `${API_URL.replace(
             '/api',
-            ''
-        )}/v1/users/search?name=${searchName}&pageNumber=1&pageSize=10`
+            'v1'
+        )}/users/search?name=${searchName}&pageNumber=1&pageSize=10`
         const response = await api
             .get(url)
             .then((res) => res.data)
@@ -35,3 +35,5 @@ export const fetchManager = async (searchName: string) => {
         return []
     }
 }
+
+export const fetchUsers = async (searchName: string) => {}

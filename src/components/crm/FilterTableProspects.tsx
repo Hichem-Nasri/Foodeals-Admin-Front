@@ -21,7 +21,7 @@ import { PartnerStatusType } from '@/types/partnersType'
 import { useRouter } from 'next/navigation'
 import MobileHeader from '../utils/MobileHeader'
 import { SelectField } from '../custom/SelectField'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 
 interface FilterTableProspectsProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>

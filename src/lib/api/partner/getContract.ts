@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_URL } from '..'
 
 interface Contract {
@@ -9,7 +9,13 @@ export async function getContract(id: string): Promise<Contract> {
     const url = `${API_URL}/v1/organizations/partners/contracts/${id}`
 
     try {
-        const response = await api.get(url, { responseType: 'blob' })
+        const response = await api.get(url, {
+            responseType: 'blob',
+            headers: {
+                Accept: 'application/pdf',
+                'Content-Type': 'application/json',
+            },
+        })
 
         // Check if the response is successful
         if (response.status !== 200) {

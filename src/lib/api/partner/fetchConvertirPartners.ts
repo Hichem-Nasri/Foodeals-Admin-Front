@@ -1,7 +1,7 @@
 import { defaultPartnerData, PartnerDataType } from '@/types/PartnerSchema'
 import { appApi } from '../../routes'
 import { API_URL } from '..'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import {
     exportPartnerConvertir,
     exportPartnerPost,

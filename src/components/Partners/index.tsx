@@ -17,11 +17,16 @@ import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType, PartnerEntitiesType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    PartnerEntitiesType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { columnsPartnersTable } from './column/partnerColumn'
 import PaginationData from '../utils/PaginationData'
 import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
@@ -50,32 +55,32 @@ export const Partners: FC<PartnersProps> = ({}) => {
     const [archive, setArchive] = React.useState(false)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [partners, setPartners] = useState<PartnerType[]>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
     const { error, isLoading, isRefetching, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 console.log('fetching partners')
                 const data = await fetchPartners(
                     'PARTNERS',
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     filterData,
                     archive
                 )
                 console.log(data)
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalPages(data.data.totalPages)
-                setTotalElements(data.data.totalElements)
+                setTotals((prev) => ({
+                    ...prev,
+                    totalElements: data.data.numberOfElements,
+                    totalPages: data.data.totalPages,
+                }))
                 setPartners(data.data.content as PartnerType[])
                 return data.data
             } catch (error) {
@@ -100,7 +105,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
 
     const table = useReactTable({
         data: partners || [],
-        columns: columnsPartnersTable(router, archive),
+        columns: columnsPartnersTable(router, archive, refetch),
         state: {
             columnFilters,
         },
@@ -121,7 +126,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
     }, [archive, filterData])
 
     return (
-        <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:mb-0 mb-4">
+        <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:px-0 lg:pr-2  lg:mb-0 mb-4">
             <FilterAndCreatePartners
                 form={form}
                 onSubmit={onSubmit}
@@ -130,22 +135,29 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 table={table}
                 handleArchive={handleArchive}
                 archive={archive}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
                 isFetching={isLoading || isRefetching}
             />
-
             <DataTable
                 data={partners! || []}
                 table={table}
                 title="Listes des partenaires"
-                transform={(value) => <PartnerCard partner={value} />}
+                transform={(value) => (
+                    <PartnerCard
+                        partner={value}
+                        refetch={refetch}
+                        archive={archive}
+                    />
+                )}
                 isLoading={isLoading || isRefetching}
             />
             <PaginationData
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPages={totalPages}
-                pageSize={pageSize}
+                currentPage={totals.currentPage}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
+                totalPages={totals.totalPages}
+                pageSize={totals.pageSize}
                 refetch={refetch}
             />
             <Link

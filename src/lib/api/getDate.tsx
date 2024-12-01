@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_URL } from '.'
 
 export default async function getDateAvailable(

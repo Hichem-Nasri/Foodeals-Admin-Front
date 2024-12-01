@@ -214,7 +214,7 @@ export const columnsSiegesTable = (
                                 AppRoutes.collaborator.replace(
                                     ':id',
                                     info.getValue()!
-                                ) + '?mode=users'
+                                ) + '?type=FOOD_BANK_SB,FOOD_BANK_ASSOCIATION'
                             ),
                         icon: Users,
                         label: 'Collaborateurs',

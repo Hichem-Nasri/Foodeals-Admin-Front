@@ -25,6 +25,7 @@ interface FilterTablePaymentProps {
         | 'NORMAL_PARTNER'
         | 'SUB_ENTITY'
     id?: string
+    state: 'commissions' | 'subscriptions'
 }
 
 export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
@@ -36,12 +37,13 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
     type,
     typePartner,
     id,
+    state = 'commissions',
 }) => {
     // dialog that take all the page and show the filter form with buttons in bottom of the page
 
     return (
-        <div className=" lg:w-full w-fit lg:max-w-2xl">
-            <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between w-full">
+        <div className=" w-full lg:max-w-2xl">
+            <div className="lg:hidden flex items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 justify-between min-    w-full ">
                 <span className="text-lg text-lynch-950">
                     {header ? header : 'Tableau de validation des commission'}
                 </span>
@@ -62,6 +64,7 @@ export const FilterTablePayment: FC<FilterTablePaymentProps> = ({
                     type={type}
                     typePartner={typePartner}
                     id={id}
+                    state={state}
                 />
             </div>
         </div>

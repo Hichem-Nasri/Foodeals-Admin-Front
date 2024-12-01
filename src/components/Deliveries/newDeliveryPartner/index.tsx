@@ -59,22 +59,6 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         mode: 'onBlur',
         defaultValues: {
             ...deliveryPartnerData,
-            solutions: {
-                marketPro: {
-                    selected: deliveryPartnerData.solutions.includes(
-                        PartnerSolutionType.MARKET_PRO
-                    ),
-                    deliveryCost: 0,
-                    commission: 0,
-                },
-                donatePro: {
-                    selected: deliveryPartnerData.solutions.includes(
-                        PartnerSolutionType.DONATE_PRO
-                    ),
-                    deliveryCost: 0,
-                    commission: 0,
-                },
-            },
             logo: undefined,
             cover: undefined,
         },
@@ -98,11 +82,9 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             return response.data
         },
         onSuccess: (data) => {
-            notif.notify(NotificationType.SUCCESS, 'Delivery Partner saved')
             setDeliveryId(data.id)
         },
         onError: (err) => {
-            notif.notify(NotificationType.ERROR, 'Failed to save partner')
             console.log(err)
         },
     })
@@ -169,6 +151,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 country: data.country,
                 city: data.siege,
                 region: data.region,
+                state: data.state,
                 address: data.address,
                 iframe: '',
             },
@@ -205,7 +188,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
 
     const onSaveData = async (modify?: boolean) => {
         console.log('save data')
-        if (modify) {
+        if (modify === true) {
             setStatus(PartnerStatusType.IN_PROGRESS)
             return
         }

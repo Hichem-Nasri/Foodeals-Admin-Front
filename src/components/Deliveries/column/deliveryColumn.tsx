@@ -27,7 +27,7 @@ import {
 } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { z } from 'zod'
-import { getListActions } from './getListActions'
+import { GetListActions } from './getListActions'
 
 const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()
 
@@ -95,11 +95,6 @@ export const columnsDeliveriesTable = (
         header: 'Email',
         footer: (info) => info.column.id,
     }),
-    columnDeliveriesTableHelper.accessor('status', {
-        cell: (info) => null,
-        header: '',
-        footer: (info) => info.column.id,
-    }),
     columnDeliveriesTableHelper.accessor('solutions', {
         cell: (info) => (
             <div className="flex items-center gap-1">
@@ -116,8 +111,8 @@ export const columnsDeliveriesTable = (
     }),
     columnDeliveriesTableHelper.accessor('id', {
         cell: (info) => {
-            const status = info.row.getValue('status') as string
-            const list = getListActions(
+            const status = info.row.original.status
+            const list = GetListActions(
                 info.getValue(),
                 status,
                 archive,

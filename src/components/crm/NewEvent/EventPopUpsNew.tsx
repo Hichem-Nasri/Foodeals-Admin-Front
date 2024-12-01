@@ -80,7 +80,7 @@ export const EventPopUpsNew = ({
     }, [open])
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto h-screen overflow-y-scroll scroll-smooth">
+        <div className="flex flex-col gap-[0.625rem] w-full  lg:mb-0 mb-20  h-screen overflow-auto scroll-smooth">
             {!isMobile && (
                 <TopBar
                     status={PartnerStatusType.IN_PROGRESS}

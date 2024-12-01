@@ -23,16 +23,31 @@ import { AppRoutes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
 import { capitalize } from '@/types/utils'
 import { PartnerContractStatus } from './PartnerContractStatus'
+import { GetListActions } from './column/getActionsList'
+import { PartnerEntitiesType } from '@/types/GlobalType'
 
 interface PartnerCardProps {
+    refetch: () => void
+    archive: boolean
     partner?: PartnerType
 }
 
-export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
+export const PartnerCard: FC<PartnerCardProps> = ({
+    partner,
+    archive,
+    refetch,
+}) => {
     const router = useRouter()
     if (!partner) return
 
     const dataArray = [
+        {
+            label:
+                partner.type == PartnerEntitiesType.SUB_ENTITY
+                    ? 'S.COMPTE'
+                    : 'PRINCIPAL',
+            icon: Building,
+        },
         {
             label: partner.subEntities,
             icon: Store,
@@ -42,29 +57,25 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
             icon: Users,
         },
         {
-            label: partner.offers,
+            label: 'OFFERS: ' + partner.offers,
             icon: Boxes,
         },
         {
-            label: partner.orders,
+            label: 'COMMANDE: ' + partner.orders,
             icon: HandCoins,
         },
     ]
 
-    const actions: ActionType[] = [
+    const actions: ActionType[] = GetListActions(
+        partner.id!,
         {
-            actions: (id) =>
-                router.push(AppRoutes.paymentDetails.replace(':id', id)),
-            icon: Eye,
-            label: 'Voir',
+            status: partner.contractStatus,
+            subEntities: partner.subEntities,
+            users: partner.users,
         },
-        {
-            actions: (id) =>
-                router.push(AppRoutes.collaborator.replace(':id', id)),
-            icon: Users,
-            label: 'Collaborateurs',
-        },
-    ]
+        archive,
+        refetch
+    )
     const name =
         capitalize(partner.contactDto.name.firstName) +
         ' ' +
@@ -115,6 +126,7 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
                     <ActionsMenu
                         menuList={actions}
                         className="[&>svg]:size-6 p-[0.625rem]"
+                        prospect={archive ? 'organisation' : false}
                     />
                 </div>
             </div>
@@ -123,13 +135,13 @@ export const PartnerCard: FC<PartnerCardProps> = ({ partner }) => {
                 <div className="flex flex-wrap gap-[0.375rem]">
                     {dataArray.map((data, index) => (
                         <div
-                            key={data.label + index}
+                            key={index.toString()}
                             className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
                         >
                             <data.icon size={18} key={data.label} />
                             <Label
                                 label={data.label.toString()}
-                                className="text-lynch-500"
+                                className="text-lynch-500 font-semibold text-xs"
                             />
                         </div>
                     ))}

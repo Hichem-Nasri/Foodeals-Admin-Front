@@ -1,12 +1,12 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
+import { API_URL } from '..'
 
 export const ConfirmCommission = async (id: string) => {
     try {
         const response = await api
-            .post(
-                'http://localhost:8080/api/v1/payments/receive?type=COMMISSION',
-                { id }
-            )
+            .post(`${API_URL}/v1/payments/receive?type=COMMISSION`, {
+                id,
+            })
             .catch((error) => {
                 throw {
                     status: error.response.status,

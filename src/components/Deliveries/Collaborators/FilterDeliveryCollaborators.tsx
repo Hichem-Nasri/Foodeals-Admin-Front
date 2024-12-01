@@ -44,6 +44,7 @@ export const FilterDeliveryCollaborators: FC<
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
+                    archive={archive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -52,6 +53,7 @@ export const FilterDeliveryCollaborators: FC<
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
+                    archive={archive}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

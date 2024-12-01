@@ -3,21 +3,26 @@ import { InputFieldForm } from '@/components/custom/InputField'
 import { SelectField } from '@/components/custom/SelectField'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+import { Form } from '@/components/ui/form'
 import { DateFilter } from '@/components/utils/DateFilters'
+import { FilterCity } from '@/components/utils/FilterCity'
 import { FilterManager } from '@/components/utils/FilterManger'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
+import { FilterRegion } from '@/components/utils/FilterRegion'
 import MobileHeader from '@/components/utils/MobileHeader'
 import { SchemaCollaborators } from '@/types/collaboratorsUtils'
 import { PartnerSolutionType } from '@/types/partnersType'
-import {
-    Dialog,
-    DialogTrigger,
-    DialogContent,
-    DialogTitle,
-} from '@radix-ui/react-dialog'
+import { capitalize } from '@/types/utils'
+
 import { ListFilter, Mail, PhoneCall, Eraser, X, Check } from 'lucide-react'
 import { FC } from 'react'
-import { UseFormReturn, Form } from 'react-hook-form'
+import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 interface FormFilterCollaboratorProps {
@@ -25,6 +30,7 @@ interface FormFilterCollaboratorProps {
     onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
+    archive: boolean
 }
 
 export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
@@ -32,7 +38,12 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
     onSubmit,
     setOpen,
     open,
+    archive,
 }) => {
+    console.log(
+        '+++++++++++++++= FormFilterCollaborator +++++++++++++++',
+        `${archive}`
+    )
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="flex  items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 lg:px-5 lg:py-3 hover:text-black hover:bg-neutral-100 my-4 lg:my-0 bg-white">
@@ -44,6 +55,7 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
+                    archive={archive}
                 />
             </DialogContent>
         </Dialog>
@@ -54,12 +66,14 @@ interface FormCollaboratorProps {
     form: UseFormReturn<z.infer<typeof SchemaCollaborators>>
     onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
 }
 
 const FormCollaborator: FC<FormCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
+    archive,
 }) => {
     const { handleSubmit, control } = form
     return (
@@ -84,13 +98,35 @@ const FormCollaborator: FC<FormCollaboratorProps> = ({
                             control={control}
                             name="collaborators"
                             label="Collaborateurs"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
+                            type={`DELIVERY_PARTNER&${archive}`}
                         />
                         <SelectField
                             control={control}
-                            name="rolaName"
+                            name="roleName"
                             label="Role"
-                            options={[]}
+                            options={[
+                                'MANAGER',
+                                'SALES_MANAGER',
+                                'DELIVERY_MAN',
+                                'LEAD',
+                            ].map((role) => ({
+                                key: role,
+                                label: capitalize(role.replace('_', ' ')),
+                            }))}
+                        />
+                    </div>
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
+                        <FilterCity
+                            control={control}
+                            name="city"
+                            label="Ville"
+                            type={'DELIVERY'}
+                        />
+                        <FilterRegion
+                            control={control}
+                            name="region"
+                            label="Région"
+                            type={'DELIVERY'}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">

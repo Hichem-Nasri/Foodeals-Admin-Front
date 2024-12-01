@@ -7,13 +7,17 @@ import { columnsSubAccountTable } from '@/components/Partners/column/subentities
 import { HeaderSubAccount } from '@/components/Partners/subAccount/HeaderSubAccount'
 import PaginationData from '@/components/utils/PaginationData'
 import { useNotification } from '@/context/NotifContext'
+import { fetchSubEntities } from '@/lib/api/partner/fetchSubEntities'
 import fetchSubPartner from '@/lib/api/partner/fetchSubPartner'
+import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
 import {
     NotificationType,
+    PartnerInfoDto,
     TotalValueProps,
     TotalValues,
 } from '@/types/GlobalType'
 import { SubAccountPartners } from '@/types/partnersType'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import {
     ColumnFiltersState,
@@ -26,7 +30,10 @@ import {
 import { table } from 'console'
 import { RotateCw, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { SubAccountCard } from './SubAccountCard'
 
 interface SubAccountProps {
     id: string
@@ -38,24 +45,39 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
         React.useState<ColumnFiltersState>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const notify = useNotification()
+    const [archive, setArchive] = useState(false)
     const router = useRouter()
+    const [open, setOpen] = useState(false)
+    const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
+        name: '',
+        avatarPath: '',
+        id: '',
+        city: '',
+    })
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const { data, isLoading, refetch, isRefetching, error } = useQuery({
         queryKey: ['subEntities', id],
         queryFn: async () => {
             try {
-                const res = await fetchSubPartner(
+                const res = await fetchSubEntities(
                     id,
+                    'PARTNERS',
                     totals.currentPage,
-                    totals.pageSize
+                    totals.pageSize,
+                    filterData,
+                    archive
                 )
                 if (res.status === 500)
                     throw new Error('Error fetching partners')
+                const { partnerInfoDto, subentities } = res.data
+                setPartner(partnerInfoDto)
                 setTotals({
                     ...totals,
-                    totalPages: res.data.totalPages,
-                    totalElements: res.data.totalElements,
+                    totalPages: subentities.totalPages,
+                    totalElements: subentities.numberOfElements,
                 })
-                setSubAccount(res.data.content as SubAccountPartners[])
+                setSubAccount(subentities.content as SubAccountPartners[])
                 return res.data
             } catch (e) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -66,7 +88,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
     })
     const table = useReactTable({
         data: subAccount,
-        columns: columnsSubAccountTable(router),
+        columns: columnsSubAccountTable(router, archive, refetch),
         state: {
             columnFilters,
         },
@@ -76,25 +98,59 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-    // const partnerData = {
-    //     id: 1,
-    //     name: 'Marjane',
-    //     avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=MarjaneGourmet',
-    //     city: 'Casablanca',
-    // }
+
+    const form = useForm<z.infer<typeof SchemaFilter>>({
+        resolver: zodResolver(SchemaFilter),
+        mode: 'onBlur',
+        defaultValues: filterData,
+    })
+
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+        console.log('Filters:', data)
+        setFilterData(data)
+        setOpen(false)
+    }
+
+    const handleArchive = () => {
+        setArchive((prev) => !prev)
+    }
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setTotals((prev) => ({
+            ...prev,
+            currentPage: 0,
+        }))
+        refetch()
+    }, [archive, filterData])
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4 scroll">
             <HeaderSubAccount
-                collaborators={subAccount}
                 table={table}
                 totalElements={totals.totalElements}
+                archive={archive}
+                handleArchive={handleArchive}
+                isFetching={isLoading || isRefetching}
+                form={form}
+                onSubmit={onSubmit}
+                open={open}
+                setOpen={setOpen}
             />
             <DataTable
                 title="Listes des sous comptes"
                 table={table}
                 data={subAccount}
-                transform={(value) => <Fragment key={value.id} />}
-                back={false}
+                transform={(value) => (
+                    <SubAccountCard
+                        refetch={refetch}
+                        partner={value}
+                        archive={archive}
+                        key={value.id}
+                    />
+                )}
+                partnerData={{
+                    ...partner,
+                    avatar: partner.avatarPath,
+                }}
                 isLoading={isLoading || isRefetching}
                 hideColumns={['contractStatus']}
             />
@@ -107,13 +163,6 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                 pageSize={totals.pageSize}
                 refetch={refetch}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 ">
-                <CustomButton
-                    label="Retour"
-                    className="w-full"
-                    IconLeft={ArrowLeft}
-                />
-            </div>
         </div>
     )
 }

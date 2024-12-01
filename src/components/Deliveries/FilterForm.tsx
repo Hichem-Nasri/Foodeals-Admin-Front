@@ -20,6 +20,7 @@ import MobileHeader from '../utils/MobileHeader'
 import { FilterOrganizations } from '../utils/FilterOrganizations'
 import { FilterCity } from '../utils/FilterCity'
 import { FilterManager } from '../utils/FilterManger'
+import { FilterRegion } from '../utils/FilterRegion'
 
 interface FormFilterProps {
     form: UseFormReturn<any>

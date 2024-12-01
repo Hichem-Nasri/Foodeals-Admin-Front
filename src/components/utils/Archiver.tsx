@@ -43,6 +43,7 @@ export const Archiver: FC<ArchiverProps> = ({
     handleArchiver,
 }) => {
     const type = title.split(' ')[0].toLowerCase()
+    const [isLoading, setIsLoading] = React.useState(false)
     const form = useForm<z.infer<typeof ArchivePartnerSchema>>({
         resolver: zodResolver(ArchivePartnerSchema),
         mode: 'onBlur',
@@ -53,7 +54,9 @@ export const Archiver: FC<ArchiverProps> = ({
     const queryClient = useQueryClient()
 
     const onSubmit = async (data: z.infer<typeof ArchivePartnerSchema>) => {
+        setIsLoading(true)
         handleArchiver(data)
+        setIsLoading(false)
     }
 
     const { handleSubmit, control } = form
@@ -114,7 +117,7 @@ export const Archiver: FC<ArchiverProps> = ({
                                         label="Annuler"
                                         IconRight={X}
                                         variant="outline"
-                                        className="h-fit py-3"
+                                        className="h-fit py-3 px-5 rounded-[12px] gap-1"
                                         type="button"
                                         onClick={() => setOpen(false)}
                                     />
@@ -126,7 +129,8 @@ export const Archiver: FC<ArchiverProps> = ({
                                                 : ArchiveRestore
                                         }
                                         type="submit"
-                                        className="h-fit py-3"
+                                        className="h-fit py-3 px-5 rounded-[12px] gap-1"
+                                        disabled={isLoading}
                                     />
                                 </div>
                             </div>

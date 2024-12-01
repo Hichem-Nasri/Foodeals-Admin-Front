@@ -22,7 +22,11 @@ import { AssociationCard } from './AssociationCard'
 import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
 import { fetchAssociations } from '@/lib/api/association/getAssociations'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { PartnerType } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'
 import PaginationData from '../utils/PaginationData'
@@ -44,29 +48,29 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     const [associations, setAssociations] = useState<AssociationType[]>([])
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [archive, setArchive] = useState(() => false)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
     const { error, isLoading, isRefetching, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const data = await fetchPartners(
                     'ASSOCIATIONS',
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     filterData,
                     archive
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
-                setTotalElements(data.data?.totalElements)
-                setTotalPages(data.data?.totalPages)
+                setTotals((prev) => ({
+                    ...prev,
+                    totalElements: data.data.numberOfElements,
+                    totalPages: data.data.totalPages,
+                }))
                 setAssociations(data.data.content)
                 return data.data
             } catch (error) {
@@ -112,7 +116,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     if (error) return <MyError message={error.message} />
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
+        <div className="flex flex-col gap-[0.625rem] w-full px-2 lg:px-0 lg:pr-2 lg:mb-0 mb-4">
             <FiltersAssociation
                 open={open}
                 setOpen={setOpen}
@@ -121,7 +125,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 onSubmit={onSubmit}
                 archive={archive}
                 handleArchive={handleArchive}
-                totalElements={totalElements}
+                totalElements={totals.totalElements}
                 isFetching={isLoading || isRefetching}
             />
             <DataTable
@@ -129,15 +133,21 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 table={table}
                 title="Liste des associations"
                 transform={(value) => (
-                    <AssociationCard association={value} archive={archive} />
+                    <AssociationCard
+                        association={value}
+                        archive={archive}
+                        refetch={refetch}
+                    />
                 )}
                 isLoading={isLoading || isRefetching}
             />
             <PaginationData
-                pageSize={pageSize}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
+                pageSize={totals.pageSize}
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
                 refetch={refetch}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 ">

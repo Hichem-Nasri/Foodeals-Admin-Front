@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { act } from 'react'
+import { GetListAssociation } from './getAssociationList'
 
 const columnHelper = createColumnHelper<AssociationType>()
 
@@ -179,161 +180,25 @@ export const columnsAssociationsTable = (
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
-            console.log('Archive', archive)
-            if (archive === true) {
-                const actionsList = [
-                    {
-                        actions: () => {},
-                        label: 'Info',
-                        icon: Info,
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data: any,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archiveData: ArchiveType = {
-                                action: 'DE_ARCHIVE',
-                                reason: data?.archiveType,
-                                details: data?.archiveReason,
-                            }
-                            const res = await archivePatner(id, archiveData)
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(
-                                            true,
-                                            'désarchivage effectué',
-                                            ['partners', 0, 10]
-                                        )
-                                    refetch()
-                                })
-                                .catch((err) => {
-                                    handleDone &&
-                                        handleDone(
-                                            false,
-                                            'Failed to archive',
-                                            []
-                                        )
-                                    console.log(err)
-                                })
-                        },
-                        label: 'Désarchiver',
-                        icon: ArchiveX,
-                    },
-                ]
-                return (
-                    <ActionsMenu
-                        id={info.getValue()}
-                        menuList={actionsList}
-                        prospect={'organisation'}
-                    />
-                )
-            }
             const id = (info.row.getValue('partner') as PartnerInfoDto)
                 .id as string
-            const subEntities = info.row.getValue('subEntities') as number
-            const collaborator = info.row.getValue('users') as number
-            const status = info.row.getValue('status') as PartnerStatusType
-            const listActions = [
+            const listActions = GetListAssociation(
+                archive,
+                refetch,
                 {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.newAssociation.replace(':id', id!)
-                        ),
-                    icon: Eye,
-                    label: 'Voir',
+                    status: info.row.original.status,
+                    subEntities: info.row.original.subEntities,
+                    collaborator: info.row.original.users,
                 },
-                {
-                    actions: () => {
-                        router.push(
-                            AppRoutes.newAssociation.replace(':id', id!) +
-                                '?mode=edit'
-                        )
-                    },
-                    icon: Pen,
-                    label: 'Modifier',
-                },
-                {
-                    actions: () =>
-                        router.push(
-                            AppRoutes.collaboratorAssociation.replace(
-                                ':id',
-                                id!
-                            )
-                        ),
-                    icon: Users,
-                    label: 'Collaborateurs',
-                    // shouldNotDisplay: collaborator === 0,
-                },
-                {
-                    actions: () =>
-                        router.push(AppRoutes.sieges.replace(':id', id!)),
-                    icon: Store,
-                    label: 'Sièges',
-                    // shouldNotDisplay: subEntities === 0,
-                },
-                {
-                    actions: async () => {
-                        try {
-                            const contractData = await getContract(id).catch(
-                                (error) => {
-                                    throw new Error('Error getting contract')
-                                }
-                            )
-                            const url = window.URL.createObjectURL(
-                                contractData as Blob
-                            )
-                            window.open(url, '_blank') // Opens the contract in a new tab
-                        } catch (error) {
-                            console.error('Error opening contract:', error)
-                        }
-                    },
-                    icon: FileBadge,
-                    label: 'Contrat',
-                    shouldNotDisplay: status !== PartnerStatusType.VALID,
-                },
-                {
-                    actions: async (
-                        id: string,
-                        data: any,
-                        handleDone?: (
-                            type: boolean,
-                            message: string,
-                            query: any[]
-                        ) => void
-                    ) => {
-                        const archiveData: ArchiveType = {
-                            action: 'ARCHIVE',
-                            reason: data?.archiveType,
-                            details: data?.archiveReason,
-                        }
-                        const res = await archivePatner(id, archiveData).catch(
-                            (err) => {
-                                handleDone &&
-                                    handleDone(false, 'Failed to archive', [])
-                                console.log(err)
-                            }
-                        )
-                        if (res.status === 204) {
-                            handleDone &&
-                                handleDone(true, "L'archive a été effectuée", [
-                                    'partners',
-                                    '0',
-                                    '10',
-                                ])
-                        }
-                        console.log(res)
-                    },
-                    icon: Archive,
-                    label: 'Archiver',
-                },
-            ]
-            return <ActionsMenu id={id} menuList={listActions} />
+                id
+            )
+            return (
+                <ActionsMenu
+                    id={id}
+                    menuList={listActions}
+                    prospect={archive ? 'organisation' : false}
+                />
+            )
         },
         header: 'Activité',
     }),

@@ -39,7 +39,7 @@ const DetailsArchive = ({
     id: string
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
-    type: 'prospect' | 'organisation' | 'sub-entites' | false
+    type: 'prospect' | 'organisation' | 'sub-entites' | 'users' | false
 }) => {
     const [details, setDetails] = React.useState<DetailsArchiveType[]>([])
     const [selected, setSelected] = React.useState<DetailsArchiveType | null>(
@@ -53,7 +53,7 @@ const DetailsArchive = ({
             try {
                 const data = await fetchDetailsArchived(
                     id,
-                    type,
+                    !type ? 'organisation' : type,
                     total.currentPage,
                     total.pageSize
                 )
@@ -97,6 +97,7 @@ const DetailsArchive = ({
                         <div className="flex gap-2 items-center justify-start px-4">
                             {data?.map((detail, index) => (
                                 <button
+                                    key={index}
                                     type="button"
                                     title={
                                         detail.action ? 'ARCHIVE' : 'RESTORE'

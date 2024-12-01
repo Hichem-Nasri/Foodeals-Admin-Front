@@ -1,11 +1,36 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { API_CITIES, API_COUNTRIES } from '../api_url'
+import { API_URL } from '.'
 
 type AddressType = {
     countries: MultiSelectOptionsType[]
     city: MultiSelectOptionsType[]
     region: MultiSelectOptionsType[]
+}
+
+export const getAllStates = async () => {
+    const resState = await api
+        .get(API_URL.replace('api', 'v1') + '/states')
+        .then((res) => res.data)
+        .then((data) => {
+            return data.map(
+                (state: {
+                    id: string
+                    name: string
+                }): MultiSelectOptionsType => {
+                    return {
+                        key: state.name,
+                        label: state.name,
+                        id: state.id,
+                    }
+                }
+            )
+        })
+        .catch((error) => {
+            throw new Error(error)
+        })
+    return resState
 }
 
 export const getAllCities = async () => {
@@ -35,7 +60,7 @@ export const getAllCities = async () => {
 
 export const getCountries = async () => {
     const resCountry = await api
-        .get(API_COUNTRIES)
+        .get(API_URL.replace('api', 'v1') + '/countries')
         .then((res) => res.data)
         .then((data) => {
             console.log('data', data)
@@ -59,9 +84,33 @@ export const getCountries = async () => {
     return resCountry
 }
 
-export const getCities = async (countryID: string) => {
+export const getState = async (countryID: string) => {
+    const resState = await api
+        .get(`${API_URL.replace('api', 'v1')}/countries/${countryID}/states`)
+        .then((res) => res.data)
+        .then((data) => {
+            return data.map(
+                (state: {
+                    id: string
+                    name: string
+                }): MultiSelectOptionsType => {
+                    return {
+                        key: state.name,
+                        label: state.name,
+                        id: state.id,
+                    }
+                }
+            )
+        })
+        .catch((error) => {
+            throw new Error(error)
+        })
+    return resState
+}
+
+export const getCities = async (stateID: string) => {
     const resCity = await api
-        .get(`${API_COUNTRIES}/${countryID}/cities`)
+        .get(`${API_URL.replace('api', 'v1')}/states/${stateID}/cities`)
         .then((res) => res.data)
         .then((data) => {
             return data.map(
@@ -85,7 +134,7 @@ export const getCities = async (countryID: string) => {
 
 export const getRegions = async (cityID: string) => {
     const resRegion = await api
-        .get(`${API_CITIES}/${cityID}/regions`)
+        .get(`${API_URL.replace('api', 'v1')}/cities/${cityID}/regions`)
         .then((res) => res.data)
         .then((data) => {
             return data.map(

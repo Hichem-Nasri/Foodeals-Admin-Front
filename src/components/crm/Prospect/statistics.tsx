@@ -1,5 +1,5 @@
 'use client'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
 import { headers } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
@@ -11,6 +11,7 @@ import {
     UsersRound,
 } from 'lucide-react'
 import React, { FC, useEffect, useState } from 'react'
+import { API_URL } from '@/lib/api'
 
 interface StatisticsProps {
     activeLeads: number
@@ -19,7 +20,7 @@ interface StatisticsProps {
     converted: number
 }
 
-const API_ENDPOINT = 'http://localhost:8080/api/v1/crm/prospects/statistics'
+const API_ENDPOINT = `${API_URL}/v1/crm/prospects/statistics`
 
 interface FcStatisticsProps {
     type: string

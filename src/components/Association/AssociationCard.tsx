@@ -23,94 +23,59 @@ import { AssociationType } from '@/types/association'
 import { PaymentStatus } from '../payment/PaymentStatus'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PaymentStatusType } from '@/types/PaymentType'
-import { PartnerSolutionType } from '@/types/partnersType'
+import { ContractStatus, PartnerSolutionType } from '@/types/partnersType'
 import { getContract } from '@/lib/api/partner/getContract'
 import DetailsArchive from '../utils/DetailsArchive'
+import { GetListAssociation } from './column/getAssociationList'
+import { ContractStatusPartner } from '@/types/GlobalType'
+import { PartnerStatus } from '../Partners/PartnerStatus'
 
 interface AssociationCardProps {
     association?: AssociationType
     archive?: boolean
+    refetch: () => void
 }
 
 export const AssociationCard: FC<AssociationCardProps> = ({
     association,
     archive,
+    refetch,
 }) => {
-    const router = useRouter()
     if (!association) return
-
+    console.log(association)
     const dataArray = [
         {
-            label: `Association : ${association.associations}`,
+            label: `Association : ${association.associations}`.toLocaleUpperCase(),
             icon: HeartHandshake,
         },
         {
-            label: `siège : ${association.users}`,
+            label: `siège : ${association.users}`.toLocaleUpperCase(),
             icon: Store,
         },
         {
-            label: `Donation : ${association.donations}`,
+            label: `Donation : ${association.donations}`.toLocaleUpperCase(),
             icon: HeartHandshake,
         },
         {
-            label: `récupération : ${association.recovered}`,
+            label: `récupération : ${association.recovered}`.toLocaleUpperCase(),
             icon: HeartHandshake,
         },
         {
-            label: `collaborateurs : ${association.subEntities}`,
+            label: `collaborateurs : ${association.subEntities}`.toLocaleUpperCase(),
             icon: HandCoins,
         },
     ]
     const id = association.id
-    const listActions: ActionType[] = [
+    const listActions: ActionType[] = GetListAssociation(
+        archive!,
+        refetch,
         {
-            actions: () =>
-                router.push(AppRoutes.newAssociation.replace(':id', id!)),
-            icon: Eye,
-            label: 'Voir',
+            status: association.status,
+            subEntities: association.subEntities,
+            collaborator: association.users,
         },
-        {
-            actions: () => {
-                router.push(
-                    AppRoutes.newAssociation.replace(':id', id!) + '?mode=edit'
-                )
-            },
-            icon: Pen,
-            label: 'Modifier',
-        },
-        {
-            actions: () =>
-                router.push(AppRoutes.collaborator.replace(':id', id!)),
-            icon: Users,
-            label: 'Collaborateurs',
-            shouldNotDisplay: association.users === 0,
-        },
-        {
-            actions: () => router.push(AppRoutes.sieges.replace(':id', id!)),
-            icon: Store,
-            label: 'Sièges',
-            shouldNotDisplay: association.subEntities === 0,
-        },
-        {
-            actions: async () => {
-                try {
-                    const contractData = await getContract(id)
-                    const url = window.URL.createObjectURL(contractData as Blob)
-                    window.open(url, '_blank') // Opens the contract in a new tab
-                } catch (error) {
-                    console.error('Error opening contract:', error)
-                }
-            },
-            icon: FileBadge,
-            label: 'Contrat',
-            shouldNotDisplay: association.status !== 'VALIDATED',
-        },
-        {
-            actions: () => {},
-            icon: Archive,
-            label: 'Archiver',
-        },
-    ]
+        id
+    )
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -143,8 +108,8 @@ export const AssociationCard: FC<AssociationCardProps> = ({
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                    <PaymentStatus
-                        status={association.status as PaymentStatusType}
+                    <PartnerStatus
+                        status={ContractStatusPartner[association.status]}
                     />
                     <div className="flex items-center gap-[0.375rem]">
                         <Link href={`tel:${association.responsible.phone}`}>
@@ -161,14 +126,11 @@ export const AssociationCard: FC<AssociationCardProps> = ({
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
                             />
                         </Link>
-                        {archive ? (
-                            <ActionsMenu
-                                menuList={listActions}
-                                className="[&>svg]:size-6 p-[0.625rem]"
-                            />
-                        ) : (
-                            <DetailsArchive id={id} />
-                        )}
+                        <ActionsMenu
+                            menuList={listActions}
+                            className="[&>svg]:size-6 p-[0.625rem]"
+                            prospect={archive ? 'organisation' : false}
+                        />
                     </div>
                 </div>
             </div>

@@ -31,6 +31,7 @@ interface InputPhoneFieldProps {
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
     styleIcon?: string
+    isLoaded?: boolean
 }
 
 export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
@@ -45,6 +46,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
     IconRight,
     IconLeft,
     styleIcon,
+    isLoaded,
 }): JSX.Element => {
     const selectedCountry = countryCodes.find(
         (option) => option.value === countryCode
@@ -115,6 +117,7 @@ export const InputPhoneField: React.FC<InputPhoneFieldProps> = ({
                                     IconRight={IconRight}
                                     IconLeft={PhoneCall}
                                     disabled={disabled}
+                                    isLoaded={isLoaded}
                                 />
                             </div>
                             <FormMessage />

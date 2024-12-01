@@ -59,39 +59,41 @@ export const FormEngagement: FC<FormEngagementProps> = ({
         <Accordion
             type="single"
             collapsible
-            className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
+            className="bg-white lg:p-5 px-4 py-6 rounded-[30px] lg:rounded-[14px]"
             defaultValue="features"
         >
             <AccordionItem
                 value="features"
                 className="text-lynch-400 text-[1.375rem] font-normal"
             >
-                <AccordionTrigger className="font-normal text-[1.375rem] py-0">
+                <AccordionTrigger className="font-normal text-lg lg:text-[1.375rem] py-0">
                     Fonctionnalités
                 </AccordionTrigger>
                 <AccordionContent className="pt-7">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Form {...form}>
                             <div className="flex flex-col justify-end gap-[1.875rem]">
-                                <div className="flex lg:flex-row flex-col lg:items-center gap-3">
-                                    <InputFieldForm
-                                        label="Nombre de Sieges"
-                                        name="numberOfSieges"
-                                        control={form.control}
-                                        placeholder="Saisir le nombre des Sieges"
-                                        type="number"
-                                        disabled={disabled}
-                                        classNameParent="lg:w-1/4"
-                                    />
-                                    <CustomButton
-                                        className={`${
-                                            !id && 'hidden'
-                                        } h-fit py-4 mt-auto`}
-                                        label="Voir la liste"
-                                        IconRight={LayoutList}
-                                        onClick={showAllPartners}
-                                        disabled={disabled}
-                                    />
+                                <div className="flex lg:flex-row flex-col-reverse lg:items-center gap-3">
+                                    <div className="flex flex-col lg:flex-row gap-3 w-full lg:w-fit ">
+                                        <InputFieldForm
+                                            label="Nombre de Sieges"
+                                            name="numberOfSieges"
+                                            control={form.control}
+                                            placeholder="Saisir le nombre des Sieges"
+                                            type="number"
+                                            disabled={disabled}
+                                            classNameParent="lg:w-full"
+                                        />
+                                        <CustomButton
+                                            className={`${
+                                                !id && 'hidden'
+                                            } h-fit py-4 mt-auto`}
+                                            label="Voir la liste"
+                                            IconRight={LayoutList}
+                                            onClick={showAllPartners}
+                                            disabled={disabled}
+                                        />
+                                    </div>
                                     <div>
                                         <div className="flex flex-col gap-3 h-full text-lynch-400 lg:min-w-40">
                                             <Label

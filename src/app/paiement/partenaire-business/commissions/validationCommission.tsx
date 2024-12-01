@@ -90,7 +90,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                     totalCommission: statistics.totalCommission.amount,
                     totalSales: statistics.total.amount,
                     totalPages: data.totalPages,
-                    totalElements: data.totalElements,
+                    totalElements: data.numberOfElements,
                 })
                 setCommission(data.content)
                 return response.data
@@ -111,7 +111,6 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
         setDateAndPartner(data)
-        refetch()
     }
 
     const { handleSubmit } = form
@@ -129,9 +128,11 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    if (error) {
-        return <MyError message={error.message} />
-    }
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setTotals({ ...totals, currentPage: 0 })
+        refetch()
+    }, [dateAndPartner])
 
     return (
         <Fragment>
@@ -148,6 +149,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                             onSubmit={onSubmit}
                             setOpen={setOpen}
                             type="all"
+                            state="commissions"
                         />
                         <CardTotalValue
                             Icon={Coins}

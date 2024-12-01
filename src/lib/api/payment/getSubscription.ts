@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_SUBSCRIPTIONS } from '@/lib/api_url'
 import { PaymentCommission } from '@/types/paymentUtils'
 

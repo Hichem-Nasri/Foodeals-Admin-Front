@@ -7,7 +7,53 @@ export const DeliveryPartnerSchema = z.object({
     companyName: z.string().min(3),
     companyType: z.array(z.string()).min(1),
     responsibleId: z.string().min(3),
-    solutions: z.array(z.string()).min(1),
+    solutions: z
+        .object({
+            marketPro: z.object({
+                selected: z.boolean().default(false),
+                deliveryCost: z
+                    .number()
+                    .min(1, 'le cout de livraison doit etre superieur a 0')
+                    .default(0)
+                    .optional(),
+                commission: z
+                    .number()
+                    .min(1, 'le cout de commution doit etre superieur a 0')
+                    .default(0)
+                    .optional(),
+            }),
+            donatePro: z.object({
+                selected: z.boolean().default(false),
+                deliveryCost: z
+                    .number()
+                    .min(1, 'le cout de livraison doit etre superieur a 0')
+                    .default(0)
+                    .optional(),
+                commission: z
+                    .number()
+                    .min(1, 'le cout de commution doit etre superieur a 0')
+                    .default(0)
+                    .optional(),
+            }),
+        })
+        .refine((value) => {
+            if (
+                value.marketPro.selected &&
+                !value.marketPro.deliveryCost &&
+                !value.marketPro.commission
+            ) {
+                return 'Please fill in the delivery cost and commission for Market Pro solution'
+            }
+            if (
+                value.donatePro.selected &&
+                !value.donatePro.deliveryCost &&
+                !value.donatePro.commission
+            ) {
+                return 'Please fill in the delivery cost and commission for Donate Pro solution'
+            }
+            return true
+        }),
+    solutionsList: z.array(z.string()).min(1),
     phone: z
         .string()
         .min(9, 'Le numéro de téléphone doit contenir au moins 9 chiffres')
@@ -17,9 +63,11 @@ export const DeliveryPartnerSchema = z.object({
     email: z.string().email('Veuillez entrer une adresse email valide'),
     country: z.string(),
     siege: z.string().min(3),
+    state: z.string().min(3),
     zone: z.array(z.string()).min(1),
     region: z.string().min(3),
     address: z.string().min(3),
+    documents: z.array(z.instanceof(File).optional()).optional(),
 })
 
 export type DeliveryPartnerType = {
@@ -28,27 +76,50 @@ export type DeliveryPartnerType = {
     companyName: string
     companyType: string[]
     responsibleId: string
-    solutions: string[]
+    solutionsList: string[]
     phone: string
     email: string
     country: string
+    state: string
     siege: string
     region: string
     zone: string[]
     address: string
     documents: File[]
-    deliveryCost: number
-    commission: number
+    solutions: {
+        marketPro: {
+            selected: boolean
+            deliveryCost: number
+            commission: number
+        }
+        donatePro: {
+            selected: boolean
+            deliveryCost: number
+            commission: number
+        }
+    }
     status?: string
 }
 
-export const emptyDeliveryPartner = {
-    logo: null,
-    cover: null,
+export const emptyDeliveryPartner: z.infer<typeof DeliveryPartnerSchema> = {
+    logo: '',
+    cover: '',
     companyName: '',
     companyType: [],
     responsibleId: '',
-    solutions: [],
+    solutionsList: [],
+    solutions: {
+        marketPro: {
+            selected: false,
+            deliveryCost: 0,
+            commission: 0,
+        },
+        donatePro: {
+            selected: false,
+            deliveryCost: 0,
+            commission: 0,
+        },
+    },
     phone: '',
     email: '',
     country: '',
@@ -56,8 +127,8 @@ export const emptyDeliveryPartner = {
     zone: [],
     address: '',
     documents: [],
-    deliveryCost: 0,
-    commission: 0,
+    region: '',
+    state: '',
 }
 
 // export const importDeliveryData: PartnerPOST = (data: )
@@ -77,17 +148,6 @@ export const defaultDeliveryPartnerData = {
     country: '',
 }
 
-export const DeliveryPartnerSolutionSchema = z.object({
-    solutions: z.array(z.string()).min(1, 'selectionner au moins une solution'),
-    documents: z.array(z.instanceof(File).optional()).optional(),
-    deliveryCost: z
-        .number()
-        .min(1, 'le cout de livraison doit etre superieur a 0'),
-    commission: z
-        .number()
-        .min(1, 'le cout de commution doit etre superieur a 0'),
-})
-
 export const defaultDeliveryPartnerSolutionData = {
     solutions: [],
     documents: null,
@@ -96,8 +156,7 @@ export const defaultDeliveryPartnerSolutionData = {
 }
 
 export interface DeliveryPartnerSchemaType
-    extends z.infer<typeof DeliveryPartnerSchema>,
-        z.infer<typeof DeliveryPartnerSolutionSchema> {}
+    extends z.infer<typeof DeliveryPartnerSchema> {}
 
 export const CollaboratorDeliverySchema = z.object({
     avatar: z
@@ -188,6 +247,14 @@ export const CollaboratorDeliveryTypeSchema = z.object({
     phone: z.string(),
     role: z.string(),
     organization: z.string(),
+    partner: z
+        .object({
+            id: z.string(),
+            name: z.string(),
+            avatarPath: z.string(),
+            city: z.string(),
+        })
+        .optional(),
     status: z.string(),
     gender: z.string(),
     nationalId: z.string(),

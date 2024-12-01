@@ -1,5 +1,6 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { CrmObjectType } from '@/types/CrmType'
+import { API_URL } from '../..'
 
 export async function createEvents(event: CrmObjectType, id: string) {
     try {
@@ -10,10 +11,7 @@ export async function createEvents(event: CrmObjectType, id: string) {
             lead: 1, //Todo: Change this value to the lead id
         }
         const res = await api
-            .post(
-                `http://localhost:8080/api/v1/crm/prospects/${id}/events/create`,
-                newEvent
-            )
+            .post(`${API_URL}/v1/crm/prospects/${id}/events/create`, newEvent)
             .catch((error) => {
                 throw error
             })

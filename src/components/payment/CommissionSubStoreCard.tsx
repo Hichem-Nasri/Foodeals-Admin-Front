@@ -56,10 +56,10 @@ const CommissionSubStoreCard = ({
         },
         {
             label:
-                commission.commissionCard.amount > 0
-                    ? 'C.CARTE: ' + commission.commissionCard.amount
+                commission.commission.amount > 0
+                    ? 'C.CARTE: ' + commission.commission.amount
                     : 'C.ESPECE: ' + commission.cashCommission.amount,
-            icon: commission.commissionCard.amount > 0 ? CreditCard : Coins,
+            icon: commission.commission.amount > 0 ? CreditCard : Coins,
             className: '',
         },
     ]

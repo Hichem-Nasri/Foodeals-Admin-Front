@@ -92,7 +92,7 @@ export default function Crm() {
                 setTotals({
                     ...totals,
                     totalPages: response.data.totalPages,
-                    totalElements: response.data.totalElements,
+                    totalElements: response.data.numberOfElements,
                 })
                 return response
             } catch (error) {
@@ -108,7 +108,7 @@ export default function Crm() {
     })
     const tableAssocciation = useReactTable({
         data,
-        columns: columnCrmAssociations(router, setData, leadKo),
+        columns: columnCrmAssociations(router, setData, leadKo, refetch),
         state: {
             columnFilters,
         },
@@ -120,7 +120,7 @@ export default function Crm() {
     })
     const table = useReactTable({
         data,
-        columns: columnsCrmTable(router, setData, leadKo),
+        columns: columnsCrmTable(router, setData, leadKo, refetch),
         state: {
             columnFilters,
         },
@@ -146,7 +146,7 @@ export default function Crm() {
 
     if (error) return <MyError message={error.message} />
     return (
-        <div className="flex flex-col gap-3 w-full p-2 lg:pr-2 lg:px-0 lg-p-0">
+        <div className="flex flex-col gap-3 w-full p-2 lg:pr-2 lg:px-0 lg:p-0 pb-4 lg:pb-0">
             <SwitchProspects setSwitch={setSwitchTable} />
             <Statistics
                 type={

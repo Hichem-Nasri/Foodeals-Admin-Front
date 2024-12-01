@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { PartnerStatus } from '@/components/Partners/PartnerStatus'
 import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
 import { getSolutions } from '@/lib/utils'
@@ -32,6 +32,23 @@ export async function fetchDeliveryPartners(
     }
 }
 
+type solutionContract = {
+    solution: string
+    contractCommissionDto: {
+        deliveryAmount: number
+        deliveryCommission: number
+        withCard: any
+        withCash: any
+    }
+}
+
+contractCommissionDto: deliveryAmount: 1212
+deliveryCommission: 1212
+withCard: null
+withCash: null
+contractSubscriptionDto: null
+solution: 'pro_market'
+
 export const getDelivery = async (id: string) => {
     if (!id || id === 'new') return null
     try {
@@ -41,7 +58,15 @@ export const getDelivery = async (id: string) => {
                 throw new Error(error)
             })
         if (res.status === 200) {
-            const data: PartnerPOST = res.data
+            const data: any = res.data
+            console.log('data', data)
+            const solutions: solutionContract[] = data.solutionsContractDto
+            const marketPro = solutions.find(
+                (val) => val.solution === 'pro_market'
+            )
+            const donatePro = solutions.find(
+                (val) => val.solution === 'pro_donate'
+            )
             const deliveryData: DeliveryPartnerType = {
                 responsibleId:
                     data.contactDto?.name.firstName +
@@ -50,11 +75,12 @@ export const getDelivery = async (id: string) => {
                 email: data.contactDto?.email,
                 phone: data.contactDto?.phone,
                 address: data.entityAddressDto.address,
+                state: data.entityAddressDto.state,
                 siege: data.entityAddressDto.city,
                 region: data.entityAddressDto.region,
                 country: data.entityAddressDto.country,
                 zone:
-                    data.coveredZonesDtos.flatMap((zone) => {
+                    data.coveredZonesDtos.flatMap((zone: any) => {
                         return zone.regions.map((region: string) => {
                             return zone.city + '-' + region
                         })
@@ -63,18 +89,28 @@ export const getDelivery = async (id: string) => {
                 cover: '',
                 companyName: data.entityName,
                 companyType: data.activities || [],
-                solutions: getSolutions(data.solutions),
+                solutionsList: data.solutions,
                 documents: [],
-                deliveryCost:
-                    (data.solutionsContractDto.length > 0 &&
-                        data.solutionsContractDto.at(0)?.contractCommissionDto
-                            .deliveryAmount) ||
-                    0,
-                commission:
-                    (data.solutionsContractDto.length > 0 &&
-                        data.solutionsContractDto.at(0)?.contractCommissionDto
-                            .deliveryCommission) ||
-                    0,
+                solutions: {
+                    marketPro: {
+                        selected: marketPro ? true : false,
+                        deliveryCost:
+                            marketPro?.contractCommissionDto.deliveryAmount ||
+                            0,
+                        commission:
+                            marketPro?.contractCommissionDto
+                                .deliveryCommission || 0,
+                    },
+                    donatePro: {
+                        selected: donatePro ? true : false,
+                        deliveryCost:
+                            donatePro?.contractCommissionDto.deliveryAmount ||
+                            0,
+                        commission:
+                            donatePro?.contractCommissionDto
+                                .deliveryCommission || 0,
+                    },
+                },
                 status: ContractStatusPartner[data.status] as PartnerStatusType,
             }
             return deliveryData

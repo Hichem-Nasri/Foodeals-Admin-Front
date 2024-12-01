@@ -1,24 +1,78 @@
-'localhost:8080/v1/users/associations/f7baee18-6ff9-4c37-8edd-e2d2ce47257eea'
-
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_ASSOCIATIONS_USERS } from '@/lib/api_url'
+import { API_URL } from '..'
+
+const buildQueryString = (data: any, type: string) => {
+    const queryParts = []
+
+    if (data.startDate) {
+        queryParts.push(`startDate=${encodeURIComponent(data.startDate)}`)
+    }
+    if (data.endDate) {
+        queryParts.push(`endDate=${encodeURIComponent(data.endDate)}`)
+    }
+    if (data.companyName && data.companyName.length > 0) {
+        queryParts.push(
+            `names=${encodeURIComponent(data.companyName.join(','))}`
+        )
+    }
+    if (data.roleName) {
+        queryParts.push(`roleName=${encodeURIComponent(data.roleName)}`)
+    }
+    if (data.collaborators) {
+        queryParts.push(`collabId=${encodeURIComponent(data.collaborators)}`)
+    }
+    if (data.phone) {
+        queryParts.push(`phone=${encodeURIComponent(data.phone)}`)
+    }
+    if (data.email) {
+        queryParts.push(`email=${encodeURIComponent(data.email)}`)
+    }
+    if (data.city) {
+        queryParts.push(`leadId=${encodeURIComponent(data.city)}`)
+    }
+    if (data.solution && data.solution.length > 0) {
+        queryParts.push(
+            `solutions=${encodeURIComponent(data.solution.join(','))}`
+        )
+    }
+    if (data.status) {
+        queryParts.push(`status=${encodeURIComponent(data.status)}`)
+    }
+    if (data.city) {
+        queryParts.push(`city=${encodeURIComponent(data.city)}`)
+    }
+    if (data.region) {
+        queryParts.push(`region=${encodeURIComponent(data.region)}`)
+    }
+    if (data.companyType) queryParts.push(`entityTypes=${data.companyType}`)
+    else queryParts.push(`entityTypes=${type}`)
+    if (data.solutions)
+        queryParts.push(`solutions=${encodeURIComponent(data.solutions)}`)
+
+    return queryParts.join('&')
+}
 
 export async function getCollaborator(
     id: string,
     currentPage: number,
-    pageSize: number
+    pageSize: number,
+    archive: boolean = false,
+    filterData: any,
+    type: string
 ): Promise<any> {
     try {
-        const res = await api
-            .get(
-                API_ASSOCIATIONS_USERS +
-                    '/' +
-                    id +
-                    `?page=${currentPage}&size=${pageSize}&sort=createdAt,desc`
-            )
-            .catch((error) => {
-                throw new Error('Error fetching collaborator')
-            })
+        const queryString = buildQueryString(filterData, type)
+        const url = `${API_URL.replace(
+            'api',
+            'v1'
+        )}/users/organizations/${id}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc&deletedAt=${
+            archive ? 'true' : 'false'
+        }&${queryString}`
+        console.log('URL', url)
+        const res = await api.get(url).catch((error) => {
+            throw new Error('Error fetching collaborator')
+        })
         return res
     } catch (error) {
         console.error('Error fetching collaborator:', error)

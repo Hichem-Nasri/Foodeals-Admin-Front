@@ -1,24 +1,38 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_URL } from '.'
 
 export async function fetchCities(
     search: string,
     type: string,
-    country?: string
+    country?: string,
+    path?: string
 ) {
     try {
         const [types, archived] = type.split('&')
-        const res = await api
-            .get(
-                `${API_URL}/v1/organizations/cities/search?city=${search}&country=${
-                    country ? country : 'morocco'
-                }&page=0&size=10` +
-                    (types ? `&types=${types}` : '') +
-                    `&deleted=${archived}`
-            )
-            .catch((error) => {
-                throw new Error(error)
-            })
+        let url = `${API_URL}`
+        if (path?.includes('sieges') || path?.includes('sub-account')) {
+            const id = path.split('/')?.pop()!
+            url = `${API_URL.replace(
+                'api',
+                'v1'
+            )}/sub-entities/cities/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
+        } else if (
+            path?.includes('collaborator') ||
+            path?.includes('collaborateur')
+        ) {
+            const id = path.split('/')?.pop()!
+            url = `${API_URL.replace(
+                'api',
+                'v1'
+            )}/users/cities/organizations/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
+        } else {
+            url = `${API_URL}/v1/organizations/cities/search?city=${search}&country=${country}&pageNum=0&pageSize=10&types=${types}`
+        }
+        console.log('cities: ', url)
+        const res = await api.get(url).catch((error) => {
+            throw new Error(error)
+        })
+
         return res.data?.content?.map((city: any) => ({
             label: city.name,
             key: city.id,

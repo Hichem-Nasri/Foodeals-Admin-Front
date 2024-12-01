@@ -118,7 +118,7 @@ export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
         responsible:
             partner.contact.name.firstName +
             ' ' +
-            partner.contact.name.lastName,
+            (partner.contact.name.lastName || ''),
         solutions: {
             solutionsId: partner.solutions.map((solution) =>
                 ParnterSolutionExport(solution)
@@ -141,20 +141,21 @@ export const exportPartnerConvertir: (partner: CrmType) => PartnerDataType = (
         country: partner.address.country,
         city: partner.address.city,
         region: partner.address.region,
+        state: partner.address.state,
         address: partner.address.address,
         status: PartnerStatusType.IN_PROGRESS,
     }
 }
 
-export const exportPartnerPost = (partner: PartnerPOST) => {
+export const exportPartnerPost = (partner: any) => {
     const marketPro = partner.solutionsContractDto.find(
-        (solution) => solution.solution === 'pro_market'
+        (solution: any) => solution.solution === 'pro_market'
     )
     const dlcPro = partner.solutionsContractDto.find(
-        (solution) => solution.solution === 'pro_dlc'
+        (solution: any) => solution.solution === 'pro_dlc'
     )
     const donate = partner.solutionsContractDto.find(
-        (solution) => solution.solution === 'pro_donate'
+        (solution: any) => solution.solution === 'pro_donate'
     )
     const newPartner: PartnerDataType = {
         partnerType: partner.features,
@@ -169,6 +170,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         companyType: partner.activities,
         mapLocation: partner.entityAddressDto.iframe,
         country: partner.entityAddressDto.country,
+        state: partner.entityAddressDto.state,
         city: partner.entityAddressDto.city,
         region: partner.entityAddressDto.region,
         address: partner.entityAddressDto.address,
@@ -176,8 +178,8 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
         rib: partner.entityBankInformationDto.rib,
         beneficiary: partner.entityBankInformationDto.beneficiaryName,
         accountType: partner.entityType,
-        managerId: partner.managerId + '',
-        subscriptionType: partner.oneSubscription ? 'personalized' : 'general',
+        managerId: partner.manager.id + '',
+        subscriptionType: !partner.oneSubscription ? 'personalized' : 'general',
         subscriptionPayedBySubEntities: partner.subscriptionPayedBySubEntities
             ? 'mainEntity'
             : 'subEntities',
@@ -187,7 +189,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
             amount: marketPro?.contractSubscriptionDto.annualPayment || 0,
             expiration:
                 marketPro?.contractSubscriptionDto.numberOfDueDates || 0,
-            managerId: partner.managerId + '',
+            managerId: partner.manager.id + '',
             commissionCash: marketPro?.contractCommissionDto.withCash || 0,
             commissionCard: marketPro?.contractCommissionDto.withCard || 0,
             name: 'pro_market',
@@ -211,7 +213,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
             // commissionCard: donate?.contractCommissionDto.withCard || 0,
         },
         solutions: {
-            solutionsId: partner.solutions.map((solution) =>
+            solutionsId: partner.solutions.map((solution: any) =>
                 ParnterSolutionExport(solution)
             ),
             duration:
@@ -223,7 +225,7 @@ export const exportPartnerPost = (partner: PartnerPOST) => {
             amount:
                 partner.solutionsContractDto[0]?.contractSubscriptionDto
                     .annualPayment || 0,
-            managerId: partner.managerId + '',
+            managerId: partner.manager.id + '',
             commissionCard:
                 partner.solutionsContractDto[0]?.contractCommissionDto
                     ?.withCard || 0,
@@ -329,7 +331,7 @@ export interface PartnerPOST {
     contactDto: ContactDto
     entityAddressDto: EntityAddressDto
     entityBankInformationDto: EntityBankInformationDto
-    managerId: number
+    managerId: string
     activities: string[]
     maxNumberOfSubEntities: number
     maxNumberOfAccounts: number
@@ -377,7 +379,7 @@ export const emptyPartnerPOST: PartnerPOST = {
         bankName: '',
         rib: '',
     },
-    managerId: 0,
+    managerId: '',
     activities: [],
     maxNumberOfSubEntities: 0,
     maxNumberOfAccounts: 0,

@@ -40,18 +40,6 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
         defaultValues: collaborator,
     })
 
-    // const DeliveryPartnerSolution = useForm<
-    //     z.infer<typeof CollaboratorDeliveryScheduleSchema>
-    // >({
-    //     resolver: zodResolver(CollaboratorDeliveryScheduleSchema),
-    //     mode: 'onBlur',
-    //     defaultValues: {
-    //         ...(partnerDetails
-    //             ? partnerDetails
-    //             : defaultCollaboratorDeliveryScheduleData),
-    //     },
-    // })
-
     const onSubmitPartnerInfo = (
         data: z.infer<typeof CollaboratorDeliveryTypeSchema>
     ) => {}

@@ -11,6 +11,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { EventType } from '@/types/CrmType'
 import { TableProspects } from '../Prospect/NewProspect/TableProspects'
 import { PartnerStatusType } from '@/types/partnersType'
+import { getUser } from '@/app/actions'
 
 interface EventProps {
     Event: EventType[]

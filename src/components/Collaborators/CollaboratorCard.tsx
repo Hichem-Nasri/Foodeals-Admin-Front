@@ -60,7 +60,7 @@ export const CollaboratorCard: FC<CollaboratorCardProps> = ({
                     <div className="flex flex-col gap-1">
                         <Label
                             label={fullName}
-                            className="text-sm font-normal text-lynch-950"
+                            className="text-base font-normal text-lynch-950"
                         />
                         <Label
                             label={User.role}
@@ -75,34 +75,32 @@ export const CollaboratorCard: FC<CollaboratorCardProps> = ({
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-[0.375rem]">
-                        <Link href={`tel:${User.phone}`}>
-                            <CustomButton
-                                label=""
-                                IconLeft={PhoneCall}
-                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
-                            />
-                        </Link>
-                        <Link href={`mailto:${User.email}`}>
-                            <CustomButton
-                                label=""
-                                IconLeft={Mail}
-                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
-                            />
-                        </Link>
-                        <Link
-                            href={`${AppRoutes.collaboratorDetails
-                                .replace(':PartnerId', partnerId)
-                                .replace('CollaboratorID', User.id)}`}
-                        >
-                            <CustomButton
-                                label=""
-                                IconLeft={Eye}
-                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
-                            />
-                        </Link>
-                    </div>
+                <div className="flex items-center gap-[0.375rem]">
+                    <Link href={`tel:${User.phone}`}>
+                        <CustomButton
+                            label=""
+                            IconLeft={PhoneCall}
+                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
+                        />
+                    </Link>
+                    <Link href={`mailto:${User.email}`}>
+                        <CustomButton
+                            label=""
+                            IconLeft={Mail}
+                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
+                        />
+                    </Link>
+                    <Link
+                        href={`${AppRoutes.collaboratorDetails
+                            .replace(':PartnerId', partnerId)
+                            .replace('CollaboratorId', User.id)}`}
+                    >
+                        <CustomButton
+                            label=""
+                            IconLeft={Eye}
+                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
+                        />
+                    </Link>
                 </div>
             </div>
         </div>

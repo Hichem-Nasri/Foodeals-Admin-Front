@@ -17,12 +17,13 @@ import {
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 
-export const getListActions: (
+export const GetListActions: (
     id: string,
     status: string,
     archive: boolean,
-    fn: () => void
-) => ActionType[] = (id, status, archive, fn) => {
+    fn: () => void,
+    isMobile?: boolean
+) => ActionType[] = (id, status, archive, fn, isMobile = false) => {
     const router = useRouter()
     if (archive) {
         return [
@@ -67,7 +68,14 @@ export const getListActions: (
             },
         ]
     }
-    return [
+    const listsort = [
+        'voir',
+        'modifier',
+        'collaborateurs',
+        'liste des paiement',
+        'archiver',
+    ]
+    const list = [
         {
             actions: () =>
                 router.push(AppRoutes.newDelivery.replace(':id', id!)),
@@ -125,7 +133,7 @@ export const getListActions: (
             label: 'Liste des paiement',
         },
         {
-            actions: async (id) => {
+            actions: async (id: string) => {
                 try {
                     const contractData = await getContract(id)
                     const url = window.URL.createObjectURL(contractData as Blob)
@@ -139,4 +147,13 @@ export const getListActions: (
             shouldNotDisplay: status !== 'VALIDATED',
         },
     ]
+    if (isMobile) {
+        return list.sort((a, b) => {
+            return (
+                listsort.indexOf(a.label.toLowerCase()) -
+                listsort.indexOf(b.label.toLowerCase())
+            )
+        })
+    }
+    return list
 }

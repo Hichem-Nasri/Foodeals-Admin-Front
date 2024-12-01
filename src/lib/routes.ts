@@ -29,7 +29,7 @@ export const AppRoutes = {
     CrmDemandesDetails: '/crm/demandes/:id',
     newCrmDemandes: '/crm/demandes/create',
     collaboratorDetails:
-        '/partenaires/collaborateurs/:PartnerId/:CollaboratorID',
+        '/partenaires/collaborateurs/:PartnerId/:CollaboratorId',
     collaborator: '/partenaires/collaborateurs/:id',
     CollaboratorSubEntities: '/collaborateurs/:id',
     products: '/produits',

@@ -12,7 +12,9 @@ export default function CreatePage({
     console.log(searchParams.type)
     return (
         <Layout formTitle="Nouveau Prospect">
-            <Create type={searchParams.type} />
+            <Create
+                type={searchParams.type as 'PARTNER' | 'ASSOCIATION,FOOD_BANK'}
+            />
         </Layout>
     )
 }

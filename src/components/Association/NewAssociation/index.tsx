@@ -20,7 +20,7 @@ import {
     defaultAssociationPostData,
 } from '@/types/association'
 import { useMutation } from '@tanstack/react-query'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_ASSOCIATIONS } from '@/lib/api_url'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
@@ -114,6 +114,9 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         defaultValues: partnerDetails,
     })
 
+    const solutions = partnerEngagement.watch('solutions')
+    console.log(solutions)
+
     const onSubmitPartnerInfo = (
         data: z.infer<typeof associationInformationSchema>
     ) => {
@@ -133,10 +136,12 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
             associationAddress: {
                 country: data.country,
                 city: data.city,
+                state: data.state,
                 region: data.region,
                 address: data.address,
-                iframe: data.mapLocation,
+                iframe: data.mapLocation || '',
             },
+            managerID: +data.managerId,
             entityType: data.associationType,
             logo: data.logo!,
             cover: data.cover!,
@@ -187,16 +192,16 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
             await partnerEngagement.handleSubmit(onSubmitEngagement)()
             mutate()
         } else {
-            console.log(
-                'invalid',
-                associationInformation.formState.errors,
-                partnerEngagement.formState.errors
+            notify.notify(
+                NotificationType.INFO,
+                'Please fill in all the fields'
             )
         }
     }
-
+    console.log('----------', associationId)
+    console.log('++++', !!!associationId && readOnly)
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto px-3 pb-3 lg:pb-0">
             <TopBar
                 status={
                     contractValid
@@ -208,14 +213,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                         : PartnerStatusType.DRAFT
                 }
                 hideStatus={contractValid}
-                primaryButtonDisabled={
-                    !associationId &&
-                    ((!associationInformation.formState.isDirty &&
-                        !associationInformation.formState.isValid &&
-                        !partnerEngagement.formState.isDirty &&
-                        !partnerEngagement.formState.isValid) ||
-                        readOnly)
-                }
+                primaryButtonDisabled={associationId === '' || readOnly}
                 secondaryButtonDisabled={readOnly}
                 onSaveData={onSaveData}
                 onSubmit={onSubmit}

@@ -9,13 +9,23 @@ import {
     columnsMultiProductTable,
     columnsOperationDeliveryTable,
     MultiProductType,
+    OperationMonthDeliveriesType,
 } from '@/components/payment/delivery/column/paymentOperationMonth'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
+import ConfirmationAll from '@/components/payment/PaymentDetails/ConfirmationAll'
 import SwitchPayment from '@/components/payment/switchPayment'
 import PaginationData from '@/components/utils/PaginationData'
-import { getPartnerDeliveryPayment } from '@/lib/api/payment/getPartnerDeliveryPayment'
+import { useNotification } from '@/context/NotifContext'
+import {
+    fetchPaymentCommissionMonth,
+    getMultiProduct,
+} from '@/lib/api/payment/getCommissionMonth'
+import {
+    getPartnerDeliveryPayment,
+    getPartnerDeliveryPaymentByMonth,
+} from '@/lib/api/payment/getPartnerDeliveryPayment'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
-import { TotalValueProps } from '@/types/GlobalType'
+import { NotificationType, TotalValueProps } from '@/types/GlobalType'
 import { PaymentFilterSchema } from '@/types/PaymentType'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
@@ -36,7 +46,7 @@ import {
     Coins,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, use, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -46,7 +56,7 @@ interface PaymentProps {
 }
 
 export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
-    const [payments, setPayments] = useState([])
+    const [payments, setPayments] = useState<OperationMonthDeliveriesType[]>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [totals, setTotals] = useState<
         TotalValueProps & { totalCommission: number; totalValue: number }
@@ -62,6 +72,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
     const [multiProductId, setMultiProductId] = useState<string>('')
     const [multiProduct, setMultiProduct] = useState<MultiProductType[]>([])
     const router = useRouter()
+    const notif = useNotification()
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
@@ -74,36 +85,51 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
         queryFn: async () => {
             if (!dateAndPartner.date) return
             if (multiProductId) {
-                setTotals({
-                    ...totals,
-                    currentPage: 0,
-                })
-                // const res = await getMultiProduct(id, totals.currentPage, totals.pageSize)
-                // setTotals({
-                //     ...totals,
-                //     totalElements: res.data.totalElements,
-                //     totalPages: res.data.totalPages,
-                // })
-                // setMultiProduct(res.data)
-            } else {
-                const res = await getPartnerDeliveryPayment(
+                const res = await getMultiProduct(
                     id,
-                    dateAndPartner.date!,
                     totals.currentPage,
                     totals.pageSize
+                ).then((res) => {
+                    return res.data.map((item: any) => ({
+                        product: item.product,
+                        quantity: item.quantity,
+                        amount: item.amount,
+                    }))
+                })
+                setMultiProduct(res)
+            } else {
+                const res = await fetchPaymentCommissionMonth(
+                    totals.currentPage,
+                    totals.pageSize,
+                    dateAndPartner.partner!,
+                    dateAndPartner.date,
+                    'DELIVERY'
                 )
+
+                // setPayments(demoDataOparatoinMonthDeliveries)
                 if (res.status == 500) {
+                    notif.notify(
+                        NotificationType.ERROR,
+                        'Error fetching partners'
+                    )
                     // setPayments([])
                     return
                 }
+                const { partner, operations, statistics, details } = res.data
+                setDateAndPartner({
+                    ...dateAndPartner,
+                    partner: partner.id,
+                })
+                setPayments(res.data.operations)
                 setTotals({
                     ...totals,
-                    totalElements: res.data.totalElements,
-                    totalCommission: res.data.totalCommission,
-                    totalValue: res.data.totalValue,
-                    totalPages: res.data.totalPages,
+                    totalElements: operations.totalElements,
+                    totalCommission: statistics.totalCommission.amount,
+                    totalValue: statistics.total.amount,
+                    totalPages: operations.totalPages,
                 })
-                setPayments(res.data.content)
+                setPayments(operations.content)
+                return res.data
             }
         },
     })
@@ -130,7 +156,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
     })
 
     const mutliProductTable = useReactTable({
-        data: payments,
+        data: multiProduct,
         columns: columnsMultiProductTable(),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -141,15 +167,15 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
 
     useEffect(() => {
         if (!isRefetching || !isLoading) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
-    }, [id, month, multiProductId, isRefetching, isLoading])
-
-    if (error) {
-        return <MyError message={error.message} />
-    }
+    }, [id, month, multiProductId, dateAndPartner])
 
     return (
-        <div className="flex flex-col gap-3 w-full">
+        <div className="flex flex-col gap-3 w-full lg:pr-2 pr-0 p-4 lg:p-0 ">
             <SwitchPayment />
             <div className="flex lg:flex-row flex-col items-center gap-3 w-full">
                 <FilterTablePayment
@@ -157,6 +183,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                     onSubmit={onSubmit}
                     setOpen={setOpen}
                     header="Tableau de validation des Subscription"
+                    state="commissions"
                 />
                 <CardTotalValue
                     Icon={Coins}
@@ -173,14 +200,16 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
             <div className="lg:flex hidden items-center gap-3 justify-between bg-white p-3 rounded-[14px]">
                 <ColumnVisibilityModal table={table} />
                 <div className="flex justify-center items-center space-x-2">
-                    <ConfirmPayment
-                        id=""
-                        label="Confirmer tout"
-                        className={`${
-                            multiProductId && 'hidden'
-                        } rounded-[12px]`}
-                        IconRight={CheckCheck}
-                    />
+                    <div
+                        className={` ${
+                            multiProductId ? 'hidden' : 'flex'
+                        } flex-col items-center gap-4 w-full`}
+                    >
+                        <ConfirmationAll
+                            isLoading={isLoading}
+                            details={data?.details}
+                        />
+                    </div>
                     <CustomButton
                         label={formatNumberWithSpaces(totals.totalElements)}
                         IconLeft={ArrowRight}
@@ -195,7 +224,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                     data={payments}
                     title="Tableau de validation des commission"
                     transform={(data) => <Fragment />}
-                    hideColumns={['payByFoodeals']}
+                    hideColumns={['type']}
                     isLoading={isLoading || isRefetching}
                 /> // TODO: Add transform
             ) : (
@@ -205,6 +234,8 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                     title="Tableau des produits"
                     transform={(data) => <Fragment />}
                     isLoading={isLoading || isRefetching}
+                    back={false}
+                    onBack={() => setMultiProductId('')}
                 /> // TODO: Add transform
             )}
             <PaginationData
@@ -216,14 +247,15 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                 refetch={refetch}
                 pageSize={totals.pageSize}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 my-3 w-full">
-                <ConfirmPayment
-                    id=""
-                    label="Confirmer tout"
-                    className={`${
-                        multiProductId && 'hidden'
-                    } rounded-[12px] w-full`}
-                    IconRight={CheckCheck}
+            <div
+                className={`lg:hidden ${
+                    multiProductId ? 'hidden' : 'flex'
+                } flex-col items-center gap-4 my-3 w-full`}
+            >
+                <ConfirmationAll
+                    isLoading={isLoading}
+                    details={data?.details}
+                    isMobile={true}
                 />
             </div>
         </div>

@@ -20,9 +20,11 @@ import { PartnerCollaborators } from '@/types/collaborators'
 import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { AppRoutes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
+import { CollaboratorsUser } from '@/types/collaboratorsUtils'
+import { capitalize } from '@/types/utils'
 
 interface PartnerCollaboratesCardProps {
-    partner?: PartnerCollaborators
+    partner?: CollaboratorsUser
 }
 
 export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
@@ -31,25 +33,6 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
     const router = useRouter()
 
     if (!partner) return
-
-    const dataArray = [
-        {
-            label: partner.collaborators,
-            icon: Store,
-        },
-        {
-            label: partner.collaborators,
-            icon: Users,
-        },
-        {
-            label: 'OFFER: ' + partner.offer,
-            icon: Boxes,
-        },
-        {
-            label: 'COMMANDE: ' + partner.order,
-            icon: HandCoins,
-        },
-    ]
 
     const actions: ActionType[] = [
         {
@@ -68,20 +51,23 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
             label: 'MODIFIER UN PARTENAIRE',
         },
     ]
-
+    const fullName =
+        capitalize(partner.name.firstName) +
+        ' ' +
+        capitalize(partner.name.lastName)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage className="" src={partner.logo} />
+                        <AvatarImage className="" src={partner.avatarPath!} />
                         <AvatarFallback>
-                            {partner.companyName[0].toUpperCase()}
+                            {fullName[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
                         <Label
-                            label={partner.companyName}
+                            label={fullName}
                             className="text-sm font-normal text-lynch-950"
                         />
                         <Label
@@ -91,7 +77,7 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={partner.createdAt.toLocaleDateString()}
+                                label={partner.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
@@ -117,24 +103,6 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
                         className="[&>svg]:size-6 p-[0.625rem]"
                     />
                 </div>
-            </div>
-            <span className="h-[1px] w-full bg-lynch-100" />
-            <div className="flex items-start gap-3">
-                <div className="flex flex-wrap gap-[0.375rem]">
-                    {dataArray.map((data) => (
-                        <div
-                            key={data.label}
-                            className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
-                        >
-                            <data.icon size={18} key={data.label} />
-                            <Label
-                                label={data.label.toString()}
-                                className="text-lynch-500"
-                            />
-                        </div>
-                    ))}
-                </div>
-                <PartnerStatus status={partner.status} />
             </div>
         </div>
     )

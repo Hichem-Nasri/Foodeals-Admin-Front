@@ -6,7 +6,6 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import TopBar from '@/components/Products/TopBar'
 import FormProduct from './FormProduct'
-import { demoData } from '@/lib/api/product/fetchProduct'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { Archive, CheckCheck } from 'lucide-react'
 

@@ -108,13 +108,14 @@ export interface partnerCommissionType {
 export type partnerCommissionMonthType = {
     id: string
     ref: string
+    type: 'MULTIPLE' | 'SINGLE'
     amount: PriceType
     cashAmount: PriceType
     cardAmount: PriceType
     cashCommission: PriceType
-    commissionCard: PriceType
+    commission: PriceType
     quantity: number
-    product: Omit<PartnerInfoDto, 'id'>
+    product: PartnerInfoDto
 }
 export interface partnerSubscriptionType {
     id: string
@@ -122,7 +123,7 @@ export interface partnerSubscriptionType {
     partner: PartnerInfoDto
     type: PartnerEntitiesType
     total: PriceType
-    solution: PartnerSolutionType[]
+    solutions: PartnerSolutionType[]
     payable: boolean
 }
 

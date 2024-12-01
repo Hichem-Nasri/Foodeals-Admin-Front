@@ -1,5 +1,5 @@
 'use client'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { Layout } from '@/components/Layout/Layout'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { useQuery } from '@tanstack/react-query'

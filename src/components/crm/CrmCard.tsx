@@ -32,6 +32,7 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
         classNameStatus: StyleStatus[crm?.status],
         IconStatus: IconStatus[crm?.status],
     }
+    console.log('dataCrm', crm)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px] w-full">
             <div className="flex justify-between items-center ">
@@ -86,27 +87,31 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
                     </div>
                 </div>
             </div>
-            <span className="h-[1px] w-full bg-lynch-100" />
+            <span className="h-[1px] w-full bg-lynch-100 [&>*]:font-semi-bold" />
             <div className="w-full flex justify-center flex-col items-start font-medium space-y-1.5">
-                <span className="px-2 py-1 flex justify-center items-center bg-lynch-200 rounded-full text-lynch-500">
+                <span className="px-2 py-1 flex justify-center items-center bg-lynch-100 rounded-full text-lynch-500 space-x-2 text-xs font-semibold">
                     <User />
                     <span>
-                        {crm.creatorInfo.name.firstName +
+                        {`Alimenter par :${
+                            crm.creatorInfo.name.firstName +
                             ' ' +
-                            crm.creatorInfo.name.lastName}
+                            crm.creatorInfo.name.lastName
+                        }`.toLocaleUpperCase()}
                     </span>
                 </span>
-                <span className="px-2 py-1 flex justify-center items-center bg-lynch-200 rounded-full text-lynch-500 space-x-2">
+                <span className="px-2 py-1 flex justify-center items-center bg-lynch-100 rounded-full text-lynch-500 space-x-2 text-xs font-semibold">
                     <UserCheck />
                     <span>
-                        {crm.managerInfo.name.firstName +
+                        {`Effectuée à : ${
+                            crm.managerInfo.name.firstName +
                             ' ' +
-                            crm.managerInfo.name.lastName}
+                            crm.managerInfo.name.lastName
+                        }`.toLocaleUpperCase()}
                     </span>
                 </span>
-                <span className="px-2 py-1 flex justify-center items-center bg-lynch-200 rounded-full text-lynch-500 space-x-2">
+                <span className="px-2 py-1 flex justify-center items-center bg-lynch-100 rounded-full text-lynch-500 space-x-2 text-xs font-semibold">
                     <ListCollapse />
-                    <span>Restaurant</span>
+                    <span>{crm.category.toLocaleUpperCase()}</span>
                 </span>
             </div>
         </div>

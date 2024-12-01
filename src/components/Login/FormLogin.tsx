@@ -5,14 +5,13 @@ import { CheckboxField } from '../custom/CheckboxField'
 import Link from 'next/link'
 import { CustomButton } from '../custom/CustomButton'
 import { InputFieldForm } from '../custom/InputField'
+import { signIn } from 'next-auth/react'
+import { z } from 'zod'
+import { LoginSchema } from '@/schemas'
 
 interface FormLoginProps {
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-    form: UseFormReturn<{
-        user: string
-        password: string
-        remember: boolean
-    }>
+    form: UseFormReturn<z.infer<typeof LoginSchema>>
     showPassword: boolean
     handleShowPassword: () => void
 }
@@ -26,11 +25,11 @@ export const FormLogin: React.FC<FormLoginProps> = ({
     const { control } = form
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="w-full">
+            <form onSubmit={handleSubmit} className="w-full" autoComplete="on">
                 <div className="flex flex-col gap-[1.875rem] max-w-[438px] mx-auto">
                     <InputFieldForm
                         control={control}
-                        name="user"
+                        name="email"
                         placeholder="ID"
                         label="Nom"
                         IconLeft={User}
@@ -58,7 +57,11 @@ export const FormLogin: React.FC<FormLoginProps> = ({
                             </Link>
                         </div>
                     </div>
-                    <CustomButton label="SE CONNECTER" IconRight={User} />
+                    <CustomButton
+                        label="SE CONNECTER"
+                        IconRight={User}
+                        type="submit"
+                    />
                 </div>
             </form>
         </Form>

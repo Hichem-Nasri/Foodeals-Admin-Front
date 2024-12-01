@@ -38,9 +38,10 @@ import { z } from 'zod'
 interface CollaborateursProps {
     id: string
     type: string
+    partnerType: string
 }
 
-const Collaborateurs: FC<CollaborateursProps> = ({ id, type }) => {
+const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
     const [collaborators, setCollaborators] = useState<CollaboratorsType[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -63,17 +64,22 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type }) => {
                 const data = await getCollaborator(
                     id,
                     type,
+                    archive,
                     totals.currentPage,
-                    totals.pageSize
+                    totals.pageSize,
+                    filterData,
+                    partnerType
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
+                const { organization, users } = data.data
+                setPartner(organization)
                 setTotals({
                     ...totals,
-                    totalPages: data.data.totalPages,
-                    totalElements: data.data.totalElements,
+                    totalPages: users?.totalPages,
+                    totalElements: users?.numberOfElements,
                 })
-                setCollaborators(data.data?.content)
+                setCollaborators(users?.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -102,7 +108,7 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type }) => {
 
     const table = useReactTable({
         data: collaborators,
-        columns: columnsCollaboratorsTable(router, id),
+        columns: columnsCollaboratorsTable(router, id, archive, refetch),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -113,7 +119,7 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type }) => {
     useEffect(() => {
         if (isLoading || isRefetching) return
         refetch()
-    }, [archive])
+    }, [archive, filterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
@@ -142,7 +148,6 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type }) => {
                     name: partner.name,
                     city: partner.city,
                 }}
-                onBack={() => router.back()}
             />
             <PaginationData
                 pageSize={totals.pageSize}

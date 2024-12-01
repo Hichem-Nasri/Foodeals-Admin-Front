@@ -28,7 +28,7 @@ export const SaveInfoData = (
         ...prev,
         logo: data.logo,
         cover: data.cover,
-        features: data.partnerType,
+        features: data.partnerType!,
         entityName: data.companyName,
         commercialNumber: data.commercialRegisterNumber.toString(),
         contactDto: {
@@ -44,9 +44,10 @@ export const SaveInfoData = (
             city: data.city,
             region: data.region,
             address: data.address,
+            state: data.state,
             iframe: data.mapLocation || '',
         },
-        managerId: +data.managerId,
+        managerId: data.managerId,
         activities: data.companyType,
     }))
 }
@@ -55,6 +56,7 @@ export const SaveSubscriptionData = (
     data: z.infer<typeof PartnerSubscriptionSchema>,
     setPartnerData: React.Dispatch<React.SetStateAction<PartnerPOST>>
 ) => {
+    console.log('Hello world ---------: ', data)
     const commonData = {
         entityType: data.accountType,
         entityBankInformationDto: {
@@ -63,9 +65,7 @@ export const SaveSubscriptionData = (
             rib: data.rib,
         },
         subscriptionPayedBySubEntities:
-            data.subscriptionPayedBySubEntities == 'mainEntities'
-                ? true
-                : false,
+            data.subscriptionPayedBySubEntities == 'mainEntity' ? true : false,
     }
 
     const setSolutionsData = (solutions: any[], isGeneral: boolean) => {
@@ -107,7 +107,7 @@ export const SaveSubscriptionData = (
         }))
     }
 
-    if (data.subscriptionType === 'general') {
+    if (data.subscriptionType === 'personalized') {
         const solutions = [data.dlcPro, data.marketPro, data.donate].filter(
             (s) => s && s.selected
         )

@@ -7,24 +7,29 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Lottie from 'react-lottie'
 import animationData from '@/lotties/loginAnimation.json'
-import { AppRoutes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
 import { LoginSchema } from '@/schemas'
 import SplashScreen from '../custom/SplashScreen'
+import { LogIn } from '@/app/actions'
+import { useNotification } from '@/context/NotifContext'
+import { NotificationType } from '@/types/GlobalType'
+import Notif from '../Layout/Notif'
 
 export const Login: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false)
     const router = useRouter()
+    const notify = useNotification()
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         mode: 'onBlur',
         defaultValues: {
-            user: '',
+            email: '',
             password: '',
             remember: false,
         },
     })
+
     const { handleSubmit } = form
 
     const defaultOptions = {
@@ -36,21 +41,45 @@ export const Login: React.FC = () => {
         },
     }
 
-    const onSubmit = (data: z.infer<typeof LoginSchema>) => {
-        router.push(AppRoutes.partners)
+    const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+        console.log(data)
+        try {
+            console.log('+++++++++++++++++++++++')
+            const result = await LogIn(data)
+            console.log('result: ', result)
+            if (!result.success) {
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur User ou mot de passe'
+                )
+            } else {
+                notify.notify(NotificationType.SUCCESS, 'Connexion réussie')
+                console.log('result: ', result)
+                setTimeout(() => {
+                    router.push('/')
+                }, 1000)
+                // router.push('/')
+            }
+        } catch (e) {
+            notify.notify(NotificationType.ERROR, "Erreur d'authentification")
+            console.log(e)
+        }
     }
+
     const [loading, setLoading] = useState(true)
     const finishLoading = () => {
         setLoading(false)
     }
+
     const handleShowPassword = () => setShowPassword((prev) => !prev)
+
     return (
         <>
             {loading ? (
                 <SplashScreen finishLoading={finishLoading} />
             ) : (
-                <div className="w-full min-h-screen flex lg:flex-row flex-col-reverse justify-between items-center">
-                    <div className="w-full lg:w-1/2 h-auto lg:min-h-screen flex flex-col justify-center items-center bg-[url('/background-auth-partners.svg')] p-4 lg:p-0">
+                <div className="w-full min-h-screen flex lg:flex-row flex-col  justify-center lg:justify-between items-center bg-[url('/background-auth-partners.svg')]">
+                    <div className="w-full lg:w-1/2 h-auto lg:min-h-screen flex flex-col justify-center items-center  p-4 lg:p-0">
                         <div className="h-auto flex flex-col justify-center lg:justify-between items-center gap-4 lg:gap-7">
                             <Image
                                 className=""
@@ -74,7 +103,7 @@ export const Login: React.FC = () => {
                             showPassword={showPassword}
                         />
                     </div>
-                    <div className="lg:flex hidden  min-h-screen justify-center items-center bg-primary rounded-l-[48px] p-8 w-1/2">
+                    <div className="lg:flex hidden min-h-screen justify-center items-center bg-primary rounded-l-[48px] p-8 w-1/2">
                         <div className="w-[38.75rem] h-[25.625rem]">
                             <Lottie options={defaultOptions} width="100%" />
                         </div>

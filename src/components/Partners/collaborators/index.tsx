@@ -1,5 +1,5 @@
 'use client'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,9 +26,26 @@ import { ActionType } from '@/components/custom/ActionsMenu'
 import { AppRoutes } from '@/lib/routes'
 import { DataTable } from '@/components/DataTable'
 import { PartnerCollaboratesCard } from './PartnerCollaboratorsCard'
+import { useNotification } from '@/context/NotifContext'
+import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
+import {
+    CollaboratorsType,
+    CollaboratorsUser,
+    SchemaCollaborators,
+    defaultSchemaCollaborators,
+} from '@/types/collaboratorsUtils'
+import {
+    TotalValueProps,
+    TotalValues,
+    PartnerInfoDto,
+    NotificationType,
+} from '@/types/GlobalType'
+import { useQuery } from '@tanstack/react-query'
+import { type } from 'os'
+import PaginationData from '@/components/utils/PaginationData'
+import { getCollaborator } from '@/lib/api/partner/getCollaborators'
 
 interface CollaboratorsProps {
-    collaborators: PartnerCollaborators[]
     partnerId: string
 }
 
@@ -37,40 +54,68 @@ export interface TableRowType {
     label: string
 }
 
-export const Collaborators: FC<CollaboratorsProps> = ({
-    collaborators,
-    partnerId,
-}) => {
+export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
+    const [collaborators, setCollaborators] = useState<CollaboratorsUser[]>([])
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [filterData, setFilterData] =
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
-    const router = useRouter()
-    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
-        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
-        mode: 'onBlur',
-        defaultValues: defaultFilter,
+    const [archive, setArchive] = useState(false)
+    const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
+        id: '',
+        name: '',
+        avatarPath: '',
+        city: '',
     })
-    const onSubmit = (data: any) => {
-        console.log(data)
-    }
-    const [data, _setData] = useState(() => [...collaborators])
+    const notify = useNotification()
+    const router = useRouter()
+    const { error, isLoading, isRefetching, refetch } = useQuery({
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
+        queryFn: async () => {
+            try {
+                const data = await getCollaborator(
+                    partnerId,
+                    'PARTNER_WITH_SB,NORMAL_PARTNER',
+                    archive,
+                    totals.currentPage,
+                    totals.pageSize,
+                    filterData,
+                    ''
+                )
+                if (data.status === 500)
+                    throw new Error('Error fetching partners')
+                const { organization, users } = data.data
+                setTotals({
+                    ...totals,
+                    totalPages: users.totalPages,
+                    totalElements: users.numberOfElements,
+                })
+                setPartner(organization)
+                setCollaborators(users?.content)
+                return data.data
+            } catch (error) {
+                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                console.log(error)
+                setCollaborators([])
+            }
+        },
+    })
 
-    const actionsList = (id: string) =>
-        [
-            {
-                actions: () =>
-                    router.push(
-                        AppRoutes.collaboratorDetails
-                            .replace(':CollaboratorID', id)
-                            .replace(':PartnerId', partnerId)
-                    ),
-                icon: Eye,
-                label: 'Voir',
-            },
-        ] as ActionType[]
+    // handleArchive function
+    const handleArchive = () => {
+        // fetching Archived associations
+        setArchive((prev) => !prev)
+    }
 
     const table = useReactTable({
-        data,
-        columns: columnsPartnerCollaboratorsTable({ actionsList: actionsList }),
+        data: collaborators,
+        columns: columnsPartnerCollaboratorsTable({
+            router,
+            archive,
+            refetch,
+            partnerId,
+        }),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -78,45 +123,53 @@ export const Collaborators: FC<CollaboratorsProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    const partnerData = {
-        name: 'Marjane',
-        avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-        city: 'Fès',
+    const form = useForm<z.infer<typeof SchemaFilter>>({
+        resolver: zodResolver(SchemaFilter),
+        mode: 'onBlur',
+        defaultValues: defaultSchemaFilter,
+    })
+    const onSubmit = (data: any) => {
+        setFilterData(data)
     }
+
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        refetch()
+    }, [archive, filterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FilterAndCreatePartnerCollaborators
                 table={table}
                 form={form}
-                collaborators={collaborators}
                 open={open}
                 setOpen={setOpen}
                 onSubmit={onSubmit}
+                archive={archive}
+                totalElements={totals.totalElements}
+                handleArchive={handleArchive}
             />
             <DataTable
                 title="Listes des collaborateurs"
                 table={table}
-                data={data}
+                data={collaborators}
                 transform={(value) => (
                     <PartnerCollaboratesCard partner={value} key={value.id} />
                 )}
-                partnerData={partnerData}
+                partnerData={{
+                    ...partner,
+                    avatar: partner.avatarPath,
+                }}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 ">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
-                />
-                <CustomButton
-                    label="Retour"
-                    className="w-full"
-                    IconLeft={ArrowLeft}
-                />
-            </div>
+            <PaginationData
+                refetch={refetch}
+                pageSize={totals.pageSize}
+                totalPages={totals.totalPages}
+                currentPage={totals.currentPage}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
+            />
         </div>
     )
 }

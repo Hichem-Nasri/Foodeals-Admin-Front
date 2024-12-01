@@ -68,6 +68,4 @@ export interface PartnerType {
     logo: string
     contactDto: ContactType
 }
-export type SubAccountPartners = Omit<PartnerType, 'subEntities'> & {
-    ref: string
-}
+export type SubAccountPartners = Omit<PartnerType, 'subEntities'> & {}

@@ -36,7 +36,7 @@ interface ActionsMenuProps {
     id?: string
     menuList: ActionType[]
     className?: string
-    prospect?: 'prospect' | 'organisation' | false
+    prospect?: 'prospect' | 'organisation' | 'sub-entites' | 'users' | false
 }
 
 export const ActionsMenu: FC<ActionsMenuProps> = ({
@@ -88,7 +88,8 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                 >
                     <ListPlus />
                 </DrawerTrigger>
-                <DrawerContent className="flex flex-col gap-2 p-3 rounded-[16px] lg:hidden">
+                <DrawerContent className="flex flex-col gap-2 p-3 rounded-t-[16px] lg:hidden">
+                    <h1 className="font-semibold">Choisissiez une action</h1>
                     {menuList
                         .filter((item) =>
                             item.shouldNotDisplay ? false : true
@@ -110,15 +111,21 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                                                 : setDesarchive(true)
                                             setCloseDrawer(false)
                                         } else if (item.label === 'Info') {
+                                            console.log('info')
                                             setInfo(true)
                                             setCloseDrawer(false)
                                         } else item.actions(id)
                                     }}
-                                    className="flex items-center
-							gap-3 px-3 py-2 hover:bg-lynch-50 rounded-[6px] text-lynch-500 cursor-pointer"
+                                    className={cn(
+                                        'flex items-center gap-3 px-3 hover:bg-lynch-50 rounded-[6px] text-lynch- cursor-pointer py-5 text-lynch-500',
+                                        `${
+                                            item.label.toLowerCase() ==
+                                                'archiver' && 'text-coral-500'
+                                        }`
+                                    )}
                                 >
                                     <item.icon size={20} />
-                                    {item.label}
+                                    {item.label.toUpperCase()}
                                 </button>
                             )
                         })}
@@ -179,7 +186,7 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                         ? 'Archiver le Prospect'
                         : desarchive
                         ? 'Désarchiver'
-                        : 'Archiver le partenaire'
+                        : 'Archiver'
                 }
             />
             {prospect && (
@@ -187,7 +194,7 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                     id={id}
                     open={info}
                     setOpen={setInfo}
-                    leadKo={prospect === 'prospect'}
+                    type={prospect}
                 />
             )}
         </>

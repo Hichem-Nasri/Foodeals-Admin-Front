@@ -96,7 +96,7 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                                 } items-center space-x-4`}
                             >
                                 {isMobile && (
-                                    <div className="w-full flex lg:flex-row flex-col space-y-2 space-x-0 justify-center items-center lg:space-x-4">
+                                    <div className="w-full flex  gap-2 space-x-0 justify-center items-center lg:space-x-4">
                                         <CustomButton
                                             title={
                                                 !convertir
@@ -112,19 +112,20 @@ const AddNewEvent: FC<AddNewEventProps> = ({
                                             className={
                                                 !isMobile
                                                     ? 'justify-self-end bg-transparent hover:bg-mountain-500 text-mountain-500 hover:text-white border border-mountain-500 transition-all delay-100 duration-150 min-w-[170.5px]'
-                                                    : 'bg-mountain-400 text-white hover:bg-mountain-500 border border-mountain-500 hover:border-mountain-500 transition-all delay-100 duration-150 min-w-[170.5px] flex-1 w-full'
+                                                    : ' transition-all delay-100 duration-150 min-w-[170.5px] flex-1 w-full'
                                             }
                                             IconRight={CheckCheck}
                                         />
                                         <CustomButton
                                             label="Annuler"
+                                            variant="secondary"
                                             onClick={() => {
                                                 console.log('Cancel')
                                                 setOpen((prev) => {
                                                     return !prev
                                                 })
                                             }}
-                                            className="bg-transparent hover:bg-mountain-500 text-mountain-500 hover:text-white border border-mountain-500 transition-all delay-100 duration-150 min-w-[170.5px] flex-1 w-full lg:w-auto"
+                                            className=" transition-all delay-100 duration-150 min-w-[170.5px] flex-1 w-full lg:w-auto"
                                             IconRight={X}
                                         />
                                     </div>

@@ -46,24 +46,26 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
             details: data.archiveReason,
         }
         if (!partnerId) return
-        const res = await archivePatner(partnerId, archiveData)
-        console.log(res)
-        if (res.status === 204) {
-            router.back()
-            notif.notify(
-                NotificationType.SUCCESS,
-                'Partenaire archivé avec succès'
-            )
-        }
+        const res = await archivePatner(partnerId, {
+            ...archiveData,
+            action: 'ARCHIVE',
+        })
+            .then((res) => {
+                notif.notify(NotificationType.SUCCESS, 'Archive with Success')
+                router.back()
+            })
+            .catch((err) => {
+                notif.notify(NotificationType.ERROR, "Error d'archive")
+            })
     }
 
     const { handleSubmit, control } = form
 
     const options = [{ key: 'OTHER', label: 'Autres' }]
     return (
-        <div className="flex items-center justify-end bg-white p-5">
+        <div className="flex items-center justify-end bg-white p-5 rounded-[30px] lg:rounded-[14px]">
             <Dialog>
-                <DialogTrigger className="flex items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-red-50 border-[1.5px] border-red-500 text-red-500 hover:bg-red-500/40">
+                <DialogTrigger className="flex items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-red-50 border-[1.5px] border-red-500 text-red-500  lg:w-fit w-full justify-center">
                     <span className="text-sm font-medium">Archiver</span>
                     <Archive />
                 </DialogTrigger>

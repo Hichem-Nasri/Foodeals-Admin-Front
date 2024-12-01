@@ -1,5 +1,5 @@
 'use client'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import TopBar from './TopBar'

@@ -1,11 +1,10 @@
-import api from '@/api/Auth'
-
-const API_URL = 'http://localhost:8080/Activities'
+import api from '@/lib/Auth'
+import { API_URL } from '..'
 
 export const fetchActivities = async (type: string) => {
     try {
         const response = await api
-            .get(API_URL + '?types=' + type)
+            .get(API_URL + '/v1/activities?types=' + type)
             .then((res) => res.data)
             .catch((error) => {
                 throw new Error(error)
@@ -13,10 +12,11 @@ export const fetchActivities = async (type: string) => {
 
         const data = response.content.map(
             (user: { id: string; name: string }) => ({
-                key: user.name,
+                key: user.name.toLowerCase(),
                 label: user.name,
             })
         )
+        console.log('data', data)
         // Return the data from the response
         return data
     } catch (error) {

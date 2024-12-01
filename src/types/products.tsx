@@ -10,14 +10,23 @@ import { z } from 'zod'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { AppRoutes } from '@/lib/routes'
 
+export const Price = z.object({
+    amount: z.number(),
+    currency: z.string(),
+})
+
 export const ProductSchema = z.object({
-    avatar: z.string().optional(),
-    title: z.string().min(3).max(255),
-    marque: z.string().min(3).max(255),
-    description: z.string().min(3).max(255),
-    categories: z.string().min(3).max(255),
-    subCategories: z.string().min(3).max(255),
-    codeBar: z.string().min(3).max(255),
+    name: z.string(),
+    title: z.string(),
+    description: z.string(),
+    barcode: z.string(),
+    type: z.string(),
+    price: Price,
+    productImagePath: z.string(),
+    categoryId: z.string(),
+    subCategoryId: z.string(),
+    brandId: z.string(),
+    rayonId: z.string(),
 })
 
 export type ProductSchemaType = z.infer<typeof ProductSchema>

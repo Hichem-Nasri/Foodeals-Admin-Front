@@ -18,12 +18,12 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
                     <div className="justify-self-start flex justify-start items-start space-x-1 ">
                         <Avatar className="w-[46px] h-[46px]">
                             <AvatarImage
-                                src={product.Product.avatarPath}
+                                src={product.product.avatarPath}
                                 sizes="46px"
                             />
                             <AvatarFallback>
-                                {product.Product.name &&
-                                    product.Product.name[0]}
+                                {product.product.name &&
+                                    product.product.name[0]}
                             </AvatarFallback>
                         </Avatar>
                     </div>

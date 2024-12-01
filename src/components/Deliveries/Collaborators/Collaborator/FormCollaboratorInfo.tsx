@@ -23,6 +23,7 @@ import {
 import { PartnerOptions } from '@/lib/utils'
 import { AvatarProfile } from '@/components/AvatarProfile'
 import { Label } from '@/components/Label'
+import { LabelAndAvatar } from '@/components/custom/LabelAndAvatar'
 
 interface FormCollaboratorInfoProps {
     form: UseFormReturn<z.infer<typeof CollaboratorDeliveryTypeSchema>>
@@ -44,6 +45,7 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
         key: option.name,
         label: option.name,
     }))
+    const partnerInfo = form.watch('partner')
     return (
         <Accordion
             type="single"
@@ -166,40 +168,12 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
                                         />
-                                        <SelectField
-                                            name="organization"
-                                            options={adaptOptions}
-                                            control={control}
-                                            label="Partenaire"
-                                            className="w-full"
-                                            disabled={disabled}
-                                            transform={(value) => {
-                                                const option =
-                                                    PartnerOptions.find(
-                                                        (option) =>
-                                                            option.name ===
-                                                            value
-                                                    )
-                                                return (
-                                                    <div className="flex items-center gap-3">
-                                                        <AvatarProfile
-                                                            disabled
-                                                            iUrl={
-                                                                option?.avatar ||
-                                                                ''
-                                                            }
-                                                            alt={option?.name}
-                                                            className="!rounded-full size-[40px]"
-                                                        />
-                                                        <Label
-                                                            label={
-                                                                option?.name ||
-                                                                ''
-                                                            }
-                                                        />
-                                                    </div>
-                                                )
-                                            }}
+                                        <LabelAndAvatar
+                                            label="Partenaires"
+                                            avatar={partnerInfo?.avatarPath}
+                                            name={partnerInfo?.name!}
+                                            onChange={() => {}}
+                                            value={partnerInfo?.name!}
                                         />
                                     </div>
                                 </div>

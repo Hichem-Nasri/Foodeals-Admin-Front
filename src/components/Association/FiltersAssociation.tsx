@@ -17,7 +17,7 @@ interface FiltersAssociationProps {
     table: import('@tanstack/table-core').Table<any>
     archive: boolean
     handleArchive: () => void
-    siege?: boolean
+    type?: 'ASSOCIATIONS' | 'SIEGES' | 'USERS'
     totalElements: number
     onSubmit: (data: z.infer<typeof SchemaFilter>) => void
     isFetching?: boolean
@@ -30,23 +30,31 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
     table,
     archive,
     handleArchive,
-    siege = false,
+    type = 'ASSOCIATIONS',
     totalElements,
     onSubmit,
     isFetching,
 }) => {
     const router = useRouter()
+    const name =
+        type == 'SIEGES'
+            ? 'Sièges'
+            : type == 'USERS'
+            ? 'Collaborateurs des associations'
+            : 'Associations'
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
-                    Liste des {siege ? 'sièges' : 'associations'}
+                    Liste des {name}
                 </h2>
                 <FormFilter
                     form={form}
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    archive={archive}
+                    type={type}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -55,14 +63,14 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    archive={archive}
+                    type={type}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton
                     size="sm"
                     variant="outline"
-                    label={
-                        !archive ? 'Archive' : siege ? 'Sièges' : 'Associations'
-                    }
+                    label={!archive ? 'Archive' : name}
                     IconRight={!archive ? Archive : ArrowLeft}
                     onClick={handleArchive}
                     disabled={isFetching}
@@ -71,7 +79,7 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
             <div className={` lg:flex hidden gap-3 p-2`}>
                 <CustomButton
                     size="sm"
-                    className={`${siege ? 'hidden' : 'flex'}`}
+                    className={`${type == 'ASSOCIATIONS' ? 'flex' : 'hidden'}`}
                     label="Ajouter une association"
                     IconRight={HeartHandshake}
                     onClick={() =>

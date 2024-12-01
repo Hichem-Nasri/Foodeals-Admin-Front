@@ -29,9 +29,14 @@ import { validProspect } from '@/lib/api/crm/prospect/validProspect'
 interface NewPartnerProps {
     partner?: PartnerDataType
     id: string
+    mode?: string
 }
 
-export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
+export const NewPartner: React.FC<NewPartnerProps> = ({
+    partner,
+    id,
+    mode,
+}) => {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [partnerDetails, setPartnerDetails] = useState<PartnerDataType>(
         partner!
@@ -39,13 +44,14 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const [partnerId, setPartnerId] = useState(
         id == 'new' || id.includes('?convertir') ? '' : id
     )
-    const [saved, setSaved] = useState(false)
+
     const [partnerData, setPartnerData] =
         useState<PartnerPOST>(emptyPartnerPOST)
     const [contractUpload, setContractUpload] = useState<File[] | null>(null)
     const notif = useNotification()
-    const [readOnly, setReadOnly] = useState<boolean>(partnerId !== '')
-    const searchParams = useSearchParams()
+    const [readOnly, setReadOnly] = useState<boolean>(
+        partnerId !== '' && mode !== 'edit'
+    )
     // Form setups
 
     const partnerInformation = useForm<
@@ -76,8 +82,8 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     // Mutation for saving partner data
     const { mutate, isPending } = useMutation({
         mutationKey: ['partner'],
-        mutationFn: async (data: { id: string; data: PartnerPOST }) => {
-            const response = await createPartner(partnerId, data.data, {
+        mutationFn: async () => {
+            const response = await createPartner(partnerId, partnerData, {
                 logo: partnerDetails.logo!,
                 cover: partnerDetails.cover!,
             })
@@ -115,6 +121,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
     const handleSubscriptionSubmit = (
         data: z.infer<typeof PartnerSubscriptionSchema>
     ) => {
+        console.log('data', data)
         SaveSubscriptionData(data, setPartnerData)
     }
 
@@ -133,6 +140,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
 
     // Handler for saving data
     const handleSaveData = async (modify?: boolean) => {
+        console.log('modify', modify)
         if (modify === true) {
             setPartnerDetails((prev) => ({
                 ...prev,
@@ -141,36 +149,27 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
             return
         }
         // check if the user already have an id and the contract is not uploaded
-        if (partnerId !== '' && !contractUpload) {
-            notif.notify(NotificationType.ERROR, 'Please upload the contract')
-            return
-        }
-        console.log(
-            partnerInformation.formState.isValid,
-            partnerSubscription.formState.isValid,
-            partnerFeatures.formState.isValid
-        )
+        const validationInformation = await partnerInformation.trigger()
+        const validationSubscription = await partnerSubscription.trigger()
+        const validationFeatures = await partnerFeatures.trigger()
 
         if (
-            partnerInformation.formState.isValid &&
-            partnerSubscription.formState.isValid &&
-            partnerFeatures.formState.isValid
+            validationInformation &&
+            validationSubscription &&
+            validationFeatures
         ) {
-            handlePartnerInfoSubmit(partnerInformation.getValues())
-            handleSubscriptionSubmit(partnerSubscription.getValues())
-            handleFeaturesSubmit(partnerFeatures.getValues())
-            console.log('saved')
-            setSaved(true)
+            await handlePartnerInfoSubmit(partnerInformation.getValues())
+            await handleSubscriptionSubmit(partnerSubscription.getValues())
+            await handleFeaturesSubmit(partnerFeatures.getValues())
+            mutate()
         } else {
+            notif.notify(NotificationType.INFO, 'Please fill all the fields')
             console.log(
                 'error',
                 partnerInformation.formState.errors,
                 partnerSubscription.formState.errors,
                 partnerFeatures.formState.errors
             )
-            partnerInformation.trigger()
-            partnerSubscription.trigger()
-            partnerFeatures.trigger()
         }
     }
     const handleSubmit = async () => {
@@ -180,7 +179,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         }
 
         const res = await validateContract(partnerId, contractUpload)
-
+        console.log('res', res)
         if (res.status === 200) {
             if (id.includes('?convertir')) {
                 const valid = await validProspect(id)
@@ -205,20 +204,8 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
         }
     }
 
-    useEffect(() => {
-        const mode = searchParams.get('mode') // Access the mode from searchParams
-        if (mode === 'edit' && readOnly) {
-            setReadOnly(false)
-        }
-        if (saved) {
-            console.log('Saving Data ...')
-            setSaved(false)
-            mutate({ id: partnerId, data: partnerData })
-        }
-    }, [partnerData, saved])
-
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto px-2">
             <TopBar
                 isPending={isPending}
                 status={partnerDetails?.status || PartnerStatusType.DRAFT}
@@ -257,6 +244,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({ partner, id }) => {
                         partnerDetails?.status === PartnerStatusType.VALID ||
                         readOnly
                     }
+                    id={partnerId}
                 />
                 {[
                     PartnerStatusType.VALID,

@@ -1,26 +1,28 @@
 import Credentials from 'next-auth/providers/credentials'
 import type { NextAuthConfig, User } from 'next-auth'
 import { LoginSchema } from './schemas'
-import { getUserByEmail } from './data/user'
-
-export type UserType = User & { accessToken: any }
+import { cookies } from 'next/headers'
+import { parseSetCookie } from 'next/dist/compiled/@edge-runtime/cookies'
+import { setCookie } from 'nookies'
+import credentials from 'next-auth/providers/credentials'
 
 export default {
     providers: [
         Credentials({
-            async authorize(credentials, request): Promise<UserType | null> {
-                const { callbackUrl, remember, ...data } = credentials
-                console.log('credentials', data)
-                const validatedFields = LoginSchema.safeParse(data)
-                console.log('validatedFields', validatedFields)
+            async authorize(credentials, req) {
+                const validatedFields = LoginSchema.safeParse({
+                    email: credentials.email,
+                    password: credentials.password,
+                })
+                if (!validatedFields.success) {
+                    console.error('Validation error:', validatedFields.error)
+                    return null // Return null if validation fails
+                }
 
-                if (validatedFields.success) {
-                    const { email, password } = validatedFields.data
+                const { email, password } = validatedFields.data
 
-                    const user = await getUserByEmail(email)
-                    console.log('user', user)
-
-                    const res = await fetch(
+                try {
+                    const response = await fetch(
                         `${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`,
                         {
                             method: 'POST',
@@ -30,26 +32,25 @@ export default {
                             body: JSON.stringify({ email, password }),
                         }
                     )
-                        .then((res) => res.json())
-                        .catch((err) => {
-                            console.log('err', err)
-                            throw new Error('Invalid credentials.')
-                        })
-
-                    // Check if the response contains a valid token
-                    if (!res || !res.access_token) {
+                    if (!response.ok) {
                         throw new Error('Invalid credentials.')
                     }
 
-                    // Return the user object along with the token
-                    return {
-                        ...user,
-                        accessToken: res.access_token as string, // Include the token in the user object
+                    const res = await response.json()
+                    console.log('auth response', res)
+                    const user = {
+                        name: `${res.name?.firstName} ${res.name?.lastName}`,
+                        role: res.role,
+                        accessToken: res.token.access_token,
+                        refreshToken: res.token.refresh_token,
+                        id: res.id,
+                        image: res.avatarPath || null, // Ensure image is string or null
                     }
+                    return user // Return the user object
+                } catch (error) {
+                    console.error('Authorization error:', error)
+                    return null // Return null on error
                 }
-
-                console.log(validatedFields.error)
-                return null
             },
         }),
     ],

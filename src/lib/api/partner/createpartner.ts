@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { NotificationType } from '@/types/GlobalType'
 import { PartnerPOST } from '@/types/partenairUtils'

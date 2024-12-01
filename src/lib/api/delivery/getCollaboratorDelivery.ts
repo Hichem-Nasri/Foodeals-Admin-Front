@@ -1,5 +1,6 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { CollaboratorDeliveryType } from '@/types/DeliverySchema'
+import { API_URL } from '..'
 
 export async function getCollaboratorDelivery(id: string): Promise<{
     status: number
@@ -7,7 +8,7 @@ export async function getCollaboratorDelivery(id: string): Promise<{
 }> {
     try {
         const res = await api
-            .get(`http://localhost:8080/v1/users/${id}/profile`)
+            .get(`${API_URL.replace('api', 'v1')}/users/${id}/profile`)
             .catch((error) => {
                 throw new Error(error.response.data.message)
             })

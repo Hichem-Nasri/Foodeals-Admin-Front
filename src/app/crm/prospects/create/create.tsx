@@ -22,7 +22,7 @@ import { z } from 'zod'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { useRouter } from 'next/navigation'
 import { EventPopUpsNew } from '@/components/crm/NewEvent/EventPopUpsNew'
 import { ArchiveType, NotificationType } from '@/types/GlobalType'
@@ -34,6 +34,7 @@ import { FormCrmInfo } from '@/components/crm/Prospect/NewProspect/FromProspectI
 import { createProspect } from '@/lib/api/crm/prospect/createProspect'
 import { Archiver } from '@/components/utils/Archiver'
 import { ArchivePartnerSchema } from '@/types/PartnerSchema'
+import { API_URL } from '@/lib/api'
 
 interface CreateProps {
     type: 'PARTNER' | 'ASSOCIATION,FOOD_BANK'
@@ -54,7 +55,7 @@ export const Create: FC<CreateProps> = ({ type }) => {
         mutationFn: async (data: any) => {
             console.log('data: ', JSON.stringify(data))
             const res = await api
-                .post('http://localhost:8080/api/v1/crm/prospects/create', {
+                .post(`${API_URL}/v1/crm/prospects/create`, {
                     ...data,
                     type: type == 'PARTNER' || !type ? 'PARTNER' : data.type,
                 })
@@ -163,26 +164,29 @@ export const Create: FC<CreateProps> = ({ type }) => {
                         }
                         prospect={Info}
                     />
-                    <div className="w-full p-4 rounded-[18px] bg-white flex justify-end items-center">
-                        <CustomButton
-                            label={
-                                Info?.status == PartnerStatusType.CANCELED
-                                    ? 'LeadOK'
-                                    : 'LeadKo'
-                            }
-                            onClick={() => setLeadko(true)}
-                            size={'sm'}
-                            disabled={[PartnerStatusType.VALID].includes(
-                                Info?.status as PartnerStatusType
-                            )}
-                            variant={'secondary'}
-                            className={`w-fit${
-                                Info?.status == PartnerStatusType.CANCELED
-                                    ? 'bg-mountain-100 border-primary text-primary'
-                                    : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'
-                            }`}
-                        />
-                    </div>
+                    {Info && PartnerStatusType.DRAFT != Info?.status && (
+                        <div className="w-full p-5 gap-[30px] rounded-[14px] bg-white flex justify-end items-center">
+                            <CustomButton
+                                label={
+                                    Info?.status == PartnerStatusType.CANCELED
+                                        ? 'LeadOK'
+                                        : 'LeadKo'
+                                }
+                                onClick={() => setLeadko(true)}
+                                size={'sm'}
+                                disabled={[PartnerStatusType.VALID].includes(
+                                    Info?.status as PartnerStatusType
+                                )}
+                                variant={'secondary'}
+                                className={`w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
+                                    Info?.status == PartnerStatusType.CANCELED
+                                        ? 'bg-mountain-100 border-primary text-primary'
+                                        : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'
+                                }`}
+                                IconRight={Archive}
+                            />
+                        </div>
+                    )}
                 </>
             ) : (
                 <EventPopUpsNew

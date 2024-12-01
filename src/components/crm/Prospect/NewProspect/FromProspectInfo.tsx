@@ -20,6 +20,7 @@ import FieldRegion from '@/components/utils/FieldRegion'
 import SelectManager from '@/components/utils/SelectManager'
 import FieldSolutions from '@/components/utils/FieldSolutions'
 import { SelectField } from '@/components/custom/SelectField'
+import FieldState from '@/components/utils/FieldState'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -40,10 +41,12 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
 }) => {
     const [address, setAddress] = useState<{
         countryId: string
+        stateId: string
         cityId: string
         regionId: string
     }>({
         countryId: '',
+        stateId: '',
         cityId: '',
         regionId: '',
     })
@@ -139,6 +142,19 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
+                                        <FieldState
+                                            control={control}
+                                            name="state"
+                                            label="State"
+                                            disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    stateId: value,
+                                                }))
+                                            }}
+                                        />
                                         <FieldCity
                                             control={control}
                                             name="city"
@@ -146,6 +162,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                             placeholder="Ville"
                                             disabled={disabled}
                                             country={address.countryId}
+                                            state={address.stateId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
                                                     ...prev,
@@ -153,12 +170,15 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
+                                    </div>
+                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldRegion
                                             control={control}
                                             name="region"
                                             label="Région"
                                             placeholder="Région"
                                             disabled={disabled}
+                                            state={address.stateId}
                                             country={address.countryId}
                                             city={address.cityId}
                                             onChange={(value) => {
@@ -168,8 +188,15 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
-                                    </div>
-                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
+                                        <InputFieldForm
+                                            classNameParent="col-span-2"
+                                            className=" flex-1 w-full"
+                                            placeholder="Adresse"
+                                            control={control}
+                                            name="address"
+                                            label="Adresse"
+                                            disabled={disabled}
+                                        />
                                         {type != 'PARTNER' && (
                                             <SelectField
                                                 control={control}
@@ -188,15 +215,6 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                                 ]}
                                             />
                                         )}
-                                        <InputFieldForm
-                                            classNameParent="col-span-2"
-                                            className=" flex-1 w-full"
-                                            placeholder="Adresse"
-                                            control={control}
-                                            name="address"
-                                            label="Adresse"
-                                            disabled={disabled}
-                                        />
                                     </div>
                                 </div>
                             </div>

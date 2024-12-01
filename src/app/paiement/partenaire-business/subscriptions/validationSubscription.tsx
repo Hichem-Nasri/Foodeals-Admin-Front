@@ -120,7 +120,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         mode: 'onBlur',
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
-        console.log(data)
+        setDateAndPartner(data)
         // handle filter by refetching date with the new filter
     }
 
@@ -135,7 +135,11 @@ export const ValidationSubscription = ({}: OperationsProps) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setTotals({ ...totals, currentPage: 0 })
+        refetch()
+    }, [dateAndPartner])
     if (error) return <MyError message={error.message} />
 
     return (
@@ -153,6 +157,8 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                             setOpen={setOpen}
                             header="Tableau de validation des abonnements"
                             dateForm="YYYY"
+                            type="PARTNER_SB,NORMAL_PARTNER,SUB_ENTITY"
+                            state="subscriptions"
                         />
                         <CardTotalValue
                             Icon={FileBadge}

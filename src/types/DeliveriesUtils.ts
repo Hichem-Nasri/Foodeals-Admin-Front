@@ -1,5 +1,6 @@
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { DeliveryType } from './deliveries'
+import { CityRegion } from './partenairUtils'
 
 const OptionGenerator = (label: string, avatar?: string) => {
     return {
@@ -7,6 +8,28 @@ const OptionGenerator = (label: string, avatar?: string) => {
         label: label,
         avatar: avatar,
     }
+}
+
+export function transformCityRegionArray(
+    arr: string[],
+    country: string
+): CityRegion[] {
+    const cityMap: { [key: string]: string[] } = {}
+
+    arr.forEach((item) => {
+        const [city, region] = item.split('-')
+
+        if (!cityMap[city]) {
+            cityMap[city] = []
+        }
+        cityMap[city].push(region)
+    })
+
+    return Object.entries(cityMap).map(([city, regions]) => ({
+        country,
+        city,
+        regions,
+    }))
 }
 
 export type OptionsType = {

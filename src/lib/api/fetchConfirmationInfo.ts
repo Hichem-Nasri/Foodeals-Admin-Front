@@ -4,7 +4,7 @@ import {
 } from '@/types/PaymentType'
 import { API_URL } from '.'
 import { appApi } from '../routes'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 
 export const getConfirmationInfo = async (
     versionId?: string

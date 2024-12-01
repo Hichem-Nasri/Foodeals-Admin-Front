@@ -1,23 +1,25 @@
-'localhost:8080/api/v1/payments/commissions/02ad89b9-80f5-427e-a3d7-42889c38fb5f/monthly-operations/2024/10'
-
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
 import { partnerCommissionMonthType } from '@/types/PaymentType'
+import { API_URL } from '..'
 
 export async function fetchPaymentCommissionMonth(
     currentPage: number,
     pageSize: number,
     id: string,
-    date: string
+    date: string,
+    type: string
 ): Promise<{ status: number; data: any }> {
     try {
         const { month, year } = {
             month: date.split('-')[0],
             year: date.split('-')[1],
         }
+        const url = `${API_URL}/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
+        console.log('url: ', url)
         const response = await api
             .get(
-                `${API_PAYMENT_COMMISSIONS}/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}`
+                `${API_URL}/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
             )
             .catch((error) => {
                 throw error
@@ -31,6 +33,95 @@ export async function fetchPaymentCommissionMonth(
         return { status: 200, data: dimoData }
     }
 }
+
+export async function getMultiProduct(
+    id: string,
+    currentPage: number,
+    pageSize: number
+): Promise<{ status: number; data: any }> {
+    try {
+        const response = await api
+            .get(
+                `${API_URL.replace(
+                    'api',
+                    'v1'
+                )}/orders/${id}/operations?page=${currentPage}&size=${pageSize}`
+            )
+            .catch((error) => {
+                throw error
+            })
+        return {
+            status: response.status,
+            data: multiPro,
+        }
+    } catch (error) {
+        console.error('Error fetching partners:', error)
+        return { status: 200, data: multiPro }
+    }
+}
+
+const multiPro = [
+    {
+        type: 'SINGLE',
+        product: {
+            name: 'Pizza ',
+            avatarPath:
+                'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/71/2f/68/pizzas-and-panozzos.jpg',
+        },
+        id: '7b3dd8dd-0df5-47a2-95c1-180d106cf1ae',
+        amount: {
+            amount: 80.0,
+            currency: 'MAD',
+        },
+        quantity: 1,
+        cashAmount: {
+            amount: 80.0,
+            currency: 'MAD',
+        },
+        cashCommission: {
+            amount: 1.6,
+            currency: 'MAD',
+        },
+        cardAmount: {
+            amount: 0,
+            currency: 'MAD',
+        },
+        commissionCard: {
+            amount: 0,
+            currency: 'MAD',
+        },
+    },
+    {
+        type: 'SINGLE',
+        product: {
+            name: 'Pizza ',
+            avatarPath:
+                'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/71/2f/68/pizzas-and-panozzos.jpg',
+        },
+        id: '2ac4bd31-66f3-4ab1-8e05-e6c891f97e68',
+        amount: {
+            amount: 80.0,
+            currency: 'MAD',
+        },
+        quantity: 1,
+        cashAmount: {
+            amount: 80.0,
+            currency: 'MAD',
+        },
+        cashCommission: {
+            amount: 1.6,
+            currency: 'MAD',
+        },
+        cardAmount: {
+            amount: 0,
+            currency: 'MAD',
+        },
+        commissionCard: {
+            amount: 0,
+            currency: 'MAD',
+        },
+    },
+]
 
 const dimoData = {
     partner: {
@@ -68,7 +159,9 @@ const dimoData = {
         size: 20,
         content: [
             {
+                type: 'MULTIPLE',
                 product: {
+                    id: '53bd1adc-5541-4b82-8bb4-09628ec4d708',
                     name: 'Perly',
                     avatarPath: null,
                 },
@@ -90,12 +183,18 @@ const dimoData = {
                     amount: 0,
                     currency: 'MAD',
                 },
-                commissionCard: {
+                commission: {
                     amount: 0,
                     currency: 'MAD',
                 },
+                deliveryBoy: {
+                    id: 103,
+                    name: 'Amine',
+                    avatarPath: '',
+                },
             },
             {
+                type: 'SINGLE',
                 product: {
                     name: 'Raibi',
                     avatarPath: null,
@@ -118,9 +217,14 @@ const dimoData = {
                     amount: 0,
                     currency: 'MAD',
                 },
-                commissionCard: {
+                commission: {
                     amount: 0,
                     currency: 'MAD',
+                },
+                deliveryBoy: {
+                    id: 103,
+                    name: 'Amine',
+                    avatarPath: '',
                 },
             },
         ],

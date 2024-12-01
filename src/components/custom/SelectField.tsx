@@ -20,6 +20,8 @@ interface SelectFieldProps {
     onChangeSearch?: (value: string) => void
     inputRef?: React.RefObject<HTMLInputElement>
     emptyAvatar?: string
+    isLoaded?: boolean
+    selectedType?: string
 }
 
 export const SelectField: FC<SelectFieldProps> = ({
@@ -37,6 +39,8 @@ export const SelectField: FC<SelectFieldProps> = ({
     onChangeSearch,
     inputRef,
     emptyAvatar,
+    isLoaded,
+    selectedType,
 }) => {
     return (
         <FormField
@@ -55,11 +59,24 @@ export const SelectField: FC<SelectFieldProps> = ({
                             disabled={options.length === 0 || disabled}
                             value={field.value}
                             onChange={(value) => {
-                                if (type === 'number') {
-                                    console.log('value', value)
-                                    field.onChange(parseInt(value))
-                                } else field.onChange(value)
-                                if (onChange) onChange(value)
+                                if (selectedType) {
+                                    const option = options.find(
+                                        (option) => option.key === value
+                                    )
+                                    if (option && selectedType in option) {
+                                        field.onChange(
+                                            option[
+                                                selectedType as keyof MultiSelectOptionsType
+                                            ]
+                                        )
+                                    }
+                                } else {
+                                    if (type === 'number') {
+                                        console.log('value', value)
+                                        field.onChange(parseInt(value))
+                                    } else field.onChange(value)
+                                    if (onChange) onChange(value)
+                                }
                             }}
                             placeholder={placeholder}
                             label={label}
@@ -68,6 +85,7 @@ export const SelectField: FC<SelectFieldProps> = ({
                             onChangeSearch={onChangeSearch}
                             inputRef={inputRef}
                             emptyAvatar={emptyAvatar}
+                            isLoaded={isLoaded}
                         />
                         <FormMessage />
                     </div>

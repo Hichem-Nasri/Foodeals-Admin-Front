@@ -74,6 +74,7 @@ export type AddressType = {
     city: string
     address: string
     region: string
+    state: string
     iframe: string
 }
 

@@ -1,5 +1,5 @@
 'use client'
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CustomButton } from '@/components/custom/CustomButton'
@@ -73,7 +73,6 @@ const SubStoreCommission = () => {
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
         setDateAndPartner(data)
-        refetch()
     }
 
     const { data, isLoading, isRefetching, error, refetch } = useQuery({
@@ -95,13 +94,12 @@ const SubStoreCommission = () => {
                 setTotalElements(data.totalElements)
                 setCommissionSubStore(data.content)
                 return response.data
-                return []
             } catch (error) {
                 notify.notify(
                     NotificationType.ERROR,
                     'Erreur lors de la récupération des données'
                 )
-                throw new Error('Error fetching commissions')
+                return []
             } //TODO: add page of error
         },
     })
@@ -119,7 +117,11 @@ const SubStoreCommission = () => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    if (error) return <MyError message={error.message} />
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setCurrentPage(0)
+        refetch()
+    }, [dateAndPartner])
 
     return (
         <>
@@ -137,6 +139,7 @@ const SubStoreCommission = () => {
                             type="organization"
                             id={id as string}
                             typePartner="PARTNER_SB"
+                            state={'commissions'}
                         />
                         <CardTotalValue
                             Icon={Coins}

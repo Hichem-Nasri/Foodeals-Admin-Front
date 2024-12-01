@@ -6,12 +6,27 @@ interface CommissionMonthProps {
     params: {
         id: string
     }
+    searchParams: {
+        type: string
+    }
 }
 
-const CommissionMonthPage: FC<CommissionMonthProps> = ({ params }) => {
+const CommissionMonthPage: FC<CommissionMonthProps> = ({
+    params,
+    searchParams,
+}) => {
     return (
         <Layout>
-            <CommissionMonth id={params.id} />
+            {['NORMAL_PARTNER', 'SUB_ENTITY'].includes(
+                searchParams.type
+            ) ? (
+                <CommissionMonth
+                    id={params.id}
+                    type={searchParams.type as 'NORMAL_PARTNER' | 'SUB_ENTITY'}
+                />
+            ) : (
+                <div>Invalid type</div>
+            )}
         </Layout>
     )
 }

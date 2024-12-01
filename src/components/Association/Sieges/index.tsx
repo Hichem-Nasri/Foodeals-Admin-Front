@@ -25,6 +25,7 @@ import { columnsSiegesTable, siegesData } from '../column/siegeColumn'
 import { useNotification } from '@/context/NotifContext'
 import {
     NotificationType,
+    PartnerInfoDto,
     TotalValueProps,
     TotalValues,
 } from '@/types/GlobalType'
@@ -51,6 +52,12 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
     const [open, setOpen] = useState(false)
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [archive, setArchive] = useState(false)
+    const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
+        id: '',
+        name: '',
+        city: '',
+        avatarPath: '',
+    })
     const notify = useNotification()
     const router = useRouter()
     const { isLoading, isRefetching, refetch } = useQuery({
@@ -67,12 +74,15 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
+                const { partnerInfoDto, subentities } = data?.data
+
                 setTotals({
                     ...totals,
-                    totalPages: data.data?.totalPages,
-                    totalElements: data.data?.totalElements,
+                    totalPages: subentities?.totalPages,
+                    totalElements: subentities?.totalElements,
                 })
-                setSieges(data.data?.content)
+                setPartner(partnerInfoDto)
+                setSieges(subentities?.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -116,7 +126,7 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
             currentPage: 0,
         })
         refetch()
-    }, [archive])
+    }, [archive, filterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
@@ -130,7 +140,7 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 setOpen={setOpen}
                 totalElements={totals.totalElements}
                 isFetching={isLoading || isRefetching}
-                siege
+                type="SIEGES"
             />
             <DataTable
                 data={sieges}
@@ -138,6 +148,10 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 title="Liste des sièges"
                 transform={(value) => <SiegeCard sieges={value} />}
                 isLoading={isLoading || isRefetching}
+                partnerData={{
+                    ...partner,
+                    avatar: partner.avatarPath,
+                }}
             />
             <PaginationData
                 pageSize={totals.pageSize}

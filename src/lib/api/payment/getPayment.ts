@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
 
 export async function fetchPaymentCommission(

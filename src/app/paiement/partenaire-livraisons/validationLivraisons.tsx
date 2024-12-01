@@ -39,7 +39,7 @@ interface PaymentProps {
 }
 
 export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
-    const [payments, setPayments] = useState(defaultDataPaymentDeliveriesTable)
+    const [payments, setPayments] = useState<PaymentDeliveriesType[]>([])
     const [totals, setTotals] = useState<
         TotalValueProps & { totalCommission: number; totalValue: number }
     >({
@@ -56,7 +56,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
     const [dateAndPartner, setDateAndPartner] = useState<
         z.infer<typeof PaymentFilterSchema>
     >({
-        date: getFilterDate(new Date()),
+        date: new Date().getFullYear().toString(),
         partner: id,
     })
 
@@ -73,13 +73,15 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
                 // setPayments([])
                 return
             }
+            const { statistics, payments } = res.data
             setTotals({
                 ...totals,
-                totalElements: res.data.totalElements,
-                totalCommission: res.data.totalCommission,
-                totalValue: res.data.totalValue,
+                totalPages: payments?.totalPages,
+                totalElements: payments?.numberOfElements,
+                totalCommission: statistics?.totalCommission.amount,
+                totalValue: statistics?.total.amount,
             })
-            // setPayments(res.data.content)
+            setPayments(payments.content)
         },
     })
 
@@ -113,6 +115,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
                     setOpen={setOpen}
                     header="Tableau de validation des Subscription"
                     dateForm="YYYY"
+                    state="commissions"
                 />
                 {dateAndPartner.partner && (
                     <>

@@ -70,6 +70,7 @@ export interface CrmInformationSchemaType {
     phone: string
     email: string
     country: string
+    state: string
     city: string
     region: string
     address: string

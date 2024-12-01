@@ -4,7 +4,7 @@ import { Layout } from '@/components/Layout/Layout'
 import React, { FC } from 'react'
 import CreateProduct from '@/components/Products/newProducts'
 import { useQuery } from '@tanstack/react-query'
-import { demoData, fetchProduct } from '@/lib/api/product/fetchProduct'
+import { emptyProduct, fetchProduct } from '@/lib/api/product/fetchProduct'
 
 interface CreateProductPageProps {
     params: {
@@ -14,7 +14,7 @@ interface CreateProductPageProps {
 
 const CreateProductPage: FC<CreateProductPageProps> = ({ params }) => {
     const { data, isLoading, error } = {
-        data: demoData,
+        data: emptyProduct,
         isLoading: false,
         error: null,
     } // GetProduct(params.id)

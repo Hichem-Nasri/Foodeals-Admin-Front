@@ -23,6 +23,7 @@ import SelectManager from '@/components/utils/SelectManager'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
+import FieldState from '@/components/utils/FieldState'
 
 interface FormAssociationProps {
     form: UseFormReturn<z.infer<typeof associationInformationSchema>>
@@ -30,6 +31,7 @@ interface FormAssociationProps {
     setCountryCode: (value: string) => void
     countryCode: string
     disabled?: boolean
+    isLoaded?: boolean
 }
 
 export const FormAssociation: FC<FormAssociationProps> = ({
@@ -38,9 +40,11 @@ export const FormAssociation: FC<FormAssociationProps> = ({
     countryCode,
     setCountryCode,
     disabled,
+    isLoaded,
 }) => {
     const [address, setAddress] = useState({
         countryId: '',
+        stateId: '',
         cityId: '',
         regionId: '',
     })
@@ -49,7 +53,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="gap-[30px] lg:gap-0 flex flex-col px-4 pb-4 lg:px-0"
+                className="gap-[30px] lg:gap-0 flex flex-col "
             >
                 <div className="flex relative gap-5 lg:pb-0 pb-14 lg:hidden my-6">
                     <AvatarField
@@ -59,6 +63,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                         label="Image du logo"
                         className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
                         classNameAvatar="rounded-full lg:rounded-[18px] bg-white"
+                        isLoaded={isLoaded}
                     />
                     <AvatarField
                         form={form}
@@ -67,19 +72,20 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                         label="Photo de couverture"
                         className="lg:w-fit w-full"
                         classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px] bg-white"
+                        isLoaded={isLoaded}
                     />
                 </div>
                 <Accordion
                     type="single"
                     collapsible
-                    className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
+                    className="bg-white lg:p-5 px-4 py-6 rounded-[30px] lg:rounded-[14px]"
                     defaultValue="partnerInfo"
                 >
                     <AccordionItem
                         value="partnerInfo"
                         className="text-lynch-400 text-[1.375rem] font-normal"
                     >
-                        <AccordionTrigger className="font-normal text-[1.375rem] py-0">
+                        <AccordionTrigger className="font-normal text-lg lg:text-[1.375rem] py-0">
                             Information de l’asociation
                         </AccordionTrigger>
                         <AccordionContent className="pt-7">
@@ -93,6 +99,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
                                         classNameAvatar="rounded-full lg:rounded-[18px]"
                                         disabled={disabled}
+                                        isLoaded={isLoaded}
                                     />
                                     <AvatarField
                                         form={form}
@@ -102,6 +109,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         className="lg:w-fit w-full"
                                         classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px]"
                                         disabled={disabled}
+                                        isLoaded={isLoaded}
                                     />
                                 </div>
                                 <span className="w-fill h-[1px] bg-lynch-100 lg:flex hidden" />
@@ -113,6 +121,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             control={control}
                                             placeholder="Nom de rasions sociale"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                         <FieldActivities
                                             control={control}
@@ -120,6 +129,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             label="Type"
                                             disabled={disabled!}
                                             type="ASSOCIATION"
+                                            isLoaded={isLoaded}
                                         />
                                         <InputFieldForm
                                             label="Responsable"
@@ -127,6 +137,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             control={control}
                                             placeholder="Nom de responsable"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -138,6 +149,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             countryCode={countryCode}
                                             onChangeCountryCode={setCountryCode}
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                         <InputFieldForm
                                             IconLeft={Mail}
@@ -146,6 +158,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             control={control}
                                             placeholder="Email professionnelle"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                         <InputFieldForm
                                             label="PV"
@@ -153,6 +166,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             control={control}
                                             placeholder="Saisir les num des PV"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -161,6 +175,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             name="managerId"
                                             label="Manager"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                         <FieldCountry
                                             control={control}
@@ -176,12 +191,28 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                                 }))
                                             }}
                                         />
+                                        <FieldState
+                                            control={control}
+                                            name="state"
+                                            label="State"
+                                            disabled={disabled!}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    stateId: value,
+                                                }))
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldCity
                                             control={control}
                                             name="city"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled!}
+                                            state={address.stateId}
                                             country={address.countryId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
@@ -190,14 +221,13 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                                 }))
                                             }}
                                         />
-                                    </div>
-                                    <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldRegion
                                             control={control}
                                             name="region"
                                             label="Region"
                                             placeholder="Region"
                                             disabled={disabled!}
+                                            state={address.stateId}
                                             country={address.countryId}
                                             city={address.cityId}
                                             onChange={(value) => {
@@ -213,7 +243,10 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                             control={control}
                                             placeholder="Saisir l’adresse"
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
+                                    </div>
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 content-start gap-3">
                                         <SelectField
                                             control={control}
                                             name="associationType"
@@ -229,6 +262,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                                 },
                                             ]}
                                             disabled={disabled}
+                                            isLoaded={isLoaded}
                                         />
                                     </div>
                                     <IframeRenderer

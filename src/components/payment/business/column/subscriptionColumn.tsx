@@ -54,7 +54,7 @@ export const columnsSubscriptionTable = (router: AppRouterInstance) => [
         header: "Total d'échéance",
         footer: (info) => info.column.id,
     }),
-    columnHelperSubscription.accessor('solution', {
+    columnHelperSubscription.accessor('solutions', {
         cell: (info) => (
             <div className="flex items-center gap-1">
                 {info.getValue().map((solution) => (
@@ -74,8 +74,8 @@ export const columnsSubscriptionTable = (router: AppRouterInstance) => [
                 type="button"
                 title="Voir"
                 disabled={
-                    info.row.getValue('payable') == false &&
-                    info.row.getValue('type') == PartnerEntitiesType.SUB_ENTITY
+                    info.row.original.payable == false &&
+                    info.row.original.type == PartnerEntitiesType.SUB_ENTITY
                 }
                 onClick={() =>
                     router.push(
@@ -312,7 +312,10 @@ export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
             amount: 1000,
             currency: 'MAD',
         },
-        solution: [PartnerSolutionType.DLC_PRO, PartnerSolutionType.DONATE_PRO],
+        solutions: [
+            PartnerSolutionType.DLC_PRO,
+            PartnerSolutionType.DONATE_PRO,
+        ],
         payable: true,
     },
     {
@@ -328,7 +331,7 @@ export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
             amount: 1000,
             currency: 'MAD',
         },
-        solution: [PartnerSolutionType.DLC_PRO],
+        solutions: [PartnerSolutionType.DLC_PRO],
         payable: false,
     },
     {
@@ -344,7 +347,7 @@ export const defaultDataSubscriptionTable: partnerSubscriptionType[] = [
             amount: 1000,
             currency: 'MAD',
         },
-        solution: [PartnerSolutionType.DLC_PRO],
+        solutions: [PartnerSolutionType.DLC_PRO],
         payable: true,
     },
 ]

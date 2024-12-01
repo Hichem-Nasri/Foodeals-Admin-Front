@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,7 +26,12 @@ import { DeliveryCollaboratorsType } from '@/types/deliveries'
 import { DeliveryCollaboratorCard } from './DeliveryCollaboratorCard'
 import { useNotification } from '@/context/NotifContext'
 import { getCollaboratorDelivery } from '@/lib/api/delivery/getCollaborator'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    PartnerInfoDto,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import PaginationData from '@/components/utils/PaginationData'
 import { columnsDeliveryCollaboratorsTable } from '../column/collaboratorsColumn'
@@ -50,33 +55,46 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
     >([])
     const [FilterData, setFilterData] =
         useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalElement, setTotalElements] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
+    const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
+        id: '',
+        name: '',
+        city: '',
+        avatarPath: '',
+    })
     const [archive, setArchive] = useState(false)
 
-    const { error, isLoading, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+    const { error, isLoading, refetch, isRefetching } = useQuery({
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const data = await getCollaboratorDelivery(
                     deliveryId,
-                    currentPage,
-                    pageSize
+                    totals.currentPage,
+                    totals.pageSize,
+                    FilterData,
+                    archive
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
+                const { organization, users } = data.data
+                setPartner(organization)
                 console.log('data', data)
-                setTotalElements(data.data.totalElements)
-                setTotalPages(data.data.totalPages)
-                setCollaborator(data.data.content)
+                setTotals({
+                    ...totals,
+                    totalElements: users?.numberOfElements,
+                    totalPages: users?.totalPages,
+                })
+                setCollaborator(users?.content)
                 return data.data
             } catch (error) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Error fetching Collaborateurs'
+                )
                 console.log(error)
                 // setCollaborator([])
             }
@@ -92,14 +110,14 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
     const onSubmit = (
         data: z.infer<typeof PartnerCollaboratorsFilerSchema>
     ) => {
+        console.log('data', data)
         setFilterData(data)
         setOpen(false)
-        refetch()
     }
 
     const table = useReactTable({
         data: collaborator,
-        columns: columnsDeliveryCollaboratorsTable(router),
+        columns: columnsDeliveryCollaboratorsTable(router, archive, refetch),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -107,14 +125,15 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    // const partnerData = {
-    //     name: 'Marjane',
-    //     avatar: 'https://api.dicebear.com/7.x/bottts/png?seed=Ikea',
-    //     city: 'Fès',
-    // }
-    if (error) {
-        return <div>Error: {error.message}</div>
-    }
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
+        refetch()
+    }, [archive, FilterData])
+
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
             <FilterDeliveryCollaborators
@@ -123,7 +142,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 form={form}
                 setArchive={setArchive}
                 archive={archive}
-                totalElements={totalElement}
+                totalElements={totals.totalElements}
                 open={open}
                 setOpen={setOpen}
             />
@@ -134,15 +153,20 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 transform={(value) => (
                     <DeliveryCollaboratorCard collaborator={value} />
                 )}
-                back={false}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
+                partnerData={{
+                    ...partner,
+                    avatar: partner.avatarPath,
+                }}
             />
             <PaginationData
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
+                currentPage={totals.currentPage}
+                totalPages={totals.totalPages}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
                 refetch={refetch}
-                pageSize={pageSize}
+                pageSize={totals.pageSize}
             />
             <div className="lg:hidden flex flex-col items-center gap-4 ">
                 <CustomButton

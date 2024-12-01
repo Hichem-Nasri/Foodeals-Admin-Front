@@ -1,11 +1,12 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { ArchiveType } from '@/types/GlobalType'
+import { API_URL } from '..'
 
 const archivePatner = async (
     partnerId: string,
     archiveReason: ArchiveType
 ): Promise<any> => {
-    const url = `http://localhost:8080/api/v1/organizations/${partnerId}`
+    const url = `${API_URL}/v1/organizations/${partnerId}`
     try {
         console.log('archiveReason:', archiveReason)
         const response = await api

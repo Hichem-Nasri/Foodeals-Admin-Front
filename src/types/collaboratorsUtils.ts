@@ -10,6 +10,18 @@ export type CollaboratorsType = {
     userInfoDto: ContactType & { avatarPath: string }
 }
 
+export interface CollaboratorsUser {
+    createdAt: string
+    id: string
+    role: string
+    name: ContactType['name']
+    city: string
+    region: string
+    avatarPath: string | null
+    email: string
+    phone: string
+}
+
 export const SchemaCollaborators = z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional(),

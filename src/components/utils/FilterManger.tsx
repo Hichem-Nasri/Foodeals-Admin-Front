@@ -4,11 +4,15 @@ import { FormField, FormMessage } from '../ui/form'
 import { cn } from '@/lib/utils'
 import { MultiSelectOptionsType } from '../MultiSelect'
 import { Select } from '../custom/Select'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { SelectField } from '../custom/SelectField'
 import { fetchManager } from '@/lib/api/fetchManager'
 import { fetchCities } from '@/lib/api/filterFetchCities'
-import { fetchFilterManager } from '@/lib/api/filterManager'
+import {
+    fetchFilterManager,
+    fetchFilterSalesManager,
+} from '@/lib/api/filterManager'
+import { usePathname } from 'next/navigation'
 
 interface FilterManagerProps {
     control: Control<any>
@@ -28,10 +32,11 @@ export const FilterManager: FC<FilterManagerProps> = ({
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
     const [search, setSearch] = useState('')
+    const id = usePathname()
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchFilterCities = async () => {
-            const data = await fetchFilterManager(search, type)
+            const data = await fetchFilterSalesManager(search, type, id)
             console.log('FilterManager data', data)
             setOptions(data)
         }

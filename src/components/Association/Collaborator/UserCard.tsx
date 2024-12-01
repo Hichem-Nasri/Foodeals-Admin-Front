@@ -17,18 +17,23 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Label } from '@/components/Label'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { capitalize } from '@/types/utils'
+import {
+    CollaboratorDataType,
+    PartnerCollaborators,
+} from '@/types/collaborators'
+import { CollaboratorsUser } from '@/types/collaboratorsUtils'
 
 interface UsersCardProps {
-    User?: CollaboratorAssociationsType
+    User: CollaboratorsUser
 }
 
 export const UsersCard: FC<UsersCardProps> = ({ User }) => {
     const router = useRouter()
     if (!User) return
-
+    console.log('user: ', User)
     const dataArray = [
         {
-            label: `Responsable : ${User.userInfoDto.role}`,
+            label: `Responsable : ${User.role}`,
             icon: Handshake,
         },
         {
@@ -52,18 +57,13 @@ export const UsersCard: FC<UsersCardProps> = ({ User }) => {
         },
     ]
     const fullName =
-        capitalize(User.userInfoDto.name.firstName) +
-        ' ' +
-        capitalize(User.userInfoDto.name.lastName)
+        capitalize(User.name.firstName) + ' ' + capitalize(User.name.lastName)
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage
-                            className=""
-                            src={User.userInfoDto.avatarPath}
-                        />
+                        <AvatarImage className="" src={User.avatarPath!} />
                         <AvatarFallback>{fullName[0]}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">
@@ -78,7 +78,7 @@ export const UsersCard: FC<UsersCardProps> = ({ User }) => {
                         <div className="flex items-center gap-2 text-lynch-500">
                             <CalendarClock size={18} />
                             <Label
-                                label={User.userInfoDto.createdAt}
+                                label={User.createdAt}
                                 className="text-xs font-medium text-lynch-500"
                             />
                         </div>
@@ -86,24 +86,32 @@ export const UsersCard: FC<UsersCardProps> = ({ User }) => {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-[0.375rem]">
-                        <Link href={`tel:${User.userInfoDto.phone}`}>
+                        <Link href={`tel:${User.phone}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={PhoneCall}
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full"
                             />
                         </Link>
-                        <Link href={`mailto:${User.userInfoDto.email}`}>
+                        <Link href={`mailto:${User.email}`}>
                             <CustomButton
                                 label=""
                                 IconLeft={Mail}
                                 className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
                             />
                         </Link>
-                        <ActionsMenu
-                            menuList={actions}
-                            className="[&>svg]:size-6 p-[0.625rem]"
-                        />
+                        <Link
+                            href={AppRoutes.deliveryCollaborator.replace(
+                                ':id',
+                                User.id
+                            )}
+                        >
+                            <CustomButton
+                                label=""
+                                IconLeft={Eye}
+                                className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
+                            />
+                        </Link>
                     </div>
                 </div>
             </div>

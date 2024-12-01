@@ -1,10 +1,11 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
+import { API_URL } from '..'
 
 async function validateContract(
     id: string,
     contractFile: File[]
 ): Promise<any> {
-    const url = `http://localhost:8080/api/v1/organizations/partners/validate/${id}`
+    const url = `${API_URL}/v1/organizations/partners/validate/${id}`
 
     const formData = new FormData()
     formData.append('document', contractFile[0])

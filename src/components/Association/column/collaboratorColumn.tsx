@@ -6,6 +6,7 @@ import archiveSubPartner from '@/lib/api/partner/archiveSubEntites'
 import archiveUser from '@/lib/api/partner/archiveUser'
 import { AppRoutes } from '@/lib/routes'
 import { CollaboratorAssociationsType, SiegesType } from '@/types/association'
+import { CollaboratorsUser } from '@/types/collaboratorsUtils'
 import { ArchiveType } from '@/types/GlobalType'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
@@ -14,30 +15,29 @@ import { createColumnHelper } from '@tanstack/react-table'
 import { Eye, Pen, Archive, Store, Users, ArchiveX, Info } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
-const columnCollaboratorTableHelper =
-    createColumnHelper<CollaboratorAssociationsType>()
+const columnCollaboratorTableHelper = createColumnHelper<CollaboratorsUser>()
 
 export const columnsCollaboratorTable = (
     router: AppRouterInstance,
     archive: boolean,
     refetch: () => void
 ) => [
-    columnCollaboratorTableHelper.accessor('userInfoDto.createdAt', {
+    columnCollaboratorTableHelper.accessor('createdAt', {
         cell: (info) => info.getValue(),
         header: 'Date',
         footer: (info) => info.column.id,
     }),
-    columnCollaboratorTableHelper.accessor('userInfoDto', {
+    columnCollaboratorTableHelper.accessor('name', {
         cell: (info) => {
-            const { avatarPath, ...rest } = info.getValue()
+            const avatarPath = info.row.original.avatarPath
             const fullName =
-                capitalize(rest.name.firstName) +
+                capitalize(info.getValue().firstName) +
                 ' ' +
-                capitalize(rest.name.lastName)
+                capitalize(info.getValue().lastName)
             return (
                 <div className="flex items-center justify-center gap-1 text-wrap">
                     <Avatar className="size-[2.875rem] shrink-0 justify-center items-center flex bg-lynch-200 rounded-full">
-                        <AvatarImage src={avatarPath} />
+                        <AvatarImage src={avatarPath!} />
                         <AvatarFallback>
                             {fullName[0].toUpperCase()}
                         </AvatarFallback>
@@ -49,7 +49,7 @@ export const columnsCollaboratorTable = (
         header: 'Nom',
         footer: (info) => info.column.id,
     }),
-    columnCollaboratorTableHelper.accessor('userInfoDto.role', {
+    columnCollaboratorTableHelper.accessor('role', {
         cell: (info) => (
             <div className="flex items-center gap-1">{info.getValue()}</div>
         ),
@@ -66,12 +66,12 @@ export const columnsCollaboratorTable = (
         header: 'Région',
         footer: (info) => info.column.id,
     }),
-    columnCollaboratorTableHelper.accessor('userInfoDto.email', {
+    columnCollaboratorTableHelper.accessor('email', {
         cell: (info) => <EmailBadge email={info.getValue()} />,
         header: 'Email',
         footer: (info) => info.column.id,
     }),
-    columnCollaboratorTableHelper.accessor('userInfoDto.phone', {
+    columnCollaboratorTableHelper.accessor('phone', {
         cell: (info) => <PhoneBadge phone={info.getValue()} />,
         header: 'Téléphone',
         footer: (info) => info.column.id,
@@ -130,7 +130,7 @@ export const columnsCollaboratorTable = (
                     {
                         actions: () =>
                             router.push(
-                                AppRoutes.newAssociation.replace(
+                                AppRoutes.deliveryCollaboratorDetails.replace(
                                     ':id',
                                     info.getValue()!
                                 )
@@ -181,7 +181,7 @@ export const columnsCollaboratorTable = (
                 <ActionsMenu
                     id={info.getValue()!}
                     menuList={listActions}
-                    prospect={archive ? 'organisation' : false}
+                    prospect={archive ? 'users' : false}
                 />
             )
         },

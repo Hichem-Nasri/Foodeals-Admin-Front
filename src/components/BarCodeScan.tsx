@@ -1,7 +1,6 @@
 // components/BarcodeProcessor.tsx
 
 import React, { useEffect } from 'react'
-import Quagga from 'quagga'
 
 interface BarcodeProcessorProps {
     imageSrc: File

@@ -116,27 +116,12 @@ export const columnsCommissionTable = (
         header: 'A recevoir',
         footer: (info) => info.column.id,
     }),
-    columnHelperCommission.accessor('payable', {
-        cell: () => null,
-        header: '',
-        footer: (info) => info.column.id,
-    }),
-    columnHelperCommission.accessor('entityId', {
-        cell: () => null,
-        header: '',
-        footer: (info) => info.column.id,
-    }),
-    columnHelperCommission.accessor('id', {
-        cell: () => null,
-        header: '',
-        footer: (info) => info.column.id,
-    }),
     columnHelperCommission.accessor('paymentStatus', {
         cell: (info) => {
-            const payable = info.row.getValue('payable')
-            const type = info.row.getValue('partnerType')
-            const id = info.row.getValue('id') as string
-            const toPay = info.row.getValue('toPay') as PriceType
+            const payable = info.row.original.payable
+            const type = info.row.original.partnerType
+            const id = info.row.original.id
+            const toPay = info.row.original.toPay
             console.log(toPay)
 
             const status = info.row.getValue(
@@ -177,38 +162,45 @@ export const columnsCommissionTable = (
         footer: (info) => info.column.id,
     }),
     columnHelperCommission.accessor('organizationId', {
-        cell: (info) => (
-            <div
-                title="Voir"
-                onClick={() => {
-                    const type = info.row.getValue('partnerType')
-                    if (path != 'subStore' && type == PartnerType.PARTNER_SB)
-                        router.push(
-                            AppRoutes.PBCommissionDetails.replace(
-                                ':id',
-                                info.getValue()
-                            )
-                        )
-                    else {
-                        router.push(
-                            AppRoutes.SubStoreCommission.replace(
-                                ':id',
-                                info.getValue()
-                            )
-                        )
-                    }
-                }}
-                className="flex items-center justify-center"
-            >
+        cell: (info) => {
+            const type = info.row.original.partnerType
+            return (
                 <div
-                    className=" flex items-center justify-center 
-					 p-2 rounded-full   bg-lynch-300 w-10 h-10 cursor-pointer text-white"
+                    title="Voir"
+                    onClick={() => {
+                        if (
+                            path != 'subStore' &&
+                            type == PartnerType.PARTNER_SB
+                        )
+                            router.push(
+                                AppRoutes.PBCommissionDetails.replace(
+                                    ':id',
+                                    info.getValue()
+                                )
+                            )
+                        else {
+                            if (type == PartnerType.PARTNER_SB) return
+                            router.push(
+                                AppRoutes.SubStoreCommission.replace(
+                                    ':id',
+                                    info.getValue() + '?type=' + type
+                                )
+                            )
+                        }
+                    }}
+                    className="flex items-center justify-center"
                 >
-                    <Eye size={20} />
+                    <div
+                        className=" flex items-center justify-center 
+                    p-2 rounded-full   bg-lynch-300 w-10 h-10 cursor-pointer text-white"
+                    >
+                        <Eye size={20} />
+                    </div>
                 </div>
-            </div>
-        ),
+            )
+        },
         header: 'Activité',
+        footer: (info) => info.column.id,
     }),
 ]
 

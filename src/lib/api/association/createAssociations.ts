@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_ASSOCIATIONS, API_PARTNERS } from '@/lib/api_url'
 import { AssociationPostType } from '@/types/association'
 import { NotificationType } from '@/types/GlobalType'

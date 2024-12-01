@@ -29,6 +29,7 @@ import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
 import FieldSolutions from '@/components/utils/FieldSolutions'
+import FieldState from '@/components/utils/FieldState'
 
 interface FormDeliveryPartnerProps {
     form: UseFormReturn<z.infer<typeof DeliveryPartnerSchema>>
@@ -52,10 +53,12 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
     const [address, setAddress] = useState<{
         countryId: string
         cityId: string
+        stateId: string
         regionId: string
     }>({
         countryId: '',
         cityId: '',
+        stateId: '',
         regionId: '',
     })
 
@@ -71,6 +74,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                         form={form}
                         name="logo"
                         alt="Logo"
+                        disabled={disabled}
                         label="Image du logo"
                         className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
                         classNameAvatar="rounded-full lg:rounded-[18px] bg-white"
@@ -79,6 +83,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                         form={form}
                         name="cover"
                         alt="cover"
+                        disabled={disabled}
                         label="Photo de couverture"
                         className="lg:w-fit w-full"
                         classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px] bg-white"
@@ -105,6 +110,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
+                                        disabled={disabled}
                                         className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
                                         classNameAvatar="rounded-full lg:rounded-[18px]"
                                     />
@@ -114,6 +120,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         alt="cover"
                                         label="Photo de couverture"
                                         className="lg:w-fit w-full"
+                                        disabled={disabled}
                                         classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px]"
                                     />
                                 </div>
@@ -214,10 +221,24 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 }))
                                             }}
                                         />
+                                        <FieldState
+                                            control={control}
+                                            name="state"
+                                            label="State"
+                                            disabled={disabled!}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    stateId: value,
+                                                }))
+                                            }}
+                                        />
                                         <FieldCity
                                             control={control}
                                             name="siege"
                                             label="Siège"
+                                            state={address.stateId}
                                             disabled={disabled}
                                             country={address.countryId}
                                             onChange={(value) => {
@@ -227,11 +248,14 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 }))
                                             }}
                                         />
+                                    </div>
+                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <FieldRegion
                                             control={control}
                                             name="region"
                                             label="Région"
                                             disabled={disabled}
+                                            state={address.stateId}
                                             country={address.countryId}
                                             city={address.cityId}
                                             onChange={(value) => {
@@ -241,8 +265,6 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 }))
                                             }}
                                         />
-                                    </div>
-                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <InputFieldForm
                                             label="Adresse"
                                             name="address"

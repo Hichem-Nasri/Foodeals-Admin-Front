@@ -11,6 +11,7 @@ interface FieldCityProps {
     label?: string
     placeholder?: string
     country: string
+    state: string
     onChange: (value: string) => void
 }
 
@@ -21,23 +22,30 @@ const FieldCity: FC<FieldCityProps> = ({
     label = 'Ville',
     placeholder = 'Sélectionner le ville',
     country,
+    state,
     onChange,
 }) => {
     const [cities, setCities] = useState<MultiSelectOptionsType[]>([])
     useEffect(() => {
         const fetchCountry = async () => {
-            const countries = await getCities(country)
-            setCities(countries)
+            const cities = await getCities(state)
+            setCities(cities)
         }
-        if (country) fetchCountry()
-    }, [country])
+        if (state) fetchCountry()
+    }, [state])
     return (
         <SelectField
             control={control}
             name={name}
             label={label}
             options={cities}
-            placeholder={country ? placeholder : "Sélectionner le pays d'abord"}
+            placeholder={
+                state
+                    ? placeholder
+                    : country
+                    ? "Sélectionner le state d'abord"
+                    : "Sélectionner le pays d'abord"
+            }
             disabled={disabled}
             onChange={(value) => {
                 const id = cities.find((values) => values.key === value)?.id

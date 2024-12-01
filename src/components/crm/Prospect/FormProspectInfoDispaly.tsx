@@ -18,7 +18,7 @@ import { AvatarField } from '@/components/custom/AvatarField'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
 import { capitalize, CountryData } from '@/types/utils'
 import { useQuery } from '@tanstack/react-query'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
 import FieldActivities from '@/components/utils/FieldActivities'
@@ -30,6 +30,7 @@ import FieldSolutions from '@/components/utils/FieldSolutions'
 import { Label } from '@/components/Label'
 import { AvatarAndName } from '@/components/AvatarAndName'
 import { LabelAndAvatar } from '@/components/custom/LabelAndAvatar'
+import FieldState from '@/components/utils/FieldState'
 
 interface FormCrmInfoProps {
     form: UseFormReturn<z.infer<typeof CrmInformationSchema>>
@@ -37,6 +38,7 @@ interface FormCrmInfoProps {
     disabled?: boolean
     setCountryCode: (value: string) => void
     countryCode: string
+    type?: 'PARTNER' | 'ASSOCIATION'
 }
 
 export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
@@ -45,13 +47,16 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
     countryCode,
     setCountryCode,
     disabled = false,
+    type = 'PARTNER',
 }) => {
     const [address, setAddress] = useState<{
         countryId: string
+        stateId: string
         cityId: string
         regionId: string
     }>({
         countryId: '',
+        stateId: '',
         cityId: '',
         regionId: '',
     })
@@ -97,7 +102,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             name="category"
                                             label="Catégorie"
                                             disabled={disabled}
-                                            type="PARTNER"
+                                            type={type!}
                                         />
                                         <InputFieldForm
                                             control={control}
@@ -143,7 +148,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             name="creatorInfo"
                                             label={'Alimenter par'}
                                             avatar={creatorInfo?.avatarPath!}
-                                            disabled={disabled}
+                                            disabled={true}
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -167,6 +172,21 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
+                                        <FieldState
+                                            control={control}
+                                            name="state"
+                                            label="State"
+                                            disabled={disabled}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    stateId: value,
+                                                }))
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldCity
                                             control={control}
                                             name="city"
@@ -174,6 +194,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             placeholder="Ville"
                                             disabled={disabled}
                                             country={address.countryId}
+                                            state={address.stateId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
                                                     ...prev,
@@ -181,8 +202,6 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                                 }))
                                             }}
                                         />
-                                    </div>
-                                    <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldRegion
                                             control={control}
                                             name="region"
@@ -191,6 +210,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             disabled={disabled}
                                             country={address.countryId}
                                             city={address.cityId}
+                                            state={address.stateId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
                                                     ...prev,
@@ -207,6 +227,26 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                             label="Adresse"
                                             disabled={disabled}
                                         />
+                                    </div>
+                                    <div className="flex lg:flex-row flex-col items-start gap-3">
+                                        {type != 'PARTNER' && (
+                                            <SelectField
+                                                control={control}
+                                                name="type"
+                                                label="Type"
+                                                disabled={disabled}
+                                                options={[
+                                                    {
+                                                        label: 'Association',
+                                                        key: 'ASSOCIATION',
+                                                    },
+                                                    {
+                                                        label: 'Food Bank',
+                                                        key: 'FOOD_BANK',
+                                                    },
+                                                ]}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>

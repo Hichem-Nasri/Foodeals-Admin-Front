@@ -27,7 +27,8 @@ export const CrmInformationSchema = z.object({
         .optional(),
     email: z.string().email('Veuillez entrer une adresse email valide'),
     country: z.string().min(3),
-    managerInfo: z.union([z.string(), z.number()]),
+    managerInfo: z.union([z.string().min(1), z.number().min(1)]),
+    state: z.string().min(3),
     city: z.string().min(3),
     region: z.string().min(3),
     solutions: z.array(z.string()).min(1),
@@ -110,6 +111,7 @@ export const defaultCrmInformationData = {
     managerInfo: '',
     country: '',
     city: '',
+    state: '',
     region: '',
     address: '',
 }
@@ -129,6 +131,7 @@ export function getInfoData(data: CrmType) {
         managerInfo: data.managerInfo.id,
         country: data.address.country,
         city: data.address.city,
+        state: data.address.state,
         region: data.address.region,
         address: data.address.address,
         solutions: data.solutions,
@@ -152,6 +155,7 @@ export const getCrmCreateData = (data: CrmInformationSchemaType) => {
         address: {
             country: data.country,
             city: data.city,
+            state: data.state,
             address: data.address,
             region: data.region,
         },

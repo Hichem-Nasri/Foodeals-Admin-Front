@@ -9,6 +9,7 @@ interface CollaboratorsPageProps {
         id: string
     }
     searchParams: {
+        partnerType: string
         type: string
     }
 }
@@ -19,7 +20,11 @@ export default async function CollaboratorsPage({
 }: CollaboratorsPageProps) {
     return (
         <Layout>
-            <Collaborateurs id={params.id} type={searchParams.type} />
+            <Collaborateurs
+                id={params.id}
+                type={searchParams.type}
+                partnerType={searchParams.partnerType}
+            />
         </Layout>
     )
 }

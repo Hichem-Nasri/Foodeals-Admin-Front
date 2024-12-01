@@ -17,8 +17,9 @@ export const PartnerInformationSchema = z.object({
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
     commercialRegisterNumber: z.number().min(1),
-    partnerType: z.array(z.string()).min(1),
+    partnerType: z.array(z.string()).optional(),
     country: z.string().min(3),
+    state: z.string().min(3),
     city: z.string().min(3),
     region: z.string().min(3),
     address: z.string().min(3),
@@ -38,6 +39,7 @@ export const defaultPartnerInformationData = {
     partnerType: [],
     country: '',
     city: '',
+    state: '',
     region: '',
     address: '',
     mapLocation: '',
@@ -55,6 +57,7 @@ export interface PartnerInformationSchemaType {
     commercialRegisterNumber: number
     partnerType: string[]
     country: string
+    state: string
     city: string
     region: string
     address: string
@@ -68,7 +71,7 @@ export const PartnerSubscriptionSchema = z.object({
     rib: z.string().min(3),
     accountType: z.string().min(3),
     subscribtionByEntity: z.boolean().default(false),
-    subscriptionPayedBySubEntities: z.string().default('mainEntities'),
+    subscriptionPayedBySubEntities: z.string().default('mainEntity'),
     marketPro: z
         .object({
             selected: z.boolean().default(false),
@@ -76,8 +79,8 @@ export const PartnerSubscriptionSchema = z.object({
             amount: z.number(),
             expiration: z.number(),
             managerId: z.string(),
-            commissionCash: z.number().min(1).max(100),
-            commissionCard: z.number().min(1).max(100),
+            commissionCash: z.number().optional(),
+            commissionCard: z.number().optional(),
             name: z.string().nullish().default('pro_market'),
         })
         .optional(),
@@ -117,7 +120,7 @@ export const PartnerSubscriptionSchema = z.object({
 })
 
 export const defaultPartnerSubscriptionData = {
-    subscriptionType: 'general',
+    subscriptionType: 'personalized',
     bank: '',
     paymentMethod: '',
     beneficiary: '',

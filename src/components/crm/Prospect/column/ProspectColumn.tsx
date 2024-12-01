@@ -35,7 +35,8 @@ const columnHelper = createColumnHelper<CrmType>()
 export const columnsCrmTable = (
     router: AppRouterInstance,
     setData: any,
-    leadKo: boolean
+    leadKo: boolean,
+    refetch: () => void
 ) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => {
@@ -126,6 +127,11 @@ export const columnsCrmTable = (
         header: 'Pays',
         footer: (info) => info.column.id,
     }),
+    columnHelper.accessor('address.city', {
+        cell: (info) => info.getValue(),
+        header: 'Ville',
+        footer: (info) => info.column.id,
+    }),
     columnHelper.accessor('address.region', {
         cell: (info) => (
             <div className="w-full px-2 flex-1 text-nowrap">
@@ -150,11 +156,7 @@ export const columnsCrmTable = (
         header: 'Téléphone',
         footer: (info) => info.column.id,
     }),
-    columnHelper.accessor('address.city', {
-        cell: (info) => info.getValue(),
-        header: 'Ville',
-        footer: (info) => info.column.id,
-    }),
+
     columnHelper.accessor('address.address', {
         cell: (info) => info.getValue(),
         header: 'Adresse',
@@ -313,13 +315,13 @@ export const columnsCrmTable = (
                                 info.getValue(),
                                 archive
                             )
-                                .then(
-                                    (res) =>
-                                        handleDone &&
+                                .then((res) => {
+                                    handleDone &&
                                         handleDone(true, 'Prospect archivé', [
                                             'prospects',
                                         ])
-                                )
+                                    refetch()
+                                })
                                 .catch(
                                     (err) =>
                                         handleDone &&
@@ -350,9 +352,10 @@ export const columnsCrmTable = (
 export const columnCrmAssociations = (
     router: AppRouterInstance,
     setData: any,
-    leadKo: boolean
+    leadKo: boolean,
+    refetch: () => void
 ) => [
-    ...columnsCrmTable(router, setData, leadKo).slice(0, 4),
+    ...columnsCrmTable(router, setData, leadKo, refetch).slice(0, 4),
     columnHelper.accessor('type', {
         cell: (info) => {
             const value = info.getValue()
@@ -363,5 +366,5 @@ export const columnCrmAssociations = (
         header: 'Type de compte',
         footer: (info) => info.column.id,
     }),
-    ...columnsCrmTable(router, setData, leadKo).slice(4, 16),
+    ...columnsCrmTable(router, setData, leadKo, refetch).slice(4, 16),
 ]

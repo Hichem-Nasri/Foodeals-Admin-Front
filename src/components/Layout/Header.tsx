@@ -35,6 +35,15 @@ import {
     LogOut,
 } from 'lucide-react'
 import { UserMenu } from './UserMenu'
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogTrigger,
+} from '../ui/dialog'
+import { DialogTitle } from '@radix-ui/react-dialog'
+import { SignOut } from '@/app/actions'
 
 interface HeaderProps {
     formTitle?: string
@@ -52,7 +61,10 @@ interface SubPageType {
 export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
     const router = useRouter()
     const [subPage, setSubPage] = useState<SubPageType | null>(null)
-    console.log('formTitle: ', formTitle)
+    const handleLogout = async () => {
+        const res = await SignOut()
+        router.push('/')
+    }
     return (
         <>
             <div
@@ -186,13 +198,45 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                                             ))}
                                         </Fragment>
                                     )}
-                                    <Button className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0">
-                                        <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
-                                            <LogOut />
-                                        </div>
-                                        Se déconnecter
-                                        <ChevronRight className="ml-auto" />
-                                    </Button>
+                                    <Dialog>
+                                        <DialogTrigger>
+                                            <Button
+                                                className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
+                                                onClick={() => {}}
+                                            >
+                                                <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
+                                                    <LogOut />
+                                                </div>
+                                                Se déconnecter
+                                                <ChevronRight className="ml-auto" />
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogTitle className="text-lynch-950 text-xl">
+                                                Confirmer déconnecter
+                                            </DialogTitle>
+                                            <DialogDescription className="text-lynch-500 text-base">
+                                                Voulez-vous vraiment vous
+                                                déconnecter?
+                                            </DialogDescription>
+                                            <div className="flex gap-4 mt-4 w-full">
+                                                <DialogClose>
+                                                    <CustomButton
+                                                        label="Annuler"
+                                                        size={'sm'}
+                                                        variant="ghost"
+                                                        onClick={() => {}}
+                                                    />
+                                                </DialogClose>
+                                                <CustomButton
+                                                    label="Confirmer"
+                                                    size={'sm'}
+                                                    className="bg-coral-500 hover:bg-coral-50 hover:text-coral-500 text-white transition-colors"
+                                                    onClick={handleLogout}
+                                                />
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </SheetDescription>
                             </SheetHeader>
                         </SheetContent>

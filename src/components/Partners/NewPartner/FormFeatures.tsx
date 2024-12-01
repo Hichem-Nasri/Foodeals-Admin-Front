@@ -24,6 +24,7 @@ interface FormFeaturesProps {
     onSubmit: (data: z.infer<typeof PartnerFeaturesSchema>) => void
     disabled?: boolean
     status?: PartnerStatusType
+    id: string
 }
 
 export const FormFeatures: FC<FormFeaturesProps> = ({
@@ -31,11 +32,12 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
     onSubmit,
     disabled,
     status,
+    id,
 }) => {
     const { handleSubmit } = form
     const router = useRouter()
     const showAllPartners = () => {
-        router.push(AppRoutes.collaborator)
+        router.push(AppRoutes.collaborator.replace(':id', id))
     }
     console.log('hello features')
     return (
@@ -55,8 +57,8 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                 <AccordionContent className="pt-7">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Form {...form}>
-                            <div className="flex lg:flex-row flex-col lg:items-end gap-[1.875rem]">
-                                <div className="lg:w-1/4">
+                            <div className="flex lg:flex-row flex-col lg:items-end gap-3">
+                                <div className="lg:w-full">
                                     <InputFieldForm
                                         label="Nombre de magasin"
                                         name="numberOfStores"
@@ -66,7 +68,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                                         disabled={disabled}
                                     />
                                 </div>
-                                <div className="lg:w-1/4">
+                                <div className="lg:w-full">
                                     <InputFieldForm
                                         label="Nombre de compte"
                                         name="maxNumberOfAccounts"
@@ -76,7 +78,7 @@ export const FormFeatures: FC<FormFeaturesProps> = ({
                                         disabled={disabled}
                                     />
                                 </div>
-                                <div className="lg:w-1/4">
+                                <div className="lg:w-full">
                                     <InputFieldForm
                                         label="minimum de Réduction"
                                         name="minimumReduction"

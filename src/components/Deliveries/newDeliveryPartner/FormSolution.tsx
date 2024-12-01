@@ -82,7 +82,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                 <>
                                                     {solutions.marketPro
                                                         .selected && (
-                                                        <div className="flex lg:flex-row flex-col items-start justify-start my-auto h-fit w-full gap-4">
+                                                        <div className="flex lg:flex-row flex-col justify-start items-start lg:items-end my-auto h-fit w-full gap-4">
                                                             <PartnerSolution
                                                                 solution={
                                                                     PartnerSolutionType.MARKET_PRO
@@ -120,7 +120,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                     )}
                                                     {solutions.donatePro
                                                         .selected && (
-                                                        <div className="flex lg:flex-row flex-col items-start  my-auto w-full gap-2 flex-1">
+                                                        <div className="flex lg:flex-row flex-col justify-start items-start lg:items-end my-auto h-fit w-full gap-4">
                                                             <PartnerSolution
                                                                 solution={
                                                                     PartnerSolutionType.DONATE_PRO

@@ -11,6 +11,7 @@ interface FieldRegionProps {
     label?: string
     placeholder?: string
     city: string
+    state: string
     country: string
     onChange: (value: string) => void
 }
@@ -23,6 +24,7 @@ const FieldRegion: FC<FieldRegionProps> = ({
     placeholder = 'Sélectionner le region',
     city,
     country,
+    state,
     onChange,
 }) => {
     const [regions, setRegions] = useState<MultiSelectOptionsType[]>([])
@@ -39,7 +41,15 @@ const FieldRegion: FC<FieldRegionProps> = ({
             name={name}
             label={label}
             options={regions}
-            placeholder={city ? placeholder : country ? "Sélectionner la ville d'abord" : "Sélectionner le pays d'abord"}
+            placeholder={
+                city
+                    ? placeholder
+                    : country
+                    ? "Sélectionner la ville d'abord"
+                    : state
+                    ? "Sélectionner la state d'abord"
+                    : "Sélectionner le pays d'abord"
+            }
             disabled={disabled}
             onChange={(value) => {
                 const id = regions.find((values) => values.key === value)?.id

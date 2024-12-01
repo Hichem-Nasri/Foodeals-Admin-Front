@@ -56,6 +56,7 @@ export const defaultAssociationPostData: AssociationPostType = {
     associationAddress: {
         address: '',
         country: '',
+        state: '',
         city: '',
         region: '',
         iframe: '',
@@ -69,6 +70,7 @@ export const defaultAssociationPostData: AssociationPostType = {
 export const exportAssociationPost: (
     data: any
 ) => AssociationInformationSchemaType = (data) => {
+    console.log('convert: ', data)
     return {
         logo: data.avatarPath,
         cover: data.coverPath,
@@ -83,6 +85,7 @@ export const exportAssociationPost: (
         PVNumber: data.pv,
         managerId: data.manager.id.toString(),
         country: data.address.country,
+        state: data.address.state,
         city: data.address.city,
         region: data.address.region,
         address: data.address.address,

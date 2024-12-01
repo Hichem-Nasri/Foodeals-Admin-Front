@@ -1,7 +1,6 @@
 'use server'
 
 import { auth, signIn, signOut } from '@/auth'
-import { UserType } from '@/auth.config'
 import { LoginSchema } from '@/schemas'
 import { z } from 'zod'
 
@@ -23,7 +22,7 @@ export async function LogIn(data: z.infer<typeof LoginSchema>) {
         console.log('the result is: ', result)
 
         // Check if there was an error during sign-in
-        if (result?.error) {
+        if (!result) {
             console.error('Login failed:', result.error)
             return { success: false, error: result.error }
         }
@@ -38,5 +37,5 @@ export async function LogIn(data: z.infer<typeof LoginSchema>) {
 
 export async function getUser() {
     const session = await auth()
-    return session?.user as UserType
+    return session?.user
 }

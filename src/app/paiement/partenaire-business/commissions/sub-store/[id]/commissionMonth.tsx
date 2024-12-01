@@ -1,5 +1,5 @@
 'use client'
-import React, { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
@@ -61,14 +61,17 @@ import { MyError } from '@/components/Error'
 
 interface CommissionMonthProps {
     id: string
+    type: 'NORMAL_PARTNER' | 'SUB_ENTITY'
 }
 
-const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
+const CommissionMonth: FC<CommissionMonthProps> = ({ id, type }) => {
     const [commissionMonth, setCommissionMonth] = useState<
         partnerCommissionMonthType[]
     >([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [open, setOpen] = useState(false)
+    const [multiProductId, setMultiProductId] = useState<string>('')
+    const [value, setValue] = useState<boolean>(false)
     const [totals, setTotals] = useState<
         TotalValueProps & {
             totalCommission: number
@@ -92,9 +95,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
         setDateAndPartner(data)
-        refetch()
     }
-
     const { data, isLoading, isRefetching, error, refetch } = useQuery({
         queryKey: ['commissionMonth', id],
         queryFn: async () => {
@@ -102,8 +103,9 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                 const response = await fetchPaymentCommissionMonth(
                     totals.currentPage,
                     totals.pageSize,
-                    dateAndPartner.partner!,
-                    dateAndPartner.date!
+                    multiProductId ? multiProductId : dateAndPartner.partner!,
+                    dateAndPartner.date!,
+                    type
                 )
                 if (response.status === 500) {
                     throw new Error('Error fetching commissions')
@@ -113,12 +115,13 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                     ...totals,
                     totalCommission: statistics.totalCommission.amount,
                     totalSales: statistics.total.amount,
-                    totalElements: operations.totalElements,
+                    totalElements: operations.numberOfElements,
                     totalPages: operations.totalPages,
                 })
                 setDateAndPartner((prev) => {
                     return { ...prev, partner: partner.name }
                 })
+                console.log('data++++++++++++++++', response.data)
                 setCommissionMonth(operations.content)
                 return response.data
             } catch (error) {
@@ -134,18 +137,27 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
 
     const tableCommission = useReactTable({
         data: commissionMonth,
-        columns: columnsCommissionMonthTable(router),
+        columns: columnsCommissionMonthTable(
+            router,
+            setMultiProductId,
+            setValue
+        ),
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-    const handleConfirmAll = () => {
-        // handle confirm all
-    }
-    if (error) return <MyError message={error.message} />
+    console.log('Heeeeeeeeeeey')
+    useEffect(() => {
+        if (isLoading || isRefetching) return
+        console.log('Refetch________________:', multiProductId)
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
+        refetch()
+    }, [value, dateAndPartner])
     return (
         <Fragment>
             <div className="flex flex-col gap-3 w-full px-3 lg:px-0 mr-2">
@@ -158,6 +170,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                         type="partner"
                         typePartner={'SUB_ENTITY'}
                         id={id}
+                        state="commissions"
                     />
                     <CardTotalValue
                         Icon={Coins}
@@ -179,7 +192,11 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                         <ColumnVisibilityModal table={tableCommission} />
                         <SwitchValidation />
                     </div>
-                    <div className="flex justify-center items-center space-x-4">
+                    <div
+                        className={` ${
+                            multiProductId ? 'hidden' : 'flex'
+                        } items-center gap-4 w-fit`}
+                    >
                         <ConfirmationAll
                             isLoading={isLoading}
                             details={data?.details}
@@ -196,9 +213,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                     table={tableCommission}
                     data={commissionMonth}
                     title="Tableau de validation des commission"
-                    transform={(data) => (
-                        <CommissionSubStoreCard commission={data} />
-                    )}
+                    transform={(data) => <Fragment />}
                     isLoading={isLoading || isRefetching}
                 />
                 <PaginationData
@@ -210,7 +225,11 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id }) => {
                     }}
                     refetch={refetch}
                 />
-                <div className="lg:hidden flex flex-col items-center gap-4 my-3 w-full">
+                <div
+                    className={`lg:hidden ${
+                        multiProductId ? 'hidden' : 'flex'
+                    } flex-col items-center gap-4 my-3 w-full`}
+                >
                     <ConfirmationAll
                         isLoading={isLoading}
                         details={data?.details}

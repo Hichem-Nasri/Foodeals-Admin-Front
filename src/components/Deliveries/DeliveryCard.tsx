@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation'
 import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { getContract } from '@/lib/api/partner/getContract'
 import { PartnerStatus } from '../Partners/PartnerStatus'
-import { getListActions } from './column/getListActions'
+import { GetListActions } from './column/getListActions'
 
 interface DeliveryCardProps {
     delivery: DeliveryType
@@ -49,12 +49,14 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
         },
     ]
 
-    const actions: ActionType[] = getListActions(
+    const actions: ActionType[] = GetListActions(
         delivery.id,
         delivery.status,
         archive,
-        refetch
+        refetch,
+        true
     )
+
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem] cursor-pointer">
@@ -68,7 +70,7 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
                     <div className="flex flex-col gap-1">
                         <Label
                             label={delivery.partnerInfoDto.name}
-                            className="text-sm font-normal text-lynch-950"
+                            className="text-base font-normal text-lynch-950"
                         />
                         <Label
                             label={delivery.distribution}
@@ -105,6 +107,7 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
                         <ActionsMenu
                             menuList={actions}
                             className="[&>svg]:size-6 p-[0.625rem]"
+                            prospect={archive ? 'organisation' : false}
                         />
                     </div>
                 </div>

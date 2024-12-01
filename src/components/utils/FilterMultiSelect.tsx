@@ -61,7 +61,7 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
     const [options, setOptions] = useState<MultiSelectOptionsType[]>(() =>
         name == 'status'
             ? optionsStatus
-            : name == 'solution'
+            : name == 'solution' || name == 'solutions'
             ? type?.includes('DELIVERY_PARTNER')
                 ? optionsSolutions.filter(
                       (option) => option.key !== PartnerSolutionType.DLC_PRO
@@ -70,12 +70,6 @@ export const FilterMultiSelect: FC<FilterMultiSelectProps> = ({
             : []
     )
     console.log(options)
-    useEffect(() => {
-        const fetchOptions = async () => {
-            // fetch options
-        }
-        fetchOptions()
-    }, [])
 
     return (
         <MultiSelectField

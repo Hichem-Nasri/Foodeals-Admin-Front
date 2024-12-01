@@ -11,24 +11,19 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { CustomButton } from '../custom/CustomButton'
-import { RotateCw, Store } from 'lucide-react'
+import { Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { DeliveryType } from '@/types/deliveries'
 import { FiltersDeliveries } from './FilterDeliveries'
 import { DeliveryCard } from './DeliveryCard'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
 import {
-    keepPreviousData,
-    useQuery,
-    useQueryClient,
-} from '@tanstack/react-query'
-import { fetchDeliveryPartners } from '@/lib/api/delivery/fetchDeliveryParnters'
-import { API_PARTNERS } from '@/lib/api_url'
-import api from '@/api/Auth'
-import archivePatner from '@/lib/api/partner/archiverPartner'
-import getArchivedPartners from '@/lib/api/partner/getArchiver'
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import PaginationData from '../utils/PaginationData'
 import { columnsDeliveriesTable } from './column/deliveryColumn'
 import {
@@ -39,10 +34,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
-import AppRouter from 'next/dist/client/components/app-router'
 import { AppRoutes } from '@/lib/routes'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
-import { MyError } from '../Error'
 interface DeliveriesProps {}
 
 export interface TableRowType {
@@ -53,25 +46,22 @@ export interface TableRowType {
 export const Deliveries: FC<DeliveriesProps> = ({}) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [deliveries, setDeliveries] = useState<DeliveryType[]>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
+    const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [FilterData, setFilterData] =
         useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
     const [open, setOpen] = useState(false)
-    const [totalElement, setTotalElements] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
     const notify = useNotification()
     const router = useRouter()
     const [archive, setArchive] = useState(false)
 
     const { error, isLoading, isRefetching, refetch } = useQuery({
-        queryKey: ['partners', currentPage, pageSize],
+        queryKey: ['partners', totals.currentPage, totals.pageSize],
         queryFn: async (data: any) => {
             try {
                 const data = await fetchPartners(
                     'DELIVERIES',
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     FilterData,
                     archive
                 )
@@ -79,8 +69,11 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                     throw new Error('Error fetching partners')
                 }
                 console.log('data', data)
-                setTotalElements(data.data.totalElements)
-                setTotalPages(data.data.totalPages)
+                setTotals((prev) => ({
+                    ...prev,
+                    totalPages: data.data.totalPages,
+                    totalElements: data.data.numberOfElements,
+                }))
                 setDeliveries(data.data.content)
                 return data.data
             } catch (error) {
@@ -128,14 +121,14 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     }, [archive, FilterData])
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
+        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:px-0 lg:pr-2 pr-0 lg:mb-0 mb-4">
             <FiltersDeliveries
                 onSubmit={onSubmit}
                 table={table}
                 form={form}
                 handleArchive={handleArchive}
                 archive={archive}
-                totalElements={totalElement}
+                totalElements={totals.totalElements}
                 open={open}
                 setOpen={setOpen}
                 isFetching={isLoading || isRefetching}
@@ -152,13 +145,14 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                     />
                 )}
                 isLoading={isLoading || isRefetching}
-                hideColumns={['status']}
             />
             <PaginationData
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPages={totalPages}
-                pageSize={pageSize}
+                currentPage={totals.currentPage}
+                setCurrentPage={(page) =>
+                    setTotals({ ...totals, currentPage: page })
+                }
+                totalPages={totals.totalPages}
+                pageSize={totals.pageSize}
                 refetch={refetch}
             />
 

@@ -151,7 +151,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             name="subscriptionPayedBySubEntities"
                                             options={[
                                                 {
-                                                    key: 'mainEntities',
+                                                    key: 'mainEntity',
                                                     label: 'Paid par le main partner',
                                                 },
                                                 {
@@ -164,12 +164,12 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                     </div>
                                     <span className="w-fill h-[1px] bg-lynch-100" />
                                     {subscriptionType === 'general' ? (
-                                        <FormSubscriptionGeneral
+                                        <FormSubscriptionPersonalized
                                             form={form}
                                             disabled={disabled}
                                         />
                                     ) : (
-                                        <FormSubscriptionPersonalized
+                                        <FormSubscriptionGeneral
                                             form={form}
                                             disabled={disabled}
                                         />

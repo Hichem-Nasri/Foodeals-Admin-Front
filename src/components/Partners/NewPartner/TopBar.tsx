@@ -120,23 +120,42 @@ export const TopBar: FC<TopBarProps> = ({
     const handleGenerateContract = async () => {
         try {
             console.log(id, 'contract')
+
+            // Detailed logging of the contract retrieval
             const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData as Blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', `contract_${id}.pdf`)
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            window.URL.revokeObjectURL(url)
+
+            // Validate contract data
+            if (!contractData) {
+                throw new Error('No contract data received')
+            }
+            console.log('-----------------------------')
+            import('file-saver').then(({ saveAs }) => {
+                saveAs(
+                    new Blob([contractData as Blob], {
+                        type: 'application/pdf',
+                    }),
+                    `contract_${id}.pdf`
+                )
+            })
+            console.log('+++++++++++++++++++++++')
             setIsDownloading(true)
             notif.notify(NotificationType.SUCCESS, 'Contrat généré avec succès')
         } catch (error) {
+            // Comprehensive error logging
+            console.error('Full error details:', {
+                message:
+                    error instanceof Error ? error.message : 'Unknown error',
+                error: error,
+                contractId: id,
+            })
+
+            // More informative error notification
             notif.notify(
                 NotificationType.ERROR,
-                'Erreur lors de la génération du contrat'
+                `Erreur lors de la génération du contrat: ${
+                    error instanceof Error ? error.message : 'Erreur inconnue'
+                }`
             )
-            console.log('Error generating contract:', error)
         }
     }
 
@@ -150,7 +169,7 @@ export const TopBar: FC<TopBarProps> = ({
             <div className="lg:flex grid grid-cols-2 lg:relative fixed left-0 z-40 bottom-0 lg:w-fit w-full gap-3 lg:p-2 p-3 rounded-t-[24px] lg:bg-transparent bg-white lg:ml-auto">
                 {status !== PartnerStatusType.VALID ? (
                     <CustomButton
-                        onClick={onSaveData}
+                        onClick={() => onSaveData()}
                         disabled={secondaryButtonDisabled || isPending}
                         size="sm"
                         type="submit"
@@ -158,7 +177,6 @@ export const TopBar: FC<TopBarProps> = ({
                         label="Enregistrer"
                         IconRight={Save}
                         variant="outline"
-                        isPending={isPending}
                     />
                 ) : (
                     <CustomButton
@@ -167,7 +185,7 @@ export const TopBar: FC<TopBarProps> = ({
                             setIsDownloading(false)
                             onSaveData(true)
                         }}
-                        disabled={secondaryButtonDisabled}
+                        disabled={isPending}
                         size="sm"
                         type="submit"
                         className="bg-white text-lynch-400 border-[1.5px] border-lynch-400 hover:text-white hover:bg-lynch-400/60"
@@ -184,7 +202,6 @@ export const TopBar: FC<TopBarProps> = ({
                         label="Générer le contrat"
                         className="disabled:bg-lynch-300"
                         IconRight={FileBadge}
-                        isPending={isPending}
                     />
                 ) : status === PartnerStatusType.VALID ? (
                     <DropdownMenu>
@@ -209,7 +226,7 @@ export const TopBar: FC<TopBarProps> = ({
                     </DropdownMenu>
                 ) : (
                     <CustomButton
-                        disabled={primaryButtonDisabled}
+                        disabled={primaryButtonDisabled || isPending}
                         onClick={onSubmit}
                         size="sm"
                         label="Valider le contrat"

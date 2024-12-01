@@ -132,12 +132,13 @@ export const columnsPaymentDeliveriesTable = () => [
             const month = info.row.getValue('month') as string
             return (
                 <Link
+                    className="w-full flex justify-center items-center"
                     href={AppRoutes.paymentDeliveriesDetails.replace(
                         ':id',
                         info.getValue() + '?month=' + month
                     )}
                 >
-                    <button className=" size-12 rounded-full bg-lynch-300 hover:bg-lynch-200 text-white grid place-content-center">
+                    <button className=" size-10 rounded-full bg-lynch-300 hover:bg-lynch-200 text-white grid place-content-center">
                         <Eye size={20} />
                     </button>
                 </Link>

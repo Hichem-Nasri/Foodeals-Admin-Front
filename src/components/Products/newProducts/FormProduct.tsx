@@ -121,7 +121,7 @@ export const NewFormProduct: FC<NewFormProduct> = ({
                                     {form.getValues('title')}
                                 </h1>
                                 <h3 className="text-sm text-primary">
-                                    {form.getValues('categories')}
+                                    {product?.categoryId}
                                 </h3>
                             </div>
                         )}

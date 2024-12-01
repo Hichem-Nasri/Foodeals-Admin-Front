@@ -37,12 +37,15 @@ import { FilterOrganizations } from '../utils/FilterOrganizations'
 import { capitalize } from '@/types/utils'
 import { FilterCity } from '../utils/FilterCity'
 import { FilterManager } from '../utils/FilterManger'
+import { FilterManagerSubEntity } from '../utils/FilterManagerSubEntitiy'
 
 interface FormFilterProps {
     form: UseFormReturn<z.infer<typeof SchemaFilter>>
     onSubmit: (data: z.infer<typeof SchemaFilter>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
+    archive: boolean
+    type?: string
 }
 
 export const FormFilter: FC<FormFilterProps> = ({
@@ -50,6 +53,8 @@ export const FormFilter: FC<FormFilterProps> = ({
     onSubmit,
     setOpen,
     open,
+    archive,
+    type = 'ASSOCIATIONS',
 }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -62,6 +67,8 @@ export const FormFilter: FC<FormFilterProps> = ({
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
+                    archive={archive}
+                    type={type}
                 />
             </DialogContent>
         </Dialog>
@@ -72,12 +79,16 @@ interface FormAssociationProps {
     form: UseFormReturn<z.infer<typeof SchemaFilter>>
     onSubmit: (data: z.infer<typeof SchemaFilter>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
+    type?: string
 }
 
 const FormAssociation: FC<FormAssociationProps> = ({
     form,
     onSubmit,
     setOpen,
+    archive,
+    type = 'ASSOCIATIONS',
 }) => {
     const { handleSubmit, control } = form
     return (
@@ -98,19 +109,51 @@ const FormAssociation: FC<FormAssociationProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterOrganizations
-                            control={control}
-                            name="companyName"
-                            label="Raison sociale"
-                            placeholder="Partenaire"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
-                        />
-                        <FilterManager
-                            control={control}
-                            name="collaborators"
-                            label="Collaborateurs"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
-                        />
+                        {type == 'SIEGES' ? (
+                            <>
+                                <FilterOrganizations
+                                    control={control}
+                                    name="companyName"
+                                    label="Raison sociale"
+                                    placeholder="Partenaire"
+                                    type={
+                                        'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&' +
+                                        (archive ? 'true' : 'false')
+                                    }
+                                />
+                                <FilterManagerSubEntity
+                                    control={control}
+                                    name="collaborators"
+                                    label="Collaborateurs"
+                                    type={
+                                        'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&' +
+                                        (archive ? 'true' : 'false')
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <FilterOrganizations
+                                    control={control}
+                                    name="companyName"
+                                    label="Raison sociale"
+                                    placeholder="Partenaire"
+                                    type={
+                                        'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&' +
+                                        (archive ? 'true' : 'false')
+                                    }
+                                />
+                                <FilterManager
+                                    control={control}
+                                    name="collaborators"
+                                    label="Collaborateurs"
+                                    type={
+                                        'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&' +
+                                        (archive ? 'true' : 'false')
+                                    }
+                                />
+                            </>
+                        )}
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
                         <FilterCity

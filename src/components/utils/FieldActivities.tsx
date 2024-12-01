@@ -10,6 +10,7 @@ interface FieldActivitiesProps {
     label: string
     disabled: boolean
     type: 'PARTNER' | 'ASSOCIATION'
+    isLoaded?: boolean
 }
 
 const FieldActivities: FC<FieldActivitiesProps> = ({
@@ -18,6 +19,7 @@ const FieldActivities: FC<FieldActivitiesProps> = ({
     name,
     label,
     type,
+    isLoaded,
 }) => {
     const [activities, setActivities] = useState<MultiSelectOptionsType[]>([
         {
@@ -52,6 +54,7 @@ const FieldActivities: FC<FieldActivitiesProps> = ({
                     </span>
                 ))
             }
+            isLoaded={isLoaded}
             len={2}
         />
     )

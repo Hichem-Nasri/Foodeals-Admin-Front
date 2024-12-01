@@ -1,4 +1,5 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
+import { API_URL } from '..'
 
 async function fetchSubPartner(
     id: string,
@@ -8,7 +9,10 @@ async function fetchSubPartner(
     status: number
     data: any
 }> {
-    const url = `http://localhost:8080/v1/sub-entities/partners/${id}?page=${currentPage}&size=${pageSize}`
+    const url = `${API_URL.replace(
+        'api',
+        'v1'
+    )}/sub-entities/partners/${id}?page=${currentPage}&size=${pageSize}`
 
     try {
         const response = await api.get(url).catch((error) => {

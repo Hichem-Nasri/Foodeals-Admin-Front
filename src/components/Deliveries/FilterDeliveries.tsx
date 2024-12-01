@@ -51,7 +51,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
-                    type={'DELIVERY_PARTNER&' + (archive ? 'true' : 'false')}
+                    type={'DELIVERY_PARTNER&' + `${archive}`}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -60,7 +60,7 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                     open={open}
                     setOpen={setOpen}
                     onSubmit={onSubmit}
-                    type={'DELIVERY_PARTNER&' + (archive ? 'true' : 'false')}
+                    type={'DELIVERY_PARTNER&' + `${archive}`}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

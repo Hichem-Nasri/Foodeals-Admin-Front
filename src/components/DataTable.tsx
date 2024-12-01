@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react'
 import {
     Table,
     TableBody,
@@ -6,32 +6,32 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { flexRender } from '@tanstack/react-table';
-import { ArrowLeft, ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Label } from './Label';
-import { CustomButton } from './custom/CustomButton';
-import { useRouter } from 'next/navigation';
-import { DataTableSkeleton } from './TableSkeleton';
-import CardSkeleton from './CardSkeleton';
+} from '@/components/ui/table'
+import { flexRender } from '@tanstack/react-table'
+import { ArrowLeft, ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Label } from './Label'
+import { CustomButton } from './custom/CustomButton'
+import { useRouter } from 'next/navigation'
+import { DataTableSkeleton } from './TableSkeleton'
+import CardSkeleton from './CardSkeleton'
 
 interface DataTableProps<T> {
-    title: string;
-    table: import('@tanstack/table-core').Table<T>;
-    data: T[];
-    transform: (data: T) => JSX.Element[] | JSX.Element;
-    hideColumns?: string[];
+    title: string
+    table: import('@tanstack/table-core').Table<T>
+    data: T[]
+    transform: (data: T) => JSX.Element[] | JSX.Element
+    hideColumns?: string[]
     partnerData?: {
-        name: string;
-        avatar: string | null;
-        city: string;
-    };
-    hidden?: boolean;
-    isLoading?: boolean;
-    back?: boolean;
-    onBack?: () => void;
+        name: string
+        avatar: string | null
+        city: string
+    }
+    hidden?: boolean
+    isLoading?: boolean
+    back?: boolean
+    onBack?: () => void
 }
 
 export const DataTable: FC<DataTableProps<any>> = ({
@@ -46,86 +46,115 @@ export const DataTable: FC<DataTableProps<any>> = ({
     back = true,
     onBack,
 }) => {
-    const router = useRouter();
-    const skeletonElements = Array.from({ length: 3 }, (_, i) => i + 1);
+    const router = useRouter()
+    const skeletonElements = Array.from({ length: 3 }, (_, i) => i + 1)
 
     const handleBackClick = () => {
         if (onBack) {
-            onBack();
+            onBack()
         } else {
-            router.back();
+            router.back()
         }
-    };
+    }
 
     const renderPartnerInfo = () => (
-        <div className="flex justify-start items-center">
-            <Avatar>
+        <div className="flex justify-start items-center gap-2">
+            <Avatar className="size-12 rounded-full bg-white text-lynch-400 ">
                 <AvatarImage src={partnerData?.avatar!} />
-                <AvatarFallback>{partnerData?.name}</AvatarFallback>
+                <AvatarFallback>{partnerData?.name.at(0)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-1">
-                <Label label={partnerData?.name!} className="text-base font-normal" />
-                <Label label={partnerData?.city!} className="text-primary text-xs font-semibold" />
+                <Label
+                    label={partnerData?.name!}
+                    className="text-base font-normal"
+                />
+                <Label
+                    label={partnerData?.city!}
+                    className="text-primary text-xs font-semibold"
+                />
             </div>
         </div>
-    );
+    )
 
     const renderTableHeader = () => (
         <TableHeader>
             {table.getHeaderGroups().map((headerGroup, index) => (
                 <TableRow key={headerGroup.id + index}>
-                    {headerGroup.headers.map(header =>
-                        !hideColumns?.includes(header.id) && (
-                            <TableHead
-                                key={header.id}
-                                onClick={header.column.getToggleSortingHandler()}
-                                className={cn(
-                                    'cursor-pointer min-w-40',
-                                    {
-                                        'min-w-48': header.column.id === 'createdAt' || header.column.id === 'date',
+                    {headerGroup.headers.map(
+                        (header) =>
+                            !hideColumns?.includes(header.id) && (
+                                <TableHead
+                                    key={header.id}
+                                    onClick={header.column.getToggleSortingHandler()}
+                                    className={cn('cursor-pointer min-w-40', {
+                                        'min-w-48':
+                                            header.column.id === 'createdAt' ||
+                                            header.column.id === 'date',
                                         'min-w-28': header.column.id === 'logo',
-                                        'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit': ['organizationId', 'id'].includes(header.id),
-                                        'min-w-60': ['email', 'phone'].includes(header.column.id),
-                                    }
-                                )}
-                            >
-                                <div className="flex justify-between items-center w-full">
-                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    {header.id !== 'organizationId' && header.id !== 'id' ? (
-                                        header.column.getIsSorted() === 'asc' ? <ChevronUp /> : header.column.getIsSorted() === 'desc' ? <ChevronDown /> : <ChevronsUpDown />
-                                    ) : null}
-                                </div>
-                            </TableHead>
-                        )
+                                        'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit':
+                                            ['organizationId', 'id'].includes(
+                                                header.id
+                                            ),
+                                        'min-w-60': ['email', 'phone'].includes(
+                                            header.column.id
+                                        ),
+                                    })}
+                                >
+                                    <div className="flex justify-between items-center w-full">
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                        {header.id !== 'organizationId' &&
+                                        header.id !== 'id' ? (
+                                            header.column.getIsSorted() ===
+                                            'asc' ? (
+                                                <ChevronUp />
+                                            ) : header.column.getIsSorted() ===
+                                              'desc' ? (
+                                                <ChevronDown />
+                                            ) : (
+                                                <ChevronsUpDown />
+                                            )
+                                        ) : null}
+                                    </div>
+                                </TableHead>
+                            )
                     )}
                 </TableRow>
             ))}
         </TableHeader>
-    );
+    )
 
     const renderTableBody = () => (
         <TableBody>
             {table.getRowModel().rows.map((row, index) => (
                 <TableRow key={row.id + index}>
-                    {row.getVisibleCells().map(cell =>
+                    {row.getVisibleCells().map((cell) =>
                         hideColumns?.includes(cell.column.id) ? null : (
                             <TableCell
                                 key={cell.id}
-                                className={cn(
-                                    'w-fit',
-                                    {
-                                        'sticky right-0 shadow-md bg-white min-w-none': ['organizationId', 'id'].includes(cell.column.id),
-                                    }
-                                )}
+                                className={cn('w-fit', {
+                                    'sticky right-0 shadow-md bg-white min-w-none':
+                                        ['organizationId', 'id'].includes(
+                                            cell.column.id
+                                        ),
+                                })}
                             >
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                )}
                             </TableCell>
                         )
                     )}
                 </TableRow>
             ))}
         </TableBody>
-    );
+    )
 
     return (
         <>
@@ -153,9 +182,13 @@ export const DataTable: FC<DataTableProps<any>> = ({
                 <DataTableSkeleton columnCount={5} rowCount={5} />
             ) : (
                 <div className="lg:grid hidden gap-[0.625rem]">
-                    {partnerData && (
+                    {partnerData && !hidden && (
                         <div className="flex items-center justify-between px-4">
-                            <h1 className={`${hidden ? 'hidden' : ''} font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]`}>
+                            <h1
+                                className={`${
+                                    hidden ? 'hidden' : ''
+                                } font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]`}
+                            >
                                 {title}
                             </h1>
                             <div className="flex items-center gap-3">
@@ -173,7 +206,11 @@ export const DataTable: FC<DataTableProps<any>> = ({
                         </div>
                     )}
                     {!partnerData && (
-                        <div className={`flex items-center w-full ${!back ? 'justify-between' : 'justify-start'}`}>
+                        <div
+                            className={`flex items-center w-full ${
+                                !back ? 'justify-between' : 'justify-start'
+                            }`}
+                        >
                             <h1 className="font-normal text-[1.375rem] text-lynch-400 mt-[0.625rem]">
                                 {title}
                             </h1>
@@ -197,5 +234,5 @@ export const DataTable: FC<DataTableProps<any>> = ({
                 </div>
             )}
         </>
-    );
-};
+    )
+}

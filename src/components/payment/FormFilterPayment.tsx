@@ -22,6 +22,7 @@ interface FormFilterPaymentProps {
         | 'PARTNER_SB'
         | 'NORMAL_PARTNER'
         | 'SUB_ENTITY'
+    state?: 'commissions' | 'subscriptions'
 }
 
 export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
@@ -32,6 +33,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
     type,
     typePartner = 'PARTNER_SB,NORMAL_PARTNER',
     id,
+    state = 'commissions',
 }) => {
     const { handleSubmit, control } = form
     console.log('FormFilterPaymentProps')
@@ -66,6 +68,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                         disabled={false}
                         type={typePartner}
                         id={id}
+                        state={state}
                     />
                 </div>
             </form>

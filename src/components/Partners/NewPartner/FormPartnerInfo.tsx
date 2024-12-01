@@ -26,6 +26,7 @@ import FieldActivities from '@/components/utils/FieldActivities'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
 import FieldRegion from '@/components/utils/FieldRegion'
+import FieldState from '@/components/utils/FieldState'
 
 interface FormPartnerInfoProps {
     form: UseFormReturn<z.infer<typeof PartnerInformationSchema>>
@@ -46,10 +47,12 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
 
     const [address, setAddress] = useState<{
         countryId: string
+        stateId: string
         cityId: string
         regionId: string
     }>({
         countryId: '',
+        stateId: '',
         cityId: '',
         regionId: '',
     })
@@ -68,18 +71,18 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                 <AccordionTrigger className="font-normal text-[1.375rem] py-0">
                     Information du partenaires
                 </AccordionTrigger>
-                <AccordionContent className="pt-7">
+                <AccordionContent className="pt-20">
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-[1.875rem] h-auto">
-                                <div className="flex relative gap-5 lg:pb-0 pb-14 h-auto ">
+                                <div className="flex relative gap-5 lg:pb-0 pb-20 h-auto ">
                                     <AvatarField
                                         disabled={disabled}
                                         form={form}
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
-                                        className="lg:static lg:translate-x-0 absolute bottom-0 left-1/2 -translate-x-1/2 z-10"
+                                        className="lg:static lg:translate-x-0 absolute -bottom-0 left-1/2 -translate-x-1/2 z-10"
                                         classNameAvatar="rounded-full lg:rounded-[24px]"
                                     />
                                     <AvatarField
@@ -183,6 +186,19 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
+                                        <FieldState
+                                            control={control}
+                                            name="state"
+                                            label="State"
+                                            disabled={disabled!}
+                                            country={address.countryId}
+                                            onChange={(value) => {
+                                                setAddress((prev) => ({
+                                                    ...prev,
+                                                    stateId: value,
+                                                }))
+                                            }}
+                                        />
                                         <FieldCity
                                             control={control}
                                             name="city"
@@ -190,6 +206,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             placeholder="Ville"
                                             disabled={disabled!}
                                             country={address.countryId}
+                                            state={address.stateId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
                                                     ...prev,
@@ -204,6 +221,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             placeholder="Région"
                                             disabled={disabled!}
                                             country={address.countryId}
+                                            state={address.stateId}
                                             city={address.cityId}
                                             onChange={(value) => {
                                                 setAddress((prev) => ({
@@ -212,12 +230,15 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                                 }))
                                             }}
                                         />
+                                    </div>
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 contents-start gap-3">
                                         <InputFieldForm
                                             label="Adresse"
                                             name="address"
                                             control={control}
                                             placeholder="Saisir l’adresse"
                                             disabled={disabled}
+                                            classNameParent="col-span-2"
                                         />
                                     </div>
                                     <IframeRenderer

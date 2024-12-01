@@ -8,10 +8,12 @@ import { cn } from '@/lib/utils'
 
 interface FieldSolutionProps {
     className?: string
+    name?: string
     control: Control<any>
     disabled: boolean
     options?: MultiSelectOptionsType[]
     selectedSolution?: string[]
+    onChange?: (value: string[]) => void
 }
 const defaultOptions: MultiSelectOptionsType[] = [
     {
@@ -31,14 +33,16 @@ const defaultOptions: MultiSelectOptionsType[] = [
 const FieldSolutions: FC<FieldSolutionProps> = ({
     className,
     control,
+    name,
     options = defaultOptions,
     disabled,
     selectedSolution = [],
+    onChange,
 }) => {
     return (
         <MultiSelectField
             control={control}
-            name="solutions"
+            name={name ? name : 'solutionsList'}
             className={cn('h-auto', className)}
             label="Solutions"
             options={options}
@@ -52,6 +56,7 @@ const FieldSolutions: FC<FieldSolutionProps> = ({
                     />
                 ))
             }}
+            onChange={onChange}
             disabled={disabled}
             selected={selectedSolution}
         />

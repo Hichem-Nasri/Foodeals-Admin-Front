@@ -30,7 +30,7 @@ const PaginationData: FC<PaginationDataProps> = ({
     isLoading,
     refetch,
 }) => {
-    const handlePageChange = (page: number) => {
+    const handlePageChange = (page: number): void => {
         if (page < 0 || page >= totalPages) return
         console.log('page', page)
         setCurrentPage(page)

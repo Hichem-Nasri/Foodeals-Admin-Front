@@ -13,6 +13,7 @@ import { MultiSelectOptionsType } from '../MultiSelect'
 import { Input } from './Input'
 import { LucideProps, Search, SearchCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Skeleton } from '../ui/skeleton'
 
 interface SelectProps {
     onChange: (value: string) => void
@@ -34,6 +35,7 @@ interface SelectProps {
         Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
     >
     emptyAvatar?: string
+    isLoaded?: boolean
 }
 
 export const Select: FC<SelectProps> = ({
@@ -52,9 +54,10 @@ export const Select: FC<SelectProps> = ({
     LeftIcon,
     RightIcon,
     emptyAvatar = '',
+    isLoaded,
 }) => {
     const avatar = options?.find(
-        (option) => option.key.toString() === value?.toString()
+        (option) => option.key?.toString() === value?.toString()
     )?.avatar
     return (
         <div
@@ -78,76 +81,89 @@ export const Select: FC<SelectProps> = ({
                     onChange(value)
                 }}
             >
-                <SelectTrigger
-                    className={`text-lynch-400 hover:text-lynch-700 border-0 z-30 w-full ${
-                        options?.find((option) => option.key === value)?.label
-                            ? 'border-textGray'
-                            : ''
-                    } ${(LeftIcon || RightIcon) && '[&>.icon]:hidden'} `}
-                >
-                    {LeftIcon && (
-                        <LeftIcon
-                            size={20}
-                            className="text-lynch-400 ml-[0
-                            5rem]"
-                        />
-                    )}
-                    {!value || !value.toString().length ? (
-                        <span className="text-base text-start font-normal line-clamp-1">
-                            {emptyAvatar && emptyAvatar.length ? (
-                                <AvatarAndName
-                                    avatar={emptyAvatar}
-                                    name={'Selectionner'}
-                                />
-                            ) : (
-                                <span>{placeholder}</span>
-                            )}
-                        </span>
-                    ) : transform ? (
-                        transform(
-                            options && options.length > 0
-                                ? options?.find(
-                                      (option) => option.key === value
-                                  )!?.label
-                                : value
-                        )
+                <>
+                    {isLoaded ? (
+                        <Skeleton className="w-full h-14 rounded-[14px]" />
                     ) : (
-                        <div
-                            className={`text-base text-start font-normal line-clamp-1 text-lynch-950 flex items-center ${
-                                avatar ? ' justify-start gap-2' : ''
-                            }`}
+                        <SelectTrigger
+                            className={`text-lynch-400 hover:text-lynch-700 border-0 z-30 w-full ${
+                                options?.find((option) => option.key === value)
+                                    ?.label
+                                    ? 'border-textGray'
+                                    : ''
+                            } ${
+                                (LeftIcon || RightIcon) && '[&>.icon]:hidden'
+                            } `}
                         >
-                            {avatar ? (
-                                <AvatarAndName
-                                    name={
+                            {LeftIcon && (
+                                <LeftIcon
+                                    size={20}
+                                    className="text-lynch-400 ml-[0
+                            5rem]"
+                                />
+                            )}
+                            {!value || !value.toString().length ? (
+                                <span className="text-base text-start font-normal line-clamp-1">
+                                    {emptyAvatar && emptyAvatar.length ? (
+                                        <AvatarAndName
+                                            avatar={emptyAvatar}
+                                            name={'Selectionner'}
+                                        />
+                                    ) : (
+                                        <span>{placeholder}</span>
+                                    )}
+                                </span>
+                            ) : transform ? (
+                                transform(
+                                    options && options.length > 0
+                                        ? options?.find(
+                                              (option) => option.key === value
+                                          )!?.label
+                                        : value
+                                )
+                            ) : (
+                                <div
+                                    className={`text-base text-start font-normal line-clamp-1 text-lynch-950 flex items-center ${
+                                        avatar ? ' justify-start gap-2' : ''
+                                    }`}
+                                >
+                                    {avatar ? (
+                                        <AvatarAndName
+                                            name={
+                                                options?.find(
+                                                    (option) =>
+                                                        option.key?.toString() ===
+                                                        value.toString()
+                                                )?.label!
+                                            }
+                                            avatar={avatar}
+                                        />
+                                    ) : options?.length ? (
                                         options?.find(
                                             (option) =>
-                                                option.key.toString() ===
+                                                option.key?.toString() ===
                                                 value.toString()
-                                        )?.label!
-                                    }
-                                    avatar={avatar}
-                                />
-                            ) : options?.length ? (
-                                options?.find(
-                                    (option) =>
-                                        option.key.toString() ===
-                                        value.toString()
-                                )?.label
-                            ) : (
-                                value
+                                        )?.label
+                                    ) : (
+                                        value
+                                    )}
+                                </div>
                             )}
-                        </div>
+                            {RightIcon && (
+                                <RightIcon
+                                    size={20}
+                                    className="text-lynch-400"
+                                />
+                            )}
+                        </SelectTrigger>
                     )}
-                    {RightIcon && (
-                        <RightIcon size={20} className="text-lynch-400" />
-                    )}
-                </SelectTrigger>
-                <SelectContent className="absolute z-50">
+                </>
+
+                <SelectContent className={`relative z-50 p-2`}>
                     {search && (
-                        <div className="py-2 space-x-2 px-1 flex justify-center items-center">
+                        <div className="py-2 space-x-2 px-1 flex justify-center items-center absolute m top-0 left-0 right-0">
                             <div className="w-full flex justify-start items-center  px-1 border-2 border-lynch-400 rounded-md focus:outline-none focus:border-lynch-700">
-                                <Search className="w-5 h-5 text-lynch-400 " />
+                                <Search className="w-5 h-5 text-lynch-400 sticky top-0 left-0 right-0" />
                                 <input
                                     ref={inputRef}
                                     type="text"
@@ -168,9 +184,11 @@ export const Select: FC<SelectProps> = ({
                     {options?.map((option, index) => (
                         <SelectItem
                             key={option.key}
-                            value={option.key.toString()}
+                            value={option.key?.toString()}
                             defaultChecked={option.key === value}
-                            className="cursor-pointer"
+                            className={`cursor-pointer ${
+                                search && index == 0 && 'mt-11'
+                            }`}
                             onClick={() => {
                                 onChange(option.label.toString())
                             }}

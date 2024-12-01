@@ -65,7 +65,8 @@ export const TableProspects: FC<TableProspectsProps> = ({
                     <div className="flex flex-col justify-center items-center w-full p-2 space-y-4">
                         <div className="self-start w-full lg:border border-lynch-100 rounded-2xl">
                             <DataTable
-                                title={''}
+                                title=""
+                                hidden={true}
                                 table={table}
                                 data={data}
                                 transform={(data) => (
@@ -74,16 +75,16 @@ export const TableProspects: FC<TableProspectsProps> = ({
                                         prospect={prospect}
                                     />
                                 )}
-                                hidden={true}
                             />
                         </div>
                         <div className="lg:self-end lg:w-fit w-full">
                             <CustomButton
                                 disabled={disabled}
+                                variant="secondary"
                                 onClick={() => setOpen((prev) => !prev)}
                                 label="Ajouter un noueau événement"
                                 IconRight={FilePlus}
-                                className="disabled:text-white disabled:border-white w-full justify-center bg-transparent text-primary hover:bg-primary hover:text-white border-2 border-primary transition-all"
+                                className=" transition-all w-full"
                             />
                         </div>
                     </div>

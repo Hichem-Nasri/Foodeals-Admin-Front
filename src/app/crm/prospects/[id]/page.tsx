@@ -1,5 +1,5 @@
 'use client'
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { EventPopUps } from '@/components/crm/NewEvent/EventPopUps'
 import { NewEvenent } from '@/components/crm/NewEvent/newEvent'
 import ArchiveConfimation from '@/components/crm/Prospect/ArchiveConfimation'
@@ -84,9 +84,6 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
         mutate(newData)
     }
 
-    const onSubmitEvent = (data: any) => {
-        console.log(data)
-    }
     const queryClient = useQueryClient()
 
     const handleArchiver = async (
@@ -167,6 +164,13 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
                                 PartnerStatusType.VALID,
                             ].includes(prospect.status as PartnerStatusType)
                         }
+                        type={
+                            ['ASSOCIATION', 'FOOD_BANK'].includes(
+                                prospect.type!
+                            )
+                                ? 'ASSOCIATION'
+                                : 'PARTNER'
+                        }
                     />
                     <NewEvenent
                         disabled={
@@ -182,27 +186,25 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
                         status={prospect.status as PartnerStatusType}
                         prospect={prospect}
                     />
-                    <div className="w-full p-4 rounded-[18px] bg-white flex justify-end items-center">
+                    <div className="w-full p-5 gap-[30px] rounded-[14px] bg-white flex justify-end items-center">
                         <CustomButton
                             label={
-                                prospect.status == PartnerStatusType.CANCELED
+                                prospect?.status == PartnerStatusType.CANCELED
                                     ? 'LeadOK'
                                     : 'LeadKo'
                             }
                             onClick={() => setLeadko(true)}
                             size={'sm'}
-                            disabled={
-                                readOnly ||
-                                [PartnerStatusType.VALID].includes(
-                                    prospect.status as PartnerStatusType
-                                )
-                            }
+                            disabled={[PartnerStatusType.VALID].includes(
+                                prospect?.status as PartnerStatusType
+                            )}
                             variant={'secondary'}
-                            className={`w-fit${
-                                prospect.status == PartnerStatusType.CANCELED
+                            className={`w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
+                                prospect?.status == PartnerStatusType.CANCELED
                                     ? 'bg-mountain-100 border-primary text-primary'
                                     : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'
                             }`}
+                            IconRight={Archive}
                         />
                     </div>
                 </>

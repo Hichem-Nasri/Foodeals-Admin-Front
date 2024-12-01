@@ -1,23 +1,38 @@
 import { FC } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { Archive, ArrowLeft, ArrowRight } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { ColumnVisibilityModal } from '../ColumnVisibilityModal'
 import { FilterTablePartnerCollaborators } from './FilterTablePartnerCollaborators'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerCollaborators } from '@/types/collaborators'
+import { formatNumberWithSpaces } from '@/lib/utils'
+import { CollaboratorsUser } from '@/types/collaboratorsUtils'
 
 interface FilterAndCreatePartnerCollaboratorsProps {
-    collaborators: PartnerCollaborators[]
     form: UseFormReturn<any>
-    table: import('@tanstack/table-core').Table<PartnerCollaborators>
+    table: import('@tanstack/table-core').Table<CollaboratorsUser>
     onSubmit: (data: any) => void
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    archive: boolean
+    totalElements: number
+    handleArchive: () => void
+    isFetching?: boolean
 }
 
 export const FilterAndCreatePartnerCollaborators: FC<
     FilterAndCreatePartnerCollaboratorsProps
-> = ({ collaborators, form, table, onSubmit, open, setOpen }) => {
+> = ({
+    form,
+    table,
+    onSubmit,
+    open,
+    setOpen,
+    archive,
+    totalElements,
+    handleArchive,
+    isFetching,
+}) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
             <div className="flex lg:hidden items-center justify-between w-full">
@@ -29,6 +44,7 @@ export const FilterAndCreatePartnerCollaborators: FC<
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    archive={archive}
                 />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -37,15 +53,24 @@ export const FilterAndCreatePartnerCollaborators: FC<
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    archive={archive}
                 />
                 <ColumnVisibilityModal table={table} />
+                <CustomButton
+                    size="sm"
+                    variant="outline"
+                    label={!archive ? 'Archive' : 'Collaborateurs'}
+                    IconRight={!archive ? Archive : ArrowLeft}
+                    onClick={handleArchive}
+                    disabled={isFetching}
+                />
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <CustomButton
-                    size="sm"
-                    className="bg-white text-primary border-[1.5px] border-primary hover:bg-primary/40"
-                    label={'1666'}
+                    label={formatNumberWithSpaces(totalElements)}
                     IconLeft={ArrowRight}
+                    disabled
+                    variant="destructive"
                 />
             </div>
         </div>

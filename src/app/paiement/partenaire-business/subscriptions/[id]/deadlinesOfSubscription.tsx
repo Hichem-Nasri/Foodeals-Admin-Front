@@ -74,14 +74,15 @@ function DeadlinesOfSubscription({ id }: { id: string }) {
                 if (response.status !== 200) {
                     throw new Error('Error fetching subscriptions')
                 }
-                const { partner, subscriptions } = response.data
+                const { statistics, list } = response.data
+                console.log('data', response.data)
                 setPartner(partner)
                 setTotals({
                     ...totals,
-                    totalElements: subscriptions.totalElements,
-                    totalPages: subscriptions.totalPages,
+                    totalElements: list.numberOfElements,
+                    totalPages: list.totalPages,
                 })
-                setPartnerSubscripton(subscriptions)
+                setPartnerSubscripton(list.content)
                 return response.data
             } catch (error) {
                 console.log('error', error)
@@ -114,13 +115,10 @@ function DeadlinesOfSubscription({ id }: { id: string }) {
         getPaginationRowModel: getPaginationRowModel(),
     })
     // useEffect(() => {
-    //     if (!year) {
-    //         const queryYear = query.get('year')!
-    //         if (year) {
-    //             setYear(parseInt(queryYear))
-    //         }
-    //     }
-    // }, [query.get('year')]) // TODO: check the year logic
+    //     if (isLoading || isRefetching) return
+    //     setTotals({ ...totals, currentPage: 0 })
+    //     refetch()
+    // }, [dateAndPartner])
 
     return (
         <div className="flex flex-col gap-3 w-full">

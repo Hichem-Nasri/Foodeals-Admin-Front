@@ -15,7 +15,21 @@ export default function DeliveryCollaboratorsPage({
     const { data, isLoading, error } = useQuery({
         queryKey: ['collaborator', params.id],
         queryFn: async () => {
-            const data = await getCollaboratorDelivery(params.id)
+            const data = await getCollaboratorDelivery(params.id).then(
+                (res) => ({
+                    status: res.status,
+                    data: {
+                        ...res.data,
+                        partner: {
+                            name: res?.data.organizationInfo.organization.name,
+                            city: res?.data.organizationInfo.organization.city,
+                            avatarPath:
+                                res?.data.organizationInfo.organization
+                                    .avatarPath,
+                        },
+                    },
+                })
+            )
             if (data.status === 500) return defaultCollaboratorDeliveryData
             return data.data
         },

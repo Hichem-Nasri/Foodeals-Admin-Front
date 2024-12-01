@@ -1,4 +1,4 @@
-import api from '@/api/Auth'
+import api from '@/lib/Auth'
 import { API_PROSPECTS } from '@/lib/api_url'
 import { FilterCrmSchema } from '@/types/CrmScheme'
 import { CrmType } from '@/types/CrmType'
@@ -39,7 +39,7 @@ const buildQueryString = (
         queryParts.push(`leadId=${encodeURIComponent(data.managerInfo)}`)
     }
     if (data.status && data.status.length > 0) {
-        queryParts.push(`status=${encodeURIComponent(data.status.join(','))}`)
+        queryParts.push(`statuses=${encodeURIComponent(data.status.join(','))}`)
     }
     // Assuming cityId and countryId are fixed values
     if (data.country) {

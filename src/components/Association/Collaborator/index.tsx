@@ -28,9 +28,11 @@ import { UsersCard } from './UserCard'
 import { getCollaborator } from '@/lib/api/association/getCollaborator'
 import {
     NotificationType,
+    PartnerInfoDto,
     TotalValueProps,
     TotalValues,
 } from '@/types/GlobalType'
+import { CollaboratorsUser } from '@/types/collaboratorsUtils'
 
 interface CollaboratorAssociationsProps {
     id: string
@@ -39,14 +41,18 @@ interface CollaboratorAssociationsProps {
 const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     id,
 }) => {
-    const [collaborators, setCollaborators] = useState<
-        CollaboratorAssociationsType[]
-    >(CollaboratorAssociationsData)
+    const [collaborators, setCollaborators] = useState<CollaboratorsUser[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
+    const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
+        id: '',
+        name: '',
+        city: '',
+        avatarPath: '',
+    })
     const [archive, setArchive] = useState(false)
     const notify = useNotification()
     const router = useRouter()
@@ -57,16 +63,21 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 const data = await getCollaborator(
                     id,
                     totals.currentPage,
-                    totals.pageSize
+                    totals.pageSize,
+                    archive,
+                    filterData,
+                    'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'
                 )
                 if (data.status === 500)
                     throw new Error('Error fetching partners')
+                const { organization, users } = data.data
+                setPartner(organization)
                 setTotals({
                     ...totals,
-                    totalPages: data.data.totalPages,
-                    totalElements: data.data.totalElements,
+                    totalPages: users?.totalPages,
+                    totalElements: users?.numberOfElements,
                 })
-                setCollaborators(data.data?.content)
+                setCollaborators(users?.content)
                 return data.data
             } catch (error) {
                 notify.notify(NotificationType.ERROR, 'Error fetching partners')
@@ -89,7 +100,10 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const form = useForm<z.infer<typeof SchemaFilter>>({
         resolver: zodResolver(SchemaFilter),
         mode: 'onBlur',
-        defaultValues: filterData,
+        defaultValues: {
+            ...filterData,
+            companyType: 'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO',
+        },
     })
 
     const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
@@ -123,7 +137,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 open={open}
                 setOpen={setOpen}
                 totalElements={totals.totalElements}
-                siege
+                type="USERS"
             />
             <DataTable
                 data={collaborators}
@@ -131,8 +145,10 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 title="Liste des Collaborateurs"
                 transform={(value) => <UsersCard User={value} />}
                 isLoading={isLoading}
-                back={false}
-                onBack={() => router.back()}
+                partnerData={{
+                    ...partner,
+                    avatar: partner.avatarPath,
+                }}
             />
             <PaginationData
                 pageSize={totals.pageSize}
