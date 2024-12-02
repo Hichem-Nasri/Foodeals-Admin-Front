@@ -16,14 +16,18 @@ const SelectParnter = ({
     label,
     type,
     id,
+    onBlurMode,
     state = 'commissions',
+    handleChange,
 }: {
     control: Control<any>
     disabled?: boolean
     name: string
     label: string
     type: string
+    onBlurMode?: 'onBlur' | 'onChange'
     state: 'commissions' | 'subscriptions'
+    handleChange?: () => void
     id?: string
 }) => {
     console.log('SelectParnter')
@@ -61,6 +65,13 @@ const SelectParnter = ({
     console.log('options', options)
     return (
         <SelectField
+            onChange={(value) => {
+                if (onBlurMode === 'onChange') {
+                    console.log("onBlurMode === 'onChange'")
+                    handleChange && handleChange()
+                    // handleSubmit(onSubmit)()
+                }
+            }}
             control={control}
             name={name}
             label={label}

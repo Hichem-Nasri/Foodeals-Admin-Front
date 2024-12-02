@@ -28,9 +28,7 @@ export const UserMenu: FC<UserMenuProps> = ({}) => {
                             <Skeleton className="w-12 h-12 rounded-full bg-lynch-50" />
                         ) : (
                             <Image
-                                src={
-                                    'https://api.dicebear.com/7.x/lorelei/png?seed=alex'
-                                }
+                                src={user?.image!}
                                 alt="avatar"
                                 width={42}
                                 height={42}

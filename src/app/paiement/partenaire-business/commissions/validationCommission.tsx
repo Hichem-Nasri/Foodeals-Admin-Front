@@ -50,6 +50,7 @@ import MobileHeader from '@/components/utils/MobileHeader'
 import PaginationData from '@/components/utils/PaginationData'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
 import { MyError } from '@/components/Error'
+import { AppRoutes } from '@/lib/routes'
 
 interface OperationsProps {}
 
@@ -110,6 +111,11 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
         mode: 'onBlur',
     })
     const onSubmit = (data: z.infer<typeof PaymentFilterSchema>) => {
+        if (data.partner !== 'all') {
+            router.push(
+                AppRoutes.PBCommissionDetails.replace(':id', data.partner!)
+            )
+        }
         setDateAndPartner(data)
     }
 
@@ -131,6 +137,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     useEffect(() => {
         if (isLoading || isRefetching) return
         setTotals({ ...totals, currentPage: 0 })
+        console.log('heeey partner change')
         refetch()
     }, [dateAndPartner])
 

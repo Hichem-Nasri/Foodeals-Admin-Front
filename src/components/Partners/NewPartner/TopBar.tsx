@@ -170,7 +170,7 @@ export const TopBar: FC<TopBarProps> = ({
                         disabled={secondaryButtonDisabled}
                         size="sm"
                         type="submit"
-                        className="bg-white text-lynch-400 border-[1.5px] border-lynch-400 hover:text-white hover:bg-lynch-400/60"
+                        className="bg-white text-lynch-400 border-[1.5px] border-lynch-400 hover:text-white hover:bg-lynch-400/60 text-xs lg:text-sm flex-grow h-full"
                         label="Modifier le partenaire"
                         IconRight={PencilLine}
                         variant="outline"
@@ -188,7 +188,7 @@ export const TopBar: FC<TopBarProps> = ({
                     />
                 ) : status === PartnerStatusType.VALID ? (
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex justify-center items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-primary text-sm font-normal text-neutral-50 hover:bg-primary/90 disabled:bg-lynch-300">
+                        <DropdownMenuTrigger className="flex justify-center items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-primary font-normal text-neutral-50 hover:bg-primary/90 disabled:bg-lynch-300 text-xs lg:text-sm">
                             Partager le contrat
                             <Share2 />
                         </DropdownMenuTrigger>

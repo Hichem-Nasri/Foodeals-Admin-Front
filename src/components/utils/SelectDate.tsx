@@ -57,10 +57,13 @@ const SelectDate = ({
     useEffect(() => {
         const fetch = async () => {
             let res
+            console.log('year fetching')
             if (format == 'MM/YYYY') {
                 if (type == 'partner' || type == 'organization') {
+                    console.log('fetching all partner')
                     res = await getDateAvailable(type, id)
                 } else {
+                    console.log('fetching all data')
                     res = await getDateAvailable('all')
                 }
             } else {
@@ -73,7 +76,7 @@ const SelectDate = ({
     }, [format, id, type])
 
     return (
-        <div className="flex flex-col w-full items-start text-sm font-semibold">
+        <div className="flex flex-col w-full items-start text-sm font-semibold h-full">
             <Label
                 label={label}
                 htmlFor={label}

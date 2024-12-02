@@ -161,10 +161,7 @@ export const exportPartnerPost = (partner: any) => {
         partnerType: partner.features,
         companyName: partner.entityName,
         commercialRegisterNumber: +partner.commercialNumber,
-        responsible:
-            partner.contactDto.name.firstName +
-            ' ' +
-            partner.contactDto.name.lastName,
+        responsible: `${partner.contactDto?.name?.firstName} ${partner.contactDto?.name?.lastName}`,
         phone: partner.contactDto.phone,
         email: partner.contactDto.email,
         companyType: partner.activities,
@@ -237,8 +234,8 @@ export const exportPartnerPost = (partner: any) => {
         minimumReduction: partner.minimumReduction,
         contractId: '',
         status: ContractStatusPartner[partner.status],
-        logo: null,
-        cover: null,
+        logo: partner.logo,
+        cover: partner.cover,
         paymentMethod: 'transfer',
         numberOfStores: partner.maxNumberOfSubEntities,
         fileType: [],

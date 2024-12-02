@@ -32,7 +32,8 @@ const columnHelperSubAccount = createColumnHelper<SubAccountPartners>()
 export const columnsSubAccountTable = (
     router: AppRouterInstance,
     archive: boolean,
-    refetch: () => void
+    refetch: () => void,
+    partnerId: string
 ) => [
     columnHelperSubAccount.accessor('createdAt', {
         cell: (info) => info.getValue(),
@@ -104,7 +105,7 @@ export const columnsSubAccountTable = (
                 info.getValue()!,
                 {
                     status,
-                    partnerId: partnerInfo.id,
+                    partnerId: partnerId,
                     users: collaborateurs,
                 },
                 archive,

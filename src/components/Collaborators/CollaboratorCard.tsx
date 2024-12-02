@@ -93,7 +93,7 @@ export const CollaboratorCard: FC<CollaboratorCardProps> = ({
                     <Link
                         href={`${AppRoutes.collaboratorDetails
                             .replace(':PartnerId', partnerId)
-                            .replace('CollaboratorId', User.id)}`}
+                            .replace(':CollaboratorId', User.id)}`}
                     >
                         <CustomButton
                             label=""

@@ -6,13 +6,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export const accessToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiTEVBRCIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJwaG9uZSI6IisyMTI2MTIzNDU2NzgxMTUiLCJlbWFpbCI6ImFtaW5lLnNhYmlyQGV4YW1wbGUuY29tIiwic3ViIjoiYW1pbmUuc2FiaXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzI1MjQ4NjYsImV4cCI6MTczNTExNjg2Nn0.Z6glL1gJwLLtytg5WdyyPOnn7vvPbKApWcOHrFBqqYxY6snZ4VwZyARUIvRmVgQkOS0OQMpOuEDSV-BeY00Tdg'
-
-export const headers = {
-    Authorization: 'Bearer ' + accessToken,
-}
-
 export const getFilterDate = (date: Date) => {
     return date
         .toISOString()

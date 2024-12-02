@@ -23,11 +23,19 @@ export default function PartnersPage({
             {data.isLoading ? (
                 <div>Loading...</div>
             ) : (
-                <NewPartner
-                    partner={data.data as PartnerDataType}
-                    id={params.id}
-                    mode={searchParams.mode}
-                />
+                <>
+                    {data.isError ? (
+                        <div className="text-coral-500 font-semibold text-2xl w-full h-full flex justify-center items-center">
+                            Partner Not found
+                        </div>
+                    ) : (
+                        <NewPartner
+                            partner={data.data as PartnerDataType}
+                            id={params.id}
+                            mode={searchParams.mode}
+                        />
+                    )}
+                </>
             )}
         </Layout>
     )

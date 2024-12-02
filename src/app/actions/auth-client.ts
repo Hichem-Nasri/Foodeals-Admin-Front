@@ -1,23 +1,29 @@
 // app/actions/auth-client.ts
-'use client'
+'use server'
 
-import { signIn } from 'next-auth/react'
+import { cookies } from 'next/headers'
 
-export async function clientSignIn(email: string, password: string) {
+export async function allowCookie(token: string) {
+    if (!token || token == '') return
     try {
-        const result = await signIn('credentials', {
-            redirect: false,
-            email,
-            password,
-        })
-
-        if (result?.error) {
-            return { error: result.error }
+        const cookie = cookies()
+        const authCookie = cookie.get('authjs.session-token')
+        console.log('authCookie', authCookie)
+        if (authCookie && authCookie.value == token) {
+            return
         }
-
-        return { success: true }
+        console.log('token', token)
+        cookie.set('authjs.session-token', token)
     } catch (error) {
-        console.error('Client Sign In Error:', error)
-        return { error: 'An unexpected error occurred' }
+        console.error('error', error)
+    }
+}
+
+export async function removeCookie() {
+    try {
+        const cookie = cookies()
+        cookie.delete('authjs.session-token')
+    } catch (error) {
+        console.error('error', error)
     }
 }

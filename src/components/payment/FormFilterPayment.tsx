@@ -49,6 +49,7 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                                 onChange={(value) => {
                                     field.onChange(value)
                                     if (onBlurMode === 'onChange') {
+                                        console.log("onBlurMode === 'onChange'")
                                         handleSubmit(onSubmit)()
                                     }
                                 }}
@@ -66,7 +67,9 @@ export const FormFilterPayment: FC<FormFilterPaymentProps> = ({
                         name="partner"
                         label="Partenaire"
                         disabled={false}
+                        onBlurMode={onBlurMode}
                         type={typePartner}
+                        handleChange={() => handleSubmit(onSubmit)()}
                         id={id}
                         state={state}
                     />

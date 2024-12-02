@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { API_URL } from './lib/api'
 import axios from 'axios'
 import api from './lib/Auth'
+import { allowCookie } from './app/actions/auth-client'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     ...authConfig,
@@ -12,6 +13,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             console.log('authorized')
             if (!auth || !auth.accessToken || auth.accessToken === '') {
                 return false
+            }
+            const token = auth.accessToken
+            const cookie = cookies()
+            if (cookie.get('authjs.session-token')?.value != token) {
+                allowCookie(token)
             }
             // if (auth && auth.accessToken && auth.accessToken !== '') {
             //     const res = await api
@@ -51,6 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         session: async ({ session, token }) => {
             // Add access_token to the session right after signin
+
             session.accessToken = token.accessToken
             session.user.id = token.id || ''
             session.user.role = token.role || ''

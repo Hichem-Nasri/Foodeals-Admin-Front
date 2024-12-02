@@ -11,8 +11,10 @@ export default async function getDateAvailable(
             case 'organization':
                 url += '/organizations?organizationId=' + (id ? id : '')
                 break
-            default:
+            case 'partner':
                 url += '/partners?partnerId=' + (id ? id : '')
+                break
+            default:
                 break
         }
         console.log('url is: ', url)

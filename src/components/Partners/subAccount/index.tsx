@@ -88,7 +88,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
     })
     const table = useReactTable({
         data: subAccount,
-        columns: columnsSubAccountTable(router, archive, refetch),
+        columns: columnsSubAccountTable(router, archive, refetch, partner.id),
         state: {
             columnFilters,
         },
