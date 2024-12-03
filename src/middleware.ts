@@ -1,6 +1,7 @@
 import { auth } from './auth'
 import axios from 'axios'
 import { signOut } from 'next-auth/react'
+import { NextResponse } from 'next/server'
 
 export default auth(async (req) => {
     const { nextUrl } = req
@@ -8,10 +9,10 @@ export default auth(async (req) => {
     console.log(req.url)
     try {
         if (req.url?.includes('/auth/signin')) {
-            return null
+            return NextResponse.redirect(new URL('/auth/signin', nextUrl))
         }
         if (!isAuth) {
-            return Response.redirect(new URL('/auth/signin', nextUrl))
+            return NextResponse.redirect(new URL('/auth/signin', nextUrl))
         } else {
             const accessToken = req.auth?.accessToken
             const res = await axios
@@ -27,13 +28,13 @@ export default auth(async (req) => {
                 })
             if (!res) {
                 signOut()
+                return NextResponse.redirect(new URL('/auth/signin', nextUrl))
             } else {
-                return null
+                return NextResponse.next()
             }
         }
     } catch (error) {
-        console.error('error', error)
-        return Response.redirect(new URL('/auth/signin', nextUrl))
+        return new NextResponse('Internal Server Error', { status: 500 })
     }
 })
 
