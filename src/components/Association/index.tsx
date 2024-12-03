@@ -68,7 +68,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                     throw new Error('Error fetching partners')
                 setTotals((prev) => ({
                     ...prev,
-                    totalElements: data.data.numberOfElements,
+                    totalElements: data.data.totalElements,
                     totalPages: data.data.totalPages,
                 }))
                 setAssociations(data.data.content)
@@ -79,6 +79,7 @@ export const Associations: FC<AssociationsProps> = ({}) => {
                 setAssociations([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm<z.infer<typeof SchemaFilter>>({
@@ -110,6 +111,10 @@ export const Associations: FC<AssociationsProps> = ({}) => {
     }
     useEffect(() => {
         if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
     }, [archive, filterData])
 

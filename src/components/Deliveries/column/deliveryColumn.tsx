@@ -1,32 +1,13 @@
 import { AvatarAndName } from '@/components/AvatarAndName'
-import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
+import { ActionsMenu } from '@/components/custom/ActionsMenu'
 import { EmailBadge } from '@/components/Partners/EmailBadge'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
 import { PhoneBadge } from '@/components/Partners/PhoneBadge'
-import DetailsArchive from '@/components/utils/DetailsArchive'
-import { useNotification } from '@/context/NotifContext'
-import archivePatner from '@/lib/api/partner/archiverPartner'
-import { getContract } from '@/lib/api/partner/getContract'
-import { AppRoutes } from '@/lib/routes'
 import { DeliveryType } from '@/types/deliveries'
-import { ArchiveType, NotificationType } from '@/types/GlobalType'
-import { ArchivePartnerSchema } from '@/types/PartnerSchema'
-import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
+import { PartnerSolutionType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
-import { useQueryClient } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import {
-    Eye,
-    Pen,
-    Archive,
-    Users,
-    FileBadge,
-    ArchiveRestore,
-    Info,
-} from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { z } from 'zod'
 import { GetListActions } from './getListActions'
 
 const columnDeliveriesTableHelper = createColumnHelper<DeliveryType>()

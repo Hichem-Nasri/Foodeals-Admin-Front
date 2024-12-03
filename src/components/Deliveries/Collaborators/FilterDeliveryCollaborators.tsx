@@ -3,12 +3,12 @@ import { Archive, ArrowLeft, ArrowRight } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
-import { FilterTablePartnerCollaborators } from '@/components/Partners/collaborators/FilterTablePartnerCollaborators'
 import { DeliveryCollaboratorsType } from '@/types/deliveries'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { FilterTablePartner } from '@/components/Partners/FilterTablePartner'
 import { FilterCollaborators } from '@/components/Collaborators/FilterCollaborators'
 import { FormFilterCollaborator } from './FilterCollaborator'
+import ArchiveButton from '@/components/custom/ArchiveButton'
 
 interface FilterDeliveryCollaboratorsProps {
     open: boolean
@@ -39,13 +39,22 @@ export const FilterDeliveryCollaborators: FC<
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des collaborateurs
                 </h2>
-                <FormFilterCollaborator
-                    form={form}
-                    open={open}
-                    setOpen={setOpen}
-                    onSubmit={onSubmit}
-                    archive={archive}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FormFilterCollaborator
+                        form={form}
+                        open={open}
+                        setOpen={setOpen}
+                        onSubmit={onSubmit}
+                        archive={archive}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={false}
+                        handleArchive={() => {
+                            setArchive((prev: boolean) => !prev)
+                        }}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FormFilterCollaborator

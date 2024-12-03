@@ -121,7 +121,7 @@ export const GetListActions: (
             actions: async () => {
                 router.push(AppRoutes.subAccountPartner.replace(':id', id))
             },
-            // shouldNotDisplay: data.subEntities === 0,
+            shouldNotDisplay: data.subEntities === 0,
             icon: Store,
         },
         {

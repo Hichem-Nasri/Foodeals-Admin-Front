@@ -75,7 +75,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                 setTotals({
                     ...totals,
                     totalPages: subentities.totalPages,
-                    totalElements: subentities.numberOfElements,
+                    totalElements: subentities.totalElements,
                 })
                 setSubAccount(subentities.content as SubAccountPartners[])
                 return res.data
@@ -85,6 +85,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                 setSubAccount([])
             }
         },
+        refetchOnWindowFocus: false,
     })
     const table = useReactTable({
         data: subAccount,

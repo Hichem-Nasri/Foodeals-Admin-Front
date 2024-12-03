@@ -9,6 +9,7 @@ import { AppRoutes } from '@/lib/routes'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { SchemaFilter } from '@/types/associationSchema'
 import { z } from 'zod'
+import ArchiveButton from '../custom/ArchiveButton'
 
 interface FiltersAssociationProps {
     open: boolean
@@ -40,7 +41,7 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
         type == 'SIEGES'
             ? 'Sièges'
             : type == 'USERS'
-            ? 'Collaborateurs des associations'
+            ? 'Collaborateurs'
             : 'Associations'
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -48,14 +49,21 @@ export const FiltersAssociation: FC<FiltersAssociationProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des {name}
                 </h2>
-                <FormFilter
-                    form={form}
-                    onSubmit={onSubmit}
-                    open={open}
-                    setOpen={setOpen}
-                    archive={archive}
-                    type={type}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FormFilter
+                        form={form}
+                        onSubmit={onSubmit}
+                        open={open}
+                        setOpen={setOpen}
+                        archive={archive}
+                        type={type}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={isFetching!}
+                        handleArchive={handleArchive}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FormFilter

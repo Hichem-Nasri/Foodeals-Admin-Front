@@ -70,7 +70,6 @@ export const FilterOrganizations: FC<FilterOrganizationsProps> = ({
                     )
                 })
             }}
-            selectedValue
             ref={inputRef}
             emptyAvatar="/avatar/emptyPartner.png"
         />

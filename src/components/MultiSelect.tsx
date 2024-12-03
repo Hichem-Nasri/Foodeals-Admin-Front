@@ -201,9 +201,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                     className="bg-lynch-50 placeholder:text-base placeholder:font-normal text-base font-normal placeholder:text-input text-textGray"
                                     placeholder={searchPlaceholder}
                                     ref={ref}
-                                    onValueChange={(value) => {
-                                        console.log({ value })
-                                    }}
                                 />
                             )}
                             <CommandList>

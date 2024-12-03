@@ -44,6 +44,10 @@ import {
 } from '../ui/dialog'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { SignOut } from '@/app/actions'
+import { Skeleton } from '../ui/skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { useUser } from '@/context/useUser'
+import Logout from './Logout'
 
 interface HeaderProps {
     formTitle?: string
@@ -60,10 +64,11 @@ interface SubPageType {
 
 export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
     const router = useRouter()
+    const { user, loading } = useUser()
     const [subPage, setSubPage] = useState<SubPageType | null>(null)
+    const [open, setOpen] = useState(false)
     const handleLogout = async () => {
         const res = await SignOut()
-        router.push('/')
     }
     return (
         <>
@@ -104,17 +109,23 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                     <div className="lg:inline-flex hidden mr-auto">
                         <SearchInput />
                     </div>
-                    <UserMenu />
+                    <UserMenu user={user} loading={loading} />
                     <Bell className="text-lynch-400 lg:hidden" size={30} />
                     <Sheet>
                         <SheetTrigger className="lg:hidden inline-flex">
-                            <Image
-                                src="https://api.dicebear.com/7.x/bottts/png"
-                                alt="avatar"
-                                width={42}
-                                height={42}
-                                className="rounded-full overflow-hidden"
-                            />
+                            {loading ? (
+                                <Skeleton className="w-12 h-12 rounded-full bg-lynch-50" />
+                            ) : (
+                                <Avatar className="size-12 rounded-full bg-white border-[1px] border-bg-lynch-400 text-lynch-500 ">
+                                    <AvatarImage src={user?.image! || ''} />
+                                    <AvatarFallback>
+                                        {user?.name &&
+                                            user?.name
+                                                .slice(0, 2)
+                                                .toLocaleUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                            )}
                         </SheetTrigger>
                         <SheetContent
                             side="left"
@@ -196,47 +207,20 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                                                     )}
                                                 </Fragment>
                                             ))}
+                                        <Button
+                                            className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
+                                            onClick={() => {
+                                                handleLogout()
+                                            }}
+                                        >
+                                            <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
+                                                <LogOut />
+                                            </div>
+                                            Se déconnecter
+                                            <ChevronRight className="ml-auto" />
+                                        </Button>
                                         </Fragment>
                                     )}
-                                    <Dialog>
-                                        <DialogTrigger>
-                                            <Button
-                                                className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
-                                                onClick={() => {}}
-                                            >
-                                                <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
-                                                    <LogOut />
-                                                </div>
-                                                Se déconnecter
-                                                <ChevronRight className="ml-auto" />
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <DialogTitle className="text-lynch-950 text-xl">
-                                                Confirmer déconnecter
-                                            </DialogTitle>
-                                            <DialogDescription className="text-lynch-500 text-base">
-                                                Voulez-vous vraiment vous
-                                                déconnecter?
-                                            </DialogDescription>
-                                            <div className="flex gap-4 mt-4 w-full">
-                                                <DialogClose>
-                                                    <CustomButton
-                                                        label="Annuler"
-                                                        size={'sm'}
-                                                        variant="ghost"
-                                                        onClick={() => {}}
-                                                    />
-                                                </DialogClose>
-                                                <CustomButton
-                                                    label="Confirmer"
-                                                    size={'sm'}
-                                                    className="bg-coral-500 hover:bg-coral-50 hover:text-coral-500 text-white transition-colors"
-                                                    onClick={handleLogout}
-                                                />
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
                                 </SheetDescription>
                             </SheetHeader>
                         </SheetContent>

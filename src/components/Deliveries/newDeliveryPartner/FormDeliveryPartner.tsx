@@ -271,7 +271,10 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             control={control}
                                             placeholder="Saisir l’adresse"
                                             disabled={disabled}
+                                            classNameParent="col-span-2"
                                         />
+                                    </div>
+                                    <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <CitySelectField
                                             country={address.countryId}
                                             control={control}
@@ -286,7 +289,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                                 type="button"
                                                 label="List des collaborators"
                                                 IconRight={Users}
-                                                className="col-auto h-14 self-end w-4/5"
+                                                className="col-auto h-14 self-end w-full lg:w-4/5 lg:col-span-1"
                                                 onClick={() => {
                                                     router.push(
                                                         AppRoutes.deliveryCollaborator.replace(

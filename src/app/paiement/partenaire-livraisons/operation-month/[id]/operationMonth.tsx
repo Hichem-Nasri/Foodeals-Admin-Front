@@ -132,6 +132,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                 return res.data
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm({

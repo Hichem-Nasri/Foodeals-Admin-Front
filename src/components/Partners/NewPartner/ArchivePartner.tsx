@@ -69,10 +69,18 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                     <span className="text-sm font-medium">Archiver</span>
                     <Archive />
                 </DialogTrigger>
-                <DialogContent className="min-w-max h-fit">
+                <DialogContent
+                    className="min-w-max h-fit rounded-[18px]"
+                    showContent={false}
+                >
                     <DialogHeader>
-                        <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal">
-                            Archiver le partenaire
+                        <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal flex w-full justify-between items-center">
+                            <h1 className="text-xl text-lynch-500">
+                                Archiver le partenaire
+                            </h1>
+                            <DialogClose>
+                                <X />
+                            </DialogClose>
                         </DialogTitle>
                         <DialogDescription>
                             <Form {...form}>

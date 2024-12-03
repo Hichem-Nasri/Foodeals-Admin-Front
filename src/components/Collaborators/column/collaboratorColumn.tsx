@@ -13,6 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Eye, Pen, Archive, Store, Users, ArchiveX, Info } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { GetListUser } from './getListUser'
 
 export interface CollaboratorsType {
     createdAt: string
@@ -75,107 +76,12 @@ export const columnsCollaboratorsTable = (
     }),
     columnCollaboratorTableHelper.accessor('id', {
         cell: (info) => {
-            let listActions: ActionType[] = []
-            if (archive) {
-                listActions = [
-                    {
-                        actions: () => {},
-                        label: 'Info',
-                        icon: Info,
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data: any,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archiveData: ArchiveType = {
-                                action: 'DE_ARCHIVE',
-                                reason: data?.archiveType,
-                                details: data?.archiveReason,
-                            }
-                            const res = await archiveUser(id, archiveData)
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(
-                                            true,
-                                            'désarchivage effectué',
-                                            ['partners', 0, 10]
-                                        )
-                                    refetch()
-                                })
-                                .catch((err) => {
-                                    handleDone &&
-                                        handleDone(
-                                            false,
-                                            'Failed to archive',
-                                            []
-                                        )
-                                    console.log(err)
-                                })
-                        },
-                        label: 'Désarchiver',
-                        icon: ArchiveX,
-                    },
-                ]
-            } else
-                listActions = [
-                    {
-                        label: 'Voir',
-                        icon: Eye,
-                        actions: (id: string) =>
-                            router.push(
-                                AppRoutes.collaboratorDetails
-                                    .replace(':PartnerId', partnerId)
-                                    .replace(
-                                        ':CollaboratorId',
-                                        info.getValue()!
-                                    )
-                            ),
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data: any,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archiveData: ArchiveType = {
-                                action: 'ARCHIVE',
-                                reason: data?.archiveType,
-                                details: data?.archiveReason,
-                            }
-                            const res = await archiveUser(id, archiveData)
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(
-                                            true,
-                                            "L'archive a été effectuée",
-                                            ['partners', '0', '10']
-                                        )
-                                    refetch()
-                                })
-                                .catch((err) => {
-                                    handleDone &&
-                                        handleDone(
-                                            false,
-                                            'Failed to archive',
-                                            []
-                                        )
-                                    console.log(err)
-                                })
-                        },
-                        icon: Archive,
-                        label: 'Archiver',
-                    },
-                ]
+            let listActions: ActionType[] = GetListUser(
+                archive,
+                refetch,
+                partnerId,
+                info.getValue()!
+            )
             return (
                 <ActionsMenu
                     id={info.getValue()!}

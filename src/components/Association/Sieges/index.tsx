@@ -90,6 +90,7 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 setSieges([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     // handleArchive function
@@ -146,7 +147,14 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 data={sieges}
                 table={table}
                 title="Liste des sièges"
-                transform={(value) => <SiegeCard sieges={value} />}
+                transform={(value) => (
+                    <SiegeCard
+                        sieges={value}
+                        refetch={refetch}
+                        archive={archive}
+                        partnerId={id}
+                    />
+                )}
                 isLoading={isLoading || isRefetching}
                 partnerData={{
                     ...partner,

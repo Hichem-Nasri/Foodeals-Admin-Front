@@ -113,7 +113,7 @@ export const columnsSubAccountTable = (
             )
             return (
                 <ActionsMenu
-                    id={info.getValue()}
+                    id={info.getValue()!}
                     menuList={list}
                     prospect={archive ? 'sub-entites' : false}
                 />

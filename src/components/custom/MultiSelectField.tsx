@@ -62,23 +62,9 @@ export const MultiSelectField: FC<MultiSelectFieldProps> = ({
                                 disabled={options.length === 0 || disabled}
                                 selectedValues={field.value}
                                 onSelect={(value) => {
-                                    if (selectedValue) {
-                                        const option = options.filter((val) =>
-                                            value.includes(val.key + '')
-                                        )
-                                        if (onChange) {
-                                            onChange(
-                                                option.map((val) => val.label)
-                                            )
-                                        } else
-                                            field.onChange(
-                                                option.map((val) => val.label)
-                                            )
-                                    } else {
-                                        if (onChange) {
-                                            onChange(value)
-                                        } else field.onChange(value)
-                                    }
+                                    if (onChange) {
+                                        onChange(value)
+                                    } else field.onChange(value)
                                 }}
                                 placeholder={placeholder}
                                 transform={transform}

@@ -33,6 +33,7 @@ export default function DeliveryCollaboratorsPage({
             if (data.status === 500) return defaultCollaboratorDeliveryData
             return data.data
         },
+        refetchOnWindowFocus: false,
     })
     console.log('data', data)
     return (

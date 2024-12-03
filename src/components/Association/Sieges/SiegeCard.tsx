@@ -19,12 +19,21 @@ import { Label } from '@/components/Label'
 import { PaymentStatus } from '@/components/payment/PaymentStatus'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import { GetListSiege } from '../column/getSiegeList'
 
 interface SiegeCardProps {
     sieges?: SiegesType
+    archive: boolean
+    refetch: () => void
+    partnerId: string
 }
 
-export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
+export const SiegeCard: FC<SiegeCardProps> = ({
+    sieges,
+    archive,
+    refetch,
+    partnerId,
+}) => {
     const router = useRouter()
     if (!sieges) return
 
@@ -39,20 +48,12 @@ export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
         },
     ]
 
-    const actions: ActionType[] = [
-        {
-            actions: (id) =>
-                router.push(AppRoutes.paymentDetails.replace(':id', id)),
-            icon: Eye,
-            label: 'Voir',
-        },
-        {
-            actions: (id) =>
-                router.push(AppRoutes.collaborator.replace(':id', id)),
-            icon: Users,
-            label: 'Collaborateurs',
-        },
-    ]
+    const actions: ActionType[] = GetListSiege(
+        archive,
+        refetch,
+        partnerId,
+        sieges.id
+    )
     return (
         <div className="flex flex-col gap-3 bg-white p-3 rounded-[20px]">
             <div className="flex justify-between gap-[0.375rem]">
@@ -103,8 +104,10 @@ export const SiegeCard: FC<SiegeCardProps> = ({ sieges }) => {
                             />
                         </Link>
                         <ActionsMenu
+                            id={sieges.id}
                             menuList={actions}
                             className="[&>svg]:size-6 p-[0.625rem]"
+                            prospect={archive ? 'organisation' : false}
                         />
                     </div>
                 </div>

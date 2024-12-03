@@ -85,7 +85,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 console.log('data', data)
                 setTotals({
                     ...totals,
-                    totalElements: users?.numberOfElements,
+                    totalElements: users?.totalElements,
                     totalPages: users?.totalPages,
                 })
                 setCollaborator(users?.content)
@@ -99,6 +99,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 // setCollaborator([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
@@ -151,7 +152,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 table={table}
                 data={collaborator}
                 transform={(value) => (
-                    <DeliveryCollaboratorCard collaborator={value} />
+                    <DeliveryCollaboratorCard collaborator={value} archive={archive} refetch={refetch} />
                 )}
                 isLoading={isLoading || isRefetching}
                 partnerData={{

@@ -46,6 +46,8 @@ const CreateProductPage: FC<CreateProductPageProps> = ({ params }) => {
 //             }
 //             return null
 //         },
+//          refetchOnWindowFocus: false,
+//
 //     })
 //     return { data: demoData, isLoading, error } // TODO: replace demoData with data
 // }

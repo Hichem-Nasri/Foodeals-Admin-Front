@@ -53,6 +53,18 @@ export const exportSolutionType = (solutions: string[]) => {
     return newSolution
 }
 
+export const subscriptionOption = [
+    { key: 6, label: '6 mois' },
+    { key: 12, label: '12 mois' },
+    { key: 24, label: '24 mois' },
+]
+
+export const expirationOption = [
+    { key: 5, label: '5' },
+    { key: 10, label: '10' },
+    { key: 15, label: '15' },
+]
+
 export interface PartnerType {
     id?: string
     offers: number

@@ -102,6 +102,7 @@ const SubStoreCommission = () => {
                 return []
             } //TODO: add page of error
         },
+        refetchOnWindowFocus: false,
     })
     const { handleSubmit } = form
     const table = useReactTable({

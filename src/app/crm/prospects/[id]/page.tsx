@@ -234,6 +234,7 @@ const useProspect = (id: string) => {
     const { data, isSuccess, error } = useQuery({
         queryKey: ['prospect'],
         queryFn: () => getProspect(id),
+        refetchOnWindowFocus: false,
     })
 
     return { prospect: data, isSuccess, error }

@@ -16,7 +16,7 @@ export const PartnerInformationSchema = z.object({
             message: 'Le numéro de téléphone ne doit contenir que des chiffres',
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
-    commercialRegisterNumber: z.number().min(1),
+    commercialRegisterNumber: z.string().min(3),
     partnerType: z.array(z.string()).optional(),
     country: z.string().min(3),
     state: z.string().min(3),
@@ -35,7 +35,7 @@ export const defaultPartnerInformationData = {
     managerId: '',
     phone: '',
     email: '',
-    commercialRegisterNumber: 0,
+    commercialRegisterNumber: '',
     partnerType: [],
     country: '',
     city: '',
@@ -54,7 +54,7 @@ export interface PartnerInformationSchemaType {
     managerId: string
     phone: string
     email: string
-    commercialRegisterNumber: number
+    commercialRegisterNumber: string
     partnerType: string[]
     country: string
     state: string

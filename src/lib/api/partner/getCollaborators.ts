@@ -1,4 +1,3 @@
-
 import api from '@/lib/Auth'
 import { API_URL } from '..'
 
@@ -11,10 +10,8 @@ const buildQueryString = (data: any, type: string, sub: string) => {
     if (data.endDate) {
         queryParts.push(`endDate=${encodeURIComponent(data.endDate)}`)
     }
-    if (data.companyName && data.companyName.length > 0) {
-        queryParts.push(
-            `names=${encodeURIComponent(data.companyName.join(','))}`
-        )
+    if (data.user && data.user.length > 0) {
+        queryParts.push(`names=${encodeURIComponent(data.user.join(','))}`)
     }
     if (data.roleName) {
         queryParts.push(`roleName=${encodeURIComponent(data.roleName)}`)
@@ -28,14 +25,6 @@ const buildQueryString = (data: any, type: string, sub: string) => {
     if (data.email) {
         queryParts.push(`email=${encodeURIComponent(data.email)}`)
     }
-    if (data.city) {
-        queryParts.push(`leadId=${encodeURIComponent(data.city)}`)
-    }
-    if (data.solution && data.solution.length > 0) {
-        queryParts.push(
-            `solutions=${encodeURIComponent(data.solution.join(','))}`
-        )
-    }
     if (data.status) {
         queryParts.push(`status=${encodeURIComponent(data.status)}`)
     }
@@ -47,7 +36,7 @@ const buildQueryString = (data: any, type: string, sub: string) => {
     }
     if (data.companyType) queryParts.push(`${entityType}=${data.companyType}`)
     else queryParts.push(`${entityType}=${type}`)
-    if (data.solutions)
+    if (data.solutions && data.solutions.length > 0)
         queryParts.push(`solutions=${encodeURIComponent(data.solutions)}`)
 
     return queryParts.join('&')

@@ -29,7 +29,7 @@ export async function fetchOragnizations(
         })
         return res.data?.content?.map((organization: any) => ({
             label: organization.name,
-            key: organization.id,
+            key: organization.name,
             avatar: organization.avatarPath,
         }))
     } catch (error) {

@@ -77,12 +77,13 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
             setTotals({
                 ...totals,
                 totalPages: payments?.totalPages,
-                totalElements: payments?.numberOfElements,
+                totalElements: payments?.totalElements,
                 totalCommission: statistics?.totalCommission.amount,
                 totalValue: statistics?.total.amount,
             })
             setPayments(payments.content)
         },
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm({

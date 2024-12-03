@@ -15,13 +15,13 @@ import { SelectField } from '@/components/custom/SelectField'
 import { InputPhoneField } from '@/components/custom/InputFieldPhone'
 import { Mail } from 'lucide-react'
 import { AvatarField } from '@/components/custom/AvatarField'
-import { IframeRenderer } from './IframeRender'
 import { MultiSelectField } from '@/components/custom/MultiSelectField'
 import { Input } from 'postcss'
 import { getCities, getCountries, getRegions } from '@/lib/api/fetchAddress'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import SelectManager from '@/components/utils/SelectManager'
 import { fetchActivities } from '@/lib/api/partner/fetchActivites'
+import IframeRenderer from '@/components/Partners/NewPartner/IframeRender'
 import FieldActivities from '@/components/utils/FieldActivities'
 import FieldCountry from '@/components/utils/FieldCountry'
 import FieldCity from '@/components/utils/FieldCity'
@@ -58,41 +58,64 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
     })
     console.log('hello partner')
     return (
-        <Accordion
-            type="single"
-            collapsible
-            className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
-            defaultValue="partnerInfo"
-        >
-            <AccordionItem
-                value="partnerInfo"
-                className="text-lynch-400 text-[1.375rem] font-normal"
+        <Form {...form}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="gap-[30px] lg:gap-0 flex flex-col "
             >
-                <AccordionTrigger className="font-normal text-[1.375rem] py-0">
-                    Information du partenaires
-                </AccordionTrigger>
-                <AccordionContent className="pt-20">
-                    <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="flex flex-col gap-[1.875rem] h-auto">
-                                <div className="flex relative gap-5 lg:pb-0 pb-20 h-auto ">
+                <div className="flex relative gap-5 lg:pb-0 pb-14 lg:hidden my-6">
+                    <AvatarField
+                        form={form}
+                        name="logo"
+                        alt="Logo"
+                        disabled={disabled}
+                        label="Image du logo"
+                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
+                        classNameAvatar="rounded-full lg:rounded-[18px] bg-white"
+                    />
+                    <AvatarField
+                        form={form}
+                        name="cover"
+                        alt="cover"
+                        disabled={disabled}
+                        label="Photo de couverture"
+                        className="lg:w-fit w-full"
+                        classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px] bg-white"
+                    />
+                </div>
+                <Accordion
+                    type="single"
+                    collapsible
+                    className="bg-white lg:p-5 px-4 py-6 rounded-[14px]"
+                    defaultValue="partnerInfo"
+                >
+                    <AccordionItem
+                        value="partnerInfo"
+                        className="text-lynch-400 text-[1.375rem] font-normal"
+                    >
+                        <AccordionTrigger className="font-normal text-[1.375rem] py-0">
+                            Information du partenaires
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-7">
+                            <div className="flex flex-col gap-[1.875rem]">
+                                <div className="lg:flex relative gap-5 lg:pb-0 pb-14 hidden">
                                     <AvatarField
-                                        disabled={disabled}
                                         form={form}
                                         name="logo"
                                         alt="Logo"
                                         label="Image du logo"
-                                        className="lg:static lg:translate-x-0 absolute -bottom-0 left-1/2 -translate-x-1/2 z-10"
-                                        classNameAvatar="rounded-full lg:rounded-[24px]"
+                                        disabled={disabled}
+                                        className="lg:static lg:translate-x-0 absolute -bottom-5 left-1/2 -translate-x-1/2 z-10 w-auto"
+                                        classNameAvatar="rounded-full lg:rounded-[18px]"
                                     />
                                     <AvatarField
-                                        disabled={disabled}
                                         form={form}
                                         name="cover"
                                         alt="cover"
                                         label="Photo de couverture"
                                         className="lg:w-fit w-full"
-                                        classNameAvatar="lg:h-[223px] h-[160px] lg:w-[740px] w-full rounded-[24px]"
+                                        disabled={disabled}
+                                        classNameAvatar="lg:h-[223px] h-[200px] lg:w-[740px] w-full rounded-[24px]"
                                     />
                                 </div>
                                 <span className="w-fill h-[1px] bg-lynch-100" />
@@ -144,7 +167,6 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                             control={control}
                                             placeholder="Saisir le RC"
                                             disabled={disabled}
-                                            type="number"
                                         />
                                     </div>
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
@@ -247,10 +269,10 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                     />
                                 </div>
                             </div>
-                        </form>
-                    </Form>
-                </AccordionContent>
-            </AccordionItem>
-        </Accordion>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </form>
+        </Form>
     )
 }

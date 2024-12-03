@@ -178,6 +178,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         console.log('save data')
         if (modify === true) {
             setContractValid(false)
+            partnerDetails.status = PartnerStatusType.IN_PROGRESS
             return
         }
 

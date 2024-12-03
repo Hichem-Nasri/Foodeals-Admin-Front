@@ -1,10 +1,9 @@
 import { Label } from './Label'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from './ui/input'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import Image from 'next/image'
-import { ImagePlus, ImageUp } from 'lucide-react'
+import { ImageUp } from 'lucide-react'
 import { Skeleton } from './ui/skeleton'
 
 interface AvatarProfileProps {

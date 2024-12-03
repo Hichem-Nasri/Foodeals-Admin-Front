@@ -72,5 +72,6 @@ export default DemandeSupport
 //             // const response = await api.get(API_SUPPORT + '/' + id)
 //             // return response.data
 //         },
+//          refetchOnWindowFocus: false,
 //     })
 // }

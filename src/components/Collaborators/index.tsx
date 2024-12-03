@@ -11,6 +11,10 @@ import { useNotification } from '@/context/NotifContext'
 import { getCollaborator } from '@/lib/api/partner/getCollaborators'
 import { SchemaFilter, defaultSchemaFilter } from '@/types/associationSchema'
 import {
+    defaultFilter,
+    PartnerCollaboratorsFilerSchema,
+} from '@/types/collaborators'
+import {
     defaultSchemaCollaborators,
     SchemaCollaborators,
 } from '@/types/collaboratorsUtils'
@@ -45,8 +49,8 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
     const [collaborators, setCollaborators] = useState<CollaboratorsType[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [filterData, setFilterData] =
-        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [FilterData, setFilterData] =
+        useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
     const [open, setOpen] = useState(false)
     const [archive, setArchive] = useState(false)
     const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
@@ -67,7 +71,7 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
                     archive,
                     totals.currentPage,
                     totals.pageSize,
-                    filterData,
+                    FilterData,
                     partnerType
                 )
                 if (data.status === 500)
@@ -77,7 +81,7 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
                 setTotals({
                     ...totals,
                     totalPages: users?.totalPages,
-                    totalElements: users?.numberOfElements,
+                    totalElements: users?.totalElements,
                 })
                 setCollaborators(users?.content)
                 return data.data
@@ -87,6 +91,7 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
                 setCollaborators([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     // handleArchive function
@@ -95,13 +100,16 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
         setArchive((prev) => !prev)
     }
 
-    const form = useForm<z.infer<typeof SchemaFilter>>({
-        resolver: zodResolver(SchemaCollaborators),
+    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
+        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
         mode: 'onBlur',
-        defaultValues: defaultSchemaCollaborators,
+        defaultValues: FilterData,
     })
 
-    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+    const onSubmit = (
+        data: z.infer<typeof PartnerCollaboratorsFilerSchema>
+    ) => {
+        console.log('data', data)
         setFilterData(data)
         setOpen(false)
     }
@@ -118,8 +126,12 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
 
     useEffect(() => {
         if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
-    }, [archive, filterData])
+    }, [archive, FilterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
@@ -139,7 +151,12 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
                 table={table}
                 title="Liste des Collaborateurs"
                 transform={(value) => (
-                    <CollaboratorCard User={value} partnerId={id} />
+                    <CollaboratorCard
+                        User={value}
+                        partnerId={id}
+                        archive={archive}
+                        refetch={refetch}
+                    />
                 )}
                 isLoading={isLoading || isRefetching}
                 hideColumns={['avatarPath']}

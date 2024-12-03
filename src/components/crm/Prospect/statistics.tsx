@@ -1,7 +1,6 @@
 'use client'
 import api from '@/lib/Auth'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { headers } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import {
@@ -38,6 +37,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type, isFetching }) => {
                 console.error(error)
             }
         },
+        refetchOnWindowFocus: false,
     })
     return (
         <div className="flex lg:flex-row flex-col items-center gap-3 w-full max-w-full">

@@ -56,7 +56,7 @@ export const SelectField: FC<SelectFieldProps> = ({
                     >
                         <Select
                             options={options}
-                            disabled={options.length === 0 || disabled}
+                            disabled={disabled}
                             value={field.value}
                             onChange={(value) => {
                                 if (selectedType) {

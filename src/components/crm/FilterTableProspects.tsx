@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -22,12 +22,14 @@ import { useRouter } from 'next/navigation'
 import MobileHeader from '../utils/MobileHeader'
 import { SelectField } from '../custom/SelectField'
 import api from '@/lib/Auth'
+import { API_URL } from '@/lib/api'
 
 interface FilterTableProspectsProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
     onSubmit: (data: z.infer<typeof FilterCrmSchema>) => void
     open: boolean
     setOpen: (open: boolean) => void
+    type?: string
 }
 
 export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
@@ -35,6 +37,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
     onSubmit,
     open,
     setOpen,
+    type,
 }) => {
     const { handleSubmit, control } = FilterForm
     const router = useRouter()
@@ -78,6 +81,7 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                     FilterForm={FilterForm}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
+                    type={type}
                 />
             </DialogContent>
         </Dialog>
@@ -88,45 +92,65 @@ interface FormCrmInfoProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
     onSubmit: (data: z.infer<typeof FilterCrmSchema>) => void
     setOpen: (open: boolean) => void
+    type?: string
 }
 
 const FormCrmInfo: FC<FormCrmInfoProps> = ({
     FilterForm,
     onSubmit,
     setOpen,
+    type,
 }) => {
     const { handleSubmit, control } = FilterForm
-    const [country, setCountry] = useState<string>('')
+    const refCity = useRef<HTMLInputElement>(null)
+    const refRegion = useRef<HTMLInputElement>(null)
     const [city, setCity] = useState<string>('')
+    const [region, setRegion] = useState<string>('')
     const [Options, setOptions] = useState<{
-        country: MultiSelectOptionsType[]
+        region: MultiSelectOptionsType[]
         city: MultiSelectOptionsType[]
     }>({
-        country: [],
+        region: [],
         city: [],
     })
     useEffect(() => {
-        const fetchCountry = async () => {
-            const res = await api.get('/api/countries')
-            const data = await res.data
-            const options = data.map((country: string) => ({
-                key: country,
-                value: country,
-            }))
-            setOptions((prev) => ({ ...prev, country: options }))
-        }
-        // fetchCountry()
         const fetchCity = async () => {
-            const res = await api.get('/api/cities')
-            const data = await res.data
-            const options = data.map((city: string) => ({
-                key: city,
-                value: city,
+            const res = await api
+                .get(
+                    `${API_URL}/v1/crm/prospects/cities/search?city=${city}&country=morocco&page=0&size=10&types=${type}`
+                )
+                .then((res) => res.data)
+                .catch((error) => {
+                    console.error(error)
+                    return []
+                })
+            const options = res?.map((city: { id: string; name: string }) => ({
+                key: city.id,
+                label: city.name,
             }))
             setOptions((prev) => ({ ...prev, city: options }))
         }
-        // fetchCity()
-    }, [country, city])
+        fetchCity()
+        const fetchRegion = async () => {
+            const res = await api
+                .get(
+                    `${API_URL}/v1/crm/prospects/cities/search?region=${region}&country=morocco&page=0&size=10&types=${type}`
+                )
+                .then((res) => res.data)
+                .catch((error) => {
+                    console.error(error)
+                    return []
+                })
+            const options = res?.map(
+                (region: { id: string; name: string }) => ({
+                    key: region.id,
+                    label: region.name,
+                })
+            )
+            setOptions((prev) => ({ ...prev, region: options }))
+        }
+        fetchRegion()
+    }, [])
     return (
         <Form {...FilterForm}>
             <form
@@ -166,34 +190,31 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <SelectField
                             control={control}
-                            name="country"
-                            label="Pays"
-                            placeholder="Saisir le pays"
-                            options={
-                                Options.country.length > 0
-                                    ? Options.country
-                                    : []
-                            }
-                            onChange={(e) => {
-                                setCountry(e)
-                            }}
-                        />
-                        <SelectField
-                            disabled={country === ''}
-                            control={control}
                             name="city"
                             label="Ville"
-                            placeholder={
-                                country == ''
-                                    ? "Saisir le pays d'abord"
-                                    : 'Saisir le ville'
-                            }
+                            placeholder={'Selectionner la Ville'}
                             options={
                                 Options.city.length > 0 ? Options.city : []
                             }
-                            onChange={(e) => {
+                            search={true}
+                            onChangeSearch={(e) => {
                                 setCity(e)
                             }}
+                            inputRef={refCity}
+                        />
+                        <SelectField
+                            control={control}
+                            name="region"
+                            label="Région"
+                            placeholder="Selectionner la région"
+                            options={
+                                Options.region.length > 0 ? Options.region : []
+                            }
+                            search
+                            onChangeSearch={(e) => {
+                                setRegion(e)
+                            }}
+                            inputRef={refRegion}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">

@@ -54,6 +54,7 @@ export const Archiver: FC<ArchiverProps> = ({
     const queryClient = useQueryClient()
 
     const onSubmit = async (data: z.infer<typeof ArchivePartnerSchema>) => {
+        console.log('archive partner')
         setIsLoading(true)
         handleArchiver(data)
         setIsLoading(false)

@@ -58,21 +58,36 @@ export const DataTable: FC<DataTableProps<any>> = ({
     }
 
     const renderPartnerInfo = () => (
-        <div className="flex justify-start items-center gap-2">
-            <Avatar className="size-12 rounded-full bg-white text-lynch-400 ">
-                <AvatarImage src={partnerData?.avatar!} />
-                <AvatarFallback>{partnerData?.name.at(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-1">
-                <Label
-                    label={partnerData?.name!}
-                    className="text-base font-normal"
-                />
-                <Label
-                    label={partnerData?.city!}
-                    className="text-primary text-xs font-semibold"
-                />
+        <div className="flex w-full justify-between items-center px-2">
+            <div className="flex justify-start items-center gap-2">
+                <Avatar className="size-12 rounded-full bg-white border-[1px] border-bg-lynch-400 text-lynch-500 ">
+                    <AvatarImage src={partnerData?.avatar!} />
+                    <AvatarFallback>
+                        {partnerData?.name &&
+                            partnerData?.name.slice(0, 2).toLocaleUpperCase()}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-1">
+                    <Label
+                        label={partnerData?.name!}
+                        className="text-base font-normal"
+                    />
+                    <Label
+                        label={partnerData?.city!}
+                        className="text-primary text-xs font-semibold"
+                    />
+                </div>
             </div>
+            {back && (
+                <CustomButton
+                    className=" text-lynch-500 ml-1 lg:hidden flex"
+                    label="Retour"
+                    IconLeft={ArrowLeft}
+                    variant="outline"
+                    size={'sm'}
+                    onClick={handleBackClick}
+                />
+            )}
         </div>
     )
 

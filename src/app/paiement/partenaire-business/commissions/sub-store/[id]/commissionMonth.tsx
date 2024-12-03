@@ -115,7 +115,7 @@ const CommissionMonth: FC<CommissionMonthProps> = ({ id, type }) => {
                     ...totals,
                     totalCommission: statistics.totalCommission.amount,
                     totalSales: statistics.total.amount,
-                    totalElements: operations.numberOfElements,
+                    totalElements: operations.totalElements,
                     totalPages: operations.totalPages,
                 })
                 setDateAndPartner((prev) => {

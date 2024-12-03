@@ -22,35 +22,31 @@ import { AppRoutes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
 import { CollaboratorsUser } from '@/types/collaboratorsUtils'
 import { capitalize } from '@/types/utils'
+import { GetListUser } from '@/components/Collaborators/column/getListUser'
 
 interface PartnerCollaboratesCardProps {
     partner?: CollaboratorsUser
+    archive: boolean
+    refetch: () => void
+    partnerId: string
 }
 
 export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
     partner,
+    archive,
+    refetch,
+    partnerId,
 }) => {
     const router = useRouter()
 
     if (!partner) return
 
-    const actions: ActionType[] = [
-        {
-            actions: (id) =>
-                router.push(AppRoutes.newPartner.replace(':id', id)),
-            icon: Eye,
-            label: 'VOIR PLUS DES DETAIL',
-        },
-        {
-            actions: (id) => {
-                router.push(
-                    AppRoutes.paymentDetails.replace(':id', id) + '?mode=edit'
-                )
-            },
-            icon: Pencil,
-            label: 'MODIFIER UN PARTENAIRE',
-        },
-    ]
+    const actions: ActionType[] = GetListUser(
+        archive,
+        refetch,
+        partnerId,
+        partner.id
+    )
     const fullName =
         capitalize(partner.name.firstName) +
         ' ' +
@@ -99,8 +95,10 @@ export const PartnerCollaboratesCard: FC<PartnerCollaboratesCardProps> = ({
                         />
                     </Link>
                     <ActionsMenu
+                        id={partner.id}
                         menuList={actions}
                         className="[&>svg]:size-6 p-[0.625rem]"
+                        prospect={archive ? 'users' : false}
                     />
                 </div>
             </div>

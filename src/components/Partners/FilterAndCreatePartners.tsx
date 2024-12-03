@@ -10,6 +10,7 @@ import { AppRoutes } from '@/lib/routes'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { z } from 'zod'
 import { SchemaFilter } from '@/types/associationSchema'
+import ArchiveButton from '../custom/ArchiveButton'
 
 interface FilterAndCreatePartnersProps {
     table: import('@tanstack/table-core').Table<PartnerType>
@@ -40,13 +41,20 @@ export const FilterAndCreatePartners: FC<FilterAndCreatePartnersProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des partenaires
                 </h2>
-                <FilterTablePartner
-                    form={form}
-                    onSubmit={onSubmit}
-                    setOpen={setOpen}
-                    open={open}
-                    type={'PARTNER_WITH_SB,NORMAL_PARTNER&' + `${archive}`}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FilterTablePartner
+                        form={form}
+                        onSubmit={onSubmit}
+                        setOpen={setOpen}
+                        open={open}
+                        type={'PARTNER_WITH_SB,NORMAL_PARTNER&' + `${archive}`}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={isFetching!}
+                        handleArchive={handleArchive}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterTablePartner

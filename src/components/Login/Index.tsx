@@ -74,11 +74,11 @@ export const Login: React.FC = () => {
     const handleShowPassword = () => setShowPassword((prev) => !prev)
 
     return (
-        <>
+        <div className="w-full h-full  overflow-hidden">
             {loading ? (
                 <SplashScreen finishLoading={finishLoading} />
             ) : (
-                <div className="w-full min-h-screen flex lg:flex-row flex-col  justify-center lg:justify-between items-center bg-[url('/background-auth-partners.svg')]">
+                <div className="w-full min-h-screen flex lg:flex-row flex-col  justify-center lg:justify-between items-center bg-[url('/background-auth-partners.svg')] overflow-hidden">
                     <div className="w-full lg:w-1/2 h-auto lg:min-h-screen flex flex-col justify-center items-center  p-4 lg:p-0">
                         <div className="h-auto flex flex-col justify-center lg:justify-between items-center gap-4 lg:gap-7">
                             <Image
@@ -110,6 +110,6 @@ export const Login: React.FC = () => {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     )
 }

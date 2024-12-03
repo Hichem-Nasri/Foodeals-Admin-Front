@@ -3,21 +3,18 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { countryCodes } from '@/lib/utils'
 import {
     CollaboratorDeliveryScheduleSchema,
     CollaboratorDeliveryType,
     CollaboratorDeliveryTypeSchema,
-    defaultCollaboratorDeliveryData,
 } from '@/types/DeliverySchema'
 import { FormCollaboratorInfo } from './FormCollaboratorInfo'
 import { FormWorkSchedule } from './FormWorkSchedule'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { getCollaboratorDelivery } from '@/lib/api/delivery/getCollaboratorDelivery'
-import { useQuery } from '@tanstack/react-query'
 
 interface CollaboratorProps {
     collaborator: CollaboratorDeliveryType
@@ -79,7 +76,7 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
                     label="Retour"
                     onClick={() => router.back()}
                     IconLeft={ArrowLeft}
-                    className="justify-self bg-transparent text-lynch-400 h-12 hover:bg-lynch-400 hover:text-white border border-lynch-200"
+                    variant="outline"
                 />
             </div>
             <div className="flex flex-col gap-[1.875rem] h-full w-full">

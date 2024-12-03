@@ -48,6 +48,7 @@ export default function DeliveryPage({ params }: { params: { id: string } }) {
                 return emptyDeliveryPartner
             }
         },
+        refetchOnWindowFocus: false,
     })
     console.log('delivery', data)
     return (

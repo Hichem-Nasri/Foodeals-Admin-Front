@@ -15,8 +15,6 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
-import { AvatarProfile } from '@/components/AvatarProfile'
-import { Input } from '@/components/custom/Input'
 import { Select } from '@/components/custom/Select'
 import { PartnerSolution } from '../PartnerSolution'
 import { InputSchedule } from '@/components/InputSchedule'

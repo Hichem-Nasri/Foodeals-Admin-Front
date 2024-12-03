@@ -15,7 +15,9 @@ import { FilterCity } from '@/components/utils/FilterCity'
 import { FilterManager } from '@/components/utils/FilterManger'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
 import { FilterRegion } from '@/components/utils/FilterRegion'
+import { FilterUsers } from '@/components/utils/FilterUser'
 import MobileHeader from '@/components/utils/MobileHeader'
+import { PartnerCollaboratorsFilerSchema } from '@/types/collaborators'
 import { SchemaCollaborators } from '@/types/collaboratorsUtils'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
@@ -26,8 +28,8 @@ import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 interface FormFilterCollaboratorProps {
-    form: UseFormReturn<z.infer<typeof SchemaCollaborators>>
-    onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
     archive: boolean
@@ -63,8 +65,8 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
 }
 
 interface FormCollaboratorProps {
-    form: UseFormReturn<z.infer<typeof SchemaCollaborators>>
-    onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
 }
@@ -94,11 +96,12 @@ const FormCollaborator: FC<FormCollaboratorProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterManager
+                        <FilterUsers
                             control={control}
-                            name="collaborators"
+                            name="user"
                             label="Collaborateurs"
                             type={`DELIVERY_PARTNER&${archive}`}
+                            filter="user"
                         />
                         <SelectField
                             control={control}

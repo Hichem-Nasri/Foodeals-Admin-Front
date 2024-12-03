@@ -61,15 +61,18 @@ const DetailsArchive = ({
                 if (data.status === 500 || data.data === null)
                     throw new Error('Error fetching partners')
                 setDetails(data!.data)
-                if (data.data.length > 0) setSelected(data.data[0])
                 return data.data
             } catch (error) {
                 console.log(error)
                 return null
             }
         },
+        refetchOnWindowFocus: false,
     })
-    console.log('data', data)
+    useEffect(() => {
+        if (details.length > 0) setSelected(() => details[0])
+        console.log('details', details)
+    }, [details])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -111,10 +114,19 @@ const DetailsArchive = ({
                                         setSelected(detail)
                                     }}
                                     style={{
-                                        opacity: selected === detail ? 1 : 0.5,
-                                        scale: selected === detail ? 1.1 : 1,
+                                        opacity:
+                                            selected?.deletedAt ===
+                                            detail.deletedAt
+                                                ? 1
+                                                : 0.5,
+                                        scale:
+                                            selected?.deletedAt ===
+                                            detail.deletedAt
+                                                ? 1.1
+                                                : 1,
                                         boxShadow:
-                                            selected === detail
+                                            selected?.deletedAt ===
+                                            detail.deletedAt
                                                 ? '0 0 10px 0 rgba(0, 0, 0, 0.1)'
                                                 : 'none',
                                     }}

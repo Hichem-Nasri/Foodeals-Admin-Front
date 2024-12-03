@@ -56,12 +56,14 @@ export const GetListActions: (
                                     10,
                                 ])
                             fn()
+                            console.log('archived done!!')
                         })
                         .catch((err) => {
                             handleDone &&
                                 handleDone(false, 'Failed to archive', [])
                             console.log(err)
                         })
+                    console.log('archived precess done!!')
                 },
                 label: 'Désarchiver',
                 icon: ArchiveRestore,

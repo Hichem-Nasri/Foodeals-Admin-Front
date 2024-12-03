@@ -234,7 +234,7 @@ const dimoData = {
             unsorted: true,
             empty: true,
         },
-        numberOfElements: 2,
+        totalElements: 2,
         empty: false,
     },
     details: {

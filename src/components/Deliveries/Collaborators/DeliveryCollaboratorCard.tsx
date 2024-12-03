@@ -29,14 +29,17 @@ import { ActionsMenu, ActionType } from '@/components/custom/ActionsMenu'
 import { useRouter } from 'next/navigation'
 import { BadgeDisponibility } from './BadgeDisponibility'
 import { capitalize } from '@/types/utils'
+import { GetListUser } from '../column/getListUser'
 
 interface DeliveryCollaboratorCardProps {
     collaborator: DeliveryCollaboratorsType
+    archive: boolean
+    refetch: () => void
 }
 
 export const DeliveryCollaboratorCard: React.FC<
     DeliveryCollaboratorCardProps
-> = ({ collaborator }): JSX.Element => {
+> = ({ collaborator, archive, refetch }): JSX.Element => {
     const router = useRouter()
     const dataArray = [
         {
@@ -53,16 +56,11 @@ export const DeliveryCollaboratorCard: React.FC<
         },
     ]
 
-    const actions: ActionType[] = [
-        {
-            actions: (id) =>
-                router.push(
-                    AppRoutes.deliveryCollaboratorDetails.replace(':id', id)
-                ),
-            icon: Eye,
-            label: 'Voir',
-        },
-    ]
+    const actions: ActionType[] = GetListUser(
+        archive,
+        refetch,
+        collaborator.userInfoDto.id
+    )
     const fullName =
         capitalize(collaborator.userInfoDto.name.firstName) +
         ' ' +
@@ -114,8 +112,10 @@ export const DeliveryCollaboratorCard: React.FC<
                         />
                     </Link>
                     <ActionsMenu
+                        id={collaborator.userInfoDto.id}
                         menuList={actions}
                         className="[&>svg]:size-6 p-[0.625rem]"
+                        prospect={archive ? 'users' : false}
                     />
                 </div>
             </div>

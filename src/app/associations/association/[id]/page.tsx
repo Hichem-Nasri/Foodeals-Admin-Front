@@ -37,6 +37,7 @@ const useAssociation = (id: string) => {
     const { data, isLoading, isError } = useQuery({
         queryKey: ['association', id],
         queryFn: async () => getAssociationData(id),
+        refetchOnWindowFocus: false,
     })
     return { data, isLoading, isError }
 }

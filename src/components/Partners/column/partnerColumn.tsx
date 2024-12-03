@@ -53,7 +53,7 @@ export const columnsPartnersTable = (
     }),
     columnHelper.accessor('offers', {
         cell: (info) => info.getValue(),
-        header: 'Raison sociale',
+        header: 'Offers',
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('users', {
@@ -129,7 +129,7 @@ export const columnsPartnersTable = (
 
             return (
                 <ActionsMenu
-                    id={info.getValue()}
+                    id={id}
                     menuList={commonActions}
                     prospect={archive ? 'organisation' : false}
                 />

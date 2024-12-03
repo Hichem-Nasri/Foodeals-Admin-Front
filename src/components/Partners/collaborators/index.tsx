@@ -58,8 +58,8 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
     const [collaborators, setCollaborators] = useState<CollaboratorsUser[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [filterData, setFilterData] =
-        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [FilterData, setFilterData] =
+        useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
     const [open, setOpen] = useState(false)
     const [archive, setArchive] = useState(false)
     const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
@@ -80,7 +80,7 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
                     archive,
                     totals.currentPage,
                     totals.pageSize,
-                    filterData,
+                    FilterData,
                     ''
                 )
                 if (data.status === 500)
@@ -89,7 +89,7 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
                 setTotals({
                     ...totals,
                     totalPages: users.totalPages,
-                    totalElements: users.numberOfElements,
+                    totalElements: users.totalElements,
                 })
                 setPartner(organization)
                 setCollaborators(users?.content)
@@ -100,6 +100,7 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
                 setCollaborators([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     // handleArchive function
@@ -123,19 +124,28 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    const form = useForm<z.infer<typeof SchemaFilter>>({
-        resolver: zodResolver(SchemaFilter),
+    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
+        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
         mode: 'onBlur',
-        defaultValues: defaultSchemaFilter,
+        defaultValues: FilterData,
     })
-    const onSubmit = (data: any) => {
+
+    const onSubmit = (
+        data: z.infer<typeof PartnerCollaboratorsFilerSchema>
+    ) => {
+        console.log('data', data)
         setFilterData(data)
+        setOpen(false)
     }
 
     useEffect(() => {
         if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
-    }, [archive, filterData])
+    }, [archive, FilterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
@@ -154,7 +164,13 @@ export const Collaborators: FC<CollaboratorsProps> = ({ partnerId }) => {
                 table={table}
                 data={collaborators}
                 transform={(value) => (
-                    <PartnerCollaboratesCard partner={value} key={value.id} />
+                    <PartnerCollaboratesCard
+                        partner={value}
+                        key={value.id}
+                        partnerId={partnerId}
+                        archive={archive}
+                        refetch={refetch}
+                    />
                 )}
                 partnerData={{
                     ...partner,

@@ -24,6 +24,7 @@ const PartnerConvertirPage: FC<PartnerConvertirProps> = ({ params }) => {
                 return []
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     return (

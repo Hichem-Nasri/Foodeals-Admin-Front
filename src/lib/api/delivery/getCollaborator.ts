@@ -11,10 +11,8 @@ const buildQueryString = (data: any, type: string, sub: string) => {
     if (data.endDate) {
         queryParts.push(`endDate=${encodeURIComponent(data.endDate)}`)
     }
-    if (data.companyName && data.companyName.length > 0) {
-        queryParts.push(
-            `names=${encodeURIComponent(data.companyName.join(','))}`
-        )
+    if (data.user && data.user.length > 0) {
+        queryParts.push(`names=${encodeURIComponent(data.user.join(','))}`)
     }
     if (data.roleName) {
         queryParts.push(`roleName=${encodeURIComponent(data.roleName)}`)
@@ -47,12 +45,11 @@ const buildQueryString = (data: any, type: string, sub: string) => {
     }
     if (data.companyType) queryParts.push(`${entityType}=${data.companyType}`)
     else queryParts.push(`${entityType}=${type}`)
-    if (data.solutions)
+    if (data.solutions && data.solutions.length > 0)
         queryParts.push(`solutions=${encodeURIComponent(data.solutions)}`)
 
     return queryParts.join('&')
 }
-
 
 export async function getCollaboratorDelivery(
     id: string,

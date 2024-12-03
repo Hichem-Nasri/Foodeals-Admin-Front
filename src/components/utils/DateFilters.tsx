@@ -22,8 +22,18 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                         <DatePicker
                             onChange={(newDate) => {
                                 if (newDate) {
-                                    field.onChange(
+                                    console.log('newDate', newDate)
+                                    console.log(
+                                        "newDate.toISOString().split('T')[0]",
                                         newDate.toISOString().split('T')[0]
+                                    )
+                                    field.onChange(
+                                        `${newDate.getFullYear()}-${
+                                            newDate.getMonth() + 1
+                                        }-${newDate
+                                            .getDate()
+                                            .toString()
+                                            .padStart(2, '0')}`
                                     )
                                 } else {
                                     field.onChange('')
@@ -45,7 +55,12 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                             onChange={(newDate) => {
                                 if (newDate) {
                                     field.onChange(
-                                        newDate.toISOString().split('T')[0]
+                                        `${newDate.getFullYear()}-${
+                                            newDate.getMonth() + 1
+                                        }-${newDate
+                                            .getDate()
+                                            .toString()
+                                            .padStart(2, '0')}`
                                     )
                                 } else {
                                     field.onChange('')
@@ -54,7 +69,6 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                             value={
                                 !field.value ? undefined : new Date(field.value)
                             }
-                            id="end"
                             disabled={disabled}
                         />
                     )}

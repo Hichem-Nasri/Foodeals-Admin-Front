@@ -8,7 +8,9 @@ import { AppRoutes } from '@/lib/routes'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { SchemaFilter } from '@/types/associationSchema'
 import { z } from 'zod'
-import { FormFilterCollaborator } from './FormFilter'
+import ArchiveButton from '../custom/ArchiveButton'
+import { FormFilterCollaborator } from '../Association/Collaborator/FilterCollaborator'
+import { PartnerCollaboratorsFilerSchema } from '@/types/collaborators'
 
 interface FilterCollaboratorsProps {
     open: boolean
@@ -19,7 +21,7 @@ interface FilterCollaboratorsProps {
     handleArchive: () => void
     siege?: boolean
     totalElements: number
-    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     isFetching?: boolean
 }
 
@@ -41,12 +43,20 @@ export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des Collaborateurs
                 </h2>
-                <FormFilterCollaborator
-                    form={form}
-                    onSubmit={onSubmit}
-                    open={open}
-                    setOpen={setOpen}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FormFilterCollaborator
+                        form={form}
+                        onSubmit={onSubmit}
+                        open={open}
+                        setOpen={setOpen}
+                        archive={archive}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={isFetching!}
+                        handleArchive={handleArchive}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FormFilterCollaborator
@@ -54,6 +64,7 @@ export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    archive={archive}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

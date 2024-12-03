@@ -33,14 +33,14 @@ export type ActionType = {
 }
 
 interface ActionsMenuProps {
-    id?: string
+    id: string
     menuList: ActionType[]
     className?: string
     prospect?: 'prospect' | 'organisation' | 'sub-entites' | 'users' | false
 }
 
 export const ActionsMenu: FC<ActionsMenuProps> = ({
-    id = '',
+    id,
     menuList,
     className,
     prospect = false,
@@ -56,6 +56,7 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
     const handleArchiver = async (
         data: z.infer<typeof ArchivePartnerSchema>
     ) => {
+        console.log('process archive')
         const handleDone = async (
             type: boolean,
             message: string,
@@ -74,8 +75,9 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
         }
         const type = leadKo ? 'Lead Ko' : open ? 'Archiver' : 'Désarchiver'
         const archiveAction = menuList.find((item) => item.label === type)
-        if (!id || !archiveAction) return
+        if (!archiveAction) return
         archiveAction.actions(id, data, handleDone)
+        console.log('archiveAction', archiveAction)
     }
     return (
         <>

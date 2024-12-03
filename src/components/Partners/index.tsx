@@ -16,7 +16,11 @@ import { RotateCw, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { DataTable } from '../DataTable'
 import { PartnerCard } from './PartnerCard'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+    keepPreviousData,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query'
 import api from '@/lib/Auth'
 import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
@@ -78,7 +82,7 @@ export const Partners: FC<PartnersProps> = ({}) => {
                     throw new Error('Error fetching partners')
                 setTotals((prev) => ({
                     ...prev,
-                    totalElements: data.data.numberOfElements,
+                    totalElements: data.data.totalElements,
                     totalPages: data.data.totalPages,
                 }))
                 setPartners(data.data.content as PartnerType[])
@@ -89,6 +93,8 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 setPartners([])
             }
         },
+        placeholderData: keepPreviousData,
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm<z.infer<typeof SchemaFilter>>({
@@ -122,9 +128,14 @@ export const Partners: FC<PartnersProps> = ({}) => {
     }
     useEffect(() => {
         if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
+        console.log('------------Refetching----------------')
         refetch()
     }, [archive, filterData])
-
+    console.log('Partners:', partners)
     return (
         <div className="flex flex-col gap-[0.625rem] items-center w-full px-3 lg:px-0 lg:pr-2  lg:mb-0 mb-4">
             <FilterAndCreatePartners

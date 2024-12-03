@@ -31,9 +31,9 @@ const SplashScreen = ({
     return (
         <div
             id="logo"
-            className="flex w-full h-screen items-center justify-center bg-mountain-400 text-white overflow-hidden"
+            className="flex h-screen w-full items-center justify-center overflow-hidden bg-mountain-400 text-white"
         >
-            <div className="flex justify-center items-center space-x-4">
+            <div className="flex items-center justify-center space-x-4">
                 <Lottie
                     style={{
                         width: '50px',
@@ -48,7 +48,7 @@ const SplashScreen = ({
                     width={50}
                     height={50}
                 />
-                <h1 className="text-3xl lg:text-5xl text-white">Foodeals</h1>
+                <h1 className="text-3xl text-white lg:text-5xl">Foodeals</h1>
             </div>
         </div>
     )

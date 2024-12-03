@@ -20,33 +20,30 @@ import { capitalize } from '@/types/utils'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { CollaboratorsType } from './column/collaboratorColumn'
+import { GetListUser } from './column/getListUser'
 
 interface CollaboratorCardProps {
     User?: CollaboratorsType
     partnerId: string
+    archive: boolean
+    refetch: () => void
 }
 
 export const CollaboratorCard: FC<CollaboratorCardProps> = ({
     User,
     partnerId,
+    archive,
+    refetch,
 }) => {
     const router = useRouter()
     if (!User) return
 
-    const actions: ActionType[] = [
-        {
-            actions: (id) =>
-                router.push(AppRoutes.paymentDetails.replace(':id', id)),
-            icon: Eye,
-            label: 'Voir',
-        },
-        {
-            actions: (id) =>
-                router.push(AppRoutes.collaborator.replace(':id', id)),
-            icon: Users,
-            label: 'Collaborateurs',
-        },
-    ]
+    const actions: ActionType[] = GetListUser(
+        archive,
+        refetch,
+        partnerId,
+        User.id
+    )
     const fullName =
         capitalize(User.name.firstName) + ' ' + capitalize(User.name.lastName)
     return (
@@ -90,17 +87,12 @@ export const CollaboratorCard: FC<CollaboratorCardProps> = ({
                             className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-amethyst-500"
                         />
                     </Link>
-                    <Link
-                        href={`${AppRoutes.collaboratorDetails
-                            .replace(':PartnerId', partnerId)
-                            .replace(':CollaboratorId', User.id)}`}
-                    >
-                        <CustomButton
-                            label=""
-                            IconLeft={Eye}
-                            className="p-[0.625rem] shrink-0 h-fit [&>.icon]:m-0 rounded-full bg-lynch-300"
-                        />
-                    </Link>
+                    <ActionsMenu
+                        id={User.id}
+                        menuList={actions}
+                        className="[&>svg]:size-6 p-[0.625rem]"
+                        prospect={archive ? 'users' : false}
+                    />
                 </div>
             </div>
         </div>

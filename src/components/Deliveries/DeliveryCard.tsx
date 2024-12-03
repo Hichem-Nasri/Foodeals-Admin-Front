@@ -105,6 +105,7 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
                             />
                         </Link>
                         <ActionsMenu
+                            id={delivery.id}
                             menuList={actions}
                             className="[&>svg]:size-6 p-[0.625rem]"
                             prospect={archive ? 'organisation' : false}

@@ -1,45 +1,51 @@
-import React, { FC, useState } from 'react'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog'
-import { Form } from '@/components/ui/form'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { SelectField } from '@/components/custom/SelectField'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+import { Form } from '@/components/ui/form'
 import { DateFilter } from '@/components/utils/DateFilters'
 import { FilterCity } from '@/components/utils/FilterCity'
 import { FilterManager } from '@/components/utils/FilterManger'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
-import { FilterOrganizations } from '@/components/utils/FilterOrganizations'
+import { FilterRegion } from '@/components/utils/FilterRegion'
+import { FilterUsers } from '@/components/utils/FilterUser'
 import MobileHeader from '@/components/utils/MobileHeader'
-import { SchemaFilter } from '@/types/associationSchema'
+import { PartnerCollaboratorsFilerSchema } from '@/types/collaborators'
+import { SchemaCollaborators } from '@/types/collaboratorsUtils'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { capitalize } from '@/types/utils'
+
 import { ListFilter, Mail, PhoneCall, Eraser, X, Check } from 'lucide-react'
+import { FC } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
-import { PartnerSolution } from '../PartnerSolution'
 
-interface FormFilterProps {
-    form: UseFormReturn<z.infer<typeof SchemaFilter>>
-    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+interface FormFilterCollaboratorProps {
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
     archive: boolean
 }
 
-export const FilterTablePartnerCollaborators: FC<FormFilterProps> = ({
+export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
     open,
     archive,
 }) => {
+    console.log(
+        '+++++++++++++++= FormFilterCollaborator +++++++++++++++',
+        `${archive}`
+    )
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="flex  items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 lg:px-5 lg:py-3 hover:text-black hover:bg-neutral-100 my-4 lg:my-0 bg-white">
@@ -47,7 +53,7 @@ export const FilterTablePartnerCollaborators: FC<FormFilterProps> = ({
                 <ListFilter />
             </DialogTrigger>
             <DialogContent className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
-                <FormUsers
+                <FormCollaborator
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
@@ -58,14 +64,14 @@ export const FilterTablePartnerCollaborators: FC<FormFilterProps> = ({
     )
 }
 
-interface FormUsersProps {
-    form: UseFormReturn<z.infer<typeof SchemaFilter>>
-    onSubmit: (data: z.infer<typeof SchemaFilter>) => void
+interface FormCollaboratorProps {
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     archive: boolean
 }
 
-const FormUsers: FC<FormUsersProps> = ({
+const FormCollaborator: FC<FormCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
@@ -90,40 +96,40 @@ const FormUsers: FC<FormUsersProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterOrganizations
+                        <FilterUsers
                             control={control}
-                            name="companyName"
-                            label="Raison sociale"
-                            placeholder="Partenaire"
-                            type={
-                                'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&' +
-                                (archive ? 'true' : 'false')
-                            }
-                        />
-                        <FilterManager
-                            control={control}
-                            name="collaborators"
+                            name="user"
                             label="Collaborateurs"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
+                            type={`PARTNER_WITH_SB,NORMAL_PARTNER&${archive}`}
+                            filter="user"
+                        />
+                        <SelectField
+                            control={control}
+                            name="roleName"
+                            label="Role"
+                            options={[
+                                'MANAGER',
+                                'SALES_MANAGER',
+                                'DELIVERY_MAN',
+                                'LEAD',
+                            ].map((role) => ({
+                                key: role,
+                                label: capitalize(role.replace('_', ' ')),
+                            }))}
                         />
                     </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterCity
                             control={control}
                             name="city"
                             label="Ville"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
+                            type={'PARTNER_WITH_SB,NORMAL_PARTNER'}
                         />
-                        <SelectField
+                        <FilterRegion
                             control={control}
-                            name="companyType"
-                            label="Type d'entreprise"
-                            options={['ASSOCIATION', 'FOOD_BANK'].map(
-                                (type) => ({
-                                    key: type,
-                                    label: capitalize(type),
-                                })
-                            )}
+                            name="region"
+                            label="Région"
+                            type={'PARTNER_WITH_SB,NORMAL_PARTNER'}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
@@ -145,7 +151,7 @@ const FormUsers: FC<FormUsersProps> = ({
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterMultiSelect
                             control={control}
-                            name="solution"
+                            name="solutions"
                             label="Solutions"
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (
@@ -166,12 +172,10 @@ const FormUsers: FC<FormUsersProps> = ({
                         variant="ghost"
                         title="Réinitialiser les filtres"
                         label="Clear"
-                        className="[&>.icon]:mr-0 space-x-2 lg:space-x-0 text-primary lg:[&>.label]:hidden h-12 w-12 lg:rounded-full px-2 py-2 "
-                        IconLeft={Eraser}
+                        className="[&>.icon]:ml-0 space-x-2 text-primary lg:[&>.label]:hidden h-12 w-fit lg:rounded-full px-2 py-2 justify-self-start"
+                        IconRight={Eraser}
                         onClick={() => {
                             form.reset()
-                            form.setValue('startDate', undefined)
-                            form.setValue('endDate', undefined)
                         }}
                         type="reset"
                     />

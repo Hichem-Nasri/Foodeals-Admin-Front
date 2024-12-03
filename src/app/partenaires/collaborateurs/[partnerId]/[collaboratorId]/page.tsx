@@ -53,6 +53,7 @@ const useCollaborators = (partnerId: string, collaboratorId: string) => {
                 return res.data
             }
         },
+        refetchOnWindowFocus: false,
     })
     return { data, isLoading, isError }
     // return collaboratorData

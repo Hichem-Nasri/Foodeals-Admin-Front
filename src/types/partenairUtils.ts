@@ -160,7 +160,7 @@ export const exportPartnerPost = (partner: any) => {
     const newPartner: PartnerDataType = {
         partnerType: partner.features,
         companyName: partner.entityName,
-        commercialRegisterNumber: +partner.commercialNumber,
+        commercialRegisterNumber: partner.commercialNumber,
         responsible: `${partner.contactDto?.name?.firstName} ${partner.contactDto?.name?.lastName}`,
         phone: partner.contactDto.phone,
         email: partner.contactDto.email,

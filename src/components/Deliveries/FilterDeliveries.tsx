@@ -15,6 +15,7 @@ import { FormFilter } from './FilterForm'
 import { DeliveryType } from '@/types/deliveries'
 import { formatNumberWithSpaces } from '@/lib/utils'
 import { FilterTablePartner } from '../Partners/FilterTablePartner'
+import ArchiveButton from '../custom/ArchiveButton'
 
 interface FiltersDeliveriesProps {
     table: import('@tanstack/table-core').Table<any>
@@ -46,13 +47,20 @@ export const FiltersDeliveries: FC<FiltersDeliveriesProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des livraisons
                 </h2>
-                <FormFilter
-                    form={form}
-                    open={open}
-                    setOpen={setOpen}
-                    onSubmit={onSubmit}
-                    type={'DELIVERY_PARTNER&' + `${archive}`}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FormFilter
+                        form={form}
+                        open={open}
+                        setOpen={setOpen}
+                        onSubmit={onSubmit}
+                        type={'DELIVERY_PARTNER&' + `${archive}`}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={isFetching!}
+                        handleArchive={handleArchive}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FormFilter

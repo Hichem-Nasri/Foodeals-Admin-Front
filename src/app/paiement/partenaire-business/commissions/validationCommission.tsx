@@ -91,7 +91,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                     totalCommission: statistics.totalCommission.amount,
                     totalSales: statistics.total.amount,
                     totalPages: data.totalPages,
-                    totalElements: data.numberOfElements,
+                    totalElements: data.totalElements,
                 })
                 setCommission(data.content)
                 return response.data
@@ -103,6 +103,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                 throw new Error('Error fetching commissions')
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     const form = useForm({

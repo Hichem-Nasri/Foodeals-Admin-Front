@@ -48,6 +48,7 @@ const usePartner = (id: string) => {
             if (id === 'new') return defaultPartnerData
             return getPartnerData(id)
         },
+        refetchOnWindowFocus: false,
     })
     return { data, isLoading, isError }
 }

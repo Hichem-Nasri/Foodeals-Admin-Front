@@ -78,7 +78,10 @@ export const SubAccountCard: FC<SubAccountCardProps> = ({
             <div className="flex justify-between gap-[0.375rem]">
                 <div className="flex gap-[0.375rem]">
                     <Avatar className="size-[2.875rem] shrink-0">
-                        <AvatarImage className="" src={partner.logo} />
+                        <AvatarImage
+                            className=""
+                            src={partner.partnerInfoDto.avatarPath}
+                        />
                         <AvatarFallback>
                             {name && name[0].toUpperCase()}
                         </AvatarFallback>
@@ -117,6 +120,7 @@ export const SubAccountCard: FC<SubAccountCardProps> = ({
                         />
                     </Link>
                     <ActionsMenu
+                        id={partner.id!}
                         menuList={actions}
                         className="[&>svg]:size-6 p-[0.625rem]"
                         prospect={archive ? 'organisation' : false}

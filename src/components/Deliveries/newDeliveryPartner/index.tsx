@@ -208,7 +208,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     }
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+        <div className="flex flex-col gap-[0.625rem] w-full px-0 pr-2 lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
                 id={deliveryId}
                 primaryButtonDisabled={deliveryId === '' || readOnly}
@@ -232,6 +232,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                     onSubmit={onSubmitEngagement}
                     disabled={readOnly}
                     id={deliveryId}
+                    status={partnerDetails.status || PartnerStatusType.DRAFT}
                 />
             </div>
             {[PartnerStatusType.VALID, PartnerStatusType.IN_PROGRESS].includes(

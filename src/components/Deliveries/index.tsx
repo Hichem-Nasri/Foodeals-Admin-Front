@@ -72,7 +72,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 setTotals((prev) => ({
                     ...prev,
                     totalPages: data.data.totalPages,
-                    totalElements: data.data.numberOfElements,
+                    totalElements: data.data.totalElements,
                 }))
                 setDeliveries(data.data.content)
                 return data.data
@@ -82,6 +82,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 setDeliveries([])
             }
         },
+        refetchOnWindowFocus: false,
         placeholderData: keepPreviousData,
     })
 
@@ -121,7 +122,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     }, [archive, FilterData])
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:px-0 lg:pr-2 pr-0 lg:mb-0 mb-4">
+        <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:px-0 lg:pr-2 lg:mb-0 mb-4">
             <FiltersDeliveries
                 onSubmit={onSubmit}
                 table={table}

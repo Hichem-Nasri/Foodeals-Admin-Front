@@ -173,6 +173,8 @@ const FormAssociation: FC<FormAssociationProps> = ({
                         IconRight={Eraser}
                         onClick={() => {
                             form.reset()
+                            form.resetField('startDate')
+                            form.resetField('endDate')
                         }}
                         type="reset"
                     />

@@ -79,7 +79,7 @@ function DeadlinesOfSubscription({ id }: { id: string }) {
                 setPartner(partner)
                 setTotals({
                     ...totals,
-                    totalElements: list.numberOfElements,
+                    totalElements: list.totalElements,
                     totalPages: list.totalPages,
                 })
                 setPartnerSubscripton(list.content)
@@ -92,6 +92,7 @@ function DeadlinesOfSubscription({ id }: { id: string }) {
                 )
             }
         },
+        refetchOnWindowFocus: false,
         placeholderData: keepPreviousData,
     })
 

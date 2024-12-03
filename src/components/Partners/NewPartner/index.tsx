@@ -44,7 +44,6 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
     const [partnerId, setPartnerId] = useState(
         id == 'new' || id.includes('?convertir') ? '' : id
     )
-
     const [partnerData, setPartnerData] =
         useState<PartnerPOST>(emptyPartnerPOST)
     const [contractUpload, setContractUpload] = useState<File[] | null>(null)
@@ -109,6 +108,52 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
             notif.notify(NotificationType.ERROR, 'Failed to save partner')
         },
     })
+
+    const { mutate: mutateContract, isPending: isPendingContract } =
+        useMutation({
+            mutationKey: ['validateContract'],
+            mutationFn: async (contractUpload: File[]) => {
+                const response = await validateContract(
+                    partnerId,
+                    contractUpload
+                )
+                if (response.status !== 200) {
+                    notif.notify(
+                        NotificationType.ERROR,
+                        'Failed to validate contract'
+                    )
+                    throw new Error('Failed to validate contract')
+                }
+                return response.data
+            },
+            onSuccess: async (data) => {
+                if (id.includes('?convertir')) {
+                    const valid = await validProspect(id)
+                    if (valid.status == 200) {
+                        notif.notify(
+                            NotificationType.SUCCESS,
+                            'Prospect converted successfully'
+                        ) //TODO: check if redirect is needed
+                    } else {
+                        notif.notify(
+                            NotificationType.ERROR,
+                            'Failed to convert prospect'
+                        )
+                    }
+                } else notif.notify(NotificationType.SUCCESS, 'Contract VALID')
+                setPartnerDetails((prev) => ({
+                    ...prev,
+                    status: PartnerStatusType.VALID,
+                }))
+            },
+            onError: (err) => {
+                console.error(err)
+                notif.notify(
+                    NotificationType.ERROR,
+                    'Failed to validate contract'
+                )
+            },
+        })
 
     // Handlers for form submissions
     const handlePartnerInfoSubmit = (
@@ -177,37 +222,13 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
             notif.notify(NotificationType.ERROR, 'Please upload the contract')
             return
         }
-
-        const res = await validateContract(partnerId, contractUpload)
-        console.log('res', res)
-        if (res.status === 200) {
-            if (id.includes('?convertir')) {
-                const valid = await validProspect(id)
-                if (valid.status == 200) {
-                    notif.notify(
-                        NotificationType.SUCCESS,
-                        'Prospect converted successfully'
-                    ) //TODO: check if redirect is needed
-                } else {
-                    notif.notify(
-                        NotificationType.ERROR,
-                        'Failed to convert prospect'
-                    )
-                }
-            } else notif.notify(NotificationType.SUCCESS, 'Contract VALID')
-            setPartnerDetails((prev) => ({
-                ...prev,
-                status: PartnerStatusType.VALID,
-            }))
-        } else {
-            notif.notify(NotificationType.ERROR, 'Failed to validate contract')
-        }
+        mutateContract(contractUpload)
     }
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto px-2">
+        <div className="flex flex-col gap-[0.625rem] w-full lg:mb-0 mb-20 overflow-auto px-2 lg:px-0 lg:pr-2">
             <TopBar
-                isPending={isPending}
+                isPending={isPending || isPendingContract}
                 status={partnerDetails?.status || PartnerStatusType.DRAFT}
                 primaryButtonDisabled={partnerId === '' || readOnly}
                 secondaryButtonDisabled={readOnly}
@@ -215,7 +236,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
                 onSubmit={handleSubmit}
                 id={partnerId}
             />
-            <div className="flex flex-col gap-[1.875rem] h-full w-full">
+            <div className="flex flex-col gap-[0.625rem] h-full w-full px-4 pb-4 lg:px-0">
                 <FormPartnerInfo
                     onSubmit={handlePartnerInfoSubmit}
                     form={partnerInformation}

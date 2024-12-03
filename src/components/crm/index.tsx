@@ -92,7 +92,7 @@ export default function Crm() {
                 setTotals({
                     ...totals,
                     totalPages: response.data.totalPages,
-                    totalElements: response.data.numberOfElements,
+                    totalElements: response.data.totalElements,
                 })
                 return response
             } catch (error) {
@@ -104,6 +104,7 @@ export default function Crm() {
                 console.error(error)
             }
         },
+        refetchOnWindowFocus: false,
         placeholderData: keepPreviousData,
     })
     const tableAssocciation = useReactTable({
@@ -144,7 +145,7 @@ export default function Crm() {
         refetch()
     }, [filterData, switchTable])
 
-    if (error) return <MyError message={error.message} />
+    // if (error) return <MyError message={error.message} />
     return (
         <div className="flex flex-col gap-3 w-full p-2 lg:pr-2 lg:px-0 lg:p-0 pb-4 lg:pb-0">
             <SwitchProspects setSwitch={setSwitchTable} />
@@ -169,6 +170,11 @@ export default function Crm() {
                 setOpen={setOpen}
                 switchTable={switchTable}
                 isLoading={isLoading || isRefetching}
+                type={
+                    switchTable == 'partenaires'
+                        ? 'PARTNER'
+                        : 'ASSOCIATION,FOOD_BANK'
+                }
             />
 
             <DataTable

@@ -46,7 +46,8 @@ const PaginationData: FC<PaginationDataProps> = ({
 
     useEffect(() => {
         if (isLoading || !refetch) return
-        refetch()
+        console.log('+++++++++++++refetch++++++++++++')
+        // refetch()
     }, [currentPage])
 
     return (

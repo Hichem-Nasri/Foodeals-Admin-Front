@@ -1,7 +1,11 @@
 import { FC, Fragment } from 'react'
 import { Label } from '@/components/Label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { PartnerSolutionType } from '@/types/partnersType'
+import {
+    expirationOption,
+    PartnerSolutionType,
+    subscriptionOption,
+} from '@/types/partnersType'
 import { PartnerSolution } from '../PartnerSolution'
 import { SelectField } from '@/components/custom/SelectField'
 import { InputFieldForm } from '@/components/custom/InputField'
@@ -22,17 +26,6 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
 }) => {
     const { dlcPro, donate, marketPro } = form.watch()
     const { errors } = form.formState // Get the form errors
-
-    const optionsT = [
-        { key: 5, label: '5' },
-        { key: 10, label: '10' },
-        { key: 15, label: '15' },
-    ]
-    const optionsAb = [
-        { key: 6, label: '6 mois' },
-        { key: 12, label: '12 mois' },
-        { key: 24, label: '24 mois' },
-    ]
 
     return (
         <Fragment>
@@ -74,7 +67,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="marketPro.duration"
                     label="Abonnement"
-                    options={optionsAb}
+                    options={subscriptionOption}
                     type="number"
                     disabled={!marketPro?.selected || disabled}
                 />
@@ -90,7 +83,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="marketPro.expiration"
                     label="Échéance"
-                    options={optionsT}
+                    options={expirationOption}
                     type="number"
                     disabled={!marketPro?.selected || disabled}
                 />
@@ -151,6 +144,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                                     name={PartnerSolutionType.DLC_PRO}
                                     className="size-5"
                                     checked={field.value}
+                                    disabled={disabled}
                                     onClick={() => field.onChange(!field.value)}
                                 />
                                 <PartnerSolution
@@ -171,7 +165,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="dlcPro.duration"
                     label="Abonnement"
-                    options={optionsAb}
+                    options={subscriptionOption}
                     type="number"
                     disabled={!dlcPro?.selected || disabled}
                 />
@@ -187,7 +181,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="dlcPro.expiration"
                     label="Échéance"
-                    options={optionsT}
+                    options={expirationOption}
                     type="number"
                     disabled={!dlcPro?.selected || disabled}
                 />
@@ -230,7 +224,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="donate.duration"
                     label="Abonnement"
-                    options={optionsAb}
+                    options={subscriptionOption}
                     type="number"
                     disabled={!donate?.selected || disabled}
                 />
@@ -246,7 +240,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     control={form.control}
                     name="donate.expiration"
                     label="Échéance"
-                    options={optionsT}
+                    options={expirationOption}
                     type="number"
                     disabled={!donate?.selected || disabled}
                 />

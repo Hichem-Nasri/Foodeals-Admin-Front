@@ -14,6 +14,7 @@ import {
 } from '@/lib/api/filterManager'
 import { usePathname } from 'next/navigation'
 import { AvatarAndName } from '../AvatarAndName'
+import { MultiSelectField } from '../custom/MultiSelectField'
 
 interface FilterManagerProps {
     control: Control<any>
@@ -24,7 +25,7 @@ interface FilterManagerProps {
     filter?: string
 }
 
-export const FilterManager: FC<FilterManagerProps> = ({
+export const FilterUsers: FC<FilterManagerProps> = ({
     control,
     disabled = false,
     name,
@@ -34,13 +35,13 @@ export const FilterManager: FC<FilterManagerProps> = ({
 }) => {
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
-    const [search, setSearch] = useState('')
     const id = usePathname()
     useEffect(() => {
         const fetchFilterCities = async () => {
             try {
+                const search = inputRef.current?.value || ''
                 const data = await fetchFilterSalesManager(search, type, id)
-                console.log('FilterManager data', data)
+                console.log('FilterUsers data', data)
                 const filterData =
                     filter === 'user'
                         ? data.map((item: MultiSelectOptionsType) => ({
@@ -56,20 +57,17 @@ export const FilterManager: FC<FilterManagerProps> = ({
         }
 
         fetchFilterCities()
-    }, [search, type, id, filter])
+    }, [type, id, inputRef])
     return (
-        <SelectField
+        <MultiSelectField
             control={control}
             name={name}
             label={label}
             options={options}
             disabled={disabled}
-            search={true} // Enable search
-            onChangeSearch={(value) => {
-                setSearch(value) // Update search term
-            }}
-            inputRef={inputRef} // Pass the input reference to the SelectField
+            ref={inputRef} // Pass the input reference to the SelectField
             emptyAvatar="/avatar/emptyUser.png"
+            len={2}
         />
     )
 }

@@ -49,6 +49,12 @@ export const FormSolution: FC<FormSolutionProps> = ({
             console.error('Error opening contract:', error)
         }
     }
+    console.log(
+        'Checking----------',
+        status == PartnerStatusType.VALID,
+        status,
+        PartnerStatusType.VALID
+    )
     const solutions = form.watch('solutions')
     return (
         <Accordion
@@ -168,15 +174,20 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                         render={({ field }) => (
                                             <div className="flex flex-col items-start gap-3 w-full text-lynch-400">
                                                 <Label
-                                                    label="Ajouter les documents"
+                                                    label={
+                                                        status ==
+                                                        PartnerStatusType.VALID
+                                                            ? 'Documents'
+                                                            : 'Ajouter les documents'
+                                                    }
                                                     className="text-xs font-semibold text-lynch-950"
                                                 />
-                                                {status ===
+                                                {status ==
                                                 PartnerStatusType.VALID ? (
                                                     <button
                                                         type="button"
                                                         title="voir contract"
-                                                        className="p-2 rounded-[12px] bg-lynch-100 flex justify-center flex-col items-center space-y-2"
+                                                        className="p-2 rounded-[12px] bg-lynch-100 flex justify-start flex-col items-center space-y-2"
                                                         onClick={
                                                             handleOpenContract
                                                         }

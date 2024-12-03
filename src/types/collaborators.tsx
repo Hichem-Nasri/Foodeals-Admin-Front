@@ -17,6 +17,7 @@ import { Info, ArchiveX, Eye, Archive } from 'lucide-react'
 import { ArchiveType, PartnerInfoDto } from './GlobalType'
 import { CollaboratorsUser } from './collaboratorsUtils'
 import { WorkingHourSchema } from './DeliverySchema'
+import { GetListUser } from '@/components/Collaborators/column/getListUser'
 
 export interface PartnerCollaborators {
     createdAt: string
@@ -151,8 +152,9 @@ export const PartnerCollaboratorsFilerSchema = z.object({
     email: z.string().optional(),
     phone: z.string().optional(),
     city: z.string().optional(),
-    collaborators: z.string().optional(),
-    solution: z.array(z.string()).optional(),
+    region: z.string().optional(),
+    user: z.array(z.string()).optional(),
+    solutions: z.array(z.string()).optional(),
 })
 
 export const defaultFilter: z.infer<typeof PartnerCollaboratorsFilerSchema> = {
@@ -162,8 +164,9 @@ export const defaultFilter: z.infer<typeof PartnerCollaboratorsFilerSchema> = {
     email: '',
     phone: '',
     city: '',
-    collaborators: '',
-    solution: [],
+    region: '',
+    user: [],
+    solutions: [],
 }
 
 const columnHelper = createColumnHelper<CollaboratorsUser>()
@@ -217,104 +220,12 @@ export const columnsPartnerCollaboratorsTable = ({
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
-            let listActions: ActionType[] = []
-            if (archive) {
-                listActions = [
-                    {
-                        actions: () => {},
-                        label: 'Info',
-                        icon: Info,
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data: any,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archiveData: ArchiveType = {
-                                action: 'DE_ARCHIVE',
-                                reason: data?.archiveType,
-                                details: data?.archiveReason,
-                            }
-                            const res = await archiveUser(id, archiveData)
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(
-                                            true,
-                                            'désarchivage effectué',
-                                            ['partners', 0, 10]
-                                        )
-                                    refetch()
-                                })
-                                .catch((err) => {
-                                    handleDone &&
-                                        handleDone(
-                                            false,
-                                            'Failed to archive',
-                                            []
-                                        )
-                                    console.log(err)
-                                })
-                        },
-                        label: 'Désarchiver',
-                        icon: ArchiveX,
-                    },
-                ]
-            } else
-                listActions = [
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.collaboratorDetails
-                                    .replace(':PartnerId', partnerId!)
-                                    .replace(':CollaboratorId', info.getValue())
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data: any,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archiveData: ArchiveType = {
-                                action: 'ARCHIVE',
-                                reason: data?.archiveType,
-                                details: data?.archiveReason,
-                            }
-                            const res = await archiveUser(id, archiveData)
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(
-                                            true,
-                                            "L'archive a été effectuée",
-                                            ['partners', '0', '10']
-                                        )
-                                    refetch()
-                                })
-                                .catch((err) => {
-                                    handleDone &&
-                                        handleDone(
-                                            false,
-                                            'Failed to archive',
-                                            []
-                                        )
-                                    console.log(err)
-                                })
-                        },
-                        icon: Archive,
-                        label: 'Archiver',
-                    },
-                ]
+            let listActions: ActionType[] = GetListUser(
+                archive,
+                refetch,
+                partnerId,
+                info.getValue()
+            )
             return (
                 <ActionsMenu
                     id={info.getValue()!}

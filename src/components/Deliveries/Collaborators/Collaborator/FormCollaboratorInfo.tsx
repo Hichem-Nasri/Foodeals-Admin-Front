@@ -174,6 +174,7 @@ export const FormCollaboratorInfo: FC<FormCollaboratorInfoProps> = ({
                                             name={partnerInfo?.name!}
                                             onChange={() => {}}
                                             value={partnerInfo?.name!}
+                                            disabled={disabled}
                                         />
                                     </div>
                                 </div>

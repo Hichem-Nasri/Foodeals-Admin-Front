@@ -5,6 +5,7 @@ import { CustomButton } from '@/components/custom/CustomButton'
 import { FilterSubAccount } from './FilterSubAccount'
 import { SubAccountPartners } from '@/types/partnersType'
 import { formatNumberWithSpaces } from '@/lib/utils'
+import ArchiveButton from '@/components/custom/ArchiveButton'
 
 interface HeaderSubAccountProps {
     form: any
@@ -35,13 +36,20 @@ export const HeaderSubAccount: FC<HeaderSubAccountProps> = ({
                 <h2 className="font-medium text-[1.375rem] text-lynch-950">
                     Liste des sous comptes
                 </h2>
-                <FilterSubAccount
-                    form={form}
-                    onSubmit={onSubmit}
-                    setOpen={setOpen}
-                    open={open}
-                    type={'PARTNERS&' + `${archive}`}
-                />
+                <div className="flex justify-end items-center gap-3">
+                    <FilterSubAccount
+                        form={form}
+                        onSubmit={onSubmit}
+                        setOpen={setOpen}
+                        open={open}
+                        type={'PARTNERS&' + `${archive}`}
+                    />
+                    <ArchiveButton
+                        archive={archive}
+                        isLoading={isFetching!}
+                        handleArchive={handleArchive}
+                    />
+                </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
                 <FilterSubAccount

@@ -33,6 +33,11 @@ import {
     TotalValues,
 } from '@/types/GlobalType'
 import { CollaboratorsUser } from '@/types/collaboratorsUtils'
+import {
+    PartnerCollaboratorsFilerSchema,
+    defaultFilter,
+} from '@/types/collaborators'
+import { FilterUsers } from './FilterDeliveryCollaborators'
 
 interface CollaboratorAssociationsProps {
     id: string
@@ -44,8 +49,8 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
     const [collaborators, setCollaborators] = useState<CollaboratorsUser[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [filterData, setFilterData] =
-        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
+    const [FilterData, setFilterData] =
+        useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
     const [open, setOpen] = useState(false)
     const [partner, setPartner] = useState<PartnerInfoDto & { city: string }>({
         id: '',
@@ -65,7 +70,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                     totals.currentPage,
                     totals.pageSize,
                     archive,
-                    filterData,
+                    FilterData,
                     'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'
                 )
                 if (data.status === 500)
@@ -75,7 +80,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 setTotals({
                     ...totals,
                     totalPages: users?.totalPages,
-                    totalElements: users?.numberOfElements,
+                    totalElements: users?.totalElements,
                 })
                 setCollaborators(users?.content)
                 return data.data
@@ -85,6 +90,7 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 setCollaborators([])
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     // handleArchive function
@@ -97,16 +103,16 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
         })
     }
 
-    const form = useForm<z.infer<typeof SchemaFilter>>({
-        resolver: zodResolver(SchemaFilter),
+    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
+        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
         mode: 'onBlur',
-        defaultValues: {
-            ...filterData,
-            companyType: 'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO',
-        },
+        defaultValues: FilterData,
     })
 
-    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
+    const onSubmit = (
+        data: z.infer<typeof PartnerCollaboratorsFilerSchema>
+    ) => {
+        console.log('data', data)
         setFilterData(data)
         setOpen(false)
     }
@@ -123,12 +129,16 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
 
     useEffect(() => {
         if (isLoading || isRefetching) return
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
-    }, [archive, filterData])
+    }, [archive, FilterData])
 
     return (
         <div className="flex flex-col gap-[0.625rem] w-full px-3 lg:mb-0 mb-4">
-            <FiltersAssociation
+            <FilterUsers
                 table={table}
                 form={form}
                 onSubmit={onSubmit}
@@ -143,7 +153,13 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 data={collaborators}
                 table={table}
                 title="Liste des Collaborateurs"
-                transform={(value) => <UsersCard User={value} />}
+                transform={(value) => (
+                    <UsersCard
+                        User={value}
+                        archive={archive}
+                        refetch={refetch}
+                    />
+                )}
                 isLoading={isLoading}
                 partnerData={{
                     ...partner,

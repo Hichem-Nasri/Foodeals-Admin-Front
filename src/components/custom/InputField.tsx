@@ -49,7 +49,7 @@ export const InputFieldForm: FC<InputFieldProps> = ({
                 return (
                     <FormItem
                         className={cn(
-                            'flex flex-col items-start w-full ',
+                            'flex flex-col items-start w-full h-full justify-between flex-grow',
                             classNameParent
                         )}
                     >

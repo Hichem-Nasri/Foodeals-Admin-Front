@@ -124,6 +124,7 @@ export const PartnerCard: FC<PartnerCardProps> = ({
                         />
                     </Link>
                     <ActionsMenu
+                        id={partner.id!}
                         menuList={actions}
                         className="[&>svg]:size-6 p-[0.625rem]"
                         prospect={archive ? 'organisation' : false}

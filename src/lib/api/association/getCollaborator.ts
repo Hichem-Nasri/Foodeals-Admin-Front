@@ -19,17 +19,14 @@ const buildQueryString = (data: any, type: string) => {
     if (data.roleName) {
         queryParts.push(`roleName=${encodeURIComponent(data.roleName)}`)
     }
-    if (data.collaborators) {
-        queryParts.push(`collabId=${encodeURIComponent(data.collaborators)}`)
+    if (data.user) {
+        queryParts.push(`name=${encodeURIComponent(data.user)}`)
     }
     if (data.phone) {
         queryParts.push(`phone=${encodeURIComponent(data.phone)}`)
     }
     if (data.email) {
         queryParts.push(`email=${encodeURIComponent(data.email)}`)
-    }
-    if (data.city) {
-        queryParts.push(`leadId=${encodeURIComponent(data.city)}`)
     }
     if (data.solution && data.solution.length > 0) {
         queryParts.push(
@@ -47,7 +44,7 @@ const buildQueryString = (data: any, type: string) => {
     }
     if (data.companyType) queryParts.push(`entityTypes=${data.companyType}`)
     else queryParts.push(`entityTypes=${type}`)
-    if (data.solutions)
+    if (data.solutions && data.solutions.length > 0)
         queryParts.push(`solutions=${encodeURIComponent(data.solutions)}`)
 
     return queryParts.join('&')

@@ -1,8 +1,9 @@
 'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { getUser } from '@/app/actions/index' // Adjust the import path
+import { useSession } from 'next-auth/react'
 
-interface User {
+export interface User {
     // Define user properties based on your user object
     id: string
     name: string
@@ -22,6 +23,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
+    const auth = useSession()
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -35,7 +37,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         fetchUser()
-    }, [])
+    }, [auth])
 
     return (
         <UserContext.Provider value={{ user, loading }}>

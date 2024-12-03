@@ -19,6 +19,7 @@ import { formatNumberWithSpaces } from '@/lib/utils'
 import { UseFormReturn } from 'react-hook-form'
 import { FilterCrmSchema } from '@/types/CrmScheme'
 import { z } from 'zod'
+import ArchiveButton from '../custom/ArchiveButton'
 
 interface FilterCrmProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
@@ -31,6 +32,7 @@ interface FilterCrmProps {
     setOpen: (open: boolean) => void
     switchTable: string
     isLoading?: boolean
+    type: string
 }
 
 export const FilterCrm: FC<FilterCrmProps> = ({
@@ -44,6 +46,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
     setOpen,
     switchTable,
     isLoading,
+    type,
 }) => {
     return (
         <div className="flex justify-between w-full rounded-[18px] lg:bg-white">
@@ -57,15 +60,13 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                         onSubmit={onSubmit}
                         open={open}
                         setOpen={setOpen}
+                        type={type}
                     />
-                    <Button
-                        size="sm"
-                        className="text-lynch-500 rounded-full bg-white hover:bg-transparent hover:text-black w-14 h-14"
-                        onClick={handleArchive}
-                        disabled={isLoading}
-                    >
-                        <Archive size={26} />
-                    </Button>
+                    <ArchiveButton
+                        archive={leadKo}
+                        isLoading={isLoading!}
+                        handleArchive={handleArchive}
+                    />
                 </div>
             </div>
             <div className="lg:flex hidden gap-3 p-2">
@@ -74,6 +75,7 @@ export const FilterCrm: FC<FilterCrmProps> = ({
                     onSubmit={onSubmit}
                     open={open}
                     setOpen={setOpen}
+                    type={type}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

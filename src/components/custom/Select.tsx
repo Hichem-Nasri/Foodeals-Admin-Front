@@ -14,6 +14,7 @@ import { Input } from './Input'
 import { LucideProps, Search, SearchCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '../ui/skeleton'
+import { Command, CommandGroup, CommandInput, CommandList } from '../ui/command'
 
 interface SelectProps {
     onChange: (value: string) => void
@@ -159,8 +160,49 @@ export const Select: FC<SelectProps> = ({
                     )}
                 </>
 
-                <SelectContent className={`relative z-50 p-2`}>
-                    {search && (
+                <SelectContent className={`z-50 py-2 px-1`}>
+                    <Command className="flex flex-col gap-5 p-0 w-full">
+                        {!disabled && search && (
+                            <CommandInput
+                                value={inputRef?.current?.value}
+                                className="bg-lynch-50 placeholder:text-base placeholder:font-normal text-base font-normal placeholder:text-input text-textGray [&>.icon]:text-lynch-400 border-0 focus:border-0 focus:outline-none"
+                                placeholder={'Rechercher'}
+                                ref={inputRef}
+                                onValueChange={(value) => {
+                                    onChangeSearch && onChangeSearch(value + '')
+                                }}
+                            />
+                        )}
+                        <CommandList>
+                            {options?.map((option, index) => (
+                                <SelectItem
+                                    key={option.key}
+                                    value={option.key?.toString()}
+                                    defaultChecked={option.key === value}
+                                    className={`cursor-pointer`}
+                                    onClick={() => {
+                                        onChange(option.label.toString())
+                                    }}
+                                >
+                                    {option.avatar ? (
+                                        <AvatarAndName
+                                            avatar={option.avatar}
+                                            name={option.label}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center gap-2 p-2 hover:bg-lynch-10">
+                                            {option.icon && (
+                                                <option.icon size={20} />
+                                            )}
+                                            {option.label}
+                                        </div>
+                                    )}
+                                </SelectItem>
+                            ))}
+                        </CommandList>
+                    </Command>
+
+                    {/* {search && (
                         <div className="py-2 space-x-2 px-1 flex justify-center items-center absolute m top-0 left-0 right-0">
                             <div className="w-full flex justify-start items-center  px-1 border-2 border-lynch-400 rounded-md focus:outline-none focus:border-lynch-700">
                                 <Search className="w-5 h-5 text-lynch-400 sticky top-0 left-0 right-0" />
@@ -171,10 +213,7 @@ export const Select: FC<SelectProps> = ({
                                     className="w-full p-2 focus-within:outline-none focus-within:border-0"
                                     onChange={(e) => {
                                         // e.preventDefault() // Prevent default behavior
-                                        const target =
-                                            e.target as HTMLInputElement
-                                        onChangeSearch &&
-                                            onChangeSearch(target.value + '')
+                                        
                                     }}
                                     // onFocus={(e) => e.preventDefault()} // Prevent default focus behavior
                                 />
@@ -205,7 +244,7 @@ export const Select: FC<SelectProps> = ({
                                 </div>
                             )}
                         </SelectItem>
-                    ))}
+                    ))} */}
                 </SelectContent>
             </SelectShadCn>
         </div>

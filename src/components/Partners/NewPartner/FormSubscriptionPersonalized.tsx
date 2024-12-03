@@ -6,7 +6,12 @@ import { FC, Fragment } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { PartnerSolution } from '../PartnerSolution'
-import { PartnerCompanyType, PartnerSolutionType } from '@/types/partnersType'
+import {
+    PartnerCompanyType,
+    PartnerSolutionType,
+    subscriptionOption,
+    expirationOption,
+} from '@/types/partnersType'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { SelectField } from '@/components/custom/SelectField'
 import { Percent } from 'lucide-react'
@@ -140,11 +145,7 @@ export const FormSubscriptionPersonalized: FC<
                     control={form.control}
                     name="solutions.duration"
                     label="Subscription"
-                    options={[
-                        { key: 6, label: '6 mois' },
-                        { key: 12, label: '12 mois' },
-                        { key: 24, label: '24 mois' },
-                    ]}
+                    options={subscriptionOption}
                     type="number"
                     disabled={disabled}
                 />
@@ -160,11 +161,7 @@ export const FormSubscriptionPersonalized: FC<
                     control={form.control}
                     name="solutions.expiration"
                     label="Échéance"
-                    options={[
-                        { key: 5, label: '5' },
-                        { key: 10, label: '10' },
-                        { key: 15, label: '15' },
-                    ]}
+                    options={expirationOption}
                     type="number"
                     disabled={disabled}
                 />

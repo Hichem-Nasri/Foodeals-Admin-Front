@@ -110,6 +110,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
                 throw new Error('Error fetching commissions')
             }
         },
+        refetchOnWindowFocus: false,
     })
 
     const [open, setOpen] = useState(false)

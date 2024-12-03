@@ -1,42 +1,51 @@
-import { FC, useState } from 'react'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { InputFieldForm } from '@/components/custom/InputField'
 import { SelectField } from '@/components/custom/SelectField'
 import { MultiSelectOptionsType } from '@/components/MultiSelect'
+import { PartnerSolution } from '@/components/Partners/PartnerSolution'
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+import { Form } from '@/components/ui/form'
 import { DateFilter } from '@/components/utils/DateFilters'
 import { FilterCity } from '@/components/utils/FilterCity'
 import { FilterManager } from '@/components/utils/FilterManger'
 import { FilterMultiSelect } from '@/components/utils/FilterMultiSelect'
-import { FilterOrganizations } from '@/components/utils/FilterOrganizations'
+import { FilterRegion } from '@/components/utils/FilterRegion'
+import { FilterUsers } from '@/components/utils/FilterUser'
 import MobileHeader from '@/components/utils/MobileHeader'
+import { PartnerCollaboratorsFilerSchema } from '@/types/collaborators'
+import { SchemaCollaborators } from '@/types/collaboratorsUtils'
 import { PartnerSolutionType } from '@/types/partnersType'
-import { ListFilter, Mail, PhoneCall, Eraser, X, Check } from 'lucide-react'
-import { UseFormReturn } from 'react-hook-form'
-import { PartnerSolution } from '../PartnerSolution'
-import { Form } from '@/components/ui/form'
+import { capitalize } from '@/types/utils'
 
-interface FilterTablePartnerProps {
-    form: UseFormReturn<any>
-    onSubmit: (data: any) => void
+import { ListFilter, Mail, PhoneCall, Eraser, X, Check } from 'lucide-react'
+import { FC } from 'react'
+import { UseFormReturn } from 'react-hook-form'
+import { z } from 'zod'
+
+interface FormFilterCollaboratorProps {
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
-    type: string
+    archive: boolean
 }
 
-export const FilterSubAccount: FC<FilterTablePartnerProps> = ({
+export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
     open,
-    type,
+    archive,
 }) => {
+    console.log(
+        '+++++++++++++++= FormFilterCollaborator +++++++++++++++',
+        `${archive}`
+    )
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="flex  items-center gap-3 lg:rounded-[12px] rounded-full lg:border border-lynch-200 border-0 text-lynch-500 font-medium text-sm p-4 lg:px-5 lg:py-3 hover:text-black hover:bg-neutral-100 my-4 lg:my-0 bg-white">
@@ -44,29 +53,29 @@ export const FilterSubAccount: FC<FilterTablePartnerProps> = ({
                 <ListFilter />
             </DialogTrigger>
             <DialogContent className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
-                <FormAssociation
+                <FormCollaborator
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
-                    type={type}
+                    archive={archive}
                 />
             </DialogContent>
         </Dialog>
     )
 }
 
-interface FormAssociationProps {
-    form: UseFormReturn<any>
-    onSubmit: (data: any) => void
+interface FormCollaboratorProps {
+    form: UseFormReturn<z.infer<typeof PartnerCollaboratorsFilerSchema>>
+    onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
-    type: string
+    archive: boolean
 }
 
-const FormAssociation: FC<FormAssociationProps> = ({
+const FormCollaborator: FC<FormCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
-    type,
+    archive,
 }) => {
     const { handleSubmit, control } = form
     return (
@@ -87,35 +96,26 @@ const FormAssociation: FC<FormAssociationProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterOrganizations
+                        <FilterUsers
                             control={control}
-                            name="companyName"
-                            label="Raison sociale"
-                            placeholder="Partenaire"
-                            type={type}
-                        />
-                        <FilterManager
-                            control={control}
-                            name="collaborators"
+                            name="user"
                             label="Collaborateurs"
-                            type={type}
+                            type={`ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&${archive}`}
+                            filter="user"
                         />
-                    </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full text-sm"></div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <InputFieldForm
+                        <SelectField
                             control={control}
-                            name="email"
-                            label="Email"
-                            placeholder="email@example.com"
-                            IconLeft={Mail}
-                        />
-                        <InputFieldForm
-                            control={control}
-                            name="phone"
-                            label="Téléphone"
-                            placeholder="Téléphone"
-                            IconLeft={PhoneCall}
+                            name="roleName"
+                            label="Role"
+                            options={[
+                                'MANAGER',
+                                'SALES_MANAGER',
+                                'DELIVERY_MAN',
+                                'LEAD',
+                            ].map((role) => ({
+                                key: role,
+                                label: capitalize(role.replace('_', ' ')),
+                            }))}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
@@ -123,11 +123,35 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             control={control}
                             name="city"
                             label="Ville"
-                            type={type}
+                            type={'DELIVERY'}
                         />
+                        <FilterRegion
+                            control={control}
+                            name="region"
+                            label="Région"
+                            type={'DELIVERY'}
+                        />
+                    </div>
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
+                        <InputFieldForm
+                            control={control}
+                            name="email"
+                            label="Email"
+                            placeholder="Saisir l'email"
+                            IconLeft={Mail}
+                        />
+                        <InputFieldForm
+                            control={control}
+                            name="phone"
+                            label="Téléphone"
+                            placeholder="Saisir le téléphone"
+                            IconLeft={PhoneCall}
+                        />
+                    </div>
+                    <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterMultiSelect
                             control={control}
-                            name="solution"
+                            name="solutions"
                             label="Solutions"
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (
@@ -136,11 +160,9 @@ const FormAssociation: FC<FormAssociationProps> = ({
                                         solution={
                                             option.key as PartnerSolutionType
                                         }
-                                        className="text-xs font-extralight"
                                     />
                                 ))
                             }}
-                            length={2}
                         />
                     </div>
                 </div>

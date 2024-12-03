@@ -127,6 +127,7 @@ export const AssociationCard: FC<AssociationCardProps> = ({
                             />
                         </Link>
                         <ActionsMenu
+                            id={association.id}
                             menuList={listActions}
                             className="[&>svg]:size-6 p-[0.625rem]"
                             prospect={archive ? 'organisation' : false}
