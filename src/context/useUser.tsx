@@ -4,7 +4,6 @@ import { getUser } from '@/app/actions/index' // Adjust the import path
 import { useSession } from 'next-auth/react'
 
 export interface User {
-    // Define user properties based on your user object
     id: string
     name: string
     email: string
@@ -23,21 +22,25 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const auth = useSession()
+    const { data: session, status } = useSession()
     const [user, setUser] = useState<User | null>(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
         const fetchUser = async () => {
-            const userData = await getUser()
-            if (userData) {
-                setUser(userData)
-                setLoading(false)
+            if (status === 'authenticated' && session?.user?.email) {
+                try {
+                    const userData = await getUser()
+                    setUser(userData)
+                } catch (error) {
+                    console.error('Failed to fetch user:', error)
+                }
             }
+            setLoading(false)
         }
 
         fetchUser()
-    }, [auth])
+    }, [session, status])
 
     return (
         <UserContext.Provider value={{ user, loading }}>
@@ -46,10 +49,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     )
 }
 
-export const useUser = () => {
+export const useUser = (): UserContextType => {
     const context = useContext(UserContext)
     if (context === undefined) {
-        throw new Error('useUser  must be used within a UserProvider')
+        throw new Error('useUser must be used within a UserProvider')
     }
     return context
 }

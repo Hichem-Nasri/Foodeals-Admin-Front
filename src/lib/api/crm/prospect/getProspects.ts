@@ -42,8 +42,8 @@ const buildQueryString = (
         queryParts.push(`statuses=${encodeURIComponent(data.status.join(','))}`)
     }
     // Assuming cityId and countryId are fixed values
-    if (data.country) {
-        queryParts.push(`countryId=${encodeURIComponent(data.country)}`)
+    if (data.region) {
+        queryParts.push(`regionId=${encodeURIComponent(data.region)}`)
     }
     if (data.city) {
         queryParts.push(`cityId=${encodeURIComponent(data.city)}`)

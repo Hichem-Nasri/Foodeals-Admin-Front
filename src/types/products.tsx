@@ -131,6 +131,7 @@ export const columnsProducts = (router: AppRouterInstance) => [
         cell: (info) => {
             return (
                 <ActionsMenu
+                    id={info.getValue()}
                     menuList={[
                         {
                             label: 'Voir',
