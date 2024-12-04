@@ -131,6 +131,7 @@ export const Archiver: FC<ArchiverProps> = ({
                                         }
                                         type="submit"
                                         className="h-fit py-3 px-5 rounded-[12px] gap-1"
+                                        isPending={isLoading}
                                         disabled={isLoading}
                                     />
                                 </div>

@@ -4,6 +4,7 @@ import { Layout } from '@/components/Layout/Layout'
 import { CollaboratorDetails } from '@/components/Partners/collaborators/CollaboratorDetails'
 import { API_URL } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
+import IsLoading from '@/components/utils/IsLoading'
 
 interface CollaboratorsPageProps {
     params: { partnerId: string; collaboratorId: string }
@@ -18,7 +19,7 @@ export default function DetailsCollaboratorPage({
             {!data.isError ? (
                 <>
                     {data.isLoading ? (
-                        <div>Loading...</div>
+                        <IsLoading />
                     ) : (
                         <CollaboratorDetails collaborator={data.data} />
                     )}

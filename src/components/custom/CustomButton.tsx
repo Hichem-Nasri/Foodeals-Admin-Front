@@ -34,7 +34,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     ...rest
 }): JSX.Element => {
     return (
-        <Button {...rest}>
+        <Button
+            {...rest}
+            title={rest.title ? rest.title : label ? label : 'icon'}
+        >
             {IconLeft && <IconLeft className=" mr-2 icon shrink-0" />}
             {isPending ? (
                 <div>

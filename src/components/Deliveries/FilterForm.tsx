@@ -101,14 +101,6 @@ const FormAssociation: FC<FormAssociationProps> = ({
                             type={type}
                         />
                     </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
-                        <FilterCity
-                            control={control}
-                            name="city"
-                            label="Ville"
-                            type={type}
-                        />
-                    </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <InputFieldForm
                             control={control}
@@ -126,6 +118,12 @@ const FormAssociation: FC<FormAssociationProps> = ({
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
+                        <FilterCity
+                            control={control}
+                            name="city"
+                            label="Ville"
+                            type={type}
+                        />
                         <FilterMultiSelect
                             control={control}
                             name="solution"

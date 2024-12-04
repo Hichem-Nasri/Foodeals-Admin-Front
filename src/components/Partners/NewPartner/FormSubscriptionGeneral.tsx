@@ -3,6 +3,7 @@ import { Label } from '@/components/Label'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
     expirationOption,
+    PartnerCompanyType,
     PartnerSolutionType,
     subscriptionOption,
 } from '@/types/partnersType'
@@ -95,11 +96,11 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                     label="Gérer par"
                     options={[
                         {
-                            key: 'PARTNER_WITH_SB',
+                            key: PartnerCompanyType.PRINCIPAL,
                             label: 'Principal',
                         },
                         {
-                            key: 'NORMAL_PARTNER',
+                            key: PartnerCompanyType.NORMAL,
                             label: 'Sous compte',
                         },
                     ]}

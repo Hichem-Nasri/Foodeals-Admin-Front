@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { PartnerStatusType } from './partnersType'
 import { subscribe } from 'diagnostics_channel'
+import { PartnerEntitiesType } from './GlobalType'
+import { sub } from 'date-fns'
 
 export const PartnerInformationSchema = z.object({
     logo: z.instanceof(File).optional(),
@@ -70,7 +72,7 @@ export const PartnerSubscriptionSchema = z.object({
     beneficiary: z.string().min(3),
     rib: z.string().min(3),
     accountType: z.string().min(3),
-    subscribtionByEntity: z.boolean().default(false),
+    subscribtionByEntity: z.string().min(3),
     subscriptionPayedBySubEntities: z.string().default('mainEntity'),
     marketPro: z
         .object({
@@ -126,7 +128,8 @@ export const defaultPartnerSubscriptionData = {
     beneficiary: '',
     rib: '',
     accountType: '',
-    subscriptionPayedBySubEntities: 'mainEntities',
+    subscribtionByEntity: '',
+    subscriptionPayedBySubEntities: 'mainEntity',
     marketPro: {
         selected: false,
         duration: 0,
@@ -171,6 +174,7 @@ export interface PartnerSubscriptionSchemaType {
     beneficiary: string
     rib: string
     accountType: string
+    subscribtionByEntity: string
     marketPro: {
         selected: boolean
         duration: number

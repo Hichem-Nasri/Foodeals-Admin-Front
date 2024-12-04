@@ -1,6 +1,7 @@
 'use client'
 import { Collaborator } from '@/components/Deliveries/Collaborators/Collaborator'
 import { Layout } from '@/components/Layout/Layout'
+import IsLoading from '@/components/utils/IsLoading'
 import { getCollaboratorDelivery } from '@/lib/api/delivery/getCollaboratorDelivery'
 import { defaultCollaboratorDeliveryData } from '@/types/DeliverySchema'
 import { useQuery } from '@tanstack/react-query'
@@ -39,7 +40,7 @@ export default function DeliveryCollaboratorsPage({
     return (
         <Layout formTitle="Nouvelle Collaboratour - livraison">
             {isLoading ? (
-                <div>Loading...</div>
+                <IsLoading />
             ) : (
                 <Collaborator collaborator={data} id={params.id} />
             )}

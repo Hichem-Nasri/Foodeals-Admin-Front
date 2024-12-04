@@ -77,7 +77,8 @@ export async function fetchSubEntities(
             )}/sub-entities/organizations/${id}?page=${currentPage}&size=${pageSize}` +
             `&organizationsType=${type}` +
             filterUrl +
-            (archived ? '&deletedAt=true' : '&deletedAt=false')
+            (archived ? '&deletedAt=true' : '&deletedAt=false') +
+            '&sort=createdAt,desc'
         console.log('filterUrl', filterUrl)
         console.log('archived', url)
         const response = await api.get(url).catch((error) => {

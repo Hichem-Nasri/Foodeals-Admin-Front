@@ -143,7 +143,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                     </div>
                                     <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
                                         <Label
-                                            label="Subscription Paid par"
+                                            label="Abonnement Payant par"
                                             className="text-sm font-medium"
                                         />
                                         <RadioButton
@@ -152,11 +152,11 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             options={[
                                                 {
                                                     key: 'mainEntity',
-                                                    label: 'Paid par le main partner',
+                                                    label: 'Payé par le partenaire principal',
                                                 },
                                                 {
                                                     key: 'subEntities',
-                                                    label: 'Paid par les sub entities',
+                                                    label: 'Payé par les sous-entités',
                                                 },
                                             ]}
                                             disabled={disabled}

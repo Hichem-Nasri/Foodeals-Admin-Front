@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
@@ -28,7 +28,9 @@ export const DatePicker: FC<DatePickerProps> = ({
     myFormat = 'MM/dd/yyyy',
 }) => {
     const [date, setDate] = useState<Date | undefined>(value)
-
+    useEffect(() => {
+        setDate(value)
+    }, [value])
     return (
         <Popover>
             <PopoverTrigger asChild disabled={disabled}>

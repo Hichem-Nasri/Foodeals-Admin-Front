@@ -146,8 +146,8 @@ export interface CollaboratorDataType {
 }
 
 export const PartnerCollaboratorsFilerSchema = z.object({
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
     roleName: z.string().optional(),
     email: z.string().optional(),
     phone: z.string().optional(),

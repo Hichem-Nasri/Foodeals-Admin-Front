@@ -1,6 +1,7 @@
 'use server'
 
 import { auth, signIn, signOut } from '@/auth'
+import { User, useUser } from '@/context/useUser'
 import { LoginSchema } from '@/schemas'
 import { z } from 'zod'
 
@@ -34,6 +35,13 @@ export async function LogIn(data: z.infer<typeof LoginSchema>) {
         return { success: false, error: 'An unexpected error occurred.' }
     }
 }
+
+// export async function SetUserContext(userData: User) {
+//     const { setUser, user } = useUser()
+//     if (!user) {
+//         setUser(userData)
+//     }
+// }
 
 export async function getUser() {
     const session = await auth()

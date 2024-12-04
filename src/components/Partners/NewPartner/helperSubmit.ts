@@ -99,10 +99,10 @@ export const SaveSubscriptionData = (
 
             commissionPayedBySubEntities: isGeneral
                 ? data.marketPro?.selected
-                    ? data.accountType === PartnerCompanyType.NORMAL
+                    ? data.marketPro.managerId === PartnerCompanyType.NORMAL
                     : false
                 : selectedSolutions.includes('pro_market')
-                ? data.accountType === PartnerCompanyType.NORMAL
+                ? data.solutions?.managerId === PartnerCompanyType.NORMAL
                 : false,
         }))
     }

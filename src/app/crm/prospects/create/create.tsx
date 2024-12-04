@@ -118,13 +118,18 @@ export const Create: FC<CreateProps> = ({ type }) => {
         if (res.status === 200) {
             Notif.notify(
                 NotificationType.SUCCESS,
-                'Prospect' +
+                'Prospect ' +
                     (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
-                    'successfully'
+                    ' successfully'
             )
             Info.status = type == 'ARCHIVE' ? 'CANCELED' : 'IN_PROGRESS'
         } else {
-            Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
+            Notif.notify(
+                NotificationType.ERROR,
+                'Failed to ' +
+                    (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
+                    ' prospect'
+            )
         }
         setLeadko(false)
         queryClient.invalidateQueries({ queryKey: ['prospect'] })

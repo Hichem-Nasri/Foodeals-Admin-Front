@@ -49,7 +49,7 @@ const buildQueryString = (
         queryParts.push(`cityId=${encodeURIComponent(data.city)}`)
     }
 
-    queryParts.push(`types=${types}`)
+    queryParts.push(`type=${types}`)
 
     return queryParts.join('&')
 }
@@ -65,7 +65,9 @@ export async function fetchProspect(
         const url =
             `${API_PROSPECTS}?page=${
                 filter ? '0' : currentPage
-            }&size=${pageSize}&` + filter
+            }&size=${pageSize}&` +
+            filter +
+            '&sort=createdAt,desc'
         console.log('url', url)
         const response = await api.get(url).catch((error) => {
             throw error

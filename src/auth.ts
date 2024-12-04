@@ -10,33 +10,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ...authConfig,
     callbacks: {
         authorized: async ({ auth, request }) => {
-            console.log('authorized')
-            if (!auth || !auth.accessToken || auth.accessToken === '') {
+            try {
+                console.log('authorized')
+                if (!auth || !auth.accessToken || auth.accessToken === '') {
+                    return false
+                }
+                const token = auth.accessToken
+
+                const accessToken = auth?.accessToken
+                const res = await axios
+                    .post(
+                        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/verify-token`,
+                        {
+                            token: accessToken,
+                        }
+                    )
+                    .then((res) => res.data)
+                    .catch((error) => {
+                        throw new Error(error)
+                    })
+                if (!res) {
+                    return false
+                } else {
+                    const cookie = cookies()
+                    if (cookie.get('authjs.session-token')?.value != token) {
+                        allowCookie(token)
+                    }
+                    return true
+                }
+                console.log('authorized Done')
+                // Logged in users are authenticated, otherwise redirect to login page
+                return !!auth
+            } catch (error) {
+                console.error('Error fetching manager:', error)
                 return false
             }
-            const token = auth.accessToken
-            const cookie = cookies()
-            if (cookie.get('authjs.session-token')?.value != token) {
-                allowCookie(token)
-            }
-            // if (auth && auth.accessToken && auth.accessToken !== '') {
-            //     const res = await api
-            //         .post(`${API_URL}/v1/auth/verify-token`, {
-            //             token: auth.accessToken,
-            //         })
-            //         .then((res) => res.data)
-            //         .catch((err) => {
-            //             console.log('err', err)
-            //             return false
-            //         })
-            //     console.log('res: ', res)
-            //     if (!res) {
-            //         return false
-            //     }
-            // }
-            console.log('authorized Done')
-            // Logged in users are authenticated, otherwise redirect to login page
-            return !!auth
         },
         async jwt({ token, account, user }) {
             // Persist the OAuth access_token and or the user id to the token right after signin

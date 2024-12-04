@@ -1,6 +1,7 @@
 'use client'
 import { NewAssociation } from '@/components/Association/NewAssociation'
 import { Layout } from '@/components/Layout/Layout'
+import IsLoading from '@/components/utils/IsLoading'
 import { getAssociationData } from '@/lib/api/association/fetchAssociationData'
 import { AssociationInformationSchemaType } from '@/types/associationSchema'
 import { useQuery } from '@tanstack/react-query'
@@ -22,7 +23,7 @@ export default function AssociationPage({ params }: AssociationPageProps) {
     return (
         <Layout formTitle="Nouvelle association">
             {data.isLoading ? (
-                <div>Loading...</div>
+                <IsLoading />
             ) : (
                 <NewAssociation
                     id={params.id != 'new' ? params.id : ''}

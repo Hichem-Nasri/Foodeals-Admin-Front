@@ -1,6 +1,7 @@
 'use client'
 import { Layout } from '@/components/Layout/Layout'
 import { NewPartner } from '@/components/Partners/NewPartner/'
+import IsLoading from '@/components/utils/IsLoading'
 import { getPartnerData } from '@/lib/api/partner/fetchPartnerData'
 import { defaultPartnerData, PartnerDataType } from '@/types/PartnerSchema'
 import { useQuery } from '@tanstack/react-query'
@@ -21,7 +22,7 @@ export default function PartnersPage({
     return (
         <Layout formTitle="Partenaire">
             {data.isLoading ? (
-                <div>Loading...</div>
+                <IsLoading />
             ) : (
                 <>
                     {data.isError ? (
@@ -50,5 +51,6 @@ const usePartner = (id: string) => {
         },
         refetchOnWindowFocus: false,
     })
+    console.log('data', data)
     return { data, isLoading, isError }
 }

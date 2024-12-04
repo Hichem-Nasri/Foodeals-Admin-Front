@@ -1,5 +1,6 @@
 import api from '@/lib/Auth'
 import { API_URL } from '..'
+import { capitalize } from '@/types/utils'
 
 export const fetchActivities = async (type: string) => {
     try {
@@ -13,7 +14,7 @@ export const fetchActivities = async (type: string) => {
         const data = response.content.map(
             (user: { id: string; name: string }) => ({
                 key: user.name.toLowerCase(),
-                label: user.name,
+                label: capitalize(user.name),
             })
         )
         console.log('data', data)

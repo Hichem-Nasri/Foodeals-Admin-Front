@@ -7,10 +7,22 @@ import { SessionProvider } from 'next-auth/react'
 import { auth } from '@/auth'
 import { NotificationProvider } from '@/context/NotifContext'
 import { UserProvider } from '@/context/useUser'
+import { Author } from 'next/dist/lib/metadata/types/metadata-types'
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: '500' })
+const authore: Author = {
+    name: 'Yassin BenTalbe',
+    url: '',
+}
 
-export const metadata: Metadata = {}
+export const metadata: Metadata = {
+    title: 'Foodeals Admin',
+    description: 'Admin panel for Foodeals',
+    keywords: 'admin, foodeals, panel',
+    authors: [authore],
+
+    // Add any other metadata properties you need
+}
 
 export default async function RootLayout({
     children,

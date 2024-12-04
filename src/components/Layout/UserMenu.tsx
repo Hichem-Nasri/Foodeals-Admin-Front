@@ -74,11 +74,14 @@ export const UserMenu: FC<UserMenuProps> = ({ user, loading }) => {
                     <Settings />
                     <span>Paramètres</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="w-full p-4">
-                    <Logout className="w-full flex justify-between items-center gap-1 text-coral-500">
-                        <LogOut />
-                        <span>Déconnexion</span>
-                    </Logout>
+                <DropdownMenuItem
+                    className="w-full flex justify-between items-center gap-1 p-4 text-coral-500"
+                    onClick={() => {
+                        handleLogout()
+                    }}
+                >
+                    <LogOut />
+                    <span>Déconnexion</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -23,6 +23,8 @@ import MobileHeader from '../utils/MobileHeader'
 import { SelectField } from '../custom/SelectField'
 import api from '@/lib/Auth'
 import { API_URL } from '@/lib/api'
+import { MultiSelectField } from '../custom/MultiSelectField'
+import MultiSelectProspects from './MultiSelectProspects'
 
 interface FilterTableProspectsProps {
     FilterForm: UseFormReturn<z.infer<typeof FilterCrmSchema>>
@@ -119,7 +121,7 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
                 .get(
                     `${API_URL}/v1/crm/prospects/cities/search?city=${city}&country=morocco&page=0&size=10&types=${type}`
                 )
-                .then((res) => res.data)
+                .then((res) => res.data?.content)
                 .catch((error) => {
                     console.error(error)
                     return []
@@ -134,9 +136,9 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
         const fetchRegion = async () => {
             const res = await api
                 .get(
-                    `${API_URL}/v1/crm/prospects/cities/search?region=${region}&country=morocco&page=0&size=10&types=${type}`
+                    `${API_URL}/v1/crm/prospects/regions/search?region=${region}&country=morocco&page=0&size=10&types=${type}`
                 )
-                .then((res) => res.data)
+                .then((res) => res.data?.content)
                 .catch((error) => {
                     console.error(error)
                     return []
@@ -160,20 +162,19 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={FilterForm} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterMultiSelect
+                        <MultiSelectProspects
                             control={control}
                             name="companyName"
                             label="Raison sociale"
                             emptyAvatar="/avatar/emptyUser.png"
-                            // normalTransform={true}
                         />
-                        <FilterMultiSelect
+                        {/* <FilterMultiSelect
                             control={control}
                             name="category"
                             label="Catégorie"
                             // normalTransform={true}
                             emptyAvatar="/avatar/emptyPartner.png"
-                        />
+                        /> */}
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full text-sm">
                         <SelectManager

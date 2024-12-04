@@ -6,6 +6,7 @@ import {
 } from './GlobalType'
 import {
     exportSolutionType,
+    PartnerCompanyType,
     PartnerCompanyTypeOptions,
     PartnerSolutionType,
     PartnerStatusOptions,
@@ -177,6 +178,9 @@ export const exportPartnerPost = (partner: any) => {
         accountType: partner.entityType,
         managerId: partner.manager.id + '',
         subscriptionType: !partner.oneSubscription ? 'personalized' : 'general',
+        subscribtionByEntity: partner.commissionPayedBySubEntities
+            ? PartnerCompanyType.NORMAL
+            : PartnerCompanyType.PRINCIPAL,
         subscriptionPayedBySubEntities: partner.subscriptionPayedBySubEntities
             ? 'mainEntity'
             : 'subEntities',
@@ -186,7 +190,9 @@ export const exportPartnerPost = (partner: any) => {
             amount: marketPro?.contractSubscriptionDto.annualPayment || 0,
             expiration:
                 marketPro?.contractSubscriptionDto.numberOfDueDates || 0,
-            managerId: partner.manager.id + '',
+            managerId: partner.commissionPayedBySubEntities
+                ? PartnerCompanyType.NORMAL
+                : PartnerCompanyType.PRINCIPAL,
             commissionCash: marketPro?.contractCommissionDto.withCash || 0,
             commissionCard: marketPro?.contractCommissionDto.withCard || 0,
             name: 'pro_market',
@@ -222,7 +228,9 @@ export const exportPartnerPost = (partner: any) => {
             amount:
                 partner.solutionsContractDto[0]?.contractSubscriptionDto
                     .annualPayment || 0,
-            managerId: partner.manager.id + '',
+            managerId: partner.commissionPayedBySubEntities
+                ? PartnerCompanyType.NORMAL
+                : PartnerCompanyType.PRINCIPAL,
             commissionCard:
                 partner.solutionsContractDto[0]?.contractCommissionDto
                     ?.withCard || 0,

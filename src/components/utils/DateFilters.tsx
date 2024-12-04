@@ -18,34 +18,39 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                 <Controller
                     control={control}
                     name="startDate"
-                    render={({ field }) => (
-                        <DatePicker
-                            onChange={(newDate) => {
-                                if (newDate) {
-                                    console.log('newDate', newDate)
-                                    console.log(
-                                        "newDate.toISOString().split('T')[0]",
-                                        newDate.toISOString().split('T')[0]
-                                    )
-                                    field.onChange(
-                                        `${newDate.getFullYear()}-${
-                                            newDate.getMonth() + 1
-                                        }-${newDate
-                                            .getDate()
-                                            .toString()
-                                            .padStart(2, '0')}`
-                                    )
-                                } else {
-                                    field.onChange('')
+                    render={({ field }) => {
+                        console.log('field', field.value)
+                        return (
+                            <DatePicker
+                                onChange={(newDate) => {
+                                    if (newDate) {
+                                        console.log('newDate', newDate)
+                                        console.log(
+                                            "newDate.toISOString().split('T')[0]",
+                                            newDate.toISOString().split('T')[0]
+                                        )
+                                        field.onChange(
+                                            `${newDate.getFullYear()}-${
+                                                newDate.getMonth() + 1
+                                            }-${newDate
+                                                .getDate()
+                                                .toString()
+                                                .padStart(2, '0')}`
+                                        )
+                                    } else {
+                                        field.onChange('')
+                                    }
+                                }}
+                                value={
+                                    !field.value
+                                        ? undefined
+                                        : new Date(field.value)
                                 }
-                            }}
-                            value={
-                                !field.value ? undefined : new Date(field.value)
-                            }
-                            id="start"
-                            disabled={disabled}
-                        />
-                    )}
+                                id="start"
+                                disabled={disabled}
+                            />
+                        )
+                    }}
                 />
                 <Controller
                     control={control}
@@ -69,6 +74,7 @@ export const DateFilter: FC<DateFilterProps> = ({ form, disabled }) => {
                             value={
                                 !field.value ? undefined : new Date(field.value)
                             }
+                            id="end"
                             disabled={disabled}
                         />
                     )}

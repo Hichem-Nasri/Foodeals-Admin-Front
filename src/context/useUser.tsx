@@ -1,8 +1,16 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { getUser } from '@/app/actions/index' // Adjust the import path
-import { useSession } from 'next-auth/react'
+import { getUser } from '@/app/actions'
+import React, { createContext, useState, useEffect, useContext } from 'react'
 
+export async function fetchUserData(): Promise<User | null> {
+    try {
+        const userData = await getUser()
+        return userData
+    } catch (error) {
+        console.error('Failed to fetch user:', error)
+        return null
+    }
+}
 export interface User {
     id: string
     name: string
@@ -15,35 +23,29 @@ export interface User {
 interface UserContextType {
     user: User | null
     loading: boolean
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined)
+export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const { data: session, status } = useSession()
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
         const fetchUser = async () => {
-            if (status === 'authenticated' && session?.user?.email) {
-                try {
-                    const userData = await getUser()
-                    setUser(userData)
-                } catch (error) {
-                    console.error('Failed to fetch user:', error)
-                }
-            }
+            const userData = await fetchUserData()
+            setUser(userData)
             setLoading(false)
         }
 
         fetchUser()
-    }, [session, status])
+    }, [])
 
     return (
-        <UserContext.Provider value={{ user, loading }}>
+        <UserContext.Provider value={{ user, loading, setUser }}>
             {children}
         </UserContext.Provider>
     )
@@ -54,5 +56,19 @@ export const useUser = (): UserContextType => {
     if (context === undefined) {
         throw new Error('useUser must be used within a UserProvider')
     }
+
+    const { user, setUser, loading } = context
+
+    useEffect(() => {
+        const fetchAndSetUser = async () => {
+            if (!user) {
+                const userData = await fetchUserData()
+                setUser(userData)
+            }
+        }
+
+        fetchAndSetUser()
+    }, [user, setUser])
+
     return context
 }
