@@ -1,8 +1,5 @@
 import api from '@/lib/Auth'
-import { API_PARTNERS } from '@/lib/api_url'
-import { SchemaFilter } from '@/types/associationSchema'
-import { PartnerType } from '@/types/partnersType'
-import { z } from 'zod'
+import { API_URL } from '..'
 
 const buildQueryString = (
     data: any,
@@ -72,7 +69,7 @@ export async function fetchPartners(
     try {
         const filterUrl = buildQueryString(filterData, type)
         const url =
-            `${API_PARTNERS}?page=${currentPage}&size=${pageSize}` +
+            `${API_URL}/api/v1/organizations/partners?page=${currentPage}&size=${pageSize}` +
             `&organizationsType=${type}` +
             filterUrl +
             (archived ? '&deletedAt=true' : '&deletedAt=false') +

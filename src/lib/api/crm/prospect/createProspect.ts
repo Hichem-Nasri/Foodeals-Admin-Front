@@ -2,7 +2,7 @@ import api from '@/lib/Auth'
 import { API_URL } from '../..'
 
 export async function createProspect(data: any) {
-    const url = `${API_URL}/v1/crm/prospects/create`
+    const url = `${API_URL}/api/v1/crm/prospects/create`
     try {
         console.log('url; ', url)
         console.log(JSON.stringify(data))

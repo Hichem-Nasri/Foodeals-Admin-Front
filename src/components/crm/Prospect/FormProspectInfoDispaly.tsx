@@ -49,16 +49,17 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
     disabled = false,
     type = 'PARTNER',
 }) => {
+    const { country, city, state, region } = form.watch()
     const [address, setAddress] = useState<{
         countryId: string
         stateId: string
         cityId: string
         regionId: string
     }>({
-        countryId: '',
-        stateId: '',
-        cityId: '',
-        regionId: '',
+        countryId: country.id || '',
+        stateId: state.id || '',
+        cityId: city.id || '',
+        regionId: region.id || '',
     })
     const { handleSubmit, control } = form
     const creatorInfo = form.watch('creatorInfo')
@@ -160,7 +161,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                         />
                                         <FieldCountry
                                             control={control}
-                                            name="country"
+                                            name="country.name"
                                             label="Pays"
                                             placeholder="Pays"
                                             disabled={disabled}
@@ -174,7 +175,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                         />
                                         <FieldState
                                             control={control}
-                                            name="state"
+                                            name="state.name"
                                             label="State"
                                             disabled={disabled}
                                             country={address.countryId}
@@ -189,7 +190,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldCity
                                             control={control}
-                                            name="city"
+                                            name="city.name"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled}
@@ -204,7 +205,7 @@ export const FormCrmInfoDisplay: FC<FormCrmInfoProps> = ({
                                         />
                                         <FieldRegion
                                             control={control}
-                                            name="region"
+                                            name="region.name"
                                             label="Région"
                                             placeholder="Région"
                                             disabled={disabled}

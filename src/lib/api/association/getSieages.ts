@@ -1,5 +1,5 @@
 import api from '@/lib/Auth'
-import { API_SIEGES } from '@/lib/api_url'
+import { API_URL } from '..'
 
 export async function fetchSieages(
     id: string,
@@ -9,7 +9,7 @@ export async function fetchSieages(
     try {
         const res = await api
             .get(
-                `${API_SIEGES}/${id}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc`
+                `${API_URL}/v1/sub-entities/associations/${id}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc`
             )
             .catch((error) => {
                 throw new Error('Error fetching sieages')

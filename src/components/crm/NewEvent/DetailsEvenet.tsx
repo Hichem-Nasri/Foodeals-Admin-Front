@@ -69,7 +69,7 @@ const DetailsProspect = ({
                 <CustomLabel
                     label="Message"
                     input={message}
-                    classNameParent="h-full"
+                    classNameParent="min-h-56"
                     className="h-full"
                 />
             </div>
@@ -95,7 +95,7 @@ const DetailsEvenetProspect = ({
 
     const createdAtDate = new Date(createdAt)
     const date = createdAtDate.toLocaleDateString()
-    const hour = createdAtDate.getHours()
+    const hour = createdAtDate.getTime().toString()
     const minutes = createdAtDate.getMinutes()
     const hourString = `${hour.toString().padStart(2, '0')}h:${minutes
         .toString()

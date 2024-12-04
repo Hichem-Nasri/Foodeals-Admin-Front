@@ -119,7 +119,7 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
         const fetchCity = async () => {
             const res = await api
                 .get(
-                    `${API_URL}/v1/crm/prospects/cities/search?city=${city}&country=morocco&page=0&size=10&types=${type}`
+                    `${API_URL}/api/v1/crm/prospects/cities/search?city=${city}&country=morocco&page=0&size=10&types=${type}`
                 )
                 .then((res) => res.data?.content)
                 .catch((error) => {
@@ -136,7 +136,7 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
         const fetchRegion = async () => {
             const res = await api
                 .get(
-                    `${API_URL}/v1/crm/prospects/regions/search?region=${region}&country=morocco&page=0&size=10&types=${type}`
+                    `${API_URL}/api/v1/crm/prospects/regions/search?region=${region}&country=morocco&page=0&size=10&types=${type}`
                 )
                 .then((res) => res.data?.content)
                 .catch((error) => {

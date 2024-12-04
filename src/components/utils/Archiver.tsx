@@ -26,6 +26,7 @@ import {
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useQueryClient } from '@tanstack/react-query'
 import { capitalize } from '@/types/utils'
+import MobileHeader from './MobileHeader'
 
 interface ArchiverProps {
     partnerId?: string
@@ -67,10 +68,10 @@ export const Archiver: FC<ArchiverProps> = ({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="hidden overflow-hidden"></DialogTrigger>
             <DialogContent
-                className="min-w-max h-fit rounded-[12px]"
+                className="min-w-full h-screen lg:h-fit lg:min-w-fit flex flex-col gap-5 justify-start px-0 lg:px-4 py-0 lg:py-4 rounded-none lg:rounded-[18px]"
                 showContent={false}
             >
-                <DialogHeader className="flex flex-row justify-between items-center w-full ">
+                <DialogHeader className="hidden lg:flex flex-row justify-between items-center w-full ">
                     <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal ">
                         {title}
                     </DialogTitle>
@@ -80,11 +81,15 @@ export const Archiver: FC<ArchiverProps> = ({
                         <X />
                     </DialogClose>
                 </DialogHeader>
-
-                <DialogDescription>
+                <MobileHeader
+                    title={title}
+                    onClick={() => {}}
+                    buttonType="dialog"
+                />
+                <DialogDescription className="flex flex-col gap-5 mt-8 p-4 lg:p-0">
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="flex flex-col gap-5 mt-8">
+                            <div className="flex flex-col gap-5">
                                 <SelectField
                                     control={control}
                                     label="Type d’archive"
@@ -113,12 +118,12 @@ export const Archiver: FC<ArchiverProps> = ({
                                         </div>
                                     )}
                                 />
-                                <div className="flex justify-end items-center gap-2.5">
+                                <div className="flex justify-end items-center gap-2.5 self-end w-full">
                                     <CustomButton
                                         label="Annuler"
                                         IconRight={X}
                                         variant="outline"
-                                        className="h-fit py-3 px-5 rounded-[12px] gap-1"
+                                        className="h-fit py-3 px-5 rounded-[12px] gap-1 w-full lg:w-fit"
                                         type="button"
                                         onClick={() => setOpen(false)}
                                     />
@@ -130,7 +135,7 @@ export const Archiver: FC<ArchiverProps> = ({
                                                 : ArchiveRestore
                                         }
                                         type="submit"
-                                        className="h-fit py-3 px-5 rounded-[12px] gap-1"
+                                        className="h-fit py-3 px-5 rounded-[12px] gap-1 w-full lg:w-fit"
                                         isPending={isLoading}
                                         disabled={isLoading}
                                     />

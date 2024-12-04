@@ -1,8 +1,4 @@
 import api from '@/lib/Auth'
-import { API_PARTNERS } from '@/lib/api_url'
-import { SchemaFilter } from '@/types/associationSchema'
-import { PartnerType } from '@/types/partnersType'
-import { z } from 'zod'
 import { API_URL } from '..'
 
 const buildQueryString = (
@@ -71,10 +67,7 @@ export async function fetchSubEntities(
     try {
         const filterUrl = buildQueryString(filterData, type)
         const url =
-            `${API_URL.replace(
-                'api',
-                'v1'
-            )}/sub-entities/organizations/${id}?page=${currentPage}&size=${pageSize}` +
+            `${API_URL}/v1/sub-entities/organizations/${id}?page=${currentPage}&size=${pageSize}` +
             `&organizationsType=${type}` +
             filterUrl +
             (archived ? '&deletedAt=true' : '&deletedAt=false') +

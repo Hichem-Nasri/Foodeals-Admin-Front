@@ -8,7 +8,7 @@ export async function getCollaboratorDelivery(id: string): Promise<{
 }> {
     try {
         const res = await api
-            .get(`${API_URL.replace('api', 'v1')}/users/${id}/profile`)
+            .get(`${API_URL}/v1/users/${id}/profile`)
             .catch((error) => {
                 throw new Error(error.response.data.message)
             })

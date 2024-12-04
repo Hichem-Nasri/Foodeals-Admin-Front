@@ -1,30 +1,11 @@
 import { ActionsMenu } from '@/components/custom/ActionsMenu'
-import { AppRoutes } from '@/lib/routes'
 import { SubAccountPartners } from '@/types/partnersType'
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { createColumnHelper } from '@tanstack/react-table'
-import {
-    Eye,
-    Store,
-    Users,
-    FileBadge,
-    Archive,
-    ArchiveRestore,
-    Info,
-} from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { EmailBadge } from '../EmailBadge'
 import { PartnerSolution } from '../PartnerSolution'
 import { PhoneBadge } from '../PhoneBadge'
-import { getContract } from '@/lib/api/partner/getContract'
-import { PartnerStatus } from '../PartnerStatus'
 import { AvatarAndName } from '@/components/AvatarAndName'
-import api from '@/lib/Auth'
-import { API_URL } from '@/lib/api'
-import { ArchiveType } from '@/types/GlobalType'
-import { ArchivePartnerSchema } from '@/types/PartnerSchema'
-import { z } from 'zod'
-import archivePatner from '@/lib/api/partner/archiverPartner'
 import { GetListActionsSubAccount } from './getActionsList'
 
 const columnHelperSubAccount = createColumnHelper<SubAccountPartners>()

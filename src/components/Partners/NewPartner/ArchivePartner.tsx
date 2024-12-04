@@ -26,6 +26,7 @@ import { useNotification } from '@/context/NotifContext'
 import archivePatner from '@/lib/api/partner/archiverPartner'
 import { NotificationType } from '@/types/GlobalType'
 import { useRouter } from 'next/navigation'
+import MobileHeader from '@/components/utils/MobileHeader'
 
 interface ArchivePartnerProps {
     partnerId?: string
@@ -70,11 +71,11 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                     <Archive />
                 </DialogTrigger>
                 <DialogContent
-                    className="min-w-max h-fit rounded-[18px]"
+                    className="min-w-full h-screen lg:h-fit lg:min-w-fit flex flex-col gap-5 justify-start px-0 lg:px-4 py-0 lg:py-4 rounded-none lg:rounded-[18px]"
                     showContent={false}
                 >
                     <DialogHeader>
-                        <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal flex w-full justify-between items-center">
+                        <DialogTitle className="text-lynch-400 text-[1.375rem] font-normal hidden lg:flex w-full justify-between items-center">
                             <h1 className="text-xl text-lynch-500">
                                 Archiver le partenaire
                             </h1>
@@ -82,7 +83,12 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                                 <X />
                             </DialogClose>
                         </DialogTitle>
-                        <DialogDescription>
+                        <MobileHeader
+                            title={'Archiver le partenaire'}
+                            onClick={() => {}}
+                            buttonType="dialog"
+                        />
+                        <DialogDescription className="p-4">
                             <Form {...form}>
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <div className="flex flex-col gap-5 mt-8">
@@ -114,21 +120,23 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
                                                 </div>
                                             )}
                                         />
-                                        <div className="flex justify-end items-center gap-2.5">
-                                            <DialogClose>
+                                        <div className="flex justify-center lg:justify-end items-center gap-2.5 w-full">
+                                            <DialogClose className="w-full lg:w-fit">
                                                 <CustomButton
                                                     label="Annuler"
                                                     IconRight={X}
                                                     variant="outline"
-                                                    className="h-fit py-3"
+                                                    className="h-fit py-3 w-full lg:w-fit"
                                                     type="button"
+                                                    size={'sm'}
                                                 />
                                             </DialogClose>
                                             <CustomButton
                                                 label="Archiver"
                                                 IconRight={Archive}
                                                 type="submit"
-                                                className="h-fit py-3"
+                                                className="h-fit py-3 w-full lg:w-fit"
+                                                size={'sm'}
                                             />
                                         </div>
                                     </div>

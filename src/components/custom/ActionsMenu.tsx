@@ -121,8 +121,9 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({
                                     className={cn(
                                         'flex items-center gap-3 px-3 hover:bg-lynch-50 rounded-[6px] text-lynch- cursor-pointer py-5 text-lynch-500',
                                         `${
-                                            item.label.toLowerCase() ==
-                                                'archiver' && 'text-coral-500'
+                                            ['archiver', 'leadko'].includes(
+                                                item.label.toLowerCase()
+                                            ) && 'text-coral-500'
                                         }`
                                     )}
                                 >

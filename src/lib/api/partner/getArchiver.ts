@@ -1,5 +1,5 @@
 import api from '@/lib/Auth'
-import { API_PARTNERS } from '@/lib/api_url'
+import { API_URL } from '..'
 
 const getArchivedPartners = async (
     type:
@@ -18,7 +18,7 @@ const getArchivedPartners = async (
     try {
         const response = await api
             .get(
-                `${API_PARTNERS}/deleted?page=${currentPage}&size=${pageSize}&sort=deletedAt,desc&type=${type}` +
+                `${API_URL}/api/v1/organizations/partners/deleted?page=${currentPage}&size=${pageSize}&sort=deletedAt,desc&type=${type}` +
                     (archived ? '&deletedAt=true' : '')
             )
             .catch((error) => {

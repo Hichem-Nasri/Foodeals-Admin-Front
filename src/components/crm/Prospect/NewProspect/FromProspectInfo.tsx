@@ -130,7 +130,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldCountry
                                             control={control}
-                                            name="country"
+                                            name="country.name"
                                             label="Pays"
                                             placeholder="Pays"
                                             disabled={disabled}
@@ -144,7 +144,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                         />
                                         <FieldState
                                             control={control}
-                                            name="state"
+                                            name="state.name"
                                             label="State"
                                             disabled={disabled}
                                             country={address.countryId}
@@ -157,7 +157,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                         />
                                         <FieldCity
                                             control={control}
-                                            name="city"
+                                            name="city.name"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled}
@@ -174,7 +174,7 @@ export const FormCrmInfo: FC<FormCrmInfoProps> = ({
                                     <div className="flex lg:grid lg:grid-cols-3 flex-col items-start justify-start gap-3 ">
                                         <FieldRegion
                                             control={control}
-                                            name="region"
+                                            name="region.name"
                                             label="Région"
                                             placeholder="Région"
                                             disabled={disabled}

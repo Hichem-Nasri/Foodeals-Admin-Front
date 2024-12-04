@@ -11,7 +11,10 @@ export async function createEvents(event: CrmObjectType, id: string) {
             lead: 1, //Todo: Change this value to the lead id
         }
         const res = await api
-            .post(`${API_URL}/v1/crm/prospects/${id}/events/create`, newEvent)
+            .post(
+                `${API_URL}/api/v1/crm/prospects/${id}/events/create`,
+                newEvent
+            )
             .catch((error) => {
                 throw error
             })

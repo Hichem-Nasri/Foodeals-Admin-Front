@@ -44,6 +44,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
     disabled,
 }) => {
     const { handleSubmit, control } = form
+    const { country, state, city, region } = form.watch()
 
     const [address, setAddress] = useState<{
         countryId: string
@@ -51,10 +52,10 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
         cityId: string
         regionId: string
     }>({
-        countryId: '',
-        stateId: '',
-        cityId: '',
-        regionId: '',
+        countryId: country.id || '',
+        stateId: state.id || '',
+        cityId: city.id || '',
+        regionId: region.id || '',
     })
     console.log('hello partner')
     return (
@@ -194,7 +195,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         />
                                         <FieldCountry
                                             control={control}
-                                            name="country"
+                                            name="country.name"
                                             label="Pays"
                                             placeholder="Pays"
                                             disabled={disabled!}
@@ -210,7 +211,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldState
                                             control={control}
-                                            name="state"
+                                            name="state.name"
                                             label="State"
                                             disabled={disabled!}
                                             country={address.countryId}
@@ -223,7 +224,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         />
                                         <FieldCity
                                             control={control}
-                                            name="city"
+                                            name="city.name"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled!}
@@ -238,7 +239,7 @@ export const FormPartnerInfo: FC<FormPartnerInfoProps> = ({
                                         />
                                         <FieldRegion
                                             control={control}
-                                            name="region"
+                                            name="region.name"
                                             label="Région"
                                             placeholder="Région"
                                             disabled={disabled!}

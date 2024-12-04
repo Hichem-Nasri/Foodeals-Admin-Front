@@ -5,7 +5,7 @@ import { capitalize } from '@/types/utils'
 export const fetchActivities = async (type: string) => {
     try {
         const response = await api
-            .get(API_URL + '/v1/activities?types=' + type)
+            .get(API_URL + '/api/v1/activities?types=' + type)
             .then((res) => res.data)
             .catch((error) => {
                 throw new Error(error)

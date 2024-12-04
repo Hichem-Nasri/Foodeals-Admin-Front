@@ -100,13 +100,13 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             }))
         }
         let solutions = []
-        if (data.solutions.donatePro.selected) {
+        if (data.solutions.donatePro?.selected) {
             solutions.push(PartnerSolutionType.DONATE_PRO)
         }
-        if (data.solutions.marketPro.selected) {
+        if (data?.solutions?.marketPro?.selected) {
             solutions.push(PartnerSolutionType.MARKET_PRO)
         }
-        const myZone = transformCityRegionArray(data.zone, data.country)
+        const myZone = transformCityRegionArray(data.zone, data.country.name)
 
         if (data.documents && data.documents.length > 0) {
             setDeliveryPartnerData((prev) => ({
@@ -122,15 +122,15 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         if (solutions.includes(PartnerSolutionType.DONATE_PRO)) {
             mySolution.push({
                 solution: PartnerSolutionType.DONATE_PRO,
-                amount: data.solutions.donatePro.deliveryCost ?? 0,
-                commission: data.solutions.donatePro.commission ?? 0,
+                amount: data.solutions.donatePro?.deliveryCost ?? 0,
+                commission: data.solutions.donatePro?.commission ?? 0,
             })
         }
         if (solutions.includes(PartnerSolutionType.MARKET_PRO)) {
             mySolution.push({
                 solution: PartnerSolutionType.MARKET_PRO,
-                amount: data.solutions.marketPro.deliveryCost ?? 0,
-                commission: data.solutions.marketPro.commission ?? 0,
+                amount: data.solutions.marketPro?.deliveryCost ?? 0,
+                commission: data.solutions.marketPro?.commission ?? 0,
             })
         }
 
@@ -148,10 +148,10 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 phone: data.phone,
             },
             entityAddressDto: {
-                country: data.country,
-                city: data.siege,
-                region: data.region,
-                state: data.state,
+                country: data.country.name,
+                city: data.siege.name,
+                region: data.region.name,
+                state: data.state.name,
                 address: data.address,
                 iframe: '',
             },
@@ -208,7 +208,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
     }
 
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full px-0 pr-2 lg:px-3 lg:mb-0 mb-20 overflow-auto">
+        <div className="flex flex-col gap-[0.625rem] w-full px-4 pr-2 lg:px-3 lg:mb-0 mb-20 overflow-auto">
             <TopBar
                 id={deliveryId}
                 primaryButtonDisabled={deliveryId === '' || readOnly}
@@ -219,7 +219,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 hideStatus={true}
                 isPending={mutation.isPending}
             />
-            <div className="flex flex-col gap-[1.875rem] lg:gap-0 h-full w-full">
+            <div className="flex flex-col gap-[0.625rem] lg:gap-0 h-full w-full ">
                 <FormDeliveryPartner
                     onSubmit={onSubmitPartnerInfo}
                     form={DeliveryPartner}

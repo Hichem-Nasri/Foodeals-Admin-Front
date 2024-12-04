@@ -6,7 +6,7 @@ interface Contract {
 }
 
 export async function getContract(id: string): Promise<Contract> {
-    const url = `${API_URL}/v1/organizations/partners/contracts/${id}`
+    const url = `${API_URL}/api/v1/organizations/partners/contracts/${id}`
 
     try {
         const response = await api.get(url, { responseType: 'blob' })

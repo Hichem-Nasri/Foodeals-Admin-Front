@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Label } from '../Label'
 import {
     Archive,
+    Building,
     CalendarClock,
     Eye,
     FileBadge,
@@ -44,6 +45,10 @@ export const AssociationCard: FC<AssociationCardProps> = ({
     if (!association) return
     console.log(association)
     const dataArray = [
+        {
+            label: association.type == 'FOOD_BANK' ? 'B.A' : 'ASSO',
+            icon: Building,
+        },
         {
             label: `Association : ${association.associations}`.toLocaleUpperCase(),
             icon: HeartHandshake,
@@ -141,12 +146,12 @@ export const AssociationCard: FC<AssociationCardProps> = ({
                     {dataArray.map((data) => (
                         <div
                             key={data.label}
-                            className="flex gap-[0.375rem] bg-lynch-100 text-lynch-500 rounded-full py-[0.375rem] px-3"
+                            className="flex gap-[0.375rem] bg-lynch-100 font-semibold text-lynch-500 rounded-full py-[0.375rem] px-3 text-xs"
                         >
                             <data.icon size={18} key={data.label} />
                             <Label
                                 label={data.label.toString()}
-                                className="text-lynch-500"
+                                className="text-lynch-500 font-semibold text-xs"
                             />
                         </div>
                     ))}

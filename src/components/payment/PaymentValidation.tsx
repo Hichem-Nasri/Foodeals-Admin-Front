@@ -183,7 +183,7 @@ export const PaymentValidation: FC<PaymentValidationProps> = ({
                 if (document) formData.append('document', document)
                 const res = await api
                     .post(
-                        `${API_URL}/v1/payments/process?type=COMMISSION`,
+                        `${API_URL}/api/v1/payments/process?type=COMMISSION`,
                         formData
                     )
                     .catch((e) => {

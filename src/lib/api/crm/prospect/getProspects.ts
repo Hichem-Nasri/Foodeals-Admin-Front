@@ -1,8 +1,8 @@
 import api from '@/lib/Auth'
-import { API_PROSPECTS } from '@/lib/api_url'
 import { FilterCrmSchema } from '@/types/CrmScheme'
 import { CrmType } from '@/types/CrmType'
 import { z } from 'zod'
+import { API_URL } from '../..'
 
 const buildQueryString = (
     data: z.infer<typeof FilterCrmSchema>,
@@ -63,7 +63,7 @@ export async function fetchProspect(
     try {
         const filter = buildQueryString(FilterData, types)
         const url =
-            `${API_PROSPECTS}?page=${
+            `${API_URL}/api/v1/crm/prospects?page=${
                 filter ? '0' : currentPage
             }&size=${pageSize}&` +
             filter +

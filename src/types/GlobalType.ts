@@ -70,11 +70,11 @@ export type CustomFilterType = {
 }
 
 export type AddressType = {
-    country: string
-    city: string
+    country: Omit<PartnerInfoDto, 'avatarPath'>
+    state: Omit<PartnerInfoDto, 'avatarPath'>
+    city: Omit<PartnerInfoDto, 'avatarPath'>
+    region: Omit<PartnerInfoDto, 'avatarPath'>
     address: string
-    region: string
-    state: string
     iframe: string
 }
 

@@ -8,7 +8,6 @@ import {
     defaultAssociationInformationData,
     defaultEngagementData,
 } from '@/types/associationSchema'
-import { API_ASSOCIATIONS } from '@/lib/api_url'
 import { exportAssociationPost } from '@/types/association'
 
 export const getAssociationData = async (
@@ -21,7 +20,7 @@ export const getAssociationData = async (
             ...defaultEngagementData,
         }
     try {
-        const url = `${API_URL}/v1/organizations/associations/form-data/${associationId}`
+        const url = `${API_URL}/api/v1/organizations/associations/form-data/${associationId}`
         const response = await api
             .get(url)
             .then((res) => res.data)

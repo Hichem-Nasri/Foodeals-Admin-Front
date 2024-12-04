@@ -5,10 +5,7 @@ import { API_URL } from '.'
 export const fetchManager = async (searchName: string) => {
     try {
         // Make a GET request to the API endpoint with the search name as a query parameter
-        const url = `${API_URL.replace(
-            '/api',
-            'v1'
-        )}/users/search?name=${searchName}&pageNumber=1&pageSize=10`
+        const url = `${API_URL}/v1/users/search?name=${searchName}&pageNumber=1&pageSize=10`
         const response = await api
             .get(url)
             .then((res) => res.data)

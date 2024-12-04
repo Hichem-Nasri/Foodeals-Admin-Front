@@ -51,7 +51,7 @@ const FieldSolutions: FC<FieldSolutionProps> = ({
                     <PartnerSolution
                         key={value.key}
                         solution={value.label as PartnerSolutionType}
-                        className="py-[0.4rem] text-[0.75rem]"
+                        className="py-2 lg:py-[0.4rem] text-xs lg:text-[0.75rem]"
                         size={12}
                     />
                 ))

@@ -11,7 +11,7 @@ export async function getPartners(
     try {
         const url =
             API_URL +
-            `/v1/payments/${
+            `/api/v1/payments/${
                 !state ? 'commissions' : state
             }/search?name=${name}&types=${types}` +
             (id ? `&id=${id}` : '')

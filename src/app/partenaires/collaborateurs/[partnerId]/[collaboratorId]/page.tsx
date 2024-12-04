@@ -38,10 +38,7 @@ const useCollaborators = (partnerId: string, collaboratorId: string) => {
         queryKey: ['collaborator', collaboratorId],
         queryFn: async () => {
             const res = await api
-                .get(
-                    API_URL.replace('api', 'v1') +
-                        `/users/${collaboratorId}/profile`
-                )
+                .get(API_URL + `/v1/users/${collaboratorId}/profile`)
                 .then((data) => {
                     console.log('res', data)
                     return data

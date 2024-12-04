@@ -5,7 +5,7 @@ async function validateContract(
     id: string,
     contractFile: File[]
 ): Promise<any> {
-    const url = `${API_URL}/v1/organizations/partners/validate/${id}`
+    const url = `${API_URL}/api/v1/organizations/partners/validate/${id}`
 
     const formData = new FormData()
     formData.append('document', contractFile[0])

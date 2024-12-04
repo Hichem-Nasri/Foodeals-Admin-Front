@@ -9,7 +9,7 @@ export async function archiveProspect(
 ): Promise<{ status: number; data: any }> {
     try {
         const res = await api
-            .post(`${API_URL}/v1/crm/prospects/status/${id}`, {
+            .post(`${API_URL}/api/v1/crm/prospects/status/${id}`, {
                 status: status,
                 reason: { ...data },
             })

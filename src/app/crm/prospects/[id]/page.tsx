@@ -19,7 +19,6 @@ import {
 import { Archiver } from '@/components/utils/Archiver'
 import { useNotification } from '@/context/NotifContext'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
-import { API_PROSPECTS } from '@/lib/api_url'
 import { AppRoutes } from '@/lib/routes'
 import {
     CrmInformationSchema,
@@ -38,6 +37,8 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import IsLoading from '@/components/utils/IsLoading'
+import { API_URL } from '@/lib/api'
 
 const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
     const [prospect, setProspect] = React.useState(() => data)
@@ -54,7 +55,7 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
         mutationFn: (data: any) => {
             console.log('data: ', data)
             console.log('prospect: ', prospect)
-            return api.put(`${API_PROSPECTS}/${id}`, {
+            return api.put(`${API_URL}/api/v1/crm/prospects/${id}`, {
                 ...data,
                 status: prospect.status,
                 type: prospect.type,
@@ -77,7 +78,7 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
         defaultValues: { ...getInfoData(prospect) },
     })
     const onSubmitCrmInfo = (data: z.infer<typeof CrmInformationSchema>) => {
-        console.log('UPdate')
+        console.log('Update')
         const newData = {
             ...getCrmCreateData(data),
         }
@@ -252,7 +253,7 @@ const ProspectPage: FC<ProspectProps> = ({ params }) => {
     return (
         <Layout formTitle="Prospect">
             {!isSuccess ? (
-                <div>Loading...</div>
+                <IsLoading />
             ) : error ? (
                 <div>Error: {error?.message}</div>
             ) : (
@@ -268,7 +269,7 @@ const getProspect = async (id: string) => {
     if (id) {
         try {
             const res = await api
-                .get(`${API_PROSPECTS}/${id}`)
+                .get(`${API_URL}/api/v1/crm/prospects/${id}`)
                 .then((res) => res.data)
                 .catch((err) => {
                     throw new Error(err)

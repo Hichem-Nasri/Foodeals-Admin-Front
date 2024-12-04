@@ -6,7 +6,7 @@ export default async function getDateAvailable(
     id?: string
 ): Promise<any> {
     try {
-        let url = API_URL + '/v1/payments/commissions/available-months'
+        let url = API_URL + '/api/v1/payments/commissions/available-months'
         switch (type) {
             case 'organization':
                 url += '/organizations?organizationId=' + (id ? id : '')
@@ -30,7 +30,7 @@ export default async function getDateAvailable(
 
 export async function getYearsAvailable(): Promise<any> {
     try {
-        const url = API_URL + '/v1/payments/subscriptions/available-years'
+        const url = API_URL + '/api/v1/payments/subscriptions/available-years'
         const res = await api.get(url).catch((err) => {
             throw new Error(err)
         })

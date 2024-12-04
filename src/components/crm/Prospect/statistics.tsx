@@ -19,7 +19,7 @@ interface StatisticsProps {
     converted: number
 }
 
-const API_ENDPOINT = `${API_URL}/v1/crm/prospects/statistics`
+const API_ENDPOINT = `${API_URL}/api/v1/crm/prospects/statistics`
 
 interface FcStatisticsProps {
     type: string

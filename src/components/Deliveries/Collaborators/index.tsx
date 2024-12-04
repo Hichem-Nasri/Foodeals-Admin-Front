@@ -152,7 +152,11 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 table={table}
                 data={collaborator}
                 transform={(value) => (
-                    <DeliveryCollaboratorCard collaborator={value} archive={archive} refetch={refetch} />
+                    <DeliveryCollaboratorCard
+                        collaborator={value}
+                        archive={archive}
+                        refetch={refetch}
+                    />
                 )}
                 isLoading={isLoading || isRefetching}
                 partnerData={{
@@ -169,20 +173,6 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                 refetch={refetch}
                 pageSize={totals.pageSize}
             />
-            <div className="lg:hidden flex flex-col items-center gap-4 ">
-                <CustomButton
-                    size="sm"
-                    label="Voir plus"
-                    className="text-sm font-semibold rounded-full border-lynch-400 text-lynch-400 py-[0.375rem] px-5"
-                    variant="outline"
-                    IconRight={RotateCw}
-                />
-                <CustomButton
-                    label="Retour"
-                    className="w-full"
-                    IconLeft={ArrowLeft}
-                />
-            </div>
         </div>
     )
 }

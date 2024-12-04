@@ -14,6 +14,7 @@ export const getConfirmationInfo = async (
         const response = await api
             .get(
                 API_URL +
+                    '/api' +
                     appApi.paymentReceived.replace('{paymentId}', versionId)
             )
             .catch((error) => {

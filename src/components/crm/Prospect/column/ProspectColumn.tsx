@@ -29,15 +29,11 @@ import {
 } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { z } from 'zod'
+import { GetListProspcts } from './getList'
 
 const columnHelper = createColumnHelper<CrmType>()
 
-export const columnsCrmTable = (
-    router: AppRouterInstance,
-    setData: any,
-    leadKo: boolean,
-    refetch: () => void
-) => [
+export const columnsCrmTable = (leadKo: boolean, refetch: () => void) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => {
             const date = info.getValue()
@@ -121,21 +117,25 @@ export const columnsCrmTable = (
     columnHelper.accessor('address.country', {
         cell: (info) => (
             <div className="w-full px-2 flex-1 text-nowrap">
-                {info.getValue()}
+                {info.getValue().name}
             </div>
         ),
         header: 'Pays',
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('address.city', {
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+            <div className="w-full px-2 flex-1 text-nowrap">
+                {info.getValue().name}
+            </div>
+        ),
         header: 'Ville',
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('address.region', {
         cell: (info) => (
             <div className="w-full px-2 flex-1 text-nowrap">
-                {info.getValue()}
+                {info.getValue().name}
             </div>
         ),
         minSize: 100,
@@ -165,12 +165,13 @@ export const columnsCrmTable = (
     columnHelper.accessor('creatorInfo', {
         cell: (info) => {
             const fullName = `${capitalize(
-                info.getValue().name.firstName
-            )} ${capitalize(info.getValue().name.lastName)}`
+                info.getValue().name?.firstName
+            )} ${capitalize(info.getValue().name?.lastName)}`
             return (
                 <AvatarAndName
                     name={fullName}
                     avatar={info.getValue().avatarPath}
+                    className="flex items-center item gap-4 min-w-44"
                 />
             )
         },
@@ -180,8 +181,8 @@ export const columnsCrmTable = (
     columnHelper.accessor('managerInfo', {
         cell: (info) => {
             const fullName = `${capitalize(
-                info.getValue().name.firstName
-            )} ${capitalize(info.getValue().name.lastName)}`
+                info.getValue().name?.firstName
+            )} ${capitalize(info.getValue().name?.lastName)}`
             return (
                 <AvatarAndName
                     name={fullName}
@@ -221,122 +222,13 @@ export const columnsCrmTable = (
     }),
     columnHelper.accessor('id', {
         cell: (info) => {
-            let menu: ActionType[] = []
             const status = info.row.original.status
-            if (leadKo) {
-                menu = [
-                    {
-                        actions: () => {},
-                        label: 'Info',
-                        icon: Info,
-                    },
-                    {
-                        actions: async (id: string, data, handlDone) => {
-                            const archive: ArchiveType = {
-                                action: 'DE_ARCHIVE',
-                                reason: data?.archiveType || 'OTHER',
-                                details: data?.archiveReason || '',
-                            }
-                            await archiveProspect(
-                                info.getValue(),
-                                archive,
-                                'IN_PROGRESS'
-                            )
-                                .then((res) => {
-                                    handlDone &&
-                                        handlDone(true, 'Prospect désarchivé', [
-                                            'prospects',
-                                        ])
-                                })
-                                .catch((err) => {
-                                    handlDone &&
-                                        handlDone(
-                                            false,
-                                            'Echec de la désarchivage',
-                                            []
-                                        )
-                                })
-                        },
-
-                        label: 'Désarchiver',
-                        icon: ArchiveRestore,
-                    },
-                ]
-            } else
-                menu = [
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.prospects + '/' + info.getValue()
-                            ),
-                        icon: Eye,
-                        label: 'Voir',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.prospects +
-                                    '/' +
-                                    info.getValue() +
-                                    '?mode=edit'
-                            ),
-                        icon: Pencil,
-                        label: 'Modifier',
-                    },
-                    {
-                        actions: () =>
-                            router.push(
-                                AppRoutes.newConvertir.replace(
-                                    ':id',
-                                    info.getValue()
-                                )
-                            ),
-                        icon: Rocket,
-                        label: 'Convertir',
-                        shouldNotDisplay: status != 'IN_PROGRESS' || leadKo,
-                    },
-                    {
-                        actions: async (
-                            id: string,
-                            data?: z.infer<typeof ArchivePartnerSchema>,
-                            handleDone?: (
-                                type: boolean,
-                                message: string,
-                                query: any[]
-                            ) => void
-                        ) => {
-                            const archive: ArchiveType = {
-                                action: 'ARCHIVE',
-                                reason: data?.archiveType || 'OTHER',
-                                details: data?.archiveReason || '',
-                            }
-                            console.log('archive', archive)
-                            const res = await archiveProspect(
-                                info.getValue(),
-                                archive
-                            )
-                                .then((res) => {
-                                    handleDone &&
-                                        handleDone(true, 'Prospect archivé', [
-                                            'prospects',
-                                        ])
-                                    refetch()
-                                })
-                                .catch(
-                                    (err) =>
-                                        handleDone &&
-                                        handleDone(
-                                            false,
-                                            "Echec de l'archivage",
-                                            []
-                                        )
-                                )
-                        },
-                        icon: Archive,
-                        label: 'Lead Ko',
-                        shouldNotDisplay: status == 'CANCELED',
-                    },
-                ]
+            let menu: ActionType[] = GetListProspcts(
+                info.getValue(),
+                refetch,
+                leadKo,
+                status
+            )
             return (
                 <ActionsMenu
                     id={info.getValue()}
@@ -349,13 +241,8 @@ export const columnsCrmTable = (
     }),
 ]
 
-export const columnCrmAssociations = (
-    router: AppRouterInstance,
-    setData: any,
-    leadKo: boolean,
-    refetch: () => void
-) => [
-    ...columnsCrmTable(router, setData, leadKo, refetch).slice(0, 4),
+export const columnCrmAssociations = (leadKo: boolean, refetch: () => void) => [
+    ...columnsCrmTable(leadKo, refetch).slice(0, 4),
     columnHelper.accessor('type', {
         cell: (info) => {
             const value = info.getValue()
@@ -366,5 +253,5 @@ export const columnCrmAssociations = (
         header: 'Type de compte',
         footer: (info) => info.column.id,
     }),
-    ...columnsCrmTable(router, setData, leadKo, refetch).slice(4, 16),
+    ...columnsCrmTable(leadKo, refetch).slice(4, 16),
 ]

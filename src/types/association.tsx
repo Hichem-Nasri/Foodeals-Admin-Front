@@ -32,7 +32,14 @@ export interface AssociationPostType {
     activities: string[]
     responsible: ContactType
     managerID: number
-    associationAddress: AddressType
+    associationAddress: {
+        address: string
+        country: string
+        state: string
+        city: string
+        region: string
+        iframe: string
+    }
     entityType: string // ASSOCIATION, FOOD_BANK
     numberOfPoints: number
     solutions: string[]
@@ -55,10 +62,10 @@ export const defaultAssociationPostData: AssociationPostType = {
     managerID: 1,
     associationAddress: {
         address: '',
-        country: '',
-        state: '',
         city: '',
+        country: '',
         region: '',
+        state: '',
         iframe: '',
     },
     entityType: 'ASSOCIATION',

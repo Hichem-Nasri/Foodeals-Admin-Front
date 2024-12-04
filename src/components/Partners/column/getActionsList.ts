@@ -178,17 +178,11 @@ export const GetListActionsSubAccount: (
                         details: data?.archiveReason,
                     }
                     const res = await api
-                        .delete(
-                            `${API_URL.replace(
-                                'api',
-                                'v1'
-                            )}/sub-entities/${id!}`,
-                            {
-                                data: {
-                                    ...archiveData,
-                                },
-                            }
-                        )
+                        .delete(`${API_URL}/v1/sub-entities/${id!}`, {
+                            data: {
+                                ...archiveData,
+                            },
+                        })
                         .then((res) => {
                             handleDone &&
                                 handleDone(true, 'désarchivage effectué', [
@@ -232,14 +226,11 @@ export const GetListActionsSubAccount: (
                     details: data?.archiveReason || '',
                 }
                 const res = await api
-                    .delete(
-                        `${API_URL.replace('api', 'v1')}/sub-entities/${id}`,
-                        {
-                            data: {
-                                ...archiveData,
-                            },
-                        }
-                    )
+                    .delete(`${API_URL}/v1/sub-entities/${id}`, {
+                        data: {
+                            ...archiveData,
+                        },
+                    })
                     .then((res) => {
                         {
                             handleDone &&

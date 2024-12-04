@@ -6,7 +6,7 @@ const archiveSubPartner = async (
     partnerId: string,
     archiveReason: ArchiveType
 ): Promise<any> => {
-    const url = `${API_URL.replace('api', 'v1')}/sub-entities/${partnerId}`
+    const url = `${API_URL}/v1/sub-entities/${partnerId}`
     try {
         console.log('archiveReason:', archiveReason)
         const response = await api

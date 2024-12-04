@@ -55,7 +55,7 @@ export async function getCollaborator(
         console.log('types: ', type)
         const queryString = buildQueryString(filterData, entityType, type)
         const url =
-            API_URL.replace('/api', '') +
+            API_URL +
             (!type || !type?.length
                 ? '/v1/users/organizations/'
                 : `/v1/users/subentities/`) +

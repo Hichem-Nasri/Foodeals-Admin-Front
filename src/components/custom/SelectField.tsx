@@ -63,12 +63,12 @@ export const SelectField: FC<SelectFieldProps> = ({
                                     const option = options.find(
                                         (option) => option.key === value
                                     )
-                                    if (option && selectedType in option) {
-                                        field.onChange(
-                                            option[
-                                                selectedType as keyof MultiSelectOptionsType
-                                            ]
-                                        )
+                                    if (option) {
+                                        field.onChange({
+                                            id: option.id,
+                                            name: option.label,
+                                        })
+                                        if (onChange) onChange(value)
                                     }
                                 } else {
                                     if (type === 'number') {

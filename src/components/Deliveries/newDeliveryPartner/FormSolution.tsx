@@ -65,14 +65,14 @@ export const FormSolution: FC<FormSolutionProps> = ({
         >
             <AccordionItem
                 value="features"
-                className="text-lynch-400 text-[1.375rem] font-normal"
+                className="text-lynch-400 text-[1.375rem] font-normal "
             >
                 <AccordionTrigger className="font-normal text-[1.375rem] py-0">
                     Fonctionnalités
                 </AccordionTrigger>
-                <AccordionContent className="pt-7">
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Form {...form}>
+                <AccordionContent className="pt-7 gap-[30px] lg:gap-0 flex flex-col px-4 pb-4 lg:px-0">
+                    <Form {...form}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col justify-end gap-[1.875rem] w-full">
                                 <div className=" lg:flex-row flex-col lg:items-center gap-3 w-full">
                                     <div>
@@ -87,7 +87,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                             <div className="flex gap-4  flex-col w-full">
                                                 <>
                                                     {solutions.marketPro
-                                                        .selected && (
+                                                        ?.selected && (
                                                         <div className="flex lg:flex-row flex-col justify-start items-start lg:items-end my-auto h-fit w-full gap-4">
                                                             <PartnerSolution
                                                                 solution={
@@ -125,7 +125,7 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                                         </div>
                                                     )}
                                                     {solutions.donatePro
-                                                        .selected && (
+                                                        ?.selected && (
                                                         <div className="flex lg:flex-row flex-col justify-start items-start lg:items-end my-auto h-fit w-full gap-4">
                                                             <PartnerSolution
                                                                 solution={
@@ -218,8 +218,8 @@ export const FormSolution: FC<FormSolutionProps> = ({
                                     />
                                 }
                             </div>
-                        </Form>
-                    </form>
+                        </form>
+                    </Form>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

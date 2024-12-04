@@ -1,5 +1,5 @@
 import api from '@/lib/Auth'
-import { API_ASSOCIATIONS } from '@/lib/api_url'
+import { API_URL } from '..'
 
 export async function fetchAssociations(
     currentPage: number,
@@ -7,7 +7,9 @@ export async function fetchAssociations(
 ): Promise<{ status: number; data: any }> {
     try {
         const response = await api
-            .get(`${API_ASSOCIATIONS}?page=${currentPage}&size=${pageSize}`)
+            .get(
+                `${API_URL}/api/v1/organizations/associations?page=${currentPage}&size=${pageSize}`
+            )
             .catch((error) => {
                 throw error
             })

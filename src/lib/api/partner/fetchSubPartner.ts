@@ -9,10 +9,7 @@ async function fetchSubPartner(
     status: number
     data: any
 }> {
-    const url = `${API_URL.replace(
-        'api',
-        'v1'
-    )}/sub-entities/partners/${id}?page=${currentPage}&size=${pageSize}`
+    const url = `${API_URL}/v1/sub-entities/partners/${id}?page=${currentPage}&size=${pageSize}`
 
     try {
         const response = await api.get(url).catch((error) => {

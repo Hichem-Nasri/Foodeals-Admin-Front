@@ -1,5 +1,4 @@
 import api from '@/lib/Auth'
-import { API_ASSOCIATIONS_USERS } from '@/lib/api_url'
 import { API_URL } from '..'
 
 const buildQueryString = (data: any, type: string) => {
@@ -60,10 +59,7 @@ export async function getCollaborator(
 ): Promise<any> {
     try {
         const queryString = buildQueryString(filterData, type)
-        const url = `${API_URL.replace(
-            'api',
-            'v1'
-        )}/users/organizations/${id}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc&deletedAt=${
+        const url = `${API_URL}/v1/users/organizations/${id}?page=${currentPage}&size=${pageSize}&sort=createdAt,desc&deletedAt=${
             archive ? 'true' : 'false'
         }&${queryString}`
         console.log('URL', url)

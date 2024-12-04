@@ -6,7 +6,7 @@ const archivePatner = async (
     partnerId: string,
     archiveReason: ArchiveType
 ): Promise<any> => {
-    const url = `${API_URL}/v1/organizations/${partnerId}`
+    const url = `${API_URL}/api/v1/organizations/${partnerId}`
     try {
         console.log('archiveReason:', archiveReason)
         const response = await api

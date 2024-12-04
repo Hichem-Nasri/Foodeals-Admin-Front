@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { ContactDto, PartnerPOST } from './partenairUtils'
+import { PartnerInfoDto } from './GlobalType'
 
 export const DeliveryPartnerSchema = z.object({
     logo: z.union([z.instanceof(File), z.string()]).optional(),
@@ -9,51 +10,43 @@ export const DeliveryPartnerSchema = z.object({
     responsibleId: z.string().min(3),
     solutions: z
         .object({
-            marketPro: z.object({
-                selected: z.boolean().default(false),
-                deliveryCost: z
-                    .number()
-                    .min(1, 'le cout de livraison doit etre superieur a 0')
-                    .default(0)
-                    .optional(),
-                commission: z
-                    .number()
-                    .min(1, 'le cout de commution doit etre superieur a 0')
-                    .default(0)
-                    .optional(),
-            }),
-            donatePro: z.object({
-                selected: z.boolean().default(false),
-                deliveryCost: z
-                    .number()
-                    .min(1, 'le cout de livraison doit etre superieur a 0')
-                    .default(0)
-                    .optional(),
-                commission: z
-                    .number()
-                    .min(1, 'le cout de commution doit etre superieur a 0')
-                    .default(0)
-                    .optional(),
-            }),
+            marketPro: z
+                .object({
+                    selected: z.boolean().default(false),
+                    deliveryCost: z.number().default(0),
+                    commission: z.number().default(0),
+                })
+                .optional(),
+            donatePro: z
+                .object({
+                    selected: z.boolean().default(false),
+                    deliveryCost: z.number().default(0),
+                    commission: z.number().default(0),
+                })
+                .optional(),
         })
         .refine((value) => {
-            if (
-                value.marketPro.selected &&
-                !value.marketPro.deliveryCost &&
-                !value.marketPro.commission
-            ) {
-                return 'Please fill in the delivery cost and commission for Market Pro solution'
+            if (value?.marketPro?.selected) {
+                if (
+                    value.marketPro?.deliveryCost <= 0 ||
+                    value.marketPro?.commission <= 0
+                ) {
+                    return 'Please ensure the delivery cost and commission for Market Pro solution are greater than 0'
+                }
             }
-            if (
-                value.donatePro.selected &&
-                !value.donatePro.deliveryCost &&
-                !value.donatePro.commission
-            ) {
-                return 'Please fill in the delivery cost and commission for Donate Pro solution'
+            if (value?.donatePro?.selected) {
+                if (
+                    value.donatePro.deliveryCost <= 0 ||
+                    value.donatePro.commission <= 0
+                ) {
+                    return 'Please ensure the delivery cost and commission for Donate Pro solution are greater than 0'
+                }
             }
             return true
         }),
-    solutionsList: z.array(z.string()).min(1),
+    solutionsList: z
+        .array(z.string())
+        .min(1, 'Veuillez selectionner une solution au moins'),
     phone: z
         .string()
         .min(9, 'Le numéro de téléphone doit contenir au moins 9 chiffres')
@@ -61,11 +54,23 @@ export const DeliveryPartnerSchema = z.object({
             message: 'Le numéro de téléphone ne doit contenir que des chiffres',
         }),
     email: z.string().email('Veuillez entrer une adresse email valide'),
-    country: z.string(),
-    siege: z.string().min(3),
-    state: z.string().min(3),
+    country: z.object({
+        id: z.string().optional(),
+        name: z.string().min(1, 'Selectionner un pays'),
+    }),
+    state: z.object({
+        id: z.string().optional(),
+        name: z.string().min(1, 'Selectionner un état'),
+    }),
+    siege: z.object({
+        id: z.string().optional(),
+        name: z.string().min(1, 'Selectionner une ville'),
+    }),
+    region: z.object({
+        id: z.string().optional(),
+        name: z.string().min(1, 'Selectionner une région'),
+    }),
     zone: z.array(z.string()).min(1),
-    region: z.string().min(3),
     address: z.string().min(3),
     documents: z.array(z.instanceof(File).optional()).optional(),
 })
@@ -79,10 +84,10 @@ export type DeliveryPartnerType = {
     solutionsList: string[]
     phone: string
     email: string
-    country: string
-    state: string
-    siege: string
-    region: string
+    country: Omit<PartnerInfoDto, 'avatarPath'>
+    state: Omit<PartnerInfoDto, 'avatarPath'>
+    region: Omit<PartnerInfoDto, 'avatarPath'>
+    siege: Omit<PartnerInfoDto, 'avatarPath'>
     zone: string[]
     address: string
     documents: File[]
@@ -122,13 +127,25 @@ export const emptyDeliveryPartner: z.infer<typeof DeliveryPartnerSchema> = {
     },
     phone: '',
     email: '',
-    country: '',
-    siege: '',
+    country: {
+        id: '',
+        name: '',
+    },
+    state: {
+        id: '',
+        name: '',
+    },
+    region: {
+        id: '',
+        name: '',
+    },
+    siege: {
+        id: '',
+        name: '',
+    },
     zone: [],
     address: '',
     documents: [],
-    region: '',
-    state: '',
 }
 
 // export const importDeliveryData: PartnerPOST = (data: )

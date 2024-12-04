@@ -55,7 +55,7 @@ export const Create: FC<CreateProps> = ({ type }) => {
         mutationFn: async (data: any) => {
             console.log('data: ', JSON.stringify(data))
             const res = await api
-                .post(`${API_URL}/v1/crm/prospects/create`, {
+                .post(`${API_URL}/api/v1/crm/prospects/create`, {
                     ...data,
                     type: type == 'PARTNER' || !type ? 'PARTNER' : data.type,
                 })

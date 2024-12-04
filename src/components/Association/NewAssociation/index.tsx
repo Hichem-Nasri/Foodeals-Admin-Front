@@ -20,8 +20,6 @@ import {
     defaultAssociationPostData,
 } from '@/types/association'
 import { useMutation } from '@tanstack/react-query'
-import api from '@/lib/Auth'
-import { API_ASSOCIATIONS } from '@/lib/api_url'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
 import { createAssociation } from '@/lib/api/association/createAssociations'
@@ -134,10 +132,10 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                 phone: data.phone,
             },
             associationAddress: {
-                country: data.country,
-                city: data.city,
-                state: data.state,
-                region: data.region,
+                country: data.country.name,
+                city: data.city.name,
+                state: data.state.name,
+                region: data.region.name,
                 address: data.address,
                 iframe: data.mapLocation || '',
             },

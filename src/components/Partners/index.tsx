@@ -21,8 +21,6 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query'
-import api from '@/lib/Auth'
-import { API_PARTNERS } from '@/lib/api_url'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
 import { useNotification } from '@/context/NotifContext'
 import {

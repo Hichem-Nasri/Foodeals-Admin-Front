@@ -1,6 +1,5 @@
 import api from '@/lib/Auth'
-import { API_SUBSCRIPTIONS } from '@/lib/api_url'
-import { PaymentCommission } from '@/types/paymentUtils'
+import { API_URL } from '..'
 
 export async function fetchSubscription(
     currentPage: number,
@@ -11,7 +10,7 @@ export async function fetchSubscription(
     try {
         const year = new Date(date).getFullYear()
         const url =
-            `${API_SUBSCRIPTIONS}/${year}?page=${currentPage}&size=${pageSize}` +
+            `${API_URL}/api/v1/payments/subscriptions/${year}?page=${currentPage}&size=${pageSize}` +
             (partner !== 'all' ? `&id=${partner}` : '')
         console.log('url', url)
         const response = await api.get(url).catch((error) => {

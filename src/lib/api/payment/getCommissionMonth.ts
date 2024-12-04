@@ -1,6 +1,4 @@
 import api from '@/lib/Auth'
-import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
-import { partnerCommissionMonthType } from '@/types/PaymentType'
 import { API_URL } from '..'
 
 export async function fetchPaymentCommissionMonth(
@@ -15,11 +13,11 @@ export async function fetchPaymentCommissionMonth(
             month: date.split('-')[0],
             year: date.split('-')[1],
         }
-        const url = `${API_URL}/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
+        const url = `${API_URL}/api/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
         console.log('url: ', url)
         const response = await api
             .get(
-                `${API_URL}/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
+                `${API_URL}/api/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
             )
             .catch((error) => {
                 throw error
@@ -42,10 +40,7 @@ export async function getMultiProduct(
     try {
         const response = await api
             .get(
-                `${API_URL.replace(
-                    'api',
-                    'v1'
-                )}/orders/${id}/operations?page=${currentPage}&size=${pageSize}`
+                `${API_URL}/v1/orders/${id}/operations?page=${currentPage}&size=${pageSize}`
             )
             .catch((error) => {
                 throw error

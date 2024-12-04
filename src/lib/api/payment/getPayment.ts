@@ -1,5 +1,5 @@
 import api from '@/lib/Auth'
-import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
+import { API_URL } from '..'
 
 export async function fetchPaymentCommission(
     currentPage: number,
@@ -14,7 +14,7 @@ export async function fetchPaymentCommission(
         console.log('fetchPaymentCommission', year, month)
         const response = await api
             .get(
-                `${API_PAYMENT_COMMISSIONS}/${year}/${month}?page=${currentPage}&size=${pageSize}` +
+                `${API_URL}/api/v1/payments/commissions/${year}/${month}?page=${currentPage}&size=${pageSize}` +
                     (id ? `&id=${id}` : '')
             )
             .catch((error) => {

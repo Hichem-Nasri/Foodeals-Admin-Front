@@ -41,10 +41,7 @@ const SelectManager = ({
         const fetchManagerData = async () => {
             const data = await api
                 .get(
-                    `${API_URL.replace(
-                        'api',
-                        'v1'
-                    )}/users/sells-managers?name=${search}&pageNumber=0&pageSize=10`
+                    `${API_URL}/v1/users/sells-managers?name=${search}&pageNumber=0&pageSize=10`
                 )
                 .then((res) => {
                     return res.data?.content?.map((manager: any) => ({

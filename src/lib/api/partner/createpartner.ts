@@ -1,7 +1,6 @@
 import api from '@/lib/Auth'
-import { API_PARTNERS } from '@/lib/api_url'
-import { NotificationType } from '@/types/GlobalType'
 import { PartnerPOST } from '@/types/partenairUtils'
+import { API_URL } from '..'
 
 export const createPartner = async (
     id: string,
@@ -21,7 +20,9 @@ export const createPartner = async (
     formData.append('dto', blob)
     if (assets.logo) formData.append('logo', assets.logo)
     if (assets.cover) formData.append('cover', assets.cover)
-    const url = id ? `${API_PARTNERS}/edit/${id}` : `${API_PARTNERS}/create`
+    const url = id
+        ? `${API_URL}/api/v1/organizations/partners/edit/${id}`
+        : `${API_URL}/api/v1/organizations/partners/create`
     const method = id ? 'put' : 'post'
     console.log('methode: ', method, url)
     const response = await api[method](url, formData).catch((err) => {

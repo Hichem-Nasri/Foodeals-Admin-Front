@@ -6,7 +6,7 @@ const archiveUser = async (
     partnerId: string,
     archiveReason: ArchiveType
 ): Promise<any> => {
-    const url = `${API_URL.replace('api', 'v1')}/users/${partnerId}`
+    const url = `${API_URL}/v1/users/${partnerId}`
     try {
         console.log('archiveReason:', archiveReason)
         const response = await api

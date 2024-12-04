@@ -13,13 +13,10 @@ export async function fetchOragnizations(
             const entity = path.includes('partenair')
                 ? 'PARTNER_SB'
                 : 'FOOD_BANK_SB,FOOD_BANK_ASSOCIATION'
-            url = `${API_URL.replace(
-                'api',
-                'v1'
-            )}/sub-entities/search?name=${search}&types=${entity}&deleted=${archived}&page=0&size=10`
+            url = `${API_URL}/v1/sub-entities/search?name=${search}&types=${entity}&deleted=${archived}&page=0&size=10`
         } else {
             url =
-                `${API_URL}/v1/organizations/partners/search?name=${search}&page=0&size=10` +
+                `${API_URL}/api/v1/organizations/partners/search?name=${search}&page=0&size=10` +
                 (types ? `&types=${types}` : '') +
                 `&deleted=${archived}`
         }

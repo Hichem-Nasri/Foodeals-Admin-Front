@@ -42,11 +42,13 @@ export const FormAssociation: FC<FormAssociationProps> = ({
     disabled,
     isLoaded,
 }) => {
+    const { country, state, city, region } = form.watch()
+
     const [address, setAddress] = useState({
-        countryId: '',
-        stateId: '',
-        cityId: '',
-        regionId: '',
+        countryId: country.id || '',
+        stateId: state.id || '',
+        cityId: city.id || '',
+        regionId: region.id || '',
     })
     const { handleSubmit, control } = form
     return (
@@ -179,7 +181,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         />
                                         <FieldCountry
                                             control={control}
-                                            name="country"
+                                            name="country.name"
                                             label="Pays"
                                             placeholder="Pays"
                                             disabled={disabled!}
@@ -193,7 +195,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         />
                                         <FieldState
                                             control={control}
-                                            name="state"
+                                            name="state.name"
                                             label="State"
                                             disabled={disabled!}
                                             country={address.countryId}
@@ -208,7 +210,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldCity
                                             control={control}
-                                            name="city"
+                                            name="city.name"
                                             label="Ville"
                                             placeholder="Ville"
                                             disabled={disabled!}
@@ -223,7 +225,7 @@ export const FormAssociation: FC<FormAssociationProps> = ({
                                         />
                                         <FieldRegion
                                             control={control}
-                                            name="region"
+                                            name="region.name"
                                             label="Region"
                                             placeholder="Region"
                                             disabled={disabled!}

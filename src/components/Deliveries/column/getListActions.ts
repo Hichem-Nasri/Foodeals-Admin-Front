@@ -133,6 +133,7 @@ export const GetListActions: (
                 router.push(AppRoutes.deliveryPayment + '?deliveryId=' + id),
             icon: Users,
             label: 'Liste des paiement',
+            shouldNotDisplay: status !== 'VALIDATED',
         },
         {
             actions: async (id: string) => {

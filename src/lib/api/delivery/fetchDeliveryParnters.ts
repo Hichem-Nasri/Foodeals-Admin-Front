@@ -1,14 +1,11 @@
 import api from '@/lib/Auth'
-import { PartnerStatus } from '@/components/Partners/PartnerStatus'
-import { API_DELIVERY_PARTNERS, API_PARTNERS } from '@/lib/api_url'
-import { getSolutions } from '@/lib/utils'
 import {
     DeliveryPartnerType,
     emptyDeliveryPartner,
 } from '@/types/DeliverySchema'
 import { ContractStatusPartner } from '@/types/GlobalType'
-import { PartnerPOST } from '@/types/partenairUtils'
 import { PartnerStatusType } from '@/types/partnersType'
+import { API_URL } from '..'
 
 export async function fetchDeliveryPartners(
     currentPage: number,
@@ -17,7 +14,7 @@ export async function fetchDeliveryPartners(
     try {
         const response = await api
             .get(
-                `${API_DELIVERY_PARTNERS}?page=${currentPage}&size=${pageSize}`
+                `${API_URL}/api/v1/organizations/delivery-partners?page=${currentPage}&size=${pageSize}`
             )
             .catch((error) => {
                 throw error
@@ -42,18 +39,11 @@ type solutionContract = {
     }
 }
 
-contractCommissionDto: deliveryAmount: 1212
-deliveryCommission: 1212
-withCard: null
-withCash: null
-contractSubscriptionDto: null
-solution: 'pro_market'
-
 export const getDelivery = async (id: string) => {
     if (!id || id === 'new') return null
     try {
         const res = await api
-            .get(`${API_PARTNERS}/form-data/${id}`)
+            .get(`${API_URL}/api/v1/organizations/partners/form-data/${id}`)
             .catch((error) => {
                 throw new Error(error)
             })

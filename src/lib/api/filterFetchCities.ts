@@ -12,19 +12,13 @@ export async function fetchCities(
         let url = `${API_URL}`
         if (path?.includes('sieges') || path?.includes('sub-account')) {
             const id = path.split('/')?.pop()!
-            url = `${API_URL.replace(
-                'api',
-                'v1'
-            )}/sub-entities/cities/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
+            url = `${API_URL}/v1/sub-entities/cities/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
         } else if (
             path?.includes('collaborator') ||
             path?.includes('collaborateur')
         ) {
             const id = path.split('/')?.pop()!
-            url = `${API_URL.replace(
-                'api',
-                'v1'
-            )}/users/cities/organizations/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
+            url = `${API_URL}/v1/users/cities/organizations/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
         } else {
             url = `${API_URL}/v1/organizations/cities/search?city=${search}&country=${country}&pageNum=0&pageSize=10&types=${types}`
         }

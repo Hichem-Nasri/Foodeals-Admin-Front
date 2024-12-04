@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { PartnerSolutionType } from './partnersType'
+import { PartnerInfoDto } from './GlobalType'
 
 export const associationInformationSchema = z.object({
     logo: z.union([z.instanceof(File), z.string()]).optional(),
@@ -18,10 +19,22 @@ export const associationInformationSchema = z.object({
         .string()
         .min(0, 'Le numéro de téléphone doit contenir au moins 9 chiffres'),
     managerId: z.string().min(1, 'selectionner un manager'),
-    country: z.string().min(3, 'selectionner un pays'),
-    state: z.string().min(3, 'selectionner un stat'),
-    city: z.string().min(3, 'selectionner une ville'),
-    region: z.string().min(3, 'selectionner une region'),
+    country: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3, 'selectionner un pays'),
+    }),
+    state: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3, 'selectionner un etat'),
+    }),
+    city: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3, 'selectionner une ville'),
+    }),
+    region: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3, 'selectionner une region'),
+    }),
     address: z.string().min(3, 'saissir une adresse'),
     associationType: z.string().min(3, "selectionner un type d'association"),
     mapLocation: z.string().optional(),
@@ -75,9 +88,10 @@ export const defaultAssociationInformationData = {
     email: '',
     PVNumber: '',
     managerId: '',
-    country: '',
-    city: '',
-    region: '',
+    country: { id: '', name: '' },
+    state: { id: '', name: '' },
+    city: { id: '', name: '' },
+    region: { id: '', name: '' },
     address: '',
     associationType: '',
     mapLocation: '',
@@ -107,9 +121,10 @@ export interface AssociationInformationSchemaType {
     email: string
     PVNumber: string
     managerId: string
-    country: string
-    city: string
-    region: string
+    country: Omit<PartnerInfoDto, 'avatarPath'>
+    state: Omit<PartnerInfoDto, 'avatarPath'>
+    city: Omit<PartnerInfoDto, 'avatarPath'>
+    region: Omit<PartnerInfoDto, 'avatarPath'>
     address: string
     associationType: string
     mapLocation: string

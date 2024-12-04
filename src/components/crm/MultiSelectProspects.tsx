@@ -32,7 +32,7 @@ const MultiSelectProspects: React.FC<MultiSelectProspectsProps> = ({
         const fetchProspcts = async () => {
             const res = await api
                 .get(
-                    `${API_URL}/v1/crm/prospects/search?name=&page=0&size=11&types=PARTNER`
+                    `${API_URL}/api/v1/crm/prospects/search?name=&page=0&size=11&types=PARTNER`
                 )
                 .then((res) => res.data)
                 .catch((err) => {

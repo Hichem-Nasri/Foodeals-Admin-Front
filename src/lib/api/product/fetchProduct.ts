@@ -8,7 +8,11 @@ export async function fetchProduct(
 ): Promise<{ status: number; data: any }> {
     try {
         const response = await api
-            .get(API_URL + appApi.productDetails.replace('{productId}', id))
+            .get(
+                API_URL +
+                    '/api' +
+                    appApi.productDetails.replace('{productId}', id)
+            )
             .catch((error) => {
                 throw new Error('Failed to fetch product')
             })

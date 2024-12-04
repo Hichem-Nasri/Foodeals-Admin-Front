@@ -10,7 +10,7 @@ export const getPartnerData = async (
     // console.log('partnerId', partnerId)
     if (!partnerId || partnerId == '%3Aid') return defaultPartnerData
     try {
-        const url = `${API_URL}/v1/organizations/partners/form-data/${partnerId}`
+        const url = `${API_URL}/api/v1/organizations/partners/form-data/${partnerId}`
         const response = await api
             .get(url)
             .then((res) => res.data)

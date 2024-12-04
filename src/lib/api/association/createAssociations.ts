@@ -1,8 +1,6 @@
 import api from '@/lib/Auth'
-import { API_ASSOCIATIONS, API_PARTNERS } from '@/lib/api_url'
 import { AssociationPostType } from '@/types/association'
-import { NotificationType } from '@/types/GlobalType'
-import { PartnerPOST } from '@/types/partenairUtils'
+import { API_URL } from '..'
 
 export const createAssociation = async (
     id: string,
@@ -17,7 +15,9 @@ export const createAssociation = async (
     formData.append('dto', blob)
     formData.append('logo', logo as Blob)
     formData.append('cover', cover as Blob)
-    const url = id ? `${API_ASSOCIATIONS}/${id}` : `${API_ASSOCIATIONS}/create`
+    const url = id
+        ? `${API_URL}/api/v1/organizations/associations/${id}`
+        : `${API_URL}/api/v1/organizations/associations/create`
     const method = id ? 'put' : 'post'
 
     const response = await api[method](url, formData).catch((err) => {

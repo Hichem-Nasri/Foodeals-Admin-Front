@@ -1,4 +1,9 @@
-import { AddressType, ContactType, ProfileType } from './GlobalType'
+import {
+    AddressType,
+    ContactType,
+    PartnerInfoDto,
+    ProfileType,
+} from './GlobalType'
 import { PartnerSolutionType } from './partnersType'
 
 export type CrmType = {
@@ -69,10 +74,22 @@ export interface CrmInformationSchemaType {
     }
     phone: string
     email: string
-    country: string
-    state: string
-    city: string
-    region: string
+    country: {
+        id?: string
+        name: string
+    }
+    state: {
+        id?: string
+        name: string
+    }
+    city: {
+        id?: string
+        name: string
+    }
+    region: {
+        id?: string
+        name: string
+    }
     address: string
     solutions: string[]
 }

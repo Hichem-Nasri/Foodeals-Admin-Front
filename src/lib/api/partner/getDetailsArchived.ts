@@ -10,8 +10,9 @@ export async function fetchDetailsArchived(
 ): Promise<{ status: number; data: DetailsArchiveType[] }> {
     try {
         let url = ''
-        if (['prospect', 'organisation'].includes(type)) url = `${API_URL}/v1/`
-        else url = `${API_URL.replace('api', 'v1')}/`
+        if (['prospect', 'organisation'].includes(type))
+            url = `${API_URL}/api/v1/`
+        else url = `${API_URL}/v1/`
         switch (type) {
             case 'prospect':
                 url += `crm/prospects`

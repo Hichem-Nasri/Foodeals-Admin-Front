@@ -1,5 +1,4 @@
 import api from '@/lib/Auth'
-import { API_DELIVERY_PARTNERS } from '@/lib/api_url'
 import { API_URL } from '..'
 
 const buildQueryString = (data: any, type: string, sub: string) => {
@@ -64,8 +63,8 @@ export async function getCollaboratorDelivery(
     try {
         const query = buildQueryString(filterData, 'DELIVERY_PARTNER', '')
         const url =
-            API_URL.replace('api', 'v1') +
-            `/users/organizations/${id}` +
+            API_URL +
+            `/v1/users/organizations/${id}` +
             `?page=${currentPage}&size=${pageSize}&sort=name.firstName,asc&deletedAt=${archive}&${query}`
         console.log('url', url)
         const res = await api.get(url).catch((error) => {

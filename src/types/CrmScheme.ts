@@ -4,6 +4,7 @@ import { CrmType } from './CrmType'
 import { capitalize } from './utils'
 import { getSolutions } from '@/lib/utils'
 import { start } from 'repl'
+import { ItemDto } from './PartnerSchema'
 
 export const CrmInformationSchema = z.object({
     companyName: z.string().min(3),
@@ -26,11 +27,23 @@ export const CrmInformationSchema = z.object({
         })
         .optional(),
     email: z.string().email('Veuillez entrer une adresse email valide'),
-    country: z.string().min(3),
     managerInfo: z.union([z.string().min(1), z.number().min(1)]),
-    state: z.string().min(3),
-    city: z.string().min(3),
-    region: z.string().min(3),
+    country: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    state: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    city: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    region: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
     solutions: z.array(z.string()).min(1),
     address: z.string().min(3),
     type: z.string().default('PARTNER'),
@@ -109,10 +122,10 @@ export const defaultCrmInformationData = {
         avatarPath: '',
     },
     managerInfo: '',
-    country: '',
-    city: '',
-    state: '',
-    region: '',
+    country: ItemDto,
+    city: ItemDto,
+    state: ItemDto,
+    region: ItemDto,
     address: '',
 }
 
@@ -155,11 +168,11 @@ export const getCrmCreateData = (data: CrmInformationSchemaType) => {
         },
         manager_id: data.managerInfo,
         address: {
-            country: data.country,
-            city: data.city,
-            state: data.state,
+            country: data.country.name,
+            city: data.city.name,
+            state: data.state.name,
+            region: data.region.name,
             address: data.address,
-            region: data.region,
         },
         event: null,
         type: data.type,

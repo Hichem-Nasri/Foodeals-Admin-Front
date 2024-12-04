@@ -17,14 +17,14 @@ const SwitchToggle = <T extends string>({
     }
 
     return (
-        <div className="w-fit p-2 rounded-[14px] bg-white flex items-center text-xs lg:text-[14px] justify-start">
-            <div className="w-auto rounded-[14px] bg-white flex items-center  justify-start gap-2 relative">
+        <div className="w-full lg:w-fit p-2 rounded-[14px] bg-white flex items-center justify-center text-xs lg:text-[14px] lg:justify-start">
+            <div className="w-full rounded-[14px] bg-white flex items-center  justify-center lg:justify-start gap-2 relative">
                 {options.map((option) => (
                     <div
                         key={option}
                         onClick={() => handleSwitch(option)}
                         className={cn(
-                            `px-5 py-2 rounded-[4px] text-lynch-400 w-auto cursor-pointer`,
+                            `px-5 py-2 rounded-[4px] text-lynch-400 lg:w-auto cursor-pointer w-full flex justify-center items-center`,
                             `${
                                 selectedType === option
                                     ? ' text-white z-10'
@@ -44,7 +44,7 @@ const SwitchToggle = <T extends string>({
                                 : ''
                         }` // Assumes the second option is the one that needs to be translated
                     )}
-                ></div>
+                />
             </div>
         </div>
     )

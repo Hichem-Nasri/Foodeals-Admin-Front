@@ -50,16 +50,17 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
 }) => {
     const { id } = useParams()
     const { handleSubmit, control } = form
+    const { country, state, siege, region } = form.watch()
     const [address, setAddress] = useState<{
         countryId: string
         cityId: string
         stateId: string
         regionId: string
     }>({
-        countryId: '',
-        cityId: '',
-        stateId: '',
-        regionId: '',
+        countryId: country.id || '',
+        cityId: siege.id || '',
+        stateId: state.id || '',
+        regionId: region.id || '',
     })
 
     const router = useRouter()
@@ -67,7 +68,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="gap-[30px] lg:gap-0 flex flex-col px-4 pb-4 lg:px-0"
+                className="gap-[30px] lg:gap-0 flex flex-col pb-4 lg:px-0"
             >
                 <div className="flex relative gap-5 lg:pb-0 pb-14 lg:hidden my-6">
                     <AvatarField
@@ -210,7 +211,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                     <div className="flex lg:flex-row flex-col items-start gap-3">
                                         <FieldCountry
                                             control={control}
-                                            name="country"
+                                            name="country.name"
                                             label="Pays"
                                             disabled={disabled}
                                             country={address.countryId}
@@ -223,7 +224,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         />
                                         <FieldState
                                             control={control}
-                                            name="state"
+                                            name="state.name"
                                             label="State"
                                             disabled={disabled!}
                                             country={address.countryId}
@@ -236,7 +237,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                         />
                                         <FieldCity
                                             control={control}
-                                            name="siege"
+                                            name="siege.name"
                                             label="Siège"
                                             state={address.stateId}
                                             disabled={disabled}
@@ -252,7 +253,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                     <div className="flex lg:grid grid-cols-3 flex-col items-start gap-3">
                                         <FieldRegion
                                             control={control}
-                                            name="region"
+                                            name="region.name"
                                             label="Région"
                                             disabled={disabled}
                                             state={address.stateId}

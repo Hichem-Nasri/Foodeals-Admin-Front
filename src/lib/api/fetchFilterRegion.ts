@@ -10,10 +10,7 @@ export async function fetchRegionsFilter(
     try {
         const id = path?.split('/')?.pop()!
         const [types, archived] = type.split('&')
-        let url = `${API_URL.replace(
-            'api',
-            'v1'
-        )}/users/regions/organizations/search?region=${search}&organizationId=${id}`
+        let url = `${API_URL}/v1/users/regions/organizations/search?region=${search}&organizationId=${id}`
         const res = await api.get(url).catch((error) => {
             throw new Error(error)
         })

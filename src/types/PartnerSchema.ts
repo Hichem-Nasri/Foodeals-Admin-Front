@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { PartnerStatusType } from './partnersType'
 import { subscribe } from 'diagnostics_channel'
-import { PartnerEntitiesType } from './GlobalType'
+import { PartnerEntitiesType, PartnerInfoDto } from './GlobalType'
 import { sub } from 'date-fns'
 
 export const PartnerInformationSchema = z.object({
@@ -20,13 +20,31 @@ export const PartnerInformationSchema = z.object({
     email: z.string().email('Veuillez entrer une adresse email valide'),
     commercialRegisterNumber: z.string().min(3),
     partnerType: z.array(z.string()).optional(),
-    country: z.string().min(3),
-    state: z.string().min(3),
-    city: z.string().min(3),
-    region: z.string().min(3),
+    country: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    state: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    city: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+    region: z.object({
+        id: z.string().optional(),
+        name: z.string().min(3),
+    }),
+
     address: z.string().min(3),
     mapLocation: z.string().optional(),
 })
+
+export const ItemDto = {
+    id: '',
+    name: '',
+}
 
 export const defaultPartnerInformationData = {
     logo: null,
@@ -39,10 +57,10 @@ export const defaultPartnerInformationData = {
     email: '',
     commercialRegisterNumber: '',
     partnerType: [],
-    country: '',
-    city: '',
-    state: '',
-    region: '',
+    country: ItemDto,
+    state: ItemDto,
+    city: ItemDto,
+    region: ItemDto,
     address: '',
     mapLocation: '',
 }
@@ -58,10 +76,10 @@ export interface PartnerInformationSchemaType {
     email: string
     commercialRegisterNumber: string
     partnerType: string[]
-    country: string
-    state: string
-    city: string
-    region: string
+    country: Omit<PartnerInfoDto, 'avatarPath'>
+    state: Omit<PartnerInfoDto, 'avatarPath'>
+    city: Omit<PartnerInfoDto, 'avatarPath'>
+    region: Omit<PartnerInfoDto, 'avatarPath'>
     address: string
     mapLocation: string
 }
@@ -72,7 +90,7 @@ export const PartnerSubscriptionSchema = z.object({
     beneficiary: z.string().min(3),
     rib: z.string().min(3),
     accountType: z.string().min(3),
-    subscribtionByEntity: z.string().min(3),
+    subscribtionByEntity: z.string().optional(),
     subscriptionPayedBySubEntities: z.string().default('mainEntity'),
     marketPro: z
         .object({

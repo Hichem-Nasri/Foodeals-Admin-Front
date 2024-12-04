@@ -1,5 +1,4 @@
 import api from '@/lib/Auth'
-import { API_PAYMENT_COMMISSIONS } from '@/lib/api_url'
 import { API_URL } from '..'
 
 export async function getPartnerDeliveryPayment(
@@ -14,8 +13,8 @@ export async function getPartnerDeliveryPayment(
     try {
         const res = await api
             .get(
-                API_PAYMENT_COMMISSIONS +
-                    `/delivery/${id}/${year}` +
+                API_URL +
+                    `/api/v1/payments/commissions/delivery/${id}/${year}` +
                     `?page=${currentPage}&size=${pageSize}&sort=name.firstName,asc`
             )
             .catch((error) => {
@@ -37,9 +36,8 @@ export async function getPartnerDeliveryPaymentByMonth(
     try {
         const res = await api
             .get(
-                API_URL.replace('api', 'v1') +
-                    `/orders/${partnerId}` +
-                    `/operations?page=${currentPage}&size=${pageSize}&sort=name.firstName,asc`
+                API_URL +
+                    `/v1/orders/${partnerId}/operations?page=${currentPage}&size=${pageSize}&sort=name.firstName,asc`
             )
             .catch((error) => {
                 throw new Error(error.response.data.message)

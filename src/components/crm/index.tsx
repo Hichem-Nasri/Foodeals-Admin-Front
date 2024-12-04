@@ -109,7 +109,7 @@ export default function Crm() {
     })
     const tableAssocciation = useReactTable({
         data,
-        columns: columnCrmAssociations(router, setData, leadKo, refetch),
+        columns: columnCrmAssociations(leadKo, refetch),
         state: {
             columnFilters,
         },
@@ -121,7 +121,7 @@ export default function Crm() {
     })
     const table = useReactTable({
         data,
-        columns: columnsCrmTable(router, setData, leadKo, refetch),
+        columns: columnsCrmTable(leadKo, refetch),
         state: {
             columnFilters,
         },
@@ -183,7 +183,13 @@ export default function Crm() {
                 }
                 data={data}
                 title="Listes des prospects"
-                transform={(data: any) => <CrmCardDetails crm={data} />}
+                transform={(data: any) => (
+                    <CrmCardDetails
+                        crm={data}
+                        refetch={refetch}
+                        LeadKo={leadKo}
+                    />
+                )}
                 isLoading={isLoading || isRefetching}
             />
             <PaginationData

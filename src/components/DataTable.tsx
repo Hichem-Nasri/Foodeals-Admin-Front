@@ -101,19 +101,26 @@ export const DataTable: FC<DataTableProps<any>> = ({
                                 <TableHead
                                     key={header.id}
                                     onClick={header.column.getToggleSortingHandler()}
-                                    className={cn('cursor-pointer min-w-40', {
-                                        'min-w-48':
-                                            header.column.id === 'createdAt' ||
-                                            header.column.id === 'date',
-                                        'min-w-28': header.column.id === 'logo',
-                                        'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit':
-                                            ['organizationId', 'id'].includes(
-                                                header.id
-                                            ),
-                                        'min-w-60': ['email', 'phone'].includes(
-                                            header.column.id
-                                        ),
-                                    })}
+                                    className={cn(
+                                        'cursor-pointer min-w-40 text-nowrap',
+                                        {
+                                            'min-w-48':
+                                                header.column.id ===
+                                                    'createdAt' ||
+                                                header.column.id === 'date',
+                                            'min-w-28':
+                                                header.column.id === 'logo',
+                                            'sticky right-0 shadow-md bg-white min-w-0 rounded-tl-[18px] w-fit':
+                                                [
+                                                    'organizationId',
+                                                    'id',
+                                                ].includes(header.id),
+                                            'min-w-60': [
+                                                'email',
+                                                'phone',
+                                            ].includes(header.column.id),
+                                        }
+                                    )}
                                 >
                                     <div className="flex justify-between items-center w-full">
                                         {header.isPlaceholder
