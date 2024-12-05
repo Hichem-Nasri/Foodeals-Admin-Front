@@ -207,18 +207,18 @@ export const Header: React.FC<HeaderProps> = ({ formTitle }) => {
                                                     )}
                                                 </Fragment>
                                             ))}
-                                        <Button
-                                            className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
-                                            onClick={() => {
-                                                handleLogout()
-                                            }}
-                                        >
-                                            <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
-                                                <LogOut />
-                                            </div>
-                                            Se déconnecter
-                                            <ChevronRight className="ml-auto" />
-                                        </Button>
+                                            <Button
+                                                className="w-full justify-normal gap-2 bg-transparent text-lynch-500 hover:bg-lynch-50 rounded-[6px] py-[0.375rem] px-0 shrink-0"
+                                                onClick={() => {
+                                                    handleLogout()
+                                                }}
+                                            >
+                                                <div className="flex justify-center items-center p-[0.625rem] icon rounded-full bg-red-500 text-white">
+                                                    <LogOut />
+                                                </div>
+                                                Se déconnecter
+                                                <ChevronRight className="ml-auto" />
+                                            </Button>
                                         </Fragment>
                                     )}
                                 </SheetDescription>

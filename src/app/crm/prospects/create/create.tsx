@@ -31,7 +31,6 @@ import { AppRoutes } from '@/lib/routes'
 import { archiveProspect } from '@/lib/api/crm/prospect/archiveProspects'
 import { TopBar } from '@/components/crm/Prospect/NewProspect/TopBar'
 import { FormCrmInfo } from '@/components/crm/Prospect/NewProspect/FromProspectInfo'
-import { createProspect } from '@/lib/api/crm/prospect/createProspect'
 import { Archiver } from '@/components/utils/Archiver'
 import { ArchivePartnerSchema } from '@/types/PartnerSchema'
 import { API_URL } from '@/lib/api'
@@ -87,7 +86,9 @@ export const Create: FC<CreateProps> = ({ type }) => {
     })
 
     const onSubmit = () => {
-        router.push(AppRoutes.newConvertir.replace(':id', Info.id))
+        if (type == 'PARTNER')
+            router.push(AppRoutes.newConvertir.replace(':id', Info.id))
+        else router.push(AppRoutes.newAssoConvertir.replace(':id', Info.id))
     }
     const onSaveData = (e: CrmInformationSchemaType) => {
         console.log('e', e)

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import anime from 'animejs'
 import Lottie from 'react-lottie'
 import foodealsLoading from '@/lotties/foodealsLoading.json'
+import { useMediaQuery } from 'react-responsive'
 
 const SplashScreen = ({
     finishLoading,
@@ -11,6 +12,7 @@ const SplashScreen = ({
     finishLoading: Function
     loop?: boolean
 }) => {
+    const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
     useEffect(() => {
         if (loop) {
             return
@@ -36,8 +38,8 @@ const SplashScreen = ({
             <div className="flex items-center justify-center space-x-4">
                 <Lottie
                     style={{
-                        width: '50px',
-                        height: '50px',
+                        width: isMobile ? '20px' : '50px',
+                        height: isMobile ? '20px' : '50px',
                         marginBottom: '10px',
                     }}
                     options={{
@@ -45,8 +47,8 @@ const SplashScreen = ({
                         autoplay: true,
                         animationData: foodealsLoading,
                     }}
-                    width={50}
-                    height={50}
+                    width={isMobile ? 20 : 50}
+                    height={isMobile ? 20 : 50}
                 />
                 <h1 className="text-xl sm:text-3xl text-white lg:text-5xl">
                     Foodeals

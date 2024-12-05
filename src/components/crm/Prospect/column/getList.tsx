@@ -19,8 +19,9 @@ export const GetListProspcts: (
     id: string,
     refetch: () => void,
     LeadKo: boolean,
-    status: string
-) => ActionType[] = (id, refetch, LeadKo, status) => {
+    status: string,
+    type: string
+) => ActionType[] = (id, refetch, LeadKo, status, type) => {
     const router = useRouter()
     if (LeadKo) {
         return [
@@ -56,19 +57,29 @@ export const GetListProspcts: (
     }
     return [
         {
-            actions: () => router.push(AppRoutes.prospects + '/' + id),
+            actions: () =>
+                router.push(AppRoutes.prospects + '/' + id + `?type=${type}`),
             icon: Eye,
             label: 'Voir',
         },
         {
             actions: () =>
-                router.push(AppRoutes.prospects + '/' + id + '?mode=edit'),
+                router.push(
+                    AppRoutes.prospects +
+                        '/' +
+                        id +
+                        '?mode=edit' +
+                        `&type=${type}`
+                ),
             icon: Pencil,
             label: 'Modifier',
         },
         {
-            actions: () =>
-                router.push(AppRoutes.newConvertir.replace(':id', id)),
+            actions: () => {
+                if (type == 'PARTNER')
+                    router.push(AppRoutes.newConvertir.replace(':id', id))
+                else router.push(AppRoutes.newAssoConvertir.replace(':id', id))
+            },
             icon: Rocket,
             label: 'Convertir',
             shouldNotDisplay: status != 'IN_PROGRESS' || LeadKo,

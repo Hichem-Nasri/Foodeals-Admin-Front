@@ -40,7 +40,15 @@ import { z } from 'zod'
 import IsLoading from '@/components/utils/IsLoading'
 import { API_URL } from '@/lib/api'
 
-const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
+const ProspectElement = ({
+    data,
+    id,
+    type,
+}: {
+    data: CrmType
+    id: string
+    type: string
+}) => {
     const [prospect, setProspect] = React.useState(() => data)
     const params = useSearchParams()
     const [countryCode, setCountryCode] = React.useState('')
@@ -148,12 +156,21 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
                             CrmInformation.handleSubmit(onSubmitCrmInfo)()
                         }}
                         onSubmit={() => {
-                            router.push(
-                                AppRoutes.newConvertir.replace(
-                                    ':id',
-                                    id as string
+                            if (type == 'PARTNER') {
+                                router.push(
+                                    AppRoutes.newConvertir.replace(
+                                        ':id',
+                                        id as string
+                                    )
                                 )
-                            )
+                            } else {
+                                router.push(
+                                    AppRoutes.newAssoConvertir.replace(
+                                        ':id',
+                                        id as string
+                                    )
+                                )
+                            }
                         }}
                         open={open}
                         isLoading={isPending}
@@ -250,9 +267,12 @@ interface ProspectProps {
     params: {
         id: string
     }
+    searchParams: {
+        type: string
+    }
 }
 
-const ProspectPage: FC<ProspectProps> = ({ params }) => {
+const ProspectPage: FC<ProspectProps> = ({ params, searchParams }) => {
     const { prospect, isSuccess, error } = useProspect(params.id)
 
     return (
@@ -262,7 +282,11 @@ const ProspectPage: FC<ProspectProps> = ({ params }) => {
             ) : error ? (
                 <div>Error: {error?.message}</div>
             ) : (
-                <ProspectElement data={prospect} id={params.id} />
+                <ProspectElement
+                    data={prospect}
+                    id={params.id}
+                    type={searchParams.type}
+                />
             )}
         </Layout>
     )

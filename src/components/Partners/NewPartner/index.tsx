@@ -236,7 +236,9 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
             <TopBar
                 isPending={isPending || isPendingContract}
                 status={partnerDetails?.status || PartnerStatusType.DRAFT}
-                primaryButtonDisabled={partnerId === '' || readOnly}
+                primaryButtonDisabled={
+                    partnerId === '' || readOnly || isPendingContract
+                }
                 secondaryButtonDisabled={readOnly}
                 onSaveData={handleSaveData}
                 onSubmit={handleSubmit}

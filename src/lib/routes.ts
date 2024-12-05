@@ -5,6 +5,7 @@ export const AppRoutes = {
     home: '/',
     payment: '/paiement',
     collaboratorAssociation: '/associations/collaborateur/:id',
+    newAssoConvertir: '/associations/convertir/:id',
     paymentDetails: '/paiement/:id',
     businessPartner: '/paiement/partenaire-business',
     businessPartnerDetails: '/paiement/partenaire-livraisons/:id',

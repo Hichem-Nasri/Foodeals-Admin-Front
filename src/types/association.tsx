@@ -1,11 +1,20 @@
-import { ContractStatus, PartnerSolutionType } from './partnersType'
+import {
+    ContractStatus,
+    PartnerSolutionType,
+    PartnerStatusType,
+} from './partnersType'
 import {
     AddressType,
     ContactType,
     ContractStatusPartner,
     PartnerInfoDto,
 } from './GlobalType'
-import { AssociationInformationSchemaType } from './associationSchema'
+import {
+    AssociationInformationSchemaType,
+    defaultAssociationInformationData,
+    defaultEngagementData,
+} from './associationSchema'
+import { CrmType } from './CrmType'
 
 export type EntitiesType = 'FOOD_BANK' | 'ASSOCIATION'
 
@@ -23,6 +32,31 @@ export interface AssociationType {
     city: string
     solutions: string[]
     type: string
+}
+
+export const exportAssociationConvertir: (
+    partner: CrmType
+) => AssociationInformationSchemaType = (partner) => {
+    return {
+        ...defaultAssociationInformationData,
+        ...defaultEngagementData,
+        companyName: partner.companyName,
+        companyType: [partner.category],
+        associationType: partner.type || '',
+        responsible: `${partner.creatorInfo.name?.firstName} ${partner.creatorInfo.name?.lastName}`,
+        solutions: partner.solutions,
+        subscriptionType: 'general',
+        mapLocation: partner.address.iframe,
+        phone: partner.contact.phone,
+        email: partner.contact.email,
+        managerId: partner.managerInfo.id + '',
+        country: partner.address.country,
+        city: partner.address.city,
+        region: partner.address.region,
+        state: partner.address.state,
+        address: partner.address.address,
+        status: PartnerStatusType.IN_PROGRESS,
+    }
 }
 
 export interface AssociationPostType {

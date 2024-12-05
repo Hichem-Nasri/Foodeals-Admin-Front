@@ -24,7 +24,7 @@ import {
     defaultArchivePartnerData,
 } from '@/types/PartnerSchema'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { capitalize } from '@/types/utils'
 import MobileHeader from './MobileHeader'
 
@@ -52,13 +52,15 @@ export const Archiver: FC<ArchiverProps> = ({
     })
     const notif = useNotification()
 
-    const queryClient = useQueryClient()
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (data: any) => {
+            return handleArchiver(data)
+        },
+    })
 
     const onSubmit = async (data: z.infer<typeof ArchivePartnerSchema>) => {
         console.log('archive partner')
-        setIsLoading(true)
-        handleArchiver(data)
-        setIsLoading(false)
+        mutate(data)
     }
 
     const { handleSubmit, control } = form
@@ -136,8 +138,8 @@ export const Archiver: FC<ArchiverProps> = ({
                                         }
                                         type="submit"
                                         className="h-fit py-3 px-5 rounded-[12px] gap-1 w-full lg:w-fit"
-                                        isPending={isLoading}
-                                        disabled={isLoading}
+                                        isPending={isPending}
+                                        disabled={isPending}
                                     />
                                 </div>
                             </div>

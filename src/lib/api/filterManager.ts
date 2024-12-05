@@ -36,8 +36,8 @@ export async function fetchFilterSalesManager(
             id.includes('sieges') ||
             partnerType == 'sub'
         ) {
-            const patner = id.split('/').pop()!
-            url = `${API_URL}/v1/users/subentities/search?name=${search}&organizationId=${patner}&pageNumber=0&pageSize=10`
+            const partner = id.split('/').pop()!
+            url = `${API_URL}/v1/users/subentities/search?name=${search}&organizationId=${partner}&pageNumber=0&pageSize=10`
         } else {
             url = `${API_URL}/v1/users/organizations/search?name=${search}&types=${types}&deleted=${archived}&pageNumber=0&pageSize=10`
         }

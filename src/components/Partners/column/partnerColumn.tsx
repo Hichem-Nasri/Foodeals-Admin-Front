@@ -2,7 +2,6 @@ import { ActionType, ActionsMenu } from '@/components/custom/ActionsMenu'
 import { AppRoutes } from '@/lib/routes'
 import { PartnerEntitiesType } from '@/types/GlobalType'
 import { PartnerType, PartnerSolutionType } from '@/types/partnersType'
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Eye, Pencil, Users, FileBadge, Archive, Store } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
@@ -21,6 +20,7 @@ import { getContract } from '@/lib/api/partner/getContract'
 import { fetchDetailsArchived } from '@/lib/api/partner/getDetailsArchived'
 import DetailsArchive from '@/components/utils/DetailsArchive'
 import { GetListActions } from './getActionsList'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const columnHelper = createColumnHelper<PartnerType>()
 
@@ -35,14 +35,17 @@ export const columnsPartnersTable = (
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('logo', {
-        cell: (info) => (
-            <Avatar className="size-12 rounded-full bg-lynch-100">
-                <AvatarImage src={info.getValue()} />
-                <AvatarFallback>
-                    {info.getValue() && info.getValue()[0].toUpperCase()}
-                </AvatarFallback>
-            </Avatar>
-        ),
+        cell: (info) => {
+            const name = info.row.original.partnerInfoDto?.name
+            return (
+                <Avatar className="size-12 rounded-full bg-lynch-100">
+                    <AvatarImage src={info.getValue()} />
+                    <AvatarFallback>
+                        {name && name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                </Avatar>
+            )
+        },
         header: 'Logo',
         footer: (info) => info.column.id,
     }),

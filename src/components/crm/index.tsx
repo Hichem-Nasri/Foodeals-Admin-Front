@@ -109,7 +109,11 @@ export default function Crm() {
     })
     const tableAssocciation = useReactTable({
         data,
-        columns: columnCrmAssociations(leadKo, refetch),
+        columns: columnCrmAssociations(
+            leadKo,
+            refetch,
+            switchTable == 'partenaires' ? 'PARTNER' : 'ASSOCIATION,FOOD_BANK'
+        ),
         state: {
             columnFilters,
         },
@@ -121,7 +125,11 @@ export default function Crm() {
     })
     const table = useReactTable({
         data,
-        columns: columnsCrmTable(leadKo, refetch),
+        columns: columnsCrmTable(
+            leadKo,
+            refetch,
+            switchTable == 'partenaires' ? 'PARTNER' : 'ASSOCIATION,FOOD_BANK'
+        ),
         state: {
             columnFilters,
         },
@@ -188,6 +196,11 @@ export default function Crm() {
                         crm={data}
                         refetch={refetch}
                         LeadKo={leadKo}
+                        type={
+                            switchTable == 'partenaires'
+                                ? 'PARTNER'
+                                : 'ASSOCIATION,FOOD_BANK'
+                        }
                     />
                 )}
                 isLoading={isLoading || isRefetching}

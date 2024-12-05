@@ -112,15 +112,37 @@ export const TopBar: FC<TopBarProps> = ({
         {
             icon: Whatsapp,
             label: 'PARTAGER PAR WHATSAPP',
-            action: () => {
-                window.open(`https://wa.me/?text=${window.location.href}`)
+            action: async () => {
+                const contractData = await getContract(id)
+                if (!contractData) {
+                    notif.notify(
+                        NotificationType.ERROR,
+                        'Erreur lors de la récupération du contrat'
+                    )
+                }
+                window.open(
+                    `https://wa.me/?text=${window.URL.createObjectURL(
+                        contractData as Blob
+                    )}`
+                )
             },
         },
         {
             icon: SendIcon,
             label: 'ENVOYER PAR EMAIL',
-            action: () => {
-                window.open(`mailto:?body=${window.location.href}`)
+            action: async () => {
+                const contractData = await getContract(id)
+                if (!contractData) {
+                    notif.notify(
+                        NotificationType.ERROR,
+                        'Erreur lors de la récupération du contrat'
+                    )
+                }
+                window.open(
+                    `mailto:?body=${window.URL.createObjectURL(
+                        contractData as Blob
+                    )}`
+                )
             },
         },
         {

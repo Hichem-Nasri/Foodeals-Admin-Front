@@ -27,24 +27,28 @@ import { useSearchParams } from 'next/navigation'
 import { ArchivePartner } from '@/components/Partners/NewPartner/ArchivePartner'
 import validateContract from '@/lib/api/partner/validateContract'
 import { PartnerStatusType } from '@/types/partnersType'
+import { validProspect } from '@/lib/api/crm/prospect/validProspect'
 
 interface NewAssociationProps {
     id: string
     partnerDetails: AssociationInformationSchemaType
+    mode: string
 }
 
 export const NewAssociation: React.FC<NewAssociationProps> = ({
     partnerDetails,
     id,
+    mode,
 }) => {
     const [payload, setPayload] = useState<AssociationPostType>(
         defaultAssociationPostData
     )
     const [isLoading, setIsLoading] = useState(false)
-    const searchParams = useSearchParams()
-    const [associationId, setAssociationId] = useState(id)
-    const [readOnly, setReadOnly] = useState(
-        id !== '' || partnerDetails?.status === PartnerStatusType.VALID
+    const [associationId, setAssociationId] = useState(
+        id == 'new' || id.includes('?convertir') ? '' : id
+    )
+    const [readOnly, setReadOnly] = useState<boolean>(
+        associationId !== '' && mode !== 'edit'
     )
     const [countryCode, setCountryCode] = useState(countryCodes[0].value)
     const [documents, setDocuments] = useState<File[]>([])
@@ -52,14 +56,6 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         partnerDetails?.status === PartnerStatusType.VALID
     )
     const notify = useNotification()
-
-    // Check if the mode is edit
-    useEffect(() => {
-        const mode = searchParams.get('mode') // Access the mode from searchParams
-        if (mode === 'edit') {
-            setReadOnly(false)
-        }
-    }, [searchParams])
 
     // create/update association
     const { mutate, isPending } = useMutation({
@@ -176,8 +172,22 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         const res = await validateContract(associationId, documents)
 
         if (res.status === 200) {
+            if (id.includes('?convertir')) {
+                const valid = await validProspect(id)
+                if (valid.status == 200) {
+                    notify.notify(
+                        NotificationType.SUCCESS,
+                        'Prospect converti avec succès'
+                    ) //TODO: vérifier si une redirection est nécessaire
+                } else {
+                    notify.notify(
+                        NotificationType.ERROR,
+                        'Échec de la conversion du prospect'
+                    )
+                }
+            } else
+                notify.notify(NotificationType.SUCCESS, 'Contrat a été validé')
             setContractValid(true)
-            notify.notify(NotificationType.SUCCESS, 'Contrat a été validé')
         } else {
             notify.notify(
                 NotificationType.ERROR,

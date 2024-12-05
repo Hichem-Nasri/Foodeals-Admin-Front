@@ -10,10 +10,11 @@ export async function fetchOragnizations(
     try {
         var url = ''
         if (path.includes('sieges') || path.includes('sub-account')) {
+            const id = path.split('/').pop()
             const entity = path.includes('partenair')
                 ? 'PARTNER_SB'
                 : 'FOOD_BANK_SB,FOOD_BANK_ASSOCIATION'
-            url = `${API_URL}/v1/sub-entities/search?name=${search}&types=${entity}&deleted=${archived}&page=0&size=10`
+            url = `${API_URL}/v1/sub-entities/search?name=${search}&types=${entity}&deleted=${archived}&page=0&size=10&organizationId=${id}`
         } else {
             url =
                 `${API_URL}/api/v1/organizations/partners/search?name=${search}&page=0&size=10` +

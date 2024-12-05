@@ -51,6 +51,7 @@ export const TopBar: FC<TopBarProps> = ({
                             label="Enregistrer"
                             IconRight={Save}
                             variant="outline"
+                            isPending={isLoading}
                         />
                         {!open ? (
                             <CustomButton

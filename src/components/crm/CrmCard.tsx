@@ -21,12 +21,14 @@ interface CrmCardDetailsProps {
     crm: CrmType
     refetch: () => void
     LeadKo: boolean
+    type: string
 }
 
 export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
     crm,
     refetch,
     LeadKo,
+    type,
 }): JSX.Element => {
     const dataCrm = {
         creator:
@@ -45,7 +47,8 @@ export const CrmCardDetails: React.FC<CrmCardDetailsProps> = ({
         crm.id,
         refetch,
         LeadKo,
-        crm.status
+        crm.status,
+        type
     )
     console.log('dataCrm', crm)
     return (

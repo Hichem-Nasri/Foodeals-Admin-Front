@@ -11,7 +11,7 @@ export const fetchConvertirPartners = async (
     partnerId?: string
 ): Promise<PartnerDataType | undefined> => {
     // console.log('partnerId', partnerId)
-    if (!partnerId || partnerId == '%3Aid') return defaultPartnerData
+    if (!partnerId || partnerId == 'new') return defaultPartnerData
     try {
         const url = `${API_URL}/api/v1/crm/prospects/${partnerId}`
         const response = await api

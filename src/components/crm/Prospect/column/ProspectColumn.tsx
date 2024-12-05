@@ -33,7 +33,11 @@ import { GetListProspcts } from './getList'
 
 const columnHelper = createColumnHelper<CrmType>()
 
-export const columnsCrmTable = (leadKo: boolean, refetch: () => void) => [
+export const columnsCrmTable = (
+    leadKo: boolean,
+    refetch: () => void,
+    type: string
+) => [
     columnHelper.accessor('createdAt', {
         cell: (info) => {
             const date = info.getValue()
@@ -227,7 +231,8 @@ export const columnsCrmTable = (leadKo: boolean, refetch: () => void) => [
                 info.getValue(),
                 refetch,
                 leadKo,
-                status
+                status,
+                type
             )
             return (
                 <ActionsMenu
@@ -241,8 +246,12 @@ export const columnsCrmTable = (leadKo: boolean, refetch: () => void) => [
     }),
 ]
 
-export const columnCrmAssociations = (leadKo: boolean, refetch: () => void) => [
-    ...columnsCrmTable(leadKo, refetch).slice(0, 4),
+export const columnCrmAssociations = (
+    leadKo: boolean,
+    refetch: () => void,
+    type: string
+) => [
+    ...columnsCrmTable(leadKo, refetch, type).slice(0, 4),
     columnHelper.accessor('type', {
         cell: (info) => {
             const value = info.getValue()
@@ -253,5 +262,5 @@ export const columnCrmAssociations = (leadKo: boolean, refetch: () => void) => [
         header: 'Type de compte',
         footer: (info) => info.column.id,
     }),
-    ...columnsCrmTable(leadKo, refetch).slice(4, 16),
+    ...columnsCrmTable(leadKo, refetch, type).slice(4, 16),
 ]

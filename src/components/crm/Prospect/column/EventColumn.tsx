@@ -5,6 +5,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 import { DetailsEvenetProspect } from '../../NewEvent/DetailsEvenet'
 import { EventType } from '@/types/CrmType'
+import { AvatarAndName } from '@/components/AvatarAndName'
 
 const columnProspectHelper = createColumnHelper<EventType>()
 
@@ -32,13 +33,10 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
                 ' ' +
                 capitalize(info.getValue().name?.lastName)
             return (
-                <div className="flex items-center justify-start gap-2 w-full">
-                    <Avatar>
-                        <AvatarImage src={info.getValue().avatarPath} />
-                        <AvatarFallback>{fullName.at(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="w-full text-nowrap px-4">{fullName}</div>
-                </div>
+                <AvatarAndName
+                    name={fullName}
+                    avatar={info.getValue().avatarPath}
+                />
             )
         },
         header: 'Créer par',
