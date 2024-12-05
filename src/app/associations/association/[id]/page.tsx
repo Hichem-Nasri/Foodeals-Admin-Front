@@ -10,9 +10,12 @@ interface AssociationPageProps {
     params: {
         id: string
     }
+	searchParams: {
+	mode: string
+	}
 }
 
-export default function AssociationPage({ params }: AssociationPageProps) {
+export default function AssociationPage({ params, searchParams }: AssociationPageProps) {
     const data = useAssociation(params.id) as {
         data: AssociationInformationSchemaType
         isLoading: boolean
@@ -32,6 +35,7 @@ export default function AssociationPage({ params }: AssociationPageProps) {
                 <NewAssociation
                     id={params.id != 'new' ? params.id : ''}
                     partnerDetails={data.data}
+			mode={searchParams.mode}
                 />
             )}
         </Layout>
