@@ -64,7 +64,7 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
             fileID: 'contractID',
         },
     ] // TODO: fetch documents with the partner id
-
+    const {accountType} = form.watch()
     return (
         <Accordion
             type="single"
@@ -141,7 +141,9 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                             disabled={disabled}
                                         />
                                     </div>
-                                    <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
+                                    {   
+                                        accountType != "NORMAL_PARTNER" &&
+                                        <div className="flex lg:flex-row flex-col justify-between gap-[1.875rem]">
                                         <Label
                                             label="Abonnement Payant par"
                                             className="text-sm font-medium"
@@ -160,8 +162,9 @@ export const FormSubscription: FC<FormSubscriptionProps> = ({
                                                 },
                                             ]}
                                             disabled={disabled}
-                                        />
+                                            />
                                     </div>
+                                        }
                                     <span className="w-fill h-[1px] bg-lynch-100" />
                                     {subscriptionType === 'general' ? (
                                         <FormSubscriptionPersonalized
