@@ -11,14 +11,10 @@ import {
     HandCoins,
     Minus,
 } from 'lucide-react'
-import { PaymentStatus } from './PaymentStatus'
-import { PaymentValidation } from './PaymentValidation'
 import { Label } from '../Label'
-import { Arrow } from '@radix-ui/react-dropdown-menu'
 import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { PartnerEntitiesType } from '@/types/GlobalType'
-import { sub } from 'date-fns'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 

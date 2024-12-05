@@ -89,7 +89,7 @@ export const TotalValues = {
     totalElements: 0,
     totalPages: 0,
     currentPage: 0,
-    pageSize: 1,
+    pageSize: 10,
 }
 
 export interface DetailsArchiveType {
