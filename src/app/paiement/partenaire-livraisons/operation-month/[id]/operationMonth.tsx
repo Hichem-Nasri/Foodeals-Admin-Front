@@ -1,10 +1,8 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
-import { MyError } from '@/components/Error'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
 import {
     columnsMultiProductTable,
     columnsOperationDeliveryTable,
@@ -20,11 +18,7 @@ import {
     fetchPaymentCommissionMonth,
     getMultiProduct,
 } from '@/lib/api/payment/getCommissionMonth'
-import {
-    getPartnerDeliveryPayment,
-    getPartnerDeliveryPaymentByMonth,
-} from '@/lib/api/payment/getPartnerDeliveryPayment'
-import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
+import { formatNumberWithSpaces } from '@/lib/utils'
 import {
     NotificationType,
     TotalValueProps,
@@ -41,16 +35,9 @@ import {
     getSortedRowModel,
     getPaginationRowModel,
 } from '@tanstack/react-table'
-import {
-    CalendarClock,
-    ArrowRight,
-    RotateCw,
-    CheckCheck,
-    PercentCircle,
-    Coins,
-} from 'lucide-react'
+import { ArrowRight, PercentCircle, Coins } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { FC, Fragment, use, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
