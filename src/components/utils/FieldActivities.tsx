@@ -9,7 +9,7 @@ interface FieldActivitiesProps {
     name: string
     label: string
     disabled: boolean
-    type: 'PARTNER' | 'ASSOCIATION'
+    type: 'PARTNER' | 'ASSOCIATION' | 'DELIVERY_PARTNER'
     isLoaded?: boolean
 }
 

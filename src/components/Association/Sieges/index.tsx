@@ -73,7 +73,9 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                     archive
                 )
                 if (data.status === 500)
-                    throw new Error('Error fetching partners')
+                    throw new Error(
+                        'Erreur lors de la récupération des sous entités'
+                    )
                 const { partnerInfoDto, subentities } = data?.data
 
                 setTotals({
@@ -85,7 +87,10 @@ export const Sieges: FC<SiegesProps> = ({ id }) => {
                 setSieges(subentities?.content)
                 return data.data
             } catch (error) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des sous entités'
+                )
                 console.log(error)
                 setSieges([])
             }

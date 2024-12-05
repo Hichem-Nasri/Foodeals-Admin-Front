@@ -15,7 +15,7 @@ const buildQueryString = (
     }
     if (data.companyName && data.companyName.length > 0) {
         queryParts.push(
-            `names=${encodeURIComponent(data.companyName.join(','))}`
+            `names=${encodeURIComponent(data.companyName.join(',') + ',')}`
         )
     }
     if (data.collaborators) {

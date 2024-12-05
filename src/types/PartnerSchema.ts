@@ -296,7 +296,7 @@ export const ArchivePartnerSchema = z.object({
     archiveType: z.string(),
     archiveReason: z
         .string()
-        .min(20, "Le type d'archive doit contenir au moins 20 caractères"),
+        .min(10, "Le type d'archive doit contenir au moins 10 caractères"),
 })
 
 export const defaultArchivePartnerData = {

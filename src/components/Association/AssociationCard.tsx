@@ -54,7 +54,7 @@ export const AssociationCard: FC<AssociationCardProps> = ({
             icon: HeartHandshake,
         },
         {
-            label: `siège : ${association.users}`.toLocaleUpperCase(),
+            label: `siège : ${association.subEntities}`.toLocaleUpperCase(),
             icon: Store,
         },
         {
@@ -66,7 +66,7 @@ export const AssociationCard: FC<AssociationCardProps> = ({
             icon: HeartHandshake,
         },
         {
-            label: `collaborateurs : ${association.subEntities}`.toLocaleUpperCase(),
+            label: `collaborateurs : ${association.users}`.toLocaleUpperCase(),
             icon: HandCoins,
         },
     ]

@@ -77,7 +77,9 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 )
                 console.log(data)
                 if (data.status === 500)
-                    throw new Error('Error fetching partners')
+                    throw new Error(
+                        'Erreur lors de la récupération des partenaires'
+                    )
                 setTotals((prev) => ({
                     ...prev,
                     totalElements: data.data.totalElements,
@@ -86,7 +88,10 @@ export const Partners: FC<PartnersProps> = ({}) => {
                 setPartners(data.data.content as PartnerType[])
                 return data.data
             } catch (error) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des partenaires'
+                )
                 console.log(error)
                 setPartners([])
             }
@@ -130,7 +135,6 @@ export const Partners: FC<PartnersProps> = ({}) => {
             ...totals,
             currentPage: 0,
         })
-        console.log('------------Refetching----------------')
         refetch()
     }, [archive, filterData])
     console.log('Partners:', partners)

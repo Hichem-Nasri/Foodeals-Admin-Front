@@ -28,9 +28,9 @@ export const columnsProspectTable = (router: AppRouterInstance) => [
     columnProspectHelper.accessor('lead', {
         cell: (info) => {
             const fullName =
-                capitalize(info.getValue().name.firstName) +
+                capitalize(info.getValue().name?.firstName) +
                 ' ' +
-                capitalize(info.getValue().name.lastName)
+                capitalize(info.getValue().name?.lastName)
             return (
                 <div className="flex items-center justify-start gap-2 w-full">
                     <Avatar>

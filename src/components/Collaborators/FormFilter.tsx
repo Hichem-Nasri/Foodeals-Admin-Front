@@ -44,6 +44,9 @@ interface FormFilterCollaboratorProps {
     onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
+    archive: boolean
+    type: string
+    partnerType: string
 }
 
 export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
@@ -51,6 +54,9 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
     onSubmit,
     setOpen,
     open,
+    archive,
+    type,
+    partnerType,
 }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -58,11 +64,13 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
                 <span className="lg:inline-flex hidden">Filtrer par</span>
                 <ListFilter />
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
+            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-4 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
                 <FormCollaborator
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
+                    type={`${type}&${archive}`}
+                    partnerType={partnerType}
                 />
             </DialogContent>
         </Dialog>
@@ -73,43 +81,54 @@ interface FormCollaboratorProps {
     form: UseFormReturn<z.infer<typeof SchemaCollaborators>>
     onSubmit: (data: z.infer<typeof SchemaCollaborators>) => void
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    type: string
+    partnerType: string
 }
 
 const FormCollaborator: FC<FormCollaboratorProps> = ({
     form,
     onSubmit,
     setOpen,
+    type,
+    partnerType,
 }) => {
     const { handleSubmit, control } = form
     return (
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-full min-h-full bg-white mt-10 lg:mt-0 gap-2 flex flex-col "
+                className="w-full min-h-full bg-white  gap-2 flex flex-col "
             >
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Filtrer par
                 </DialogTitle>
-                <div className="absolute flex lg:hidden top-0 left-0 right-0 min-w-full">
-                    <MobileHeader
-                        title="Filtrer par"
-                        onClick={() => setOpen(false)}
-                    />
-                </div>
-                <div className="flex flex-col gap-2 gap-x-4">
+                <MobileHeader
+                    title="Filtrer par"
+                    onClick={() => setOpen(false)}
+                />
+                <div className="flex flex-col gap-2 gap-x-4 p-5">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterManager
                             control={control}
                             name="collaborators"
                             label="Collaborateurs"
-                            type={'ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO'}
+                            type={type}
+                            partnerType={partnerType}
                         />
                         <SelectField
                             control={control}
                             name="rolaName"
                             label="Role"
-                            options={[]}
+                            options={[
+                                'MANAGER',
+                                'SALES_MANAGER',
+                                'DELIVERY_MAN',
+                                'LEAD',
+                            ].map((role) => ({
+                                key: role,
+                                label: capitalize(role.replace('_', ' ')),
+                            }))}
                         />
                     </div>
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
@@ -147,7 +166,7 @@ const FormCollaborator: FC<FormCollaboratorProps> = ({
                     </div>
                 </div>
 
-                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
+                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem] p-5">
                     <CustomButton
                         variant="ghost"
                         title="Réinitialiser les filtres"

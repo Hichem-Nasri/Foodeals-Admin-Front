@@ -145,6 +145,8 @@ const Collaborateurs: FC<CollaborateursProps> = ({ id, type, partnerType }) => {
                 setOpen={setOpen}
                 totalElements={totals.totalElements}
                 isFetching={isLoading || isRefetching}
+                type={type}
+                partnerType={partnerType}
             />
             <DataTable
                 data={collaborators}

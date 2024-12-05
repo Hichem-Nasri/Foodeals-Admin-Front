@@ -1,22 +1,16 @@
 'use client'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
-import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
-import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
-import {
-    columnsPaymentDeliveriesTable,
-    defaultDataPaymentDeliveriesTable,
-} from '@/components/payment/business/column/paymentDeliveriesColumn'
+import { columnsPaymentDeliveriesTable } from '@/components/payment/business/column/paymentDeliveriesColumn'
 import { CardTotalValue } from '@/components/payment/CardTotalValue'
-import { ConfirmPayment } from '@/components/payment/ConfirmPayment'
 import DeliveryPaymentCard from '@/components/payment/delivery/DeliveryPaymentCard'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import SwitchPayment from '@/components/payment/switchPayment'
 import PaginationData from '@/components/utils/PaginationData'
 import { getPartnerDeliveryPayment } from '@/lib/api/payment/getPartnerDeliveryPayment'
-import { formatDate, formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
-import { TotalValueProps } from '@/types/GlobalType'
+import { formatNumberWithSpaces } from '@/lib/utils'
+import { TotalValueProps, TotalValues } from '@/types/GlobalType'
 import { PaymentFilterSchema, PaymentDeliveriesType } from '@/types/PaymentType'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
@@ -28,9 +22,9 @@ import {
     getSortedRowModel,
     getPaginationRowModel,
 } from '@tanstack/react-table'
-import { CalendarClock, ArrowRight, RotateCw, CheckCheck } from 'lucide-react'
+import { CalendarClock, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { FC, Fragment, useState } from 'react'
+import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -43,10 +37,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
     const [totals, setTotals] = useState<
         TotalValueProps & { totalCommission: number; totalValue: number }
     >({
-        totalElements: 0,
-        totalPages: 0,
-        currentPage: 0,
-        pageSize: 10,
+        ...TotalValues,
         totalCommission: 0,
         totalValue: 0,
     })
@@ -114,7 +105,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
-                    header="Tableau de validation des Subscription"
+                    header="Tableau de validation des Abonnements"
                     dateForm="YYYY"
                     state="commissions"
                 />
@@ -150,7 +141,7 @@ export const PaymentDeliveries: FC<PaymentProps> = ({ id }) => {
             <DataTable
                 table={table}
                 data={payments}
-                title="Tableau de validation des commission"
+                title="Tableau de validation des commissions"
                 transform={(data) => <DeliveryPaymentCard commission={data} />}
                 hideColumns={['payByFoodeals']}
                 isLoading={isLoading || isRefetching}

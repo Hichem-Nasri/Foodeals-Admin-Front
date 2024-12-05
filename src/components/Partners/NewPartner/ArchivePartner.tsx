@@ -30,9 +30,13 @@ import MobileHeader from '@/components/utils/MobileHeader'
 
 interface ArchivePartnerProps {
     partnerId?: string
+    disabled?: boolean
 }
 
-export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
+export const ArchivePartner: FC<ArchivePartnerProps> = ({
+    partnerId,
+    disabled,
+}) => {
     const form = useForm<z.infer<typeof ArchivePartnerSchema>>({
         resolver: zodResolver(ArchivePartnerSchema),
         mode: 'onBlur',
@@ -66,7 +70,10 @@ export const ArchivePartner: FC<ArchivePartnerProps> = ({ partnerId }) => {
     return (
         <div className="flex items-center justify-end bg-white p-5 rounded-[30px] lg:rounded-[14px]">
             <Dialog>
-                <DialogTrigger className="flex items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-red-50 border-[1.5px] border-red-500 text-red-500  lg:w-fit w-full justify-center">
+                <DialogTrigger
+                    disabled={disabled}
+                    className="flex items-center gap-3 px-5 py-3 rounded-[12px] h-fit bg-red-50 border-[1.5px] border-red-500 text-red-500  lg:w-fit w-full justify-center disabled:cursor-not-allowed disabled:bg-coral-100 disabled:border-coral-100 disabled:text-coral-50"
+                >
                     <span className="text-sm font-medium">Archiver</span>
                     <Archive />
                 </DialogTrigger>

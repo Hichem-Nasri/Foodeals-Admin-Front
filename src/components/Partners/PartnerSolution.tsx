@@ -54,7 +54,7 @@ export const PartnerSolution: FC<PartnerSolutionProps> = ({
     return (
         <span
             className={cn(
-                `flex items-center gap-[0.375rem] text-nowrap  text-[0.625rem] font-bold py-[0.375rem] px-3 rounded-full h-fit ${solutionColor.className}`,
+                `flex items-center gap-[0.375rem] text-nowrap w-auto whitespace-nowrap  text-[0.625rem] font-bold py-[0.375rem] px-3 rounded-full h-fit ${solutionColor.className}`,
                 className
             )}
         >

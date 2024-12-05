@@ -82,7 +82,7 @@ export const ValidationSubscription = ({}: OperationsProps) => {
     })
 
     const { data, isLoading, error, isRefetching, refetch } = useQuery({
-        queryKey: ['subscription'],
+        queryKey: ['subscription', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const response = await fetchSubscription(

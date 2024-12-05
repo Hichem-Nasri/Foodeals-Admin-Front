@@ -57,7 +57,7 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
     const [filterData, setFilterData] =
         useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const { data, isLoading, refetch, isRefetching, error } = useQuery({
-        queryKey: ['subEntities', id],
+        queryKey: ['subEntities', totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const res = await fetchSubEntities(
@@ -69,7 +69,9 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                     archive
                 )
                 if (res.status === 500)
-                    throw new Error('Error fetching partners')
+                    throw new Error(
+                        'Erreur lors de la récupération des partenais'
+                    )
                 const { partnerInfoDto, subentities } = res.data
                 setPartner(partnerInfoDto)
                 setTotals({
@@ -80,7 +82,10 @@ const SubAccount: FC<SubAccountProps> = ({ id }) => {
                 setSubAccount(subentities.content as SubAccountPartners[])
                 return res.data
             } catch (e) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des partenaires'
+                )
                 console.log(e)
                 setSubAccount([])
             }

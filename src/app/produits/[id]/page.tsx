@@ -22,13 +22,14 @@ const CreateProductPage: FC<CreateProductPageProps> = ({ params }) => {
 
     return (
         <Layout>
-            <CreateProduct
+            <h1>Create Product Page</h1>
+            {/* <CreateProduct
                 data={{
                     product: data,
                     isLoading,
                     error,
                 }}
-            />
+            /> */}
         </Layout>
     )
 }

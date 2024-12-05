@@ -32,7 +32,11 @@ import { PaymentCommission } from '@/types/paymentUtils'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
 import { useNotification } from '@/context/NotifContext'
-import { NotificationType } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
 import { PaymentFilterSchema } from '@/types/PaymentType'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -50,12 +54,12 @@ const SubStoreCommission = () => {
         PaymentCommission[]
     >([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [currentPage, setCurrentPage] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalCommission, setTotalCommission] = useState(0)
-    const [totalSales, setTotalSales] = useState(0)
-    const [totalElements, setTotalElements] = useState(0)
+    const [totals, setTotals] = useState<
+        TotalValueProps & {
+            totalCommission: number
+            totalSales: number
+        }
+    >({ ...TotalValues, totalCommission: 0, totalSales: 0 })
     const notify = useNotification()
     const [open, setOpen] = useState(false)
 
@@ -76,22 +80,25 @@ const SubStoreCommission = () => {
     }
 
     const { data, isLoading, isRefetching, error, refetch } = useQuery({
-        queryKey: ['commissions', id, currentPage, pageSize],
+        queryKey: ['commissions', id, totals.currentPage, totals.pageSize],
         queryFn: async () => {
             try {
                 const response = await fetchPaymentCommission(
-                    currentPage,
-                    pageSize,
+                    totals.currentPage,
+                    totals.pageSize,
                     dateAndPartner.date!,
                     dateAndPartner.partner!
                 )
                 console.log(response)
                 const statistics = response.data.statistics
-                setTotalCommission(statistics.totalCommission.amount)
-                setTotalSales(statistics.total.amount)
                 const data = response.data.commissions
-                setTotalPages(data.totalPages)
-                setTotalElements(data.totalElements)
+                setTotals({
+                    ...totals,
+                    totalCommission: statistics.totalCommission.amount,
+                    totalSales: statistics.total.amount,
+                    totalElements: data.totalElements,
+                    totalPages: data.totalPages,
+                })
                 setCommissionSubStore(data.content)
                 return response.data
             } catch (error) {
@@ -120,7 +127,10 @@ const SubStoreCommission = () => {
 
     useEffect(() => {
         if (isLoading || isRefetching) return
-        setCurrentPage(0)
+        setTotals({
+            ...totals,
+            currentPage: 0,
+        })
         refetch()
     }, [dateAndPartner])
 
@@ -145,14 +155,14 @@ const SubStoreCommission = () => {
                         <CardTotalValue
                             Icon={Coins}
                             title="Total des ventes"
-                            value={totalCommission}
+                            value={totals.totalCommission}
                             className="text-mountain-400 bg-mountain-400"
                             isLoading={isLoading || isRefetching}
                         />
                         <CardTotalValue
                             Icon={Percent}
                             title="Total des commissions"
-                            value={totalSales}
+                            value={totals.totalSales}
                             className="bg-amethyst-500 text-amethyst-500"
                             isLoading={isLoading || isRefetching}
                         />
@@ -166,7 +176,7 @@ const SubStoreCommission = () => {
                             <SwitchValidation />
                         </div>
                         <CustomButton
-                            label={formatNumberWithSpaces(totalElements)}
+                            label={formatNumberWithSpaces(totals.totalElements)}
                             IconLeft={ArrowRight}
                             disabled
                             variant="destructive"
@@ -186,10 +196,12 @@ const SubStoreCommission = () => {
                         isLoading={isLoading || isRefetching}
                     />
                     <PaginationData
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        setCurrentPage={setCurrentPage}
-                        pageSize={pageSize}
+                        currentPage={totals.currentPage}
+                        totalPages={totals.totalPages}
+                        setCurrentPage={(page) =>
+                            setTotals({ ...totals, currentPage: page })
+                        }
+                        pageSize={totals.pageSize}
                         refetch={refetch}
                     />
                     <div className="lg:hidden flex flex-col items-center gap-4 my-3">

@@ -68,10 +68,15 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
             try {
                 const res = await createAssociation(associationId, payload)
                 if (res.status === 500)
-                    throw new Error('Error creating association')
+                    throw new Error(
+                        "Erreur lors de la création de l'association"
+                    )
                 return res
             } catch (error) {
-                console.error('Error creating association:', error)
+                console.error(
+                    "Erreur lors de la création de l'association",
+                    error
+                )
                 throw error
             }
         },
@@ -82,12 +87,15 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
             partnerDetails.status = PartnerStatusType.IN_PROGRESS
             notify.notify(
                 NotificationType.SUCCESS,
-                'Association created successfully'
+                'Association créée avec succès'
             )
         },
         onError: (error) => {
             setIsLoading(false)
-            notify.notify(NotificationType.ERROR, 'Error creating association')
+            notify.notify(
+                NotificationType.ERROR,
+                "Erreur lors de la création de l'association"
+            )
             console.error('Error creating association:', error)
         },
     })
@@ -158,7 +166,10 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
 
     const onSubmit = async () => {
         if (!documents || documents.length === 0) {
-            notify.notify(NotificationType.ERROR, 'Please upload the contract')
+            notify.notify(
+                NotificationType.ERROR,
+                'Veuillez télécharger le contrat'
+            )
             return
         }
 
@@ -166,9 +177,12 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
 
         if (res.status === 200) {
             setContractValid(true)
-            notify.notify(NotificationType.SUCCESS, 'Contract VALID')
+            notify.notify(NotificationType.SUCCESS, 'Contrat a été validé')
         } else {
-            notify.notify(NotificationType.ERROR, 'Failed to validate contract')
+            notify.notify(
+                NotificationType.ERROR,
+                'Échec de la validation du contrat'
+            )
         }
     }
 
@@ -193,7 +207,7 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
         } else {
             notify.notify(
                 NotificationType.INFO,
-                'Please fill in all the fields'
+                'Veuillez remplir tous les champs obligatoires'
             )
         }
     }
@@ -237,7 +251,9 @@ export const NewAssociation: React.FC<NewAssociationProps> = ({
                     contractValid={contractValid}
                 />
             </div>
-            {associationId && <ArchivePartner partnerId={associationId} />}
+            {associationId && (
+                <ArchivePartner partnerId={associationId} disabled={readOnly} />
+            )}
         </div>
     )
 }

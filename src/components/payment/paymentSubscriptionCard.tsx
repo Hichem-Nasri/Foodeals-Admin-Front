@@ -19,6 +19,8 @@ import { PartnerSolution } from '../Partners/PartnerSolution'
 import { PartnerSolutionType } from '@/types/partnersType'
 import { PartnerEntitiesType } from '@/types/GlobalType'
 import { sub } from 'date-fns'
+import Link from 'next/link'
+import { AppRoutes } from '@/lib/routes'
 
 const PaymentSubscriptionCard = ({
     subscription,
@@ -29,7 +31,7 @@ const PaymentSubscriptionCard = ({
 }) => {
     const dataArray = [
         {
-            label: subscription.reference,
+            label: subscription.reference.slice(0, 8),
             icon: Frame,
         },
         {
@@ -70,12 +72,16 @@ const PaymentSubscriptionCard = ({
                         </div>
                     </div>
                 </div>
-                <button
-                    className="bg-lynch-300 size-11 rounded-full text-white hover:bg-lynch-300"
-                    onClick={() => setSubscriptionId(subscription.reference)}
+                <Link
+                    href={AppRoutes.PBSubscriptionDetails.replace(
+                        ':id',
+                        subscription.reference
+                    )}
+                    className="bg-lynch-300 size-11 rounded-full text-white hover:bg-lynch-300 flex justify-center items-center"
+                    // onClick={() => setSubscriptionId(subscription.reference)}
                 >
                     <ArrowRight size={18} className="m-auto w-full" />
-                </button>
+                </Link>
             </div>
             <span className="h-[1px] w-full bg-lynch-100" />
             <div className="flex flex-wrap gap-[0.375rem]">

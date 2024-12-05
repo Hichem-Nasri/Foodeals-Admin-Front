@@ -22,7 +22,8 @@ export async function fetchFilterManager(search: string, type: string) {
 export async function fetchFilterSalesManager(
     search: string,
     type: string,
-    id: string
+    id: string,
+    partnerType?: string
 ) {
     try {
         const [types, archived] = type.split('&')
@@ -32,10 +33,11 @@ export async function fetchFilterSalesManager(
         if (
             id.includes('sub-account') ||
             id.includes('sub-entity') ||
-            id.includes('sieges')
+            id.includes('sieges') ||
+            partnerType == 'sub'
         ) {
             const patner = id.split('/').pop()!
-            url = `${API_URL}/api/v1/users/subentities/search?name=${search}&organizationId=${patner}&pageNumber=0&pageSize=10`
+            url = `${API_URL}/v1/users/subentities/search?name=${search}&organizationId=${patner}&pageNumber=0&pageSize=10`
         } else {
             url = `${API_URL}/v1/users/organizations/search?name=${search}&types=${types}&deleted=${archived}&pageNumber=0&pageSize=10`
         }

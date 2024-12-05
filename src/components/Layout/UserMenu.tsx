@@ -13,7 +13,26 @@ import { Skeleton } from '../ui/skeleton'
 import { User, useUser } from '@/context/useUser'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import Logout from './Logout'
+import { capitalize } from '@/types/utils'
 
+export const format = (name: string) => {
+    if (!name) {
+        return ''
+    }
+    const memo: { [key: string]: string } = {}
+
+    if (memo[name]) {
+        return memo[name]
+    }
+
+    const [firstName, lastName] = name.split(' ')
+    console.log('firstName:', firstName)
+    console.log('lastName:', lastName)
+    const formattedName = `${capitalize(firstName)} ${capitalize(lastName)}`
+    memo[name] = formattedName
+
+    return formattedName
+}
 interface UserMenuProps {
     user: User | null
     loading: boolean
@@ -39,7 +58,7 @@ export const UserMenu: FC<UserMenuProps> = ({ user, loading }) => {
                                 <AvatarImage src={user?.image! || ''} />
                                 <AvatarFallback>
                                     {user?.name &&
-                                        user?.name
+                                        format(user?.name)
                                             .slice(0, 2)
                                             .toLocaleUpperCase()}
                                 </AvatarFallback>
@@ -50,14 +69,14 @@ export const UserMenu: FC<UserMenuProps> = ({ user, loading }) => {
                                 <Skeleton className="w-24 h-6 rounded-full bg-lynch-50" />
                             ) : (
                                 <p className="text-base font-normal text-mountain-500">
-                                    {user?.name}
+                                    {format(user?.name!)}
                                 </p>
                             )}
                             {loading ? (
                                 <Skeleton className="w-12 h-6 rounded-full bg-lynch-50" />
                             ) : (
                                 <p className="text-xs font-semibold text-subtitle">
-                                    {user?.role}
+                                    {user?.role?.replace('_', ' ')}
                                 </p>
                             )}
                         </div>
@@ -66,16 +85,16 @@ export const UserMenu: FC<UserMenuProps> = ({ user, loading }) => {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="min-w-44">
-                <DropdownMenuItem className=" w-full flex justify-between items-center gap-1 p-4 text-lynch-950">
+                <DropdownMenuItem className="cursor-pointer  w-full flex justify-between items-center gap-1 p-4 text-lynch-950">
                     <UserCircle />
                     <span>Mon Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="w-full flex justify-between items-center gap-1 p-4 text-lynch-950">
+                <DropdownMenuItem className="cursor-pointer w-full flex justify-between items-center gap-1 p-4 text-lynch-950">
                     <Settings />
                     <span>Paramètres</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    className="w-full flex justify-between items-center gap-1 p-4 text-coral-500"
+                    className="cursor-pointer w-full flex justify-between items-center gap-1 p-4 text-coral-500"
                     onClick={() => {
                         handleLogout()
                     }}

@@ -138,7 +138,6 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
     useEffect(() => {
         if (isLoading || isRefetching) return
         setTotals({ ...totals, currentPage: 0 })
-        console.log('heeey partner change')
         refetch()
     }, [dateAndPartner])
 
@@ -192,7 +191,7 @@ export const ValidationCommissions: FC<OperationsProps> = ({}) => {
                     <DataTable
                         table={tableCommission}
                         data={commission}
-                        title="Tableau de validation des commission"
+                        title="Tableau de validation des commissions"
                         transform={(data) => (
                             <PaymentCommissionCard
                                 commission={data}

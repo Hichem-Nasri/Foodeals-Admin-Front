@@ -22,6 +22,7 @@ interface FilterManagerProps {
     label: string
     type: string
     filter?: string
+    partnerType?: string
 }
 
 export const FilterManager: FC<FilterManagerProps> = ({
@@ -31,6 +32,7 @@ export const FilterManager: FC<FilterManagerProps> = ({
     label,
     type,
     filter = 'organization',
+    partnerType,
 }) => {
     const [options, setOptions] = useState<MultiSelectOptionsType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
@@ -39,8 +41,15 @@ export const FilterManager: FC<FilterManagerProps> = ({
     useEffect(() => {
         const fetchFilterCities = async () => {
             try {
-                const data = await fetchFilterSalesManager(search, type, id)
+                const data = await fetchFilterSalesManager(
+                    search,
+                    type,
+                    id,
+                    partnerType
+                )
                 console.log('FilterManager data', data)
+                console.log('types: ', type)
+                console.log('partnerType: ', partnerType)
                 const filterData =
                     filter === 'user'
                         ? data.map((item: MultiSelectOptionsType) => ({

@@ -32,7 +32,14 @@ export const FilterCity: FC<FilterCityProps> = ({
     useEffect(() => {
         if (inputRef.current) inputRef.current.focus()
         const fetchFilterCities = async () => {
-            const data = await fetchCities(search, type, 'morocco', path)
+            const fullUrl = window.location.href
+            const data = await fetchCities(
+                search,
+                type,
+                'morocco',
+                path,
+                fullUrl
+            )
             console.log('FilterCity data', data)
             setOptions(data)
         }

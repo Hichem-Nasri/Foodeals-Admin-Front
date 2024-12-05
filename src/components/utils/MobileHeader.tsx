@@ -14,7 +14,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({
     buttonType = 'button',
 }) => {
     return (
-        <div className="lg:hidden flex justify-between gap-5 items-center border-b-2 w-full border-primary px-2 py-3 bg-white">
+        <div className="lg:hidden flex justify-between gap-5 items-center border-b-2 w-full border-primary px-2 py-5 bg-white mt-4 sm:mt-0">
             {buttonType === 'button' ? (
                 <button className="text-lynch-400" onClick={onClick}>
                     <ChevronLeft size={24} />

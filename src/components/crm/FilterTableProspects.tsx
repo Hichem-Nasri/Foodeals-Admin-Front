@@ -67,18 +67,16 @@ export const FilterTableProspects: FC<FilterTableProspectsProps> = ({
                 <ListFilter />
             </DialogTrigger>
             <DialogContent
-                className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto"
+                className="[&>.Icon]:hidden p-0 lg:p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto"
                 onBlur={() => handleHref(false)}
             >
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Filtrer par
                 </DialogTitle>
-                <div className="absolute flex lg:hidden top-0 left-0 right-0 min-w-full">
-                    <MobileHeader
-                        title="Filtrer par"
-                        onClick={() => setOpen(false)}
-                    />
-                </div>
+                <MobileHeader
+                    title="Filtrer par"
+                    onClick={() => setOpen(false)}
+                />
                 <FormCrmInfo
                     FilterForm={FilterForm}
                     onSubmit={onSubmit}
@@ -157,7 +155,7 @@ const FormCrmInfo: FC<FormCrmInfoProps> = ({
         <Form {...FilterForm}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-full min-h-full bg-white mt-10 lg:mt-0 gap-2 flex flex-col "
+                className="w-full min-h-full bg-white  gap-2 flex flex-col p-5"
             >
                 <div className="flex flex-col gap-2 gap-x-4">
                     <DateFilter form={FilterForm} disabled={false} />

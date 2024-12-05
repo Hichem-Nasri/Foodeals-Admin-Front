@@ -1,6 +1,6 @@
 'use client'
 import React, { FC, Fragment, useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { CustomButton } from '@/components/custom/CustomButton'
 import { DataTable } from '@/components/DataTable'
 import { ColumnVisibilityModal } from '@/components/Partners/ColumnVisibilityModal'
@@ -18,46 +18,24 @@ import {
     getSortedRowModel,
     getPaginationRowModel,
 } from '@tanstack/react-table'
-import {
-    Coins,
-    Percent,
-    ArrowRight,
-    RotateCw,
-    CheckCheck,
-    X,
-} from 'lucide-react'
-import { PaymentValidation } from '@/components/payment/PaymentValidation'
+import { Coins, Percent, ArrowRight } from 'lucide-react'
 import SwitchPayment from '@/components/payment/switchPayment'
-import { MultiSelectOptionsType } from '@/components/MultiSelect'
 import { useNotification } from '@/context/NotifContext'
-import { fetchPaymentCommission } from '@/lib/api/payment/getPayment'
 import {
     NotificationType,
-    PartnerEntitiesType,
     TotalValueProps,
     TotalValues,
 } from '@/types/GlobalType'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPaymentCommissionMonth } from '@/lib/api/payment/getCommissionMonth'
-import { defaultDataCommissionTable } from '@/components/payment/business/column/commissionColumn'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import {
-    columnsCommissionMonthTable,
-    defaultDataCommissionMonthTable,
-} from '@/components/payment/business/column/commissionMonthColumn'
-import CommissionSubStoreCard from '@/components/payment/CommissionSubStoreCard'
+import { columnsCommissionMonthTable } from '@/components/payment/business/column/commissionMonthColumn'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { FilterTablePayment } from '@/components/payment/FilterTablePayment'
-import { FormFilterPayment } from '@/components/payment/FormFilterPayment'
-import MobileHeader from '@/components/utils/MobileHeader'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
-import ConfirmationAll, {
-    DetailsPayment,
-} from '@/components/payment/PaymentDetails/ConfirmationAll'
+import ConfirmationAll from '@/components/payment/PaymentDetails/ConfirmationAll'
 import PaginationData from '@/components/utils/PaginationData'
-import { MyError } from '@/components/Error'
 
 interface CommissionMonthProps {
     id: string

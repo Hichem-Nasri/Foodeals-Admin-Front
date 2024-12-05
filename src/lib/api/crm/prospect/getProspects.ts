@@ -18,12 +18,12 @@ const buildQueryString = (
     }
     if (data.companyName && data.companyName.length > 0) {
         queryParts.push(
-            `names=${encodeURIComponent(data.companyName.join(','))}`
+            `names=${encodeURIComponent(data.companyName.join(',') + ',')}`
         )
     }
     if (data.category && data.category.length > 0) {
         queryParts.push(
-            `categories=${encodeURIComponent(data.category.join(','))}`
+            `categories=${encodeURIComponent(data.category.join(',') + ',')}`
         )
     }
     if (data.phone) {

@@ -67,7 +67,7 @@ function Notif({ type, message }: NotificationProps) {
                         )}
                     </div>
                 </div>
-                <h4 className="">{message}</h4>
+                <h4 className="text-xs lg:text-sm">{message}</h4>
                 <button type="button" onClick={handleClose} className="">
                     <X />
                 </button>

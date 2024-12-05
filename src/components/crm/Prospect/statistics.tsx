@@ -28,7 +28,7 @@ interface FcStatisticsProps {
 
 const Statistics: FC<FcStatisticsProps> = ({ type, isFetching }) => {
     const { data, isLoading, error } = useQuery({
-        queryKey: ['statistics'],
+        queryKey: ['statistics', type],
         queryFn: async () => {
             try {
                 const response = await api.get(API_ENDPOINT + '?type=' + type)

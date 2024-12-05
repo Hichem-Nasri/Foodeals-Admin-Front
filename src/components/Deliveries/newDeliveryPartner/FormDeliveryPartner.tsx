@@ -140,7 +140,7 @@ export const FormDeliveryPartner: FC<FormDeliveryPartnerProps> = ({
                                             name="companyType"
                                             label="Activité"
                                             disabled={disabled}
-                                            type="PARTNER"
+                                            type="DELIVERY_PARTNER"
                                         />
                                         <InputFieldForm
                                             control={control}

@@ -26,6 +26,7 @@ import {
 import { getContract } from '@/lib/api/partner/getContract'
 import { useNotification } from '@/context/NotifContext'
 import { NotificationType } from '@/types/GlobalType'
+import { useMutation } from '@tanstack/react-query'
 
 interface TopBarProps {
     primaryButtonDisabled?: boolean
@@ -74,20 +75,31 @@ export const TopBar: FC<TopBarProps> = ({
         try {
             const contractData = await getContract(id)
             const url = window.URL.createObjectURL(contractData as Blob)
-            window.open(url, '_blank') // Opens the contract in a new tab
+            window.open(url, '_blank') // Ouvre le contrat dans un nouvel onglet
         } catch (error) {
-            console.error('Error opening contract:', error)
+            console.error("Erreur lors de l'ouverture du contrat :", error)
         }
     }
+
     const handleCopyContractLink = async () => {
         try {
             const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData as Blob)
-            const fullLink = url // Use the generated URL
-            await navigator.clipboard.writeText(fullLink)
-            notif.notify(NotificationType.INFO, 'Lien du contrat copié')
+            if (contractData) {
+                const blobUrl = window.URL.createObjectURL(contractData as Blob)
+                const fullLink = blobUrl
+                await navigator.clipboard.writeText(fullLink)
+                notif.notify(NotificationType.INFO, 'Lien du contrat copié')
+            } else {
+                throw new Error(
+                    'Les données du contrat sont nulles ou indéfinies'
+                )
+            }
         } catch (error) {
-            console.error('Error copying contract link:', error)
+            console.error('Erreur lors de la copie du lien du contrat :', error)
+            notif.notify(
+                NotificationType.ERROR,
+                'Erreur lors de la copie du lien du contrat'
+            )
         }
     }
 
@@ -117,28 +129,55 @@ export const TopBar: FC<TopBarProps> = ({
             action: handleOpenContract, // New action to open the contract
         },
     ]
-    const handleGenerateContract = async () => {
-        try {
-            console.log(id, 'contract')
-            const contractData = await getContract(id)
-            const url = window.URL.createObjectURL(contractData as Blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', `contract_${id}.pdf`)
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            window.URL.revokeObjectURL(url)
-            setIsDownloading(true)
-            notif.notify(NotificationType.SUCCESS, 'Contrat généré avec succès')
-        } catch (error) {
-            notif.notify(
-                NotificationType.ERROR,
-                'Erreur lors de la génération du contrat'
-            )
-            console.log('Error generating contract:', error)
-        }
-    }
+    const { mutate: GenerateContract, isPending: PendingContract } =
+        useMutation({
+            mutationFn: getContract,
+            onSuccess: (data) => {
+                const url = window.URL.createObjectURL(data as Blob)
+                const link = document.createElement('a')
+                link.href = url
+                link.setAttribute('download', `contract_${id}.pdf`)
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                window.URL.revokeObjectURL(url)
+                setIsDownloading(true)
+                notif.notify(
+                    NotificationType.SUCCESS,
+                    'Contract a été généré avec succès'
+                )
+            },
+            onError: (error) => {
+                notif.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la génération du contrat'
+                )
+                console.error('Error generating contract:', error)
+            },
+        })
+    // const handleGenerateContract = async () => {
+
+    // try {
+    //     console.log(id, 'contract')
+    //     const contractData = await getContract(id)
+    //     const url = window.URL.createObjectURL(contractData as Blob)
+    //     const link = document.createElement('a')
+    //     link.href = url
+    //     link.setAttribute('download', `contract_${id}.pdf`)
+    //     document.body.appendChild(link)
+    //     link.click()
+    //     document.body.removeChild(link)
+    //     window.URL.revokeObjectURL(url)
+    //     setIsDownloading(true)
+    //     notif.notify(NotificationType.SUCCESS, 'Contrat généré avec succès')
+    // } catch (error) {
+    //     notif.notify(
+    //         NotificationType.ERROR,
+    //         'Erreur lors de la génération du contrat'
+    //     )
+    //     console.log('Error generating contract:', error)
+    // }
+    // }
 
     return (
         <div className="flex lg:relative fixed bottom-0 left-0 z-50 justify-between w-full rounded-t-[18px] lg:rounded-[18px] bg-white">
@@ -178,13 +217,17 @@ export const TopBar: FC<TopBarProps> = ({
                 )}
                 {status !== PartnerStatusType.VALID && !isDownloading ? (
                     <CustomButton
-                        disabled={primaryButtonDisabled || isPending}
-                        onClick={handleGenerateContract}
+                        disabled={
+                            primaryButtonDisabled ||
+                            isPending ||
+                            PendingContract
+                        }
+                        onClick={() => GenerateContract(id)}
                         size="sm"
                         label="Générer le contrat"
                         className="disabled:bg-lynch-300"
                         IconRight={FileBadge}
-                        isPending={isPending}
+                        isPending={isPending || PendingContract}
                     />
                 ) : status === PartnerStatusType.VALID ? (
                     <DropdownMenu>

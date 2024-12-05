@@ -11,7 +11,9 @@ const buildQueryString = (data: any, type: string, sub: string) => {
         queryParts.push(`endDate=${encodeURIComponent(data.endDate)}`)
     }
     if (data.user && data.user.length > 0) {
-        queryParts.push(`names=${encodeURIComponent(data.user.join(','))}`)
+        queryParts.push(
+            `names=${encodeURIComponent(data.user.join(',') + ',')}`
+        )
     }
     if (data.roleName) {
         queryParts.push(`roleName=${encodeURIComponent(data.roleName)}`)

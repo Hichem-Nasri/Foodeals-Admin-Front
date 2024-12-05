@@ -118,11 +118,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
                     contractUpload
                 )
                 if (response.status !== 200) {
-                    notif.notify(
-                        NotificationType.ERROR,
-                        'Failed to validate contract'
-                    )
-                    throw new Error('Failed to validate contract')
+                    throw new Error('Échec de la validation du contrat')
                 }
                 return response.data
             },
@@ -132,15 +128,19 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
                     if (valid.status == 200) {
                         notif.notify(
                             NotificationType.SUCCESS,
-                            'Prospect converted successfully'
-                        ) //TODO: check if redirect is needed
+                            'Prospect converti avec succès'
+                        ) //TODO: vérifier si une redirection est nécessaire
                     } else {
                         notif.notify(
                             NotificationType.ERROR,
-                            'Failed to convert prospect'
+                            'Échec de la conversion du prospect'
                         )
                     }
-                } else notif.notify(NotificationType.SUCCESS, 'Contract VALID')
+                } else
+                    notif.notify(
+                        NotificationType.SUCCESS,
+                        'Contrat a été validé'
+                    )
                 setPartnerDetails((prev) => ({
                     ...prev,
                     status: PartnerStatusType.VALID,
@@ -150,7 +150,7 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
                 console.error(err)
                 notif.notify(
                     NotificationType.ERROR,
-                    'Failed to validate contract'
+                    'Échec de la validation du contrat'
                 )
             },
         })
@@ -208,7 +208,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
             await handleFeaturesSubmit(partnerFeatures.getValues())
             mutate()
         } else {
-            notif.notify(NotificationType.INFO, 'Please fill all the fields')
+            notif.notify(
+                NotificationType.INFO,
+                'Veuillez remplir tous les champs obligatoires'
+            )
             console.log(
                 'error',
                 partnerInformation.formState.errors,
@@ -219,7 +222,10 @@ export const NewPartner: React.FC<NewPartnerProps> = ({
     }
     const handleSubmit = async () => {
         if (!contractUpload) {
-            notif.notify(NotificationType.ERROR, 'Please upload the contract')
+            notif.notify(
+                NotificationType.ERROR,
+                'Veuillez télécharger le contrat'
+            )
             return
         }
         mutateContract(contractUpload)

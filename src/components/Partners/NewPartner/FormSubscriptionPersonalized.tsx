@@ -189,7 +189,7 @@ export const FormSubscriptionPersonalized: FC<
                             disabled={disabled}
                         />
                         <InputFieldForm
-                            label="Montant"
+                            label="Commission par espèce"
                             name="solutions.commissionCash"
                             type="number"
                             control={form.control}
@@ -199,7 +199,7 @@ export const FormSubscriptionPersonalized: FC<
                             disabled={disabled}
                         />
                         <InputFieldForm
-                            label="Montant"
+                            label="Commission par carte"
                             name="solutions.commissionCard"
                             type="number"
                             control={form.control}

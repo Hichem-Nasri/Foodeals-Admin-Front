@@ -66,7 +66,9 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                     archive
                 )
                 if (data.status === 500) {
-                    throw new Error('Error fetching partners')
+                    throw new Error(
+                        'Erreur lors de la récupération des partenaires'
+                    )
                 }
                 console.log('data', data)
                 setTotals((prev) => ({
@@ -77,7 +79,10 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
                 setDeliveries(data.data.content)
                 return data.data
             } catch (error) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des partenaires'
+                )
                 console.log(error)
                 setDeliveries([])
             }

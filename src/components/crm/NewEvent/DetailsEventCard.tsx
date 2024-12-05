@@ -4,6 +4,7 @@ import React, { FC } from 'react'
 import { DetailsEvenetProspect } from './DetailsEvenet'
 import { CrmType, EventType } from '@/types/CrmType'
 import Link from 'next/link'
+import { capitalize } from '@/types/utils'
 
 interface DetailsEventCardProps {
     detailsData: EventType
@@ -14,8 +15,8 @@ const DetailsEventCard: FC<DetailsEventCardProps> = ({
     detailsData,
     prospect,
 }) => {
-    const { lead, object, createdAt } = detailsData
-    const createdAtDate = new Date(createdAt)
+    const { lead, object, dateAndTime } = detailsData
+    const createdAtDate = new Date(dateAndTime)
     const date = createdAtDate.toLocaleDateString()
     const hour = createdAtDate.getHours()
     const minutes = createdAtDate.getMinutes()
@@ -33,9 +34,9 @@ const DetailsEventCard: FC<DetailsEventCardProps> = ({
                         </Avatar>
                         <div className="flex flex-col justify-center items-start">
                             <p className="text-lynch-950    text-xl w-full font-normal">
-                                {lead.name.firstName +
+                                {capitalize(lead.name?.firstName) +
                                     ' ' +
-                                    lead.name.lastName.toUpperCase()}
+                                    capitalize(lead.name?.lastName)}
                             </p>
                             <p className="text-md text-mountain-400">Manager</p>
                         </div>

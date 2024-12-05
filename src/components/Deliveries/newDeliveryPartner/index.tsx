@@ -72,12 +72,11 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
                 cover: deliveryPartnerData.cover! as File,
             })
             if (![200, 201].includes(response.status)) {
-                notif.notify(NotificationType.ERROR, 'Failed to save partner')
                 throw new Error('Failed to save partner')
             }
             notif.notify(
                 NotificationType.SUCCESS,
-                `The Delivery Partner has been saved successfully`
+                `Le partenaire de livraison a été enregistré avec succès`
             )
             return response.data
         },
@@ -85,6 +84,10 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             setDeliveryId(data.id)
         },
         onError: (err) => {
+            notif.notify(
+                NotificationType.ERROR,
+                "Échec de l'enregistrement du partenaire"
+            )
             console.log(err)
         },
     })
@@ -173,16 +176,19 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
         if (!documents || documents.length === 0) {
             notif.notify(
                 NotificationType.ERROR,
-                'Please upload the contract first'
+                "Veuillez d'abord télécharger le contrat"
             )
             return
         }
         const res = await validateContract(deliveryId, documents)
         if (res.status === 200) {
-            notif.notify(NotificationType.SUCCESS, 'Contract VALID')
+            notif.notify(NotificationType.SUCCESS, 'Contract a été validé')
             setStatus(PartnerStatusType.VALID)
         } else {
-            notif.notify(NotificationType.ERROR, 'Failed to validate contract')
+            notif.notify(
+                NotificationType.ERROR,
+                'Échec de la validation du contrat'
+            )
         }
     }
 
@@ -202,7 +208,7 @@ export const NewDelivery: React.FC<NewDeliveryProps> = ({
             console.log('invalid', DeliveryPartner.formState.errors)
             notif.notify(
                 NotificationType.INFO,
-                'Please fill in all the required fields'
+                'Veuillez remplir tous les champs obligatoires'
             )
         }
     }

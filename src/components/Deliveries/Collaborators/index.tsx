@@ -13,8 +13,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { ArrowLeft, RotateCw } from 'lucide-react'
-import { CustomButton } from '@/components/custom/CustomButton'
 import {
     defaultFilter,
     PartnerCollaboratorsFilerSchema,
@@ -79,7 +77,9 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
                     archive
                 )
                 if (data.status === 500)
-                    throw new Error('Error fetching partners')
+                    throw new Error(
+                        'Erreur lors de la récupération des collaborateurs'
+                    )
                 const { organization, users } = data.data
                 setPartner(organization)
                 console.log('data', data)
@@ -93,7 +93,7 @@ export const DeliveryCollaborators: FC<DeliveryCollaboratorsProps> = ({
             } catch (error) {
                 notify.notify(
                     NotificationType.ERROR,
-                    'Error fetching Collaborateurs'
+                    'Erreur lors de la récupération des collaborateurs'
                 )
                 console.log(error)
                 // setCollaborator([])

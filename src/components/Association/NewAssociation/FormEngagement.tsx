@@ -91,7 +91,6 @@ export const FormEngagement: FC<FormEngagementProps> = ({
                                             label="Voir la liste"
                                             IconRight={LayoutList}
                                             onClick={showAllPartners}
-                                            disabled={disabled}
                                         />
                                     </div>
                                     <div>

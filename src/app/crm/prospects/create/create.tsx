@@ -61,21 +61,21 @@ export const Create: FC<CreateProps> = ({ type }) => {
                 })
                 .catch((err) => console.log(err))
             if (!res || ![201, 200].includes(res.status))
-                throw new Error('Failed to create prospect')
+                throw new Error('Échec de la création du prospect')
             console.log('done: ', res)
             return res.data
         },
         onSuccess: (data) => {
             setConvertir(true)
             setInfo(data)
-            Notif.notify(
-                NotificationType.SUCCESS,
-                'Prospect created successfully'
-            )
+            Notif.notify(NotificationType.SUCCESS, 'Prospect créé avec succès')
             queryClient.invalidateQueries({ queryKey: ['prospects'] })
         },
         onError: (error) => {
-            Notif.notify(NotificationType.ERROR, 'Failed to create prospect')
+            Notif.notify(
+                NotificationType.ERROR,
+                'Échec de la création du prospect'
+            )
             console.log(error)
         },
     })
@@ -119,16 +119,16 @@ export const Create: FC<CreateProps> = ({ type }) => {
             Notif.notify(
                 NotificationType.SUCCESS,
                 'Prospect ' +
-                    (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
-                    ' successfully'
+                    (type == 'ARCHIVE' ? 'archivé' : 'désarchivé') +
+                    ' avec succès'
             )
-            Info.status = type == 'ARCHIVE' ? 'CANCELED' : 'IN_PROGRESS'
+            Info.status = type == 'ARCHIVE' ? 'ANNULÉ' : 'EN COURS'
         } else {
             Notif.notify(
                 NotificationType.ERROR,
-                'Failed to ' +
-                    (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
-                    ' prospect'
+                'Échec de ' +
+                    (type == 'ARCHIVE' ? "l'archivage" : 'la désarchivage') +
+                    ' du prospect'
             )
         }
         setLeadko(false)
@@ -183,7 +183,7 @@ export const Create: FC<CreateProps> = ({ type }) => {
                                     Info?.status as PartnerStatusType
                                 )}
                                 variant={'secondary'}
-                                className={`w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
+                                className={`w-full lg:w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
                                     Info?.status == PartnerStatusType.CANCELED
                                         ? 'bg-mountain-100 border-primary text-primary'
                                         : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'

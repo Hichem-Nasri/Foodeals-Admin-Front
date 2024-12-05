@@ -9,8 +9,8 @@ import { formatNumberWithSpaces } from '@/lib/utils'
 import { SchemaFilter } from '@/types/associationSchema'
 import { z } from 'zod'
 import ArchiveButton from '../custom/ArchiveButton'
-import { FormFilterCollaborator } from '../Association/Collaborator/FilterCollaborator'
 import { PartnerCollaboratorsFilerSchema } from '@/types/collaborators'
+import { FormFilterCollaborator } from './FormFilter'
 
 interface FilterCollaboratorsProps {
     open: boolean
@@ -23,6 +23,8 @@ interface FilterCollaboratorsProps {
     totalElements: number
     onSubmit: (data: z.infer<typeof PartnerCollaboratorsFilerSchema>) => void
     isFetching?: boolean
+    type: string
+    partnerType: string
 }
 
 export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
@@ -35,6 +37,8 @@ export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
     totalElements,
     onSubmit,
     isFetching,
+    type,
+    partnerType,
 }) => {
     const router = useRouter()
     return (
@@ -50,6 +54,8 @@ export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
                         open={open}
                         setOpen={setOpen}
                         archive={archive}
+                        type={type}
+                        partnerType={partnerType}
                     />
                     <ArchiveButton
                         archive={archive}
@@ -65,6 +71,8 @@ export const FilterCollaborators: FC<FilterCollaboratorsProps> = ({
                     open={open}
                     setOpen={setOpen}
                     archive={archive}
+                    type={type}
+                    partnerType={partnerType}
                 />
                 <ColumnVisibilityModal table={table} />
                 <CustomButton

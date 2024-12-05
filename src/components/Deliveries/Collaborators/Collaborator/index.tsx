@@ -77,6 +77,7 @@ export const Collaborator: React.FC<CollaboratorProps> = ({
                     onClick={() => router.back()}
                     IconLeft={ArrowLeft}
                     variant="outline"
+                    size={'sm'}
                 />
             </div>
             <div className="flex flex-col gap-[1.875rem] h-full w-full">

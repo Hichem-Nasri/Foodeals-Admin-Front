@@ -54,7 +54,7 @@ export const OptionStatus: Record<string, MultiSelectOptionsType> = {
 }
 
 export function capitalize(str: string): string {
-    if (!str) return ''
+    if (!str || !str.length) return ''
     return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1)
 }
 

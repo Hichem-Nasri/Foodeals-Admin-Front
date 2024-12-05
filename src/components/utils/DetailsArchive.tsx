@@ -140,7 +140,7 @@ const DetailsArchive = ({
                             ))}
                         </div>
                         {selected && (
-                            <DialogDescription className="flex flex-col gap-5 mt-8 p-4 lg:p-0">
+                            <DialogDescription className="flex flex-col gap-5 mt-4 p-4 lg:p-0">
                                 <div className="flex justify-between flex-col items-start space-y-2">
                                     <Label
                                         htmlFor="archiveReason"

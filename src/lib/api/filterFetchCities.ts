@@ -5,7 +5,8 @@ export async function fetchCities(
     search: string,
     type: string,
     country?: string,
-    path?: string
+    path?: string,
+    fullUrl?: string
 ) {
     try {
         const [types, archived] = type.split('&')
@@ -18,9 +19,11 @@ export async function fetchCities(
             path?.includes('collaborateur')
         ) {
             const id = path.split('/')?.pop()!
-            url = `${API_URL}/v1/users/cities/organizations/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
+            url = `${API_URL}/v1/users/cities/${
+                fullUrl?.includes('sub') ? 'subentities' : 'organizations'
+            }/search?city=${search}&organizationId=${id}&pageNum=0&pageSize=10`
         } else {
-            url = `${API_URL}/v1/organizations/cities/search?city=${search}&country=${country}&pageNum=0&pageSize=10&types=${types}`
+            url = `${API_URL}/api/v1/organizations/cities/search?city=${search}&country=${country}&pageNum=0&pageSize=10&types=${types}`
         }
         console.log('cities: ', url)
         const res = await api.get(url).catch((error) => {

@@ -43,7 +43,7 @@ export const FilterSubAccount: FC<FilterTablePartnerProps> = ({
                 <span className="lg:inline-flex hidden">Filtrer par</span>
                 <ListFilter />
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
+            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
                 <FormAssociation
                     form={form}
                     onSubmit={onSubmit}
@@ -73,18 +73,16 @@ const FormAssociation: FC<FormAssociationProps> = ({
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-full min-h-full bg-white mt-10 lg:mt-0 gap-2 flex flex-col "
+                className="w-full min-h-full bg-white gap-2 flex flex-col "
             >
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Filtrer par
                 </DialogTitle>
-                <div className="absolute flex lg:hidden top-0 left-0 right-0 min-w-full">
-                    <MobileHeader
-                        title="Filtrer par"
-                        onClick={() => setOpen(false)}
-                    />
-                </div>
-                <div className="flex flex-col gap-2 gap-x-4">
+                <MobileHeader
+                    title="Filtrer par"
+                    onClick={() => setOpen(false)}
+                />
+                <div className="flex flex-col gap-2 gap-x-4 p-5">
                     <DateFilter form={form} disabled={false} />
                     <div className="flex lg:flex-row flex-col gap-3 w-full">
                         <FilterOrganizations
@@ -145,7 +143,7 @@ const FormAssociation: FC<FormAssociationProps> = ({
                     </div>
                 </div>
 
-                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
+                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem] p-5">
                     <CustomButton
                         variant="ghost"
                         title="Réinitialiser les filtres"

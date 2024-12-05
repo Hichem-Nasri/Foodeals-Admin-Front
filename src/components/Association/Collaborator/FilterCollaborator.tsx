@@ -52,7 +52,7 @@ export const FormFilterCollaborator: FC<FormFilterCollaboratorProps> = ({
                 <span className="lg:inline-flex hidden">Filtrer par</span>
                 <ListFilter />
             </DialogTrigger>
-            <DialogContent className="[&>.Icon]:hidden p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
+            <DialogContent className="[&>.Icon]:hidden p-0 lg:p-5 lg:rounded-[14px] w-full max-w-full rounded-none lg:max-w-[36.25rem] min-w-full lg:min-w-fit gap-[1.875rem] max-h-screen overflow-auto">
                 <FormCollaborator
                     form={form}
                     onSubmit={onSubmit}
@@ -82,92 +82,93 @@ const FormCollaborator: FC<FormCollaboratorProps> = ({
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-full min-h-full bg-white mt-10 lg:mt-0 gap-2 flex flex-col "
+                className="w-full min-h-full bg-white gap-2 flex flex-col "
             >
                 <DialogTitle className="text-[1.375rem] font-normal text-lynch-400 lg:flex hidden">
                     Filtrer par
                 </DialogTitle>
-                <div className="absolute flex lg:hidden top-0 left-0 right-0 min-w-full">
-                    <MobileHeader
-                        title="Filtrer par"
-                        onClick={() => setOpen(false)}
-                    />
+                <MobileHeader
+                    title="Filtrer par"
+                    onClick={() => setOpen(false)}
+                />
+                <div className="w-full gap-3 p-5 lg:p-0">
+                    <div className="flex flex-col gap-2 gap-x-4">
+                        <DateFilter form={form} disabled={false} />
+                        <div className="flex lg:flex-row flex-col gap-3 w-full">
+                            <FilterUsers
+                                control={control}
+                                name="user"
+                                label="Collaborateurs"
+                                type={`ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&${archive}`}
+                                filter="user"
+                            />
+                            <SelectField
+                                control={control}
+                                name="roleName"
+                                label="Role"
+                                options={[
+                                    'MANAGER',
+                                    'SALES_MANAGER',
+                                    'DELIVERY_MAN',
+                                    'LEAD',
+                                ].map((role) => ({
+                                    key: role,
+                                    label: capitalize(role.replace('_', ' ')),
+                                }))}
+                            />
+                        </div>
+                        <div className="flex lg:flex-row flex-col gap-3 w-full">
+                            <FilterCity
+                                control={control}
+                                name="city"
+                                label="Ville"
+                                type={'DELIVERY'}
+                            />
+                            <FilterRegion
+                                control={control}
+                                name="region"
+                                label="Région"
+                                type={'DELIVERY'}
+                            />
+                        </div>
+                        <div className="flex lg:flex-row flex-col gap-3 w-full">
+                            <InputFieldForm
+                                control={control}
+                                name="email"
+                                label="Email"
+                                placeholder="Saisir l'email"
+                                IconLeft={Mail}
+                            />
+                            <InputFieldForm
+                                control={control}
+                                name="phone"
+                                label="Téléphone"
+                                placeholder="Saisir le téléphone"
+                                IconLeft={PhoneCall}
+                            />
+                        </div>
+                        <div className="flex lg:flex-row flex-col gap-3 w-full">
+                            <FilterMultiSelect
+                                control={control}
+                                name="solutions"
+                                label="Solutions"
+                                transform={(
+                                    value: MultiSelectOptionsType[]
+                                ) => {
+                                    return value.map((option, index) => (
+                                        <PartnerSolution
+                                            key={index}
+                                            solution={
+                                                option.key as PartnerSolutionType
+                                            }
+                                        />
+                                    ))
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className="flex flex-col gap-2 gap-x-4">
-                    <DateFilter form={form} disabled={false} />
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterUsers
-                            control={control}
-                            name="user"
-                            label="Collaborateurs"
-                            type={`ASSOCIATION,FOOD_BANK,FOOD_BANK_ASSO&${archive}`}
-                            filter="user"
-                        />
-                        <SelectField
-                            control={control}
-                            name="roleName"
-                            label="Role"
-                            options={[
-                                'MANAGER',
-                                'SALES_MANAGER',
-                                'DELIVERY_MAN',
-                                'LEAD',
-                            ].map((role) => ({
-                                key: role,
-                                label: capitalize(role.replace('_', ' ')),
-                            }))}
-                        />
-                    </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterCity
-                            control={control}
-                            name="city"
-                            label="Ville"
-                            type={'DELIVERY'}
-                        />
-                        <FilterRegion
-                            control={control}
-                            name="region"
-                            label="Région"
-                            type={'DELIVERY'}
-                        />
-                    </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <InputFieldForm
-                            control={control}
-                            name="email"
-                            label="Email"
-                            placeholder="Saisir l'email"
-                            IconLeft={Mail}
-                        />
-                        <InputFieldForm
-                            control={control}
-                            name="phone"
-                            label="Téléphone"
-                            placeholder="Saisir le téléphone"
-                            IconLeft={PhoneCall}
-                        />
-                    </div>
-                    <div className="flex lg:flex-row flex-col gap-3 w-full">
-                        <FilterMultiSelect
-                            control={control}
-                            name="solutions"
-                            label="Solutions"
-                            transform={(value: MultiSelectOptionsType[]) => {
-                                return value.map((option, index) => (
-                                    <PartnerSolution
-                                        key={index}
-                                        solution={
-                                            option.key as PartnerSolutionType
-                                        }
-                                    />
-                                ))
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem]">
+                <div className="flex lg:flex-row flex-col justify-end gap-[0.625rem] p-5">
                     <CustomButton
                         variant="ghost"
                         title="Réinitialiser les filtres"

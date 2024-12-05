@@ -7,7 +7,8 @@ interface ProductPageProps {}
 const ProductPage: FC<ProductPageProps> = () => {
     return (
         <Layout>
-            <Product />
+            <h1>Product Page</h1>
+            {/* <Product /> */}
         </Layout>
     )
 }

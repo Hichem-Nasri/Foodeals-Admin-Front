@@ -74,6 +74,7 @@ export const GetListActions: (
         'voir',
         'modifier',
         'collaborateurs',
+        'contrat',
         'liste des paiement',
         'archiver',
     ]

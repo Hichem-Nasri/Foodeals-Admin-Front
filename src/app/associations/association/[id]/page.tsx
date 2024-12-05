@@ -21,7 +21,11 @@ export default function AssociationPage({ params }: AssociationPageProps) {
 
     console.log(data.data)
     return (
-        <Layout formTitle="Nouvelle association">
+        <Layout
+            formTitle={
+                params.id == 'new' ? 'Nouvelle association' : 'Association'
+            }
+        >
             {data.isLoading ? (
                 <IsLoading />
             ) : (

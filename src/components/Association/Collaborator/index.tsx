@@ -85,7 +85,10 @@ const CollaboratorAssociations: FC<CollaboratorAssociationsProps> = ({
                 setCollaborators(users?.content)
                 return data.data
             } catch (error) {
-                notify.notify(NotificationType.ERROR, 'Error fetching partners')
+                notify.notify(
+                    NotificationType.ERROR,
+                    'Erreur lors de la récupération des collaborateurs'
+                )
                 console.log(error)
                 setCollaborators([])
             }

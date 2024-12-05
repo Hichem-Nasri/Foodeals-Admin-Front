@@ -80,6 +80,7 @@ const DetailsProspect = ({
 import React, { useEffect } from 'react'
 import { EventType } from '@/types/CrmType'
 import { useMediaQuery } from 'react-responsive'
+import { capitalize } from '@/types/utils'
 
 const DetailsEvenetProspect = ({
     children,
@@ -91,11 +92,11 @@ const DetailsEvenetProspect = ({
     className?: string
 }) => {
     const [open, setOpen] = React.useState(false)
-    const { lead, object, message, createdAt } = detailsData
+    const { lead, object, message, dateAndTime } = detailsData
 
-    const createdAtDate = new Date(createdAt)
+    const createdAtDate = new Date(dateAndTime)
     const date = createdAtDate.toLocaleDateString()
-    const hour = createdAtDate.getTime().toString()
+    const hour = createdAtDate.getHours()
     const minutes = createdAtDate.getMinutes()
     const hourString = `${hour.toString().padStart(2, '0')}h:${minutes
         .toString()
@@ -113,7 +114,7 @@ const DetailsEvenetProspect = ({
 
             <DialogContent className={`${styleDialog}`} showContent={false}>
                 <div className="h-full overflow-y-auto flex justify-start items-center flex-col w-full m-auto space-y-6 relative">
-                    <DialogTitle className=" w-full flex flex-col justify-center items-center">
+                    <DialogTitle className=" w-full flex flex-col mt-2 lg:mt-0 justify-center items-center">
                         <div className="px-2 flex justify-between items-center text-base font-normal w-full text-lynch-400 lg:flex-row flex-row-reverse">
                             <span
                                 className={`${
@@ -136,7 +137,9 @@ const DetailsEvenetProspect = ({
                     <DialogDescription className="flex flex-col space-x-4 w-full p-4">
                         <DetailsProspect
                             name={
-                                lead.name.firstName + ' ' + lead.name.lastName
+                                capitalize(lead.name?.firstName) +
+                                ' ' +
+                                capitalize(lead.name?.lastName)
                             }
                             avatar={lead.avatarPath!}
                             date={{

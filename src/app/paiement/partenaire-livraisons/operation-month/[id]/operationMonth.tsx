@@ -25,7 +25,11 @@ import {
     getPartnerDeliveryPaymentByMonth,
 } from '@/lib/api/payment/getPartnerDeliveryPayment'
 import { formatNumberWithSpaces, getFilterDate } from '@/lib/utils'
-import { NotificationType, TotalValueProps } from '@/types/GlobalType'
+import {
+    NotificationType,
+    TotalValueProps,
+    TotalValues,
+} from '@/types/GlobalType'
 import { PaymentFilterSchema } from '@/types/PaymentType'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
@@ -61,10 +65,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
     const [totals, setTotals] = useState<
         TotalValueProps & { totalCommission: number; totalValue: number }
     >({
-        totalElements: 0,
-        totalPages: 0,
-        currentPage: 0,
-        pageSize: 10,
+        ...TotalValues,
         totalCommission: 0,
         totalValue: 0,
     })
@@ -183,7 +184,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                     form={form}
                     onSubmit={onSubmit}
                     setOpen={setOpen}
-                    header="Tableau de validation des Subscription"
+                    header="Tableau de validation des abonnements"
                     state="commissions"
                 />
                 <CardTotalValue
@@ -223,7 +224,7 @@ export const OperationMonthDeliveries: FC<PaymentProps> = ({ id, month }) => {
                 <DataTable
                     table={table}
                     data={payments}
-                    title="Tableau de validation des commission"
+                    title="Tableau de validation des commissions"
                     transform={(data) => <Fragment />}
                     hideColumns={['type']}
                     isLoading={isLoading || isRefetching}

@@ -25,6 +25,7 @@ import { PartnerSolutionType, PartnerStatusType } from '@/types/partnersType'
 import { getContract } from '@/lib/api/partner/getContract'
 import { PartnerStatus } from '../Partners/PartnerStatus'
 import { GetListActions } from './column/getListActions'
+import { ContractStatusPartner } from '@/types/GlobalType'
 
 interface DeliveryCardProps {
     delivery: DeliveryType
@@ -86,7 +87,9 @@ export const DeliveryCard: React.FC<DeliveryCardProps> = ({
                     </div>
                 </div>
                 <div className="flex flex-col justify-evenly items-end space-y-4">
-                    <PartnerStatus status={delivery.status} />
+                    <PartnerStatus
+                        status={ContractStatusPartner[delivery.status]}
+                    />
                     <div className="flex items-center gap-[0.375rem]">
                         <Link href={`tel:${delivery.responsibleInfoDto.phone}`}>
                             <CustomButton

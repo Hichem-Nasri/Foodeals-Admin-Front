@@ -109,13 +109,18 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
         if (res.status === 200) {
             Notif.notify(
                 NotificationType.SUCCESS,
-                'Prospect' +
-                    (type == 'ARCHIVE' ? 'archived' : 'desarchive') +
-                    'successfully'
+                'Prospect ' +
+                    (type == 'ARCHIVE' ? 'archivé' : 'désarchivé') +
+                    ' avec succès'
             )
-            prospect.status = type == 'ARCHIVE' ? 'CANCELED' : 'IN_PROGRESS'
+            prospect.status = type == 'ARCHIVE' ? 'ANNULÉ' : 'EN COURS'
         } else {
-            Notif.notify(NotificationType.ERROR, 'Failed to archive prospect')
+            Notif.notify(
+                NotificationType.ERROR,
+                'Échec de ' +
+                    (type == 'ARCHIVE' ? "l'archivage" : 'la désarchivage') +
+                    ' du prospect'
+            )
         }
         setLeadko(false)
         queryClient.invalidateQueries({ queryKey: ['prospect'] })
@@ -129,7 +134,7 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
 
     console.log('prospect: ', CrmInformation.formState.errors)
     return (
-        <div className="flex flex-col gap-[0.625rem] w-full lg:px-3 lg:mb-0 mb-20 overflow-auto">
+        <div className="flex flex-col gap-[0.625rem] w-full lg:pr-3 lg:mb-0 mb-20 overflow-auto px-3 lg:px-0">
             {!open ? (
                 <>
                     <TopBar
@@ -200,7 +205,7 @@ const ProspectElement = ({ data, id }: { data: CrmType; id: string }) => {
                                 prospect?.status as PartnerStatusType
                             )}
                             variant={'secondary'}
-                            className={`w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
+                            className={`w-full lg:w-fit rounded=[12px] border-[1.5px] px-5 py-3 ${
                                 prospect?.status == PartnerStatusType.CANCELED
                                     ? 'bg-mountain-100 border-primary text-primary'
                                     : 'bg-coral-50 border-coral-500 text-coral-500 hover:bg-coral-100 hover:text-coral-500'
