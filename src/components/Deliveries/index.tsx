@@ -26,16 +26,13 @@ import {
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import PaginationData from '../utils/PaginationData'
 import { columnsDeliveriesTable } from './column/deliveryColumn'
-import {
-    defaultFilter,
-    PartnerCollaboratorsFilerSchema,
-} from '@/types/collaborators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/routes'
 import { fetchPartners } from '@/lib/api/partner/fetchPartners'
+import { defaultSchemaFilter, SchemaFilter } from '@/types/associationSchema'
 interface DeliveriesProps {}
 
 export interface TableRowType {
@@ -48,7 +45,7 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
     const [deliveries, setDeliveries] = useState<DeliveryType[]>([])
     const [totals, setTotals] = useState<TotalValueProps>(TotalValues)
     const [FilterData, setFilterData] =
-        useState<z.infer<typeof PartnerCollaboratorsFilerSchema>>(defaultFilter)
+        useState<z.infer<typeof SchemaFilter>>(defaultSchemaFilter)
     const [open, setOpen] = useState(false)
     const notify = useNotification()
     const router = useRouter()
@@ -91,15 +88,13 @@ export const Deliveries: FC<DeliveriesProps> = ({}) => {
         placeholderData: keepPreviousData,
     })
 
-    const form = useForm<z.infer<typeof PartnerCollaboratorsFilerSchema>>({
-        resolver: zodResolver(PartnerCollaboratorsFilerSchema),
+    const form = useForm<z.infer<typeof SchemaFilter>>({
+        resolver: zodResolver(SchemaFilter),
         mode: 'onBlur',
         defaultValues: FilterData,
     })
 
-    const onSubmit = (
-        data: z.infer<typeof PartnerCollaboratorsFilerSchema>
-    ) => {
+    const onSubmit = (data: z.infer<typeof SchemaFilter>) => {
         setFilterData(data)
         setOpen(false)
     }

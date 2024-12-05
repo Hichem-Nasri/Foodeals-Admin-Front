@@ -25,7 +25,7 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
     form,
     disabled,
 }) => {
-    const { dlcPro, donate, marketPro } = form.watch()
+    const { dlcPro, donate, marketPro, accountType } = form.watch()
     const { errors } = form.formState // Get the form errors
 
     return (
@@ -90,23 +90,25 @@ export const FormSubscriptionGeneral: FC<FormSubscriptionGeneralProps> = ({
                 />
             </div>
             <div className="flex lg:flex-row flex-col items-start gap-3">
-                <SelectField
-                    control={form.control}
-                    name="marketPro.managerId"
-                    label="Gérer par"
-                    options={[
-                        {
-                            key: PartnerCompanyType.PRINCIPAL,
-                            label: 'Principal',
-                        },
-                        {
-                            key: PartnerCompanyType.NORMAL,
-                            label: 'Sous compte',
-                        },
-                    ]}
-                    placeholder="Sélectionnez type magasin"
-                    disabled={!marketPro?.selected || disabled}
-                />
+                {accountType != 'NORMAL_PARTNER' && (
+                    <SelectField
+                        control={form.control}
+                        name="marketPro.managerId"
+                        label="Gérer par"
+                        options={[
+                            {
+                                key: PartnerCompanyType.PRINCIPAL,
+                                label: 'Principal',
+                            },
+                            {
+                                key: PartnerCompanyType.NORMAL,
+                                label: 'Sous compte',
+                            },
+                        ]}
+                        placeholder="Sélectionnez type magasin"
+                        disabled={!marketPro?.selected || disabled}
+                    />
+                )}
                 <InputFieldForm
                     control={form.control}
                     label="Commission par espèce"

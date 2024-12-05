@@ -127,7 +127,7 @@ export interface AssociationInformationSchemaType {
     region: Omit<PartnerInfoDto, 'avatarPath'>
     address: string
     associationType: string
-    mapLocation: string
+    mapLocation?: string
     numberOfSieges: number
     solutions: PartnerSolutionType[]
     documents: string[]

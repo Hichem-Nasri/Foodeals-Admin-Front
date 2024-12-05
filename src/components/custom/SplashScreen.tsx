@@ -38,8 +38,8 @@ const SplashScreen = ({
             <div className="flex items-center justify-center space-x-4">
                 <Lottie
                     style={{
-                        width: isMobile ? '20px' : '50px',
-                        height: isMobile ? '20px' : '50px',
+                        width: isMobile ? '30px' : '50px',
+                        height: isMobile ? '30px' : '50px',
                         marginBottom: '10px',
                     }}
                     options={{
@@ -47,8 +47,8 @@ const SplashScreen = ({
                         autoplay: true,
                         animationData: foodealsLoading,
                     }}
-                    width={isMobile ? 20 : 50}
-                    height={isMobile ? 20 : 50}
+                    width={isMobile ? 30 : 50}
+                    height={isMobile ? 30 : 50}
                 />
                 <h1 className="text-xl sm:text-3xl text-white lg:text-5xl">
                     Foodeals

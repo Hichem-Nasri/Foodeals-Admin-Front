@@ -25,7 +25,7 @@ interface FormSubscriptionPersonalizedProps {
 export const FormSubscriptionPersonalized: FC<
     FormSubscriptionPersonalizedProps
 > = ({ form, disabled }) => {
-    const { solutions } = form.watch()
+    const { solutions, accountType } = form.watch()
     console.log('hello person: ', solutions)
 
     return (
@@ -171,23 +171,25 @@ export const FormSubscriptionPersonalized: FC<
                     (s) => s === PartnerSolutionType.MARKET_PRO
                 ).length > 0 && (
                     <div className="flex items-start gap-3">
-                        <SelectField
-                            control={form.control}
-                            name="solutions.managerId"
-                            label="Gérer par"
-                            options={[
-                                {
-                                    key: PartnerCompanyType.PRINCIPAL,
-                                    label: 'Principal',
-                                },
-                                {
-                                    key: PartnerCompanyType.NORMAL,
-                                    label: 'Sous compte',
-                                },
-                            ]}
-                            placeholder="Sélectionnez type magasin"
-                            disabled={disabled}
-                        />
+                        {accountType != 'NORMAL_PARTNER' && (
+                            <SelectField
+                                control={form.control}
+                                name="solutions.managerId"
+                                label="Gérer par"
+                                options={[
+                                    {
+                                        key: PartnerCompanyType.PRINCIPAL,
+                                        label: 'Principal',
+                                    },
+                                    {
+                                        key: PartnerCompanyType.NORMAL,
+                                        label: 'Sous compte',
+                                    },
+                                ]}
+                                placeholder="Sélectionnez type magasin"
+                                disabled={disabled}
+                            />
+                        )}
                         <InputFieldForm
                             label="Commission par espèce"
                             name="solutions.commissionCash"

@@ -148,7 +148,7 @@ const FormAssociation: FC<FormAssociationProps> = ({
                         <div className="flex lg:flex-row flex-col gap-3 w-full">
                             <FilterMultiSelect
                                 control={control}
-                                name="solution"
+                                name="solutions"
                                 label="Solutions"
                                 transform={(
                                     value: MultiSelectOptionsType[]

@@ -125,7 +125,7 @@ const FormAssociation: FC<FormAssociationProps> = ({
                         />
                         <FilterMultiSelect
                             control={control}
-                            name="solution"
+                            name="solutions"
                             label="Solutions"
                             transform={(value: MultiSelectOptionsType[]) => {
                                 return value.map((option, index) => (

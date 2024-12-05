@@ -43,8 +43,8 @@ export const PartnerCard: FC<PartnerCardProps> = ({
     const dataArray = [
         {
             label:
-                partner.type == PartnerEntitiesType.SUB_ENTITY
-                    ? 'S.COMPTE'
+                partner.type == PartnerEntitiesType.NORMAL_PARTNER
+                    ? 'NORMAL'
                     : 'PRINCIPAL',
             icon: Building,
         },
