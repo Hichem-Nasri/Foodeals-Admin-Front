@@ -49,7 +49,7 @@ const buildQueryString = (
         queryParts.push(`cityId=${encodeURIComponent(data.city)}`)
     }
 
-    queryParts.push(`type=${types}`)
+    queryParts.push(`types=${types}`)
 
     return queryParts.join('&')
 }

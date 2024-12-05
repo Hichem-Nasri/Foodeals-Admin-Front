@@ -31,7 +31,7 @@ const Statistics: FC<FcStatisticsProps> = ({ type, isFetching }) => {
         queryKey: ['statistics', type],
         queryFn: async () => {
             try {
-                const response = await api.get(API_ENDPOINT + '?type=' + type)
+                const response = await api.get(API_ENDPOINT + '?types=' + type)
                 return response.data as StatisticsProps
             } catch (error) {
                 console.error(error)

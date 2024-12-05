@@ -12,7 +12,7 @@ const buildQueryString = (data: any, type: string) => {
     }
     if (data.companyName && data.companyName.length > 0) {
         queryParts.push(
-            `names=${encodeURIComponent(data.companyName.join(','))}`
+            `names=${encodeURIComponent(data.companyName.join(',') + ',')}`
         )
     }
     if (data.roleName) {
