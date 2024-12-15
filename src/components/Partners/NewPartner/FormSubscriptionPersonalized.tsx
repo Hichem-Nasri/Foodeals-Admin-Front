@@ -30,7 +30,7 @@ export const FormSubscriptionPersonalized: FC<
 
     return (
         <Fragment>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
                 <div className="flex flex-col justify-center items-start">
                     <Label
                         label="Nos solution"
@@ -41,7 +41,7 @@ export const FormSubscriptionPersonalized: FC<
                     control={form.control}
                     name="solutions.solutionsId"
                     render={({ field }) => (
-                        <div className="flex items-center gap-5">
+                        <div className="flex flex-wrap items-center gap-5">
                             <div className="flex items-center my-auto h-full gap-2">
                                 <Checkbox
                                     name={PartnerSolutionType.MARKET_PRO}
@@ -140,7 +140,7 @@ export const FormSubscriptionPersonalized: FC<
                         Please select at least one solution.
                     </div>
                 )}
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col lg:flex-row items-start gap-3">
                 <SelectField
                     control={form.control}
                     name="solutions.duration"
@@ -170,7 +170,7 @@ export const FormSubscriptionPersonalized: FC<
                 solutions.solutionsId.filter(
                     (s) => s === PartnerSolutionType.MARKET_PRO
                 ).length > 0 && (
-                    <div className="flex items-start gap-3">
+                    <div className="flex flex-col lg:flex-row items-start gap-3">
                         {accountType != 'NORMAL_PARTNER' && (
                             <SelectField
                                 control={form.control}

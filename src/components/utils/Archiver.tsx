@@ -68,7 +68,6 @@ export const Archiver: FC<ArchiverProps> = ({
     const options = [{ key: 'OTHER', label: 'Autres' }]
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="hidden overflow-hidden"></DialogTrigger>
             <DialogContent
                 className="min-w-full h-screen lg:h-fit lg:min-w-fit flex flex-col gap-5 justify-start px-0 lg:px-4 py-0 lg:py-4 rounded-none lg:rounded-[18px]"
                 showContent={false}

@@ -1,6 +1,5 @@
 import api from '@/lib/Auth'
 import { API_URL } from '..'
-
 export async function fetchPaymentCommissionMonth(
     currentPage: number,
     pageSize: number,
@@ -15,20 +14,16 @@ export async function fetchPaymentCommissionMonth(
         }
         const url = `${API_URL}/api/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
         console.log('url: ', url)
-        const response = await api
-            .get(
-                `${API_URL}/api/v1/payments/commissions/${id}/monthly-operations/${year}/${month}?page=${currentPage}&size=${pageSize}&type=${type}`
-            )
-            .catch((error) => {
-                throw error
-            })
+        const response = await api.get(url).catch((error) => {
+            throw error
+        })
         return {
             status: response.status,
-            data: dimoData,
+            data: response.data,
         }
     } catch (error) {
         console.error('Error fetching partners:', error)
-        return { status: 200, data: dimoData }
+        return { status: 500, data: [] }
     }
 }
 
